@@ -486,8 +486,11 @@ body.dark-mode img{opacity:.92}
 @media (max-width:860px){
   body.has-sidebar{padding-left:0;padding-top:56px}
   body.has-sidebar .mobile-topbar{display:flex}
-  .sidebar{width:270px;transform:translateX(-100%);transition:transform .25s ease;box-shadow:6px 0 28px rgba(0,0,0,.3)}
-  .sidebar.mobile-open{transform:translateX(0)}
+  .sidebar{width:270px;transform:translateX(-100%);transition:transform .25s ease,box-shadow .25s ease;box-shadow:none}
+  .sidebar.mobile-open{transform:translateX(0);box-shadow:6px 0 28px rgba(0,0,0,.3)}
+  .btn-rem-add,.btn-hist-add{padding:11px 16px;font-size:13px}
+  .dep-head-btns{width:100%}
+  .dep-head-btns .btn-add{flex:1;justify-content:center;white-space:nowrap;padding:10px 8px;font-size:12.5px;gap:6px}
 
   html,body{overflow-x:hidden}
   .page{padding:1rem;max-width:100%}
@@ -1045,7 +1048,7 @@ body.dark-mode img{opacity:.92}
   <div class="page">
     <div class="page-header">
       <div><p class="page-title">Mis deportistas</p><p class="page-sub" id="depsub">Cargando…</p></div>
-      <div style="display:flex;gap:8px">
+      <div class="dep-head-btns" style="display:flex;gap:8px">
         <button class="btn-add" style="background:var(--g100);color:var(--g700)" onclick="openImportDep()">
           <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
           Importar varios
@@ -2779,7 +2782,9 @@ async function confirmRelock(){
 
 
 function getInitials(nombre) {
-  const parts = nombre.trim().split(/\s+/);
+  // Se ignoran apodos entre paréntesis o comillas: "Ramón (Rumu) Martínez" → RM
+  const parts = nombre.trim().split(/\s+/).filter(w => !/^[("'“]/.test(w));
+  if (!parts.length) return (nombre.trim().charAt(0) || '?').toUpperCase();
   if (parts.length === 1) return parts[0].charAt(0).toUpperCase();
   return (parts[0].charAt(0) + parts[1].charAt(0)).toUpperCase();
 }

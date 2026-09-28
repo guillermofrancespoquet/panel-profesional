@@ -254,17 +254,24 @@ body.dark-mode canvas{background:#fff;border-radius:10px;}
    ============================================================ */
 @media screen and (max-width:760px){
   .app{flex-direction:column;}
+  /* Barra superior compacta y fija: marca + menú en una sola fila deslizable */
   .sidebar{
-    position:static;height:auto;width:100%;flex:0 0 auto;
-    flex-direction:row;flex-wrap:wrap;align-items:center;
-    padding:12px 14px;gap:6px;
+    position:sticky;top:0;z-index:100;height:auto;width:100%;flex:0 0 auto;
+    flex-direction:row;flex-wrap:nowrap;align-items:center;
+    padding:8px 10px;gap:4px;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
   }
-  .brand{width:100%;margin-bottom:6px;padding:0 0 10px;}
+  .sidebar::-webkit-scrollbar{display:none;}
+  .brand{width:auto;flex:0 0 auto;margin:0 6px 0 0;padding:0 10px 0 0;border-bottom:none;border-right:.5px solid rgba(255,255,255,.12);gap:9px;}
+  .brand img{width:34px;height:34px;flex:0 0 34px;}
+  .brand h1{font-size:14px;}
+  .brand .sub{display:none;}
   .navsep{display:none;}
-  .sidebar .foot{width:100%;margin-top:8px;padding:8px 0 0;}
-  .navbtn{flex:0 0 auto;margin:0;padding:8px 11px;font-size:12.5px;}
+  .sidebar .foot{width:auto;flex:0 0 auto;margin:0;padding:0;border-top:none;}
+  .navbtn{flex:0 0 auto;margin:0;padding:8px 11px;font-size:12.5px;white-space:nowrap;}
   .navbtn.active::before{display:none;}
-  .sb-toggle{padding:8px 11px;font-size:12.5px;}
+  .sb-toggle{width:auto;padding:8px 11px;font-size:12.5px;}
+  .sb-toggle span{display:none;}
   .main{padding:16px 14px;}
 
   h2{font-size:18px;}
@@ -303,6 +310,20 @@ body.dark-mode canvas{background:#fff;border-radius:10px;}
   .rep-header{flex-direction:column;gap:8px;}
   .rep-header .meta{text-align:left;}
 
+  /* Lista de clientes: cada fila pasa a tarjeta (antes se cortaban columnas y los botones) */
+  #clientTable,#clientTable tbody{display:block;width:100%;min-width:0;}
+  #clientTable thead{display:none;}
+  #clientTable tr.clientrow{display:grid;grid-template-columns:1fr 1fr;gap:2px 12px;padding:12px 2px;border-bottom:.5px solid var(--bd);}
+  #clientTable tr.clientrow:hover td{background:transparent;}
+  #clientTable td{display:block;padding:0;border:none;white-space:normal !important;font-size:13px;}
+  #clientTable td:nth-child(1){grid-column:1/-1;font-size:15px;}
+  #clientTable td:nth-child(2){color:var(--g500);}
+  #clientTable td:nth-child(3){display:none;}
+  #clientTable td:nth-child(4){grid-column:1;}
+  #clientTable td:nth-child(5){grid-column:2;text-align:right;color:var(--g500);}
+  #clientTable td:nth-child(6){grid-column:1/-1;margin-top:8px;}
+  #clientTable td:nth-child(6) .btn-group{display:grid;grid-template-columns:1fr 1fr;}
+  #clientTable td:nth-child(6) .btn{justify-content:center;}
   .modal{padding:16px;max-height:92vh;}
 }
 </style>
