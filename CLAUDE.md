@@ -9,7 +9,10 @@ Apps web de gestión para Guillermo Frances (nutrición deportiva, Valencia). To
 | `panel-profesional.html` | App principal (login con PIN, dashboard, agenda, facturación, Método 3M, Nutrición Deportiva, herramientas). |
 | `calculadora_antropometria.html` | Calculadora ISAK de antropometría. Se abre en pestaña nueva desde el panel (`openAntropometria()`). Guarda en Supabase. |
 | `metodo-3-meses-final.html` | Programa Método 3 Meses (satélite, abierto desde el panel). **No revisado en la sesión donde se creó este archivo: léelo entero antes de tocarlo.** |
-| `icon-192.png`, `icon-512.png`, `manifest-panel.json` | Iconos/PWA del panel. |
+| `icon-192.png`, `icon-512.png` | Iconos PWA (los usan ambos manifests). |
+| `manifest-panel.json` | Manifest PWA del panel (`start_url` → `panel-profesional.html`). |
+| `manifest.json` | Manifest PWA del Método 3M (`start_url` → `metodo-3-meses-final.html`). |
+| `Logo.png` | Logo original. Ningún HTML lo referencia porque el logo va embebido en base64; se conserva como archivo fuente para regenerar ese base64. **No borrar.** |
 | `supabase_antropometria.sql` | Esquema de las tablas de antropometría (ya ejecutado en Supabase). |
 
 ## Reglas de arquitectura (importantes)
