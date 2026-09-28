@@ -327,18 +327,18 @@ body.dark-mode img{opacity:.92}
 .sidebar-backdrop.show{display:block}
 
 /* ═══ SIDEBAR APP SHELL ═══ */
-@media (min-width:861px){ body.has-sidebar{padding-left:224px} }
+@media (min-width:861px){ body.has-sidebar{padding-left:248px} }
 .sidebar{
-  position:fixed;top:0;left:0;bottom:0;width:224px;
+  position:fixed;top:0;left:0;bottom:0;width:248px;
   background:var(--t900);display:none;flex-direction:column;
   padding:1.5rem 0;z-index:200;overflow-y:auto;
 }
 .sidebar.show{display:flex}
-.sb-brand{display:flex;align-items:center;gap:10px;padding:0 1.25rem 1.5rem;margin-bottom:.5rem;border-bottom:.5px solid rgba(255,255,255,.08)}
-.sb-logo{width:32px;height:32px;border-radius:50%;overflow:hidden;border:1px solid rgba(184,149,106,.4);flex-shrink:0}
+.sb-brand{display:flex;align-items:center;gap:12px;padding:0 1.25rem 1.25rem;margin-bottom:.5rem;border-bottom:.5px solid rgba(255,255,255,.08)}
+.sb-logo{width:52px;height:52px;border-radius:50%;overflow:hidden;border:1.5px solid rgba(184,149,106,.5);flex-shrink:0}
 .sb-logo img{width:100%;height:100%;object-fit:cover;display:block}
-.sb-brand-txt{font-size:13px;font-weight:600;color:#fff;line-height:1.3}
-.sb-brand-sub{font-size:10px;color:rgba(255,255,255,.4)}
+.sb-brand-txt{font-size:16px;font-weight:700;letter-spacing:-.01em;color:#fff;line-height:1.2}
+.sb-brand-sub{font-size:11px;color:rgba(255,255,255,.45);margin-top:2px;line-height:1.2}
 .sb-nav{display:flex;flex-direction:column;gap:2px;padding:0 .75rem;flex:1}
 .sb-divider{padding:14px 1.25rem 6px;font-size:10px;font-weight:700;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.6px;margin:0}
 .sb-item{
