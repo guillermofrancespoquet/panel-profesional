@@ -6,9 +6,9 @@ Apps web de gestión para Guillermo Frances (nutrición deportiva, Valencia). To
 
 | Archivo | Qué es |
 |---|---|
-| `panel-profesional.html` | App principal (login con PIN, dashboard, agenda, facturación, Método 3M, Nutrición Deportiva, herramientas). |
+| `panel-profesional.html` | App principal (login con correo y contraseña (Supabase Auth), dashboard, agenda, facturación, Método 3M, Nutrición Deportiva, herramientas). |
 | `calculadora_antropometria.html` | Calculadora ISAK de antropometría. Se muestra **dentro del panel** en un iframe con `?embed=1` (`cargarAntropometria()` / `abrirAntropometria(depId)`, que pasa `&c=<id>` para dejar abierto a ese deportista) y también funciona sola en su propia URL. Guarda en Supabase. |
-| `metodo-3-meses-final.html` | Programa Método 3 Meses (satélite, abierto desde el panel). **No revisado en la sesión donde se creó este archivo: léelo entero antes de tocarlo.** |
+| `metodo-3-meses-final.html` | Programa Método 3 Meses: página del **cliente**, se abre con su enlace personal `?t=<token>`. Solo habla con Supabase por las funciones `m3m_*`. Ya no tiene modo administrador (la semana la desbloquea el profesional desde el panel). |
 | `icon-192.png`, `icon-512.png` | Iconos PWA (los usan ambos manifests). |
 | `manifest-panel.json` | Manifest PWA del panel (`start_url` → `panel-profesional.html`). |
 | `manifest.json` | Manifest PWA del Método 3M (`start_url` → `metodo-3-meses-final.html`). |
@@ -16,6 +16,8 @@ Apps web de gestión para Guillermo Frances (nutrición deportiva, Valencia). To
 | `supabase_antropometria.sql` | Esquema de las tablas de antropometría (ya ejecutado en Supabase). |
 | `supabase_sudoracion.sql` | Tabla `tests_sudoracion` (test de sudoración por deportista). |
 | `supabase_plan_competicion.sql` | Tabla `planes_competicion` (plan de competición por deportista). |
+| `supabase_seguridad_1_tokens.sql` | Seguridad, paso 1 (aditivo): `clientes.token` y funciones `m3m_cliente`, `m3m_guardar_checks`, `m3m_guardar_nota` para la página del cliente del Método 3M. |
+| `supabase_seguridad_2_cerrar.sql` | Seguridad, paso 2: quita el acceso anónimo (RLS solo para `authenticated`) y pone privado el bucket `deportistas-docs`. **Solo ejecutarlo cuando se cumplan las condiciones de su cabecera.** |
 
 ## Reglas de arquitectura (importantes)
 
@@ -27,8 +29,11 @@ Apps web de gestión para Guillermo Frances (nutrición deportiva, Valencia). To
 ## Supabase
 
 - URL: `https://knmucvrbxpzmrjwxyksj.supabase.co`. Se llama con `fetch` a la API REST de PostgREST mediante un helper `sb(path, opts)` (no se usa la librería cliente). La anon key está en el propio HTML (`SKEY`); no la muestres ni la copies en mensajes.
-- Acceso protegido solo por el PIN de la app + RLS permisiva (`for all using (true)`). No hay Supabase Auth.
-- El PIN **no aparece en claro en ningún sitio público** (ni en el código ni en Notion): el panel solo guarda su huella SHA-256 con sal (`PASS_SALT`, `PASS_HASH`). Ojo: con 4 dígitos la huella se puede fuerza-brutar al instante, así que esto solo evita el texto en claro; la protección real llegará con el rediseño de seguridad. El PIN antiguo sigue en el historial de git, por eso conviene cambiarlo. Para cambiarlo: en la consola del navegador ejecutar `(async()=>{const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode('nutrilogos-panel:'+'NUEVO_PIN'));console.log([...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join(''))})()` y pegar el resultado en `PASS_HASH`. No escribas el PIN en chats, commits ni Notion.
+- **Acceso**: el panel y la calculadora usan **Supabase Auth** (correo + contraseña, un único usuario). La sesión (`access_token` + `refresh_token`) vive en `localStorage['nl_session']`, se comparte con la calculadora incrustada (mismo origen) y todas las llamadas pasan por `authFetch()` / `sb()`, que renuevan el token solas. La `anon key` es pública por diseño: lo que protege los datos es la RLS (solo `authenticated`; el paso 2 del SQL) **más tener desactivados los registros públicos** en Supabase (Authentication → "Allow new users to sign up" apagado), porque si no cualquiera podría crearse una cuenta.
+- La página del cliente del Método 3M entra con la anon key pero **solo** a las funciones `m3m_*` con su `token` (64 hex, secreto). No puede leer ni escribir nada más ni cambiar la semana desbloqueada.
+- Archivos de deportistas: bucket **privado** `deportistas-docs`; el panel sube con la sesión, guarda `path` en `archivos` y abre con URL firmada de 5 min (`abrirArchivo()`). Las entradas antiguas con URL pública siguen funcionando porque `archivoPath()` deduce la ruta.
+- Orden de despliegue de la seguridad (para no bloquearse): 1) crear el usuario y apagar registros; 2) ejecutar el SQL 1; 3) fusionar el código; 4) comprobar login y enlaces y enviar los enlaces nuevos; 5) ejecutar el SQL 2 y hacer sus comprobaciones. No hay PIN en ningún sitio: no escribas contraseñas en chats, commits ni Notion.
+- Riesgo asumido: la sesión en `localStorage` es legible por cualquier página del mismo origen (`guillermofrancespoquet.github.io`, incluidos otros repos del mismo usuario).
 - Tablas que usa el panel: `clientes` (Método 3M), `clientes_deportivos`, `citas`, `recordatorios`, `historial_deportista`, `progresion_cargas`, además de `antropometria_perfil` y `antropometria_valoraciones`.
 - `clientes_deportivos`: `id` (bigint), `nombre` (nombre completo en una sola casilla), `deporte`, `objetivo`, `foto_url`, `descripcion`, `plan_url`, `proxima_revision`, `ultima_actividad`, `notas`, `archivos`, `proxima_accion`.
 - Antropometría: `antropometria_perfil` (1:1 con `clientes_deportivos` por `deportista_id`, con `talla`, `talla_sentado`, `envergadura` y `diametros_oseos` jsonb como medidas fijas del cliente) y `antropometria_valoraciones` (una fila por sesión; `medidas` jsonb). Borrar un cliente en la calculadora solo quita su perfil y valoraciones, **nunca** el registro de `clientes_deportivos`.
