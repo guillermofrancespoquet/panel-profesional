@@ -1759,10 +1759,10 @@ body.dark-mode .frm select.inp{background-image:url("data:image/svg+xml,%3Csvg x
           <tr><td>Población general</td><td>0.8</td></tr>
           <tr><td>Activo recreativo (orientativo)</td><td>1.0 – 1.2</td></tr>
           <tr><td>Deportista entrenado, sin déficit calórico</td><td>1.2 – 1.6</td></tr>
-          <tr><td>Fuerza / hipertrofia</td><td>≈ 1.6 (techo práctico ≈ 2.0)</td></tr>
+          <tr><td>Fuerza / hipertrofia</td><td>1.4 – 2.0 (posición ISSN 2017)</td></tr>
           <tr><td>Déficit calórico en deportista</td><td>1.6 – 2.4 (≈ 2.3 – 3.1 por kg de masa libre de grasa)</td></tr>
           </table>
-        <p class="ref-note">Sin déficit, la necesidad de un atleta sube respecto a la población general pero no se dispara: IAAO ≈ 1.2 en deporte de equipo (seguro 1.4) y ≈ 1.6 en resistencia (seguro ≈ 1.85); en fuerza las ganancias de masa se estabilizan en ≈ 1.6 g/kg. Subir más no aporta ventaja demostrada. En déficit las necesidades aumentan: con ≈ 1.0 g/kg se perdió más masa magra que con ≈ 2.3 g/kg. Fuentes: Packer 2017, Williamson 2023, Morton 2018, Mettler 2010, Helms 2014.</p>
+        <p class="ref-note">Sin déficit, la necesidad de un atleta sube respecto a la población general pero no se dispara: IAAO ≈ 1.2 en deporte de equipo (seguro 1.4) y ≈ 1.6 en resistencia (seguro ≈ 1.85), y la síntesis proteica se satura hacia ese punto. En déficit las necesidades aumentan: con ≈ 1.0 g/kg se perdió más masa magra que con ≈ 2.3 g/kg. Límites: los estudios IAAO son de corta duración, con pocos sujetos y con una dieta previa de 1.2–1.4 g/kg, y el de déficit dura 2 semanas (n = 20): son orientación, no un techo. Fuentes: Packer 2017, Williamson 2023, Mettler 2010, Helms 2014, ISSN 2017.</p>
       </div>
       <div class="ref-section" id="refAgua">
         <div class="ref-head"><p class="ref-title">Hidratación — ingesta total de referencia</p><span class="ref-src">EFSA</span></div>
@@ -4060,7 +4060,7 @@ function calcAll(){
     const pMlg = proteinaG/mlg;
     sem.push(['info', `<b>Proteína: ${planF(proteinaG,0)} g = ${planF(proteinaGkg,1)} g/kg de peso = ${planF(pMlg,1)} g/kg de masa libre de grasa.</b> ${ajuste<0
       ? 'En déficit las necesidades suben: 1,6–2,4 g/kg de peso, y 2,3–3,1 g/kg de masa libre de grasa en deportistas magros o de fuerza (Helms 2014). Con ≈ 1,0 g/kg se perdió más masa magra que con ≈ 2,3 g/kg (Mettler 2010).'
-      : 'Sin déficit, un deportista entrenado necesita unos 1,2–1,6 g/kg de peso (Packer 2017, Williamson 2023, Morton 2018); por encima de ≈ 1,6–2,0 no hay ventaja demostrada.'}`]);
+      : 'Sin déficit, un deportista entrenado necesita unos 1,2–1,6 g/kg de peso (Packer 2017, Williamson 2023); según los estudios IAAO la síntesis proteica se satura hacia ≈ 1,6–1,9 g/kg.'}`]);
     if(ajuste<0 && proteinaGkg<1.6) sem.push(['warn', `<b>Proteína baja para un déficit (${planF(proteinaGkg,1)} g/kg).</b> Con déficit calórico conviene subir a 1,6–2,4 g/kg para proteger la masa muscular.`]);
   }
   avisos.forEach(a=>sem.unshift(a));
