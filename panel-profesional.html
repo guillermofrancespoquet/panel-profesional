@@ -568,6 +568,28 @@ body.dark-mode img{opacity:.92}
 .calc-head{display:flex;align-items:center;justify-content:space-between}
 .calc-close{background:var(--g100);border:none;border-radius:8px;width:28px;height:28px;cursor:pointer;color:var(--g500);font-size:13px}
 .calc-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.plan-check{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--g700);line-height:1.4;cursor:pointer}
+.plan-check input{width:18px;height:18px;flex-shrink:0;accent-color:var(--t400)}
+.plan-tl,.pdf-tl{display:flex;flex-direction:column;gap:12px;margin-top:14px}
+.plan-item,.pdf-tl-item{border-radius:12px;padding:14px 16px 14px 18px;break-inside:avoid;page-break-inside:avoid}
+.plan-item{background:var(--sf);border:.5px solid var(--bd);border-left:4px solid var(--gold)}
+.pdf-tl-item{background:#faf8f3;border:1px solid #ece4d6;border-left:4px solid #c19a6b}
+.plan-item[data-t="durante"],.pdf-tl-item[data-t="durante"]{border-left-color:#1D9E75}
+.plan-item[data-t="despues"],.pdf-tl-item[data-t="despues"]{border-left-color:#1f4d5e}
+.plan-top,.pdf-tl-top{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:4px}
+.plan-when,.pdf-tl-when{font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#B8956A}
+.plan-hora,.pdf-tl-hora{font-size:13px;font-weight:700;color:var(--t600)}
+.plan-h,.pdf-tl-h{font-size:15px;font-weight:700;margin-bottom:8px}
+.plan-chips,.pdf-tl-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.plan-chip,.pdf-tl-chip{background:#E1F5EE;color:#085041;border-radius:20px;padding:4px 11px;font-size:12px;font-weight:600}
+.plan-li,.pdf-tl-li{font-size:12.5px;line-height:1.55;margin:3px 0}
+.plan-opt,.pdf-tl-opt{font-size:12px;line-height:1.5;margin:3px 0;padding-left:10px;border-left:2px solid #E2D8C5}
+.plan-opt b,.pdf-tl-opt b{font-weight:600}
+.plan-note,.pdf-tl-note{font-size:11px;line-height:1.5;margin-top:6px;color:var(--g400)}
+.plan-lista{width:100%;border-collapse:collapse;font-size:12px;margin-top:10px}
+.plan-lista td{padding:8px 8px 8px 0;border-top:.5px solid var(--bd);vertical-align:middle;color:var(--g700)}
+.plan-lista td.n{font-weight:600;color:var(--g900);white-space:nowrap}
+.plan-lista .btn-action{padding:5px 10px;font-size:11px}
 .hd-card{margin-bottom:12px}
 .hd-h{font-size:12px;font-weight:600;color:var(--g900);margin-bottom:12px}
 .hd-opt{font-weight:400;color:var(--g400)}
@@ -605,7 +627,8 @@ body.dark-mode img{opacity:.92}
   body *{visibility:hidden}
   #printArea, #printArea *{visibility:visible}
   #printArea{display:block !important;position:absolute;top:0;left:0;width:100%;padding:0;margin:0}
-  .sidebar,.mobile-topbar,.sidebar-backdrop,.mbg{display:none !important}
+  .sidebar,.mobile-topbar,.sidebar-backdrop,.mbg,.view{display:none !important}
+  body,body.has-sidebar{background:#fff !important;padding:0 !important;min-height:0 !important}
   @page{margin:14mm}
 }
 .pdf-hero{background:linear-gradient(135deg,#163a47 0%,#1f4d5e 100%);border-radius:18px;padding:22px 28px;color:#f7f4ee;margin-bottom:22px;display:flex;align-items:center;gap:18px}
@@ -638,6 +661,12 @@ body.dark-mode img{opacity:.92}
 .pdf-two-col > div{flex:1}
 .pdf-hist-item{display:flex;gap:10px;padding:5px 0;font-size:11.5px;border-bottom:.5px solid #f0ebe0}
 .pdf-hist-date{color:#c19a6b;font-weight:700;white-space:nowrap;min-width:55px}
+.pdf-tl-when{color:#c19a6b}.pdf-tl-hora{color:#163a47}.pdf-tl-h{color:#163a47}.pdf-tl-li,.pdf-tl-opt{color:#3a3a3a}.pdf-tl-note{color:#8a7f6d}
+.pdf-tl-chip{background:#e4f0e6;color:#3f7a4c}
+.pdf-sum{display:flex;gap:10px;margin-bottom:18px}
+.pdf-sum div{flex:1;background:#faf8f3;border:1px solid #ece4d6;border-radius:10px;padding:9px 12px}
+.pdf-sum b{display:block;font-size:9.5px;letter-spacing:1px;text-transform:uppercase;color:#a89c89;font-weight:600;margin-bottom:2px}
+.pdf-sum span{font-size:14px;font-weight:700;color:#163a47}
 .pdf-foot{text-align:center;margin-top:26px;padding-top:14px;border-top:1px solid #ece4d6;font-size:9px;color:#a89c89;letter-spacing:1px;text-transform:uppercase}
 
 </style>
@@ -743,6 +772,10 @@ body.dark-mode img{opacity:.92}
         Hidratación
       </button>
     </div>
+    <button class="sb-item" id="sbPlan" onclick="navTo('plan')">
+      <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 22V4"/><path d="M4 4h13l-2 4 2 4H4"/></svg>
+      Plan de partido
+    </button>
     <button class="sb-item" id="sbComp" onclick="navTo('comparador')">
       <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0H5a2 2 0 0 1-2-2v-4m6 6h10a2 2 0 0 0 2-2v-4"/></svg>
       Comparador de alimentos
@@ -988,6 +1021,78 @@ body.dark-mode img{opacity:.92}
 </div>
 
 <!-- PÁGINA: GENERADOR DE MENÚ SEMANAL -->
+<div id="vplan" class="view">
+  <div class="page">
+    <div class="page-header">
+      <div><p class="page-title">Plan de partido</p><p class="page-sub">Hidratos y líquidos antes, durante y después · línea de tiempo y PDF para el deportista</p></div>
+      <button class="btn-add" onclick="exportPlanPDF()">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Exportar PDF
+      </button>
+    </div>
+
+    <div class="dash-card hd-card">
+      <p class="hd-h">1 · Deportista y evento</p>
+      <div class="calc-grid">
+        <div style="grid-column:1/-1">
+          <label class="mfl" for="planDep">Deportista <span class="hd-opt">(opcional · para guardar el plan)</span></label>
+          <select class="inp" id="planDep" onchange="planElegirDep()"><option value="">Sin guardar (solo calcular)</option></select>
+          <div id="planDepHint" class="hd-hint"></div>
+        </div>
+        <div>
+          <label class="mfl" for="planEvento">Evento <span class="hd-opt">(rival o competición)</span></label>
+          <input type="text" class="inp" id="planEvento" placeholder="Ej. Jornada 12 · vs. Levante" oninput="planCambio()">
+        </div>
+        <div>
+          <label class="mfl" for="planDeporte">Deporte</label>
+          <select class="inp" id="planDeporte" onchange="planDeporteCambio()">
+            <option value="futbol">Fútbol</option><option value="baloncesto">Baloncesto</option><option value="running">Running</option>
+            <option value="ciclismo">Ciclismo</option><option value="triatlon">Triatlón</option><option value="otro">Otro deporte</option>
+          </select>
+        </div>
+        <div>
+          <label class="mfl" for="planFecha">Fecha</label>
+          <input type="date" class="inp" id="planFecha" oninput="planCambio()">
+        </div>
+        <div>
+          <label class="mfl" for="planHora">Hora de inicio <span class="hd-opt">(opcional)</span></label>
+          <input type="time" class="inp" id="planHora" oninput="calcPlanUI()">
+        </div>
+      </div>
+    </div>
+
+    <div class="dash-card hd-card">
+      <p class="hd-h">2 · Esfuerzo</p>
+      <div class="calc-grid">
+        <div>
+          <label class="mfl" for="planDuracion">Duración (min)</label>
+          <input type="number" class="inp" id="planDuracion" inputmode="decimal" min="1" step="5" value="90" oninput="calcPlanUI()">
+        </div>
+        <div>
+          <label class="mfl" for="planIntensidad">Intensidad</label>
+          <select class="inp" id="planIntensidad" onchange="calcPlanUI()">
+            <option value="baja">Baja</option><option value="media">Media</option><option value="alta" selected>Alta</option><option value="competicion">Competición</option>
+          </select>
+        </div>
+        <div>
+          <label class="mfl" for="planPeso">Peso (kg)</label>
+          <input type="number" class="inp" id="planPeso" inputmode="decimal" min="20" step="0.1" placeholder="Ej. 72" oninput="calcPlanUI()">
+        </div>
+        <div style="display:flex;align-items:flex-end">
+          <label class="plan-check"><input type="checkbox" id="planRapida" onchange="calcPlanUI()"> Necesita recuperar rápido <span class="hd-opt">(otro esfuerzo en pocas horas)</span></label>
+        </div>
+      </div>
+    </div>
+
+    <div id="planAvisos" aria-live="polite"></div>
+    <div id="planOut"></div>
+    <div class="hd-actions">
+      <button class="btn-add" id="planGuardar" onclick="guardarPlan()" disabled>Guardar plan</button>
+      <span class="hd-status" id="planStatus" role="status"></span>
+    </div>
+  </div>
+</div>
+
 <div id="vmenu" class="view">
   <div class="page">
     <div class="page-header">
@@ -2519,6 +2624,7 @@ function navTo(section){
   else if(section==='metodo'){document.getElementById('sbMetodo').classList.add('on');show('vdash');load();}
   else if(section==='deportiva'){document.getElementById('sbDep').classList.add('on');show('vdepdash');loadDeportistas();}
   else if(section==='facturacion'){document.getElementById('sbFact').classList.add('on');show('vfact');loadFacturacion();}
+  else if(section==='plan'){document.getElementById('sbPlan').classList.add('on');show('vplan');initPlan();}
   else if(section==='calc-energia'||section==='calc-hidra'){
     const hidra = section==='calc-hidra';
     document.getElementById(hidra?'sbCalcHidra':'sbCalcEnergia').classList.add('on');
@@ -3837,6 +3943,11 @@ function openDepDet(id) {
     </div>
 
     <div class="depd-section">
+      <p class="sec-title">Planes de partido</p>
+      <div class="med-box" id="planBox"><p class="med-empty">Cargando…</p></div>
+    </div>
+
+    <div class="depd-section">
       <p class="sec-title">Archivos · antropometrías, bioimpedancias, informes</p>
       <div class="files-box" id="filesDropZone" onclick="document.getElementById('fileInput').click()">
         <svg class="files-box-icon" width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
@@ -3871,6 +3982,7 @@ function openDepDet(id) {
   loadHistorial(d.id);
   loadMediciones(d.id);
   loadSudoracion(d.id);
+  loadPlanes(d.id);
 }
 
 
@@ -4010,6 +4122,308 @@ async function deleteSudoracion(id, depId){
   if(!confirm('¿Eliminar este test de sudoración?')) return;
   await sb(`tests_sudoracion?id=eq.${id}`, {method:'DELETE', headers:{'Prefer':'return=minimal'}});
   loadSudoracion(depId);
+}
+
+// ═══════════════ PLAN DE PARTIDO ═══════════════
+// Pautas (adultos): antes 1-4 g/kg en las horas previas y 8-12 g/kg/día el día anterior; durante 30-60 g/h
+// (hasta 90 g/h más allá de 2,5 h, con hidratos de fuentes múltiples); después 1,2 g/kg/h si la recuperación
+// es en menos de 4 h y 0,25-0,4 g/kg de proteína por toma. Fuentes: ISSN 2017 (Kerksick), Burke 2011,
+// Jeukendrup 2014, ACSM 2007 (líquidos). Las cantidades de alimentos son aproximadas.
+const PLAN_DEPORTES = {
+  futbol:{n:'Fútbol',dur:90,tip:'Aprovecha el descanso y las pausas del juego para beber y tomar hidratos.'},
+  baloncesto:{n:'Baloncesto',dur:60,tip:'Aprovecha los tiempos muertos y los descansos entre cuartos.'},
+  running:{n:'Running',dur:60,tip:'Reparte la toma cada 20-30 minutos y no estrenes nada el día de la competición: pruébalo antes en los entrenamientos.'},
+  ciclismo:{n:'Ciclismo',dur:120,tip:'Sobre la bici es fácil comer y beber: reparte la toma cada 15-20 minutos.'},
+  triatlon:{n:'Triatlón',dur:120,tip:'Concentra la toma en el segmento de bici; en la carrera, pequeñas cantidades.'},
+  otro:{n:'Otro deporte',dur:60,tip:''}
+};
+const PLAN_INT = {baja:'Baja',media:'Media',alta:'Alta',competicion:'Competición'};
+// c = gramos de hidratos por 100 g/mL (u='g'|'ml') o por unidad (u='ud'). Valores aproximados.
+const PLAN_ALIM = {
+  arroz:{n:'arroz blanco cocido',c:28,u:'g'}, pasta:{n:'pasta cocida',c:31,u:'g'}, patata:{n:'patata cocida',c:20,u:'g'},
+  avena:{n:'copos de avena (en crudo)',c:66,u:'g'}, pan:{n:'pan de masa madre',c:50,u:'g'}, pasas:{n:'pasas',c:79,u:'g'},
+  zumo:{n:'zumo de naranja',c:10,u:'ml'},
+  platano:{n:'plátano',c:27,u:'ud',s:'plátano',p:'plátanos'}, datil:{n:'dátil medjool',c:18,u:'ud',s:'dátil',p:'dátiles'},
+  manzana:{n:'manzana',c:25,u:'ud',s:'manzana',p:'manzanas'}
+};
+// p = gramos de proteína por 100 g/mL
+const PLAN_PROT = {tofu:{n:'tofu firme',p:12,u:'g'}, tempeh:{n:'tempeh',p:19,u:'g'}, lentejas:{n:'lentejas cocidas',p:9,u:'g'}, soja:{n:'bebida de soja',p:3.3,u:'mL'}};
+
+let planDeps = [], planEdad = null, planSudor = null, planDefDur = 90, lastPlan = null, planGuardadoOk = false;
+
+const planNum = id => { const v = parseFloat(document.getElementById(id).value); return isNaN(v) ? null : v; };
+const planF = (n,d=0) => n.toLocaleString('es-ES',{minimumFractionDigits:d,maximumFractionDigits:d});
+function planQty(q){ const e=Math.floor(q), f=q-e; return (e?e:'')+(f?'½':'') || '½'; }
+
+function planHora(hhmm, offMin){
+  const m = /^(\d{1,2}):(\d{2})$/.exec(hhmm||''); if(!m) return null;
+  const t = ((+m[1]*60 + +m[2] + offMin) % 1440 + 1440) % 1440;
+  return String(Math.floor(t/60)).padStart(2,'0') + ':' + String(t%60).padStart(2,'0');
+}
+function planPorcion(k, gCho){
+  const a = PLAN_ALIM[k];
+  if(a.u==='ud'){ const q = Math.max(0.5, Math.round(gCho/a.c*2)/2); return {t:`${planQty(q)} ${q===1?a.s:a.p}`, cho:q*a.c}; }
+  const q = Math.max(10, Math.round(gCho/a.c*10)*10);
+  return {t:`${q} ${a.u==='ml'?'mL':'g'} de ${a.n}`, cho:q*a.c/100};
+}
+// Reparte los hidratos objetivo entre alimentos ([clave, proporción]) y devuelve el texto con el total real.
+function planCombo(gCho, partes){
+  const it = partes.map(([k,f])=>planPorcion(k, gCho*f));
+  return `<b>${it.map(x=>x.t).join(' + ')}</b> · ≈ ${Math.round(it.reduce((a,x)=>a+x.cho,0))} g de hidratos`;
+}
+function planProteina(k, gProt){
+  const a = PLAN_PROT[k], q = Math.max(10, Math.round(gProt/a.p*10)*10);
+  return `${q} ${a.u} de ${a.n}`;
+}
+
+function calcPlan(p){
+  if(!p.peso || !p.duracion || p.peso<=0 || p.duracion<=0) return null;
+  const peso = p.peso, horas = p.duracion/60, adulto = !(p.edad!==null && p.edad<18);
+  const alta = p.intensidad==='alta' || p.intensidad==='competicion';
+  const R = { bloques:[], avisos:[], p };
+  if(!adulto) R.avisos.push('Deportista menor de edad: las pautas son de adultos y no se aplica la carga de hidratos del día anterior. Úsalas con criterio.');
+
+  // Día anterior (solo adultos, esfuerzos de 90 min o más y no suaves)
+  if(adulto && p.duracion>=90 && p.intensidad!=='baja'){
+    R.bloques.push({t:'antes', cuando:'Día anterior', hora:null, titulo:'Llena el depósito',
+      chips:[`${planF(8*peso)}–${planF(12*peso)} g de hidratos en el día`, '8–12 g/kg'],
+      lineas:['Comidas ricas en hidratos repartidas durante todo el día: cereales integrales, tubérculos, legumbres y fruta.'],
+      nota:'Una dieta rica en hidratos maximiza las reservas de glucógeno (ISSN 2017).'});
+  }
+  // Comida previa: 3 h antes
+  const hComida = planHora(p.hora,-180), temprano = hComida && +hComida.slice(0,2) < 10;
+  const gkgComida = (alta && p.duracion>=120) ? 3 : 2, gComida = gkgComida*peso;
+  R.bloques.push({t:'antes', cuando:'3 h antes', hora:hComida, titulo:temprano?'Desayuno previo':'Comida previa',
+    chips:[`${planF(gComida)} g de hidratos`, `${gkgComida} g/kg`],
+    lineas:['Alimentos que ya conozcas y toleres bien. Bebe con la comida para empezar bien hidratado.'],
+    opciones: temprano
+      ? [planCombo(gComida,[['avena',.7],['platano',.3]]), planCombo(gComida,[['pan',.7],['datil',.3]])]
+      : [planCombo(gComida,[['arroz',.7],['platano',.3]]), planCombo(gComida,[['pasta',.7],['manzana',.3]]), planCombo(gComida,[['patata',.7],['pasas',.3]])],
+    nota:'Regla práctica dentro del rango de 1–4 g/kg en las horas previas.'});
+  // Snack: 1 h antes
+  const gSnack = 1*peso;
+  R.bloques.push({t:'antes', cuando:'1 h antes', hora:planHora(p.hora,-60), titulo:'Snack previo',
+    chips:[`${planF(gSnack)} g de hidratos`, '1 g/kg'],
+    lineas:['Algo ligero y fácil de digerir.'],
+    opciones:[planCombo(gSnack,[['platano',.6],['datil',.4]]), planCombo(gSnack,[['pan',.6],['pasas',.4]])]});
+
+  // Durante
+  let rate = 0, rango = '', notaDur = '';
+  if(p.duracion<=60){ notaDur = 'En esfuerzos de hasta ~1 h bastan pequeñas cantidades o incluso un enjuague bucal con una bebida con hidratos (Burke 2011).'; }
+  else if(p.duracion<=150){ rate = p.intensidad==='baja'?30:p.intensidad==='media'?45:60; rango='30–60 g/h'; notaDur = p.intensidad==='baja' ? 'Con intensidad baja, ajusta hacia el extremo inferior del rango (Jeukendrup 2014).' : 'El rango depende de la duración y la intensidad (Jeukendrup 2014).'; }
+  else { rate = p.intensidad==='baja'?30:p.intensidad==='media'?60:90; rango='60–90 g/h'; notaDur = 'Por encima de 60 g/h conviene mezclar fuentes de hidratos (glucosa y fructosa) para absorberlos bien. Entrena esta pauta antes (Jeukendrup 2014).'; }
+  const durLineas = [], durOpc = [], durDespues = [];
+  if(rate>0){
+    durOpc.push(planCombo(rate,[['datil',.5],['platano',.5]]), planCombo(rate,[['pasas',.5],['zumo',.5]]));
+    durLineas.push(`En total, unos ${planF(rate*horas)} g de hidratos durante el esfuerzo. Cada hora, por ejemplo:`);
+  } else durLineas.push('No hace falta una pauta fija de hidratos; puedes tomar pequeñas cantidades si lo toleras.');
+  // Líquido según el último test de sudoración
+  const t = planSudor;
+  if(t && t.tasa>0){
+    const need = Math.max(0, t.tasa*horas - 0.02*peso)/horas*1000;
+    durDespues.push(need>0
+      ? `Líquido: ~${Math.round(need/10)*10} mL/h para no perder más del 2 % del peso (según su tasa de sudoración de ${planF(t.tasa,2)} L/h, test del ${t.fecha}).`
+      : `Líquido: con su tasa de sudoración (${planF(t.tasa,2)} L/h, test del ${t.fecha}) no llegaría al 2 % de pérdida en esta duración; bebe según lo que necesite sin forzar.`);
+  } else durDespues.push('Líquido: sin test de sudoración no hay pauta personalizada. Hazlo desde Calculadora → Hidratación.');
+  const tip = PLAN_DEPORTES[p.deporte] ? PLAN_DEPORTES[p.deporte].tip : '';
+  if(tip) durDespues.push(tip);
+  R.bloques.push({t:'durante', cuando:`Durante · ${p.duracion} min`, hora:p.hora?`${p.hora} – ${planHora(p.hora,p.duracion)}`:null, titulo:'Durante el esfuerzo',
+    chips: rate>0 ? [`${rate} g/h`, `Rango ${rango}`] : ['Pequeñas cantidades'], lineas:durLineas, opciones:durOpc, despues:durDespues, nota:notaDur});
+
+  // Después
+  const pMin = 0.25*peso, pMax = 0.4*peso, pMed = 0.3*peso;
+  const dlineas = [], ddespues = [];
+  if(p.rapida){
+    dlineas.push(`Si el siguiente esfuerzo es en menos de 4 h: ${planF(1.2*peso)} g de hidratos cada hora durante las primeras 4 h (1,2 g/kg/h). Cada hora, por ejemplo:`);
+  } else dlineas.push('Si no hay otro esfuerzo pronto: una comida completa rica en hidratos y proteína en cuanto puedas.');
+  ddespues.push(`Proteína: ${planF(pMin)}–${planF(pMax)} g (0,25–0,4 g/kg) en la primera toma, por ejemplo ${planProteina('tofu',pMed)}, ${planProteina('tempeh',pMed)} o ${planProteina('lentejas',pMed)}.`);
+  ddespues.push('Líquidos: pésate antes y después; repón 1,25–1,5 L por cada kg perdido.');
+  const dop = p.rapida ? [planCombo(1.2*peso,[['arroz',.7],['platano',.3]]), planCombo(1.2*peso,[['pasta',.7],['pasas',.3]])] : [];
+  R.bloques.push({t:'despues', cuando:'Después', hora:p.hora?planHora(p.hora,p.duracion):null, titulo:'Recuperación',
+    chips: p.rapida ? [`${planF(1.2*peso)} g/h de hidratos`, '1,2 g/kg/h'] : [`${planF(pMin)}–${planF(pMax)} g de proteína`],
+    lineas:dlineas, opciones:dop, despues:ddespues});
+  return R;
+}
+
+function planBloqueHtml(b, c){
+  const opc = (b.opciones||[]).map(o=>`<p class="${c}-opt">${o}</p>`).join('');
+  return `<div class="${c}-item" data-t="${b.t}">
+    <div class="${c}-top"><span class="${c}-when">${sudEsc(b.cuando)}</span>${b.hora?`<span class="${c}-hora">${sudEsc(b.hora)}</span>`:''}</div>
+    <div class="${c}-h">${sudEsc(b.titulo)}</div>
+    <div class="${c}-chips">${b.chips.map(x=>`<span class="${c}-chip">${sudEsc(x)}</span>`).join('')}</div>
+    ${(b.lineas||[]).map(l=>`<p class="${c}-li">${sudEsc(l)}</p>`).join('')}${opc}
+    ${(b.despues||[]).map(l=>`<p class="${c}-li">${sudEsc(l)}</p>`).join('')}
+    ${b.nota?`<p class="${c}-note">${sudEsc(b.nota)}</p>`:''}
+  </div>`;
+}
+
+function planLeer(){
+  return { peso:planNum('planPeso'), duracion:planNum('planDuracion'), intensidad:document.getElementById('planIntensidad').value,
+    deporte:document.getElementById('planDeporte').value, hora:document.getElementById('planHora').value||'',
+    rapida:document.getElementById('planRapida').checked, edad:planEdad };
+}
+function planCambio(){
+  planGuardadoOk = false;
+  document.getElementById('planStatus').textContent = '';
+  planActualizarBoton();
+}
+function planActualizarBoton(){
+  const b = document.getElementById('planGuardar'); if(!b) return;
+  const ok = !!document.getElementById('planDep').value && !!lastPlan && !!document.getElementById('planFecha').value && !planGuardadoOk;
+  b.disabled = !ok; b.textContent = planGuardadoOk ? '✓ Plan guardado' : 'Guardar plan';
+  b.title = document.getElementById('planDep').value ? '' : 'Elige un deportista para poder guardar el plan';
+}
+function calcPlanUI(){
+  planCambio();
+  const R = calcPlan(planLeer()), out = document.getElementById('planOut'), av = document.getElementById('planAvisos');
+  lastPlan = R;
+  if(!R){
+    av.innerHTML = ''; out.innerHTML = '<p class="hd-hint" style="margin-top:14px">Indica el peso y la duración para generar el plan.</p>';
+  } else {
+    av.innerHTML = R.avisos.map(a=>`<p class="hd-note" role="note">${sudEsc(a)}</p>`).join('');
+    out.innerHTML = `<div class="plan-tl">${R.bloques.map(b=>planBloqueHtml(b,'plan')).join('')}</div>
+      <p class="hd-hint">Pautas de adultos según ISSN 2017, Burke 2011, Jeukendrup 2014 y ACSM 2007. Las cantidades de alimentos son aproximadas. Prueba siempre la estrategia en entrenamientos antes de competir.</p>`;
+  }
+  planActualizarBoton();
+}
+function planDeporteCambio(){
+  const d = PLAN_DEPORTES[document.getElementById('planDeporte').value], dur = document.getElementById('planDuracion');
+  if(!dur.value || +dur.value===planDefDur){ dur.value = d.dur; }
+  planDefDur = d.dur;
+  calcPlanUI();
+}
+async function initPlan(){
+  const f = document.getElementById('planFecha');
+  if(!f.value) f.value = localISO(new Date());
+  try{
+    const rows = await sb('clientes_deportivos?select=id,nombre,deporte&order=nombre.asc');
+    planDeps = Array.isArray(rows) ? rows : [];
+  }catch(e){ planDeps = []; }
+  const sel = document.getElementById('planDep'), actual = sel.value;
+  sel.innerHTML = '<option value="">Sin guardar (solo calcular)</option>' + planDeps.map(d=>`<option value="${d.id}">${sudEsc(d.nombre)}</option>`).join('');
+  if(actual) sel.value = actual;
+  calcPlanUI();
+}
+// Al elegir deportista: peso de su última valoración, edad del perfil y último test de sudoración.
+async function planElegirDep(conservarPeso){
+  const id = document.getElementById('planDep').value, hint = document.getElementById('planDepHint');
+  planEdad = null; planSudor = null; hint.innerHTML = '';
+  if(id){
+    const d = planDeps.find(x=>x.id==id), dep = document.getElementById('planDeporte');
+    if(d && d.deporte && !conservarPeso){
+      const k = Object.keys(PLAN_DEPORTES).find(k=>PLAN_DEPORTES[k].n.toLowerCase()===String(d.deporte).toLowerCase());
+      if(k){ dep.value = k; planDeporteCambio(); }
+    }
+    const [val, per, sud] = await Promise.all([
+      sb(`antropometria_valoraciones?deportista_id=eq.${id}&order=fecha.desc&limit=1&select=fecha,resumen,peso:medidas->peso`).catch(()=>null),
+      sb(`antropometria_perfil?deportista_id=eq.${id}&select=fecha_nacimiento`).catch(()=>null),
+      sb(`tests_sudoracion?deportista_id=eq.${id}&order=fecha.desc,id.desc&limit=1&select=fecha,resultados`).catch(()=>null)
+    ]);
+    const notas = [];
+    const v = Array.isArray(val) && val[0];
+    if(v){
+      let peso = v.resumen && v.resumen.peso!=null ? v.resumen.peso : v.peso;
+      if(peso && typeof peso==='object') peso = peso.value;
+      if(peso && !conservarPeso){ document.getElementById('planPeso').value = peso; }
+      if(peso) notas.push(`Peso de su última valoración (${sudEsc(v.fecha)}): ${planF(+peso,1)} kg.`);
+    } else notas.push('Sin valoración antropométrica: introduce el peso a mano.');
+    const fn = Array.isArray(per) && per[0] && per[0].fecha_nacimiento;
+    if(fn) planEdad = (Date.now()-new Date(fn).getTime())/(365.25*86400000);
+    else notas.push('Sin fecha de nacimiento en su perfil de antropometría: no se puede comprobar si es menor de edad.');
+    const t = Array.isArray(sud) && sud[0];
+    if(t && t.resultados && t.resultados.tasa_l_h>0){ planSudor = {tasa:+t.resultados.tasa_l_h, fecha:t.fecha}; notas.push(`Último test de sudoración: ${sudEsc(t.fecha)}.`); }
+    else notas.push('Sin test de sudoración: el plan no incluirá una pauta de líquido personalizada.');
+    hint.innerHTML = notas.join(' ');
+  }
+  calcPlanUI();
+}
+
+async function guardarPlan(){
+  if(!lastPlan) return;
+  const depId = document.getElementById('planDep').value, st = document.getElementById('planStatus'), btn = document.getElementById('planGuardar');
+  if(!depId) return;
+  const p = lastPlan.p;
+  const fila = { deportista_id:+depId, fecha:document.getElementById('planFecha').value, hora_inicio:p.hora||null,
+    evento:document.getElementById('planEvento').value.trim()||null, deporte:p.deporte, duracion_min:p.duracion, intensidad:p.intensidad, peso_kg:p.peso,
+    parametros:{ rapida:p.rapida } };
+  btn.disabled = true; st.className = 'hd-status'; st.textContent = 'Guardando…';
+  let out = null;
+  try{ out = await sb('planes_competicion',{method:'POST',body:JSON.stringify(fila)}); }catch(e){}
+  if(Array.isArray(out) && out[0] && out[0].id){ planGuardadoOk = true; st.textContent = 'Guardado en la ficha del deportista.'; }
+  else { st.className = 'hd-status err'; st.textContent = 'No se pudo guardar. Comprueba la conexión y que se haya ejecutado el SQL de planes_competicion.'; }
+  planActualizarBoton();
+}
+
+function exportPlanPDF(){
+  if(!lastPlan){ alert('Indica el peso y la duración para generar el plan antes de exportar.'); return; }
+  const p = lastPlan.p, sel = document.getElementById('planDep');
+  const nombre = sel.value ? sel.options[sel.selectedIndex].text : '';
+  const evento = document.getElementById('planEvento').value.trim(), fecha = document.getElementById('planFecha').value;
+  const fechaTxt = fecha ? new Date(fecha+'T00:00:00').toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long',year:'numeric'}) : '';
+  const sub = [nombre, evento, fechaTxt, p.hora?`${p.hora} h`:''].filter(Boolean).map(sudEsc).join(' · ');
+  const dep = PLAN_DEPORTES[p.deporte] ? PLAN_DEPORTES[p.deporte].n : '';
+  const html = `
+    <div class="pdf-hero">
+      ${pdfLogoHtml()}
+      <div class="pdf-hero-txt">
+        <p class="pdf-brand">NutriLogos · Nutrición deportiva</p>
+        <h1>Plan de partido</h1>
+        <p>${sub||'Plan personalizado'}</p>
+      </div>
+    </div>
+    <div class="pdf-sum">
+      <div><b>Deporte</b><span>${sudEsc(dep)}</span></div>
+      <div><b>Duración</b><span>${p.duracion} min</span></div>
+      <div><b>Intensidad</b><span>${sudEsc(PLAN_INT[p.intensidad]||'')}</span></div>
+      <div><b>Peso</b><span>${planF(p.peso,1)} kg</span></div>
+    </div>
+    ${lastPlan.avisos.map(a=>`<p class="pdf-box" style="margin-bottom:10px">${sudEsc(a)}</p>`).join('')}
+    <div class="pdf-tl">${lastPlan.bloques.map(b=>planBloqueHtml(b,'pdf-tl')).join('')}</div>
+    <p class="pdf-foot">NutriLogos · Ciencia con propósito · Pauta orientativa: prueba todo en entrenamientos y consulta cualquier duda con tu nutricionista</p>`;
+  document.getElementById('printArea').innerHTML = html;
+  printNow();
+}
+
+// ── Planes guardados en la ficha del deportista ──
+let planesCache = {};
+async function loadPlanes(depId){
+  let rows = [];
+  try{ const r = await sb(`planes_competicion?deportista_id=eq.${depId}&order=fecha.desc,id.desc&select=*`); if(Array.isArray(r)) rows = r; }catch(e){}
+  const el = document.getElementById('planBox');
+  if(!el || currentDepId != depId) return;
+  planesCache = {}; rows.forEach(r=>planesCache[r.id]=r);
+  const nuevo = `<button class="btn-action" style="background:var(--t50);color:var(--t600)" onclick="abrirPlan(${depId})">Nuevo plan</button>`;
+  if(!rows.length){ el.innerHTML = `<p class="med-empty">Sin planes de partido todavía.</p>${nuevo}`; return; }
+  const fmt = f=>new Date(f+'T00:00:00').toLocaleDateString('es-ES',{day:'numeric',month:'short',year:'numeric'});
+  el.innerHTML = `<table class="plan-lista"><tbody>${rows.map(r=>`<tr>
+      <td class="n">${fmt(r.fecha)}</td>
+      <td>${sudEsc(r.evento||'Sin evento')}<span class="sud-cond">${sudEsc((PLAN_DEPORTES[r.deporte]||{}).n||'')} · ${r.duracion_min} min · ${sudEsc(PLAN_INT[r.intensidad]||'')}</span></td>
+      <td style="white-space:nowrap"><button class="btn-action" style="background:var(--t50);color:var(--t600)" onclick="abrirPlan(${depId},${r.id})">Ver / PDF</button>
+        <button class="hist-del" style="opacity:1" title="Eliminar plan" onclick="deletePlan(${r.id},${depId})"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg></button></td></tr>`).join('')}</tbody></table>
+    <div style="margin-top:10px">${nuevo}</div>`;
+}
+async function abrirPlan(depId, planId){
+  navTo('plan'); await initPlan();
+  document.getElementById('planDep').value = String(depId);
+  const r = planId ? planesCache[planId] : null;
+  await planElegirDep(!!r);
+  if(r){
+    document.getElementById('planEvento').value = r.evento||'';
+    document.getElementById('planFecha').value = r.fecha;
+    document.getElementById('planHora').value = r.hora_inicio||'';
+    document.getElementById('planDeporte').value = r.deporte||'otro';
+    document.getElementById('planDuracion').value = r.duracion_min;
+    document.getElementById('planIntensidad').value = r.intensidad||'alta';
+    document.getElementById('planPeso').value = r.peso_kg;
+    document.getElementById('planRapida').checked = !!(r.parametros && r.parametros.rapida);
+    calcPlanUI();
+    planGuardadoOk = true; planActualizarBoton();
+  }
+}
+async function deletePlan(id, depId){
+  if(!confirm('¿Eliminar este plan de partido?')) return;
+  await sb(`planes_competicion?id=eq.${id}`, {method:'DELETE', headers:{'Prefer':'return=minimal'}});
+  loadPlanes(depId);
 }
 
 // ═══════════════ HISTORIAL DE SESIONES + ACTIVIDAD ═══════════════

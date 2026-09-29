@@ -15,6 +15,7 @@ Apps web de gestión para Guillermo Frances (nutrición deportiva, Valencia). To
 | `Logo.png` | Logo original. Ningún HTML lo referencia porque el logo va embebido en base64; se conserva como archivo fuente para regenerar ese base64. **No borrar.** |
 | `supabase_antropometria.sql` | Esquema de las tablas de antropometría (ya ejecutado en Supabase). |
 | `supabase_sudoracion.sql` | Tabla `tests_sudoracion` (test de sudoración por deportista). |
+| `supabase_plan_partido.sql` | Tabla `planes_competicion` (plan de partido por deportista). |
 
 ## Reglas de arquitectura (importantes)
 
@@ -32,6 +33,7 @@ Apps web de gestión para Guillermo Frances (nutrición deportiva, Valencia). To
 - Antropometría: `antropometria_perfil` (1:1 con `clientes_deportivos` por `deportista_id`, con `talla`, `talla_sentado`, `envergadura` y `diametros_oseos` jsonb como medidas fijas del cliente) y `antropometria_valoraciones` (una fila por sesión; `medidas` jsonb). Borrar un cliente en la calculadora solo quita su perfil y valoraciones, **nunca** el registro de `clientes_deportivos`.
 - `antropometria_valoraciones.resumen` (jsonb: `peso`, `pct_grasa`, `masa_grasa_kg`, `modelo`) lo escribe la calculadora al guardar y al cargar (`sincronizarResumenes()`, solo PATCH si cambia) y lo lee el panel en la ficha del deportista ("Mediciones"). El % de grasa es el primario del informe: Durnin & Womersley si hay edad, Yuhász / Ross-Kerr si no. Si el perfil está incompleto queda en `null`.
 - `tests_sudoracion` (una fila por test, `deportista_id` → `clientes_deportivos`, `resultados` jsonb con tasa, % de peso perdido, sodio y reposición). Se rellena en Calculadora → Hidratación y se lista en la ficha del deportista. Los umbrales (2 % del peso) son de adultos: con menores de 18 años (fecha de nacimiento de `antropometria_perfil`) se muestra un aviso.
+- `planes_competicion` (una fila por plan: fecha, hora, evento, deporte, duración, intensidad, peso y `parametros` jsonb). Lo escribe la pestaña "Plan de partido" y se lista en la ficha del deportista; el plan se recalcula al abrirlo. Pautas de adultos (ISSN 2017, Burke 2011, Jeukendrup 2014, ACSM 2007): sin carga de hidratos para menores de 18. La tabla de alimentos (`PLAN_ALIM`, `PLAN_PROT`) es aproximada y editable.
 - Los ids llegan a veces como string (atributos `data-*`) y otras como número: comparar con `==`, no `===`.
 - Para actualizaciones parciales se usa upsert con `Prefer: resolution=merge-duplicates`.
 - Cualquier cambio de esquema: dar el SQL al usuario para que lo ejecute en el SQL Editor de Supabase (Claude Code no tiene acceso directo) y dejarlo también en `supabase_antropometria.sql` (o un nuevo `.sql`) para que el repo refleje la base real.
