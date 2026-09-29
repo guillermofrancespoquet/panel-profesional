@@ -349,8 +349,6 @@ body.dark-mode canvas{background:#fff;border-radius:10px;}
       </div>
     </div>
     <button class="navbtn active" data-view="clientes"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> Clientes</button>
-    <button class="navbtn" data-view="valoracion"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21.3 8.7 8.7 21.3a1 1 0 0 1-1.4 0L2.7 16.7a1 1 0 0 1 0-1.4L15.3 2.7a1 1 0 0 1 1.4 0l4.6 4.6a1 1 0 0 1 0 1.4z"/><path d="m7.5 10.5 2 2"/><path d="m10.5 7.5 2 2"/><path d="m13.5 4.5 2 2"/><path d="m4.5 13.5 2 2"/></svg> Nueva valoración</button>
-    <button class="navbtn" data-view="resultados"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg> Resultados</button>
     <button class="navbtn" data-view="informe"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> Informe / PDF</button>
     <div class="navsep"></div>
     <button class="navbtn" data-view="ajustes"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg> Ajustes</button>
@@ -1096,7 +1094,9 @@ function compararValores(actual, referencia, etmSettings){
    ============================================================ */
 const VIEWS = ["clientes","valoracion","resultados","informe","ajustes"];
 function goView(v){
-  document.querySelectorAll(".navbtn").forEach(b=>b.classList.toggle("active", b.dataset.view===v));
+  // Valoración y Resultados ya no son pestañas: se abren desde un cliente y cuelgan de "Clientes".
+  const pestana = (v==="valoracion" || v==="resultados") ? "clientes" : v;
+  document.querySelectorAll(".navbtn").forEach(b=>b.classList.toggle("active", b.dataset.view===pestana));
   renderView(v);
 }
 function renderView(v){
@@ -1836,20 +1836,13 @@ function viewValoracion(){
     return `<h2>Nueva valoración</h2><div class="card"><div class="empty">Todavía no hay clientes. Crea uno primero en la pestaña "Clientes".</div></div>`;
   }
   if(!CURRENT_CLIENT_ID || !getClient(CURRENT_CLIENT_ID)){
-    CURRENT_CLIENT_ID = allClients[0].id;
+    return `<h2>Nueva valoración</h2><div class="card"><div class="empty">Elige un cliente en Clientes (botón "+ Valoración") para empezar una valoración.</div>
+      <div class="btnbar"><button class="btn camel" data-back>Ir a Clientes</button></div></div>`;
   }
   const c = getClient(CURRENT_CLIENT_ID);
   const draft = ensureDraft(c);
   const prev = lastValoracion(c);
   const prevValores = prev ? valoresDesdeValoracion(prev, c) : null;
-
-  const clientSelector = `
-  <div class="card no-print">
-    <div class="field" style="max-width:340px;">
-      <label>Cliente</label>
-      <select id="valClientSelect">${allClients.map(cc=>`<option value="${cc.id}" ${cc.id==c.id?"selected":""}>${esc(cc.nombre)} ${esc(cc.apellidos||"")}</option>`).join("")}</select>
-    </div>
-  </div>`;
 
   const compareNote = prev ? `
     <div class="compare-box">
@@ -1858,9 +1851,9 @@ function viewValoracion(){
     <div class="compare-box">Esta será la primera valoración de ${esc(c.nombre)}. No hay datos anteriores con los que comparar todavía.</div>`;
 
   return `
+  <button class="btn ghost sm no-print" data-back style="margin-bottom:12px;">← Volver a ${esc(c.nombre)}</button>
   <h2>Nueva valoración — ${esc(c.nombre)} ${esc(c.apellidos||"")}</h2>
   <p class="lead">Introduce hasta 3 medidas por variable siguiendo el protocolo ISAK. La app valida automáticamente la tolerancia y calcula la media armónica o mediana. Si no tienes tiempo para repetir la medida, con rellenar el primer campo es suficiente: se usará ese valor directamente, sin aviso de tolerancia.</p>
-  ${clientSelector}
   ${compareNote}
 
   <div class="card no-print">
@@ -2153,9 +2146,9 @@ function pickResultValoracion(c){
 
 function viewResultados(){
   const c = pickResultClient();
-  if(!c) return `<h2>Resultados</h2><div class="card"><div class="empty">Selecciona un cliente con al menos una valoración.</div></div>`;
+  if(!c) return `<h2>Resultados</h2><div class="card"><div class="empty">Abre un cliente en Clientes y pulsa "Resultados" en una de sus valoraciones.</div><div class="btnbar"><button class="btn camel" data-back>Ir a Clientes</button></div></div>`;
   const v = pickResultValoracion(c);
-  if(!v) return `<h2>Resultados</h2><div class="card"><div class="empty">${esc(c.nombre)} todavía no tiene valoraciones. Ve a "Nueva valoración".</div></div>`;
+  if(!v) return `<h2>Resultados</h2><div class="card"><div class="empty">${esc(c.nombre)} todavía no tiene valoraciones. Vuelve a Clientes y pulsa "+ Valoración".</div><div class="btnbar"><button class="btn camel" data-back>← Volver a ${esc(c.nombre)}</button></div></div>`;
 
   const valores = valoresDesdeValoracion(v, c);
   const edad = edadDecimal(v.fecha, c.fechaNacimiento);
@@ -2173,10 +2166,12 @@ function viewResultados(){
   const footballCompareHtml = footballCompareCardHtml(c, R);
 
   if(!R){
-    return `<h2>Resultados — ${esc(c.nombre)}</h2><div class="card"><div class="empty">Esta valoración tiene datos incompletos.</div></div>`;
+    return `<button class="btn ghost sm no-print" data-back style="margin-bottom:12px;">← Volver a ${esc(c.nombre)}</button>
+      <h2>Resultados — ${esc(c.nombre)}</h2><div class="card"><div class="empty">Esta valoración tiene datos incompletos.</div></div>`;
   }
 
   return `
+  <button class="btn ghost sm no-print" data-back style="margin-bottom:12px;">← Volver a ${esc(c.nombre)}</button>
   <h2>Resultados — ${esc(c.nombre)} ${esc(c.apellidos||"")}</h2>
   <p class="lead">Valoración del <strong>${fmtDate(v.fecha)}</strong>${edad!==null?(" · "+fmt(edad,1)+" años"):""} ${prev?(" · comparado con la del "+fmtDate(prev.fecha)):""}</p>
 
@@ -3378,6 +3373,8 @@ function wireAjustes(){
    DISPATCHER DE EVENTOS POR VISTA
    ============================================================ */
 function wireView(v){
+  // Enlace "← Volver a <cliente>" de las pantallas que cuelgan de un cliente
+  document.querySelectorAll("[data-back]").forEach(b=>b.addEventListener("click", ()=>goView("clientes")));
   if(v==="clientes") wireClientes();
   else if(v==="valoracion") wireValoracion();
   else if(v==="resultados") wireResultados();
