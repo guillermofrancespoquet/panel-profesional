@@ -209,6 +209,13 @@ body{font-family:var(--f);background:var(--bg);color:var(--g900);min-height:100v
 
 /* DEPORTISTA DETAIL */
 .depd-hero{background:var(--sf);border-radius:14px;border:.5px solid var(--bd);padding:1.5rem;margin-bottom:1.25rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
+.depd-actions{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.depd-actions .btn-action{padding:10px 16px}
+@media(max-width:700px){
+  .depd-actions{width:100%;margin-left:0;margin-top:4px}
+  .depd-actions .btn-action{flex:1;justify-content:center}
+  .depd-actions .btn-action.primary{flex:1 1 100%}
+}
 .depd-avatar{width:76px;height:76px;border-radius:50%;overflow:hidden;background:var(--gold-50);display:flex;align-items:center;justify-content:center;flex-shrink:0;border:2px solid var(--gold-50)}
 .depd-avatar img{width:100%;height:100%;object-fit:cover}
 .depd-avatar-fallback{font-size:26px;font-weight:700;color:var(--gold-dk)}
@@ -216,6 +223,9 @@ body{font-family:var(--f);background:var(--bg);color:var(--g900);min-height:100v
 .depd-name{font-size:22px;font-weight:700;letter-spacing:-.02em;margin-bottom:3px}
 .depd-sport{font-size:13px;color:var(--gold-dk);font-weight:500}
 .depd-section{margin-bottom:1.25rem}
+.depd-cols{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;align-items:start}
+.depd-cols .notes-ta{min-height:170px}
+@media(max-width:860px){.depd-cols{grid-template-columns:1fr;gap:0}}
 .depd-desc-box{background:var(--sf);border:.5px solid var(--bd);border-radius:12px;padding:1.1rem 1.25rem;font-size:14px;color:var(--g700);line-height:1.65}
 .plan-box{background:var(--g100);border-radius:10px;padding:10px 14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .plan-url{font-size:12px;color:var(--g500);flex:1;min-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:monospace}
@@ -311,11 +321,8 @@ body{font-family:var(--f);background:var(--bg);color:var(--g900);min-height:100v
 .pay-toggle.pending{background:#FEF2F2;color:var(--red)}
 .pay-toggle.info{background:var(--g100);color:var(--g400);cursor:default}
 .agenda-del{background:var(--g100);border:none;border-radius:6px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--g500)}
-.agenda-wa{background:#E7F7EE;border:none;border-radius:6px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#25D366}
-.agenda-wa.sent{background:var(--g100);color:var(--g400)}
 .agenda-cal{background:var(--t50);border:none;border-radius:6px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--t600);text-decoration:none}
 .agenda-cal:hover{background:var(--t100)}
-.agenda-wa:hover{background:#D4F0DF}
 .agenda-empty-group{font-size:11px;font-weight:500;color:var(--g400);text-transform:uppercase;letter-spacing:.06em;margin:1.25rem 0 8px;padding-bottom:6px;border-bottom:.5px solid var(--bd)}
 
 
@@ -328,8 +335,6 @@ body.dark-mode{
   --t50:#193530;--gold-50:#2e2718;--red-bg:#3a1f1f;
 }
 body.dark-mode .gsearch-modal,
-body.dark-mode .comp-result-item img,
-body.dark-mode .comp-card,
 body.dark-mode .agenda-tab.on{background:var(--sf)}
 body.dark-mode .week-chip{background:var(--gold-50)}
 body.dark-mode .week-chip.paid{background:var(--t50)}
@@ -408,19 +413,95 @@ body.dark-mode img{opacity:.92}
 .sb-logout svg{flex-shrink:0;opacity:.9}
 
 /* ═══ DASHBOARD ═══ */
-.comp-controls{display:flex;gap:14px;flex-wrap:wrap;align-items:center;margin-bottom:16px}
-.comp-search-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.comp-search-col{background:var(--sf);border-radius:16px;border:.5px solid var(--bd);padding:14px}
-.comp-results{max-height:180px;overflow-y:auto;margin-top:8px}
-.comp-result-item{padding:8px 10px;border-radius:8px;cursor:pointer;font-size:12px;display:flex;align-items:center;gap:8px}
-.comp-result-item:hover{background:var(--g100)}
-.comp-result-item img{width:28px;height:28px;object-fit:contain;border-radius:4px;flex-shrink:0;background:#fff}
-.comp-card{margin-top:12px;background:#fff;border:.5px solid var(--bd);border-radius:12px;padding:14px}
-.comp-card-name{font-size:13px;font-weight:700;color:var(--g900);margin-bottom:2px}
-.comp-card-brand{font-size:11px;color:var(--g400);margin-bottom:10px}
-.comp-nutri-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:.5px solid var(--bd);font-size:12px}
-.comp-nutri-row:last-child{border-bottom:none}
-.comp-nutri-row.hl{font-weight:700;color:var(--t600)}
+/* Comparador de alimentos */
+.cmp-bar-top{display:flex;gap:12px 24px;flex-wrap:wrap;align-items:center;background:var(--sf);border:.5px solid var(--bd);border-radius:14px;padding:12px 16px;margin-bottom:16px}
+.cmp-ctl{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.cmp-ctl-l{font-size:10.5px;font-weight:600;color:var(--g400);text-transform:uppercase;letter-spacing:.06em}
+.cmp-seg{display:inline-flex;background:var(--g100);border-radius:10px;padding:3px}
+.cmp-seg-b{border:none;background:transparent;font-family:var(--f);font-size:12.5px;font-weight:500;color:var(--g500);padding:7px 14px;border-radius:8px;cursor:pointer;transition:all .15s}
+.cmp-seg-b.on{background:var(--sf);color:var(--t600);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.cmp-iso{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--g500)}
+.cmp-iso input{width:76px;height:36px;border:.5px solid var(--bdm);border-radius:10px;background:var(--bg);color:var(--g900);font-family:var(--f);font-size:13.5px;padding:0 10px;outline:none}
+.cmp-iso input:focus{border-color:var(--t400);box-shadow:0 0 0 3px rgba(29,158,117,.15)}
+.cmp-slots{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
+.cmp-slot{background:var(--sf);border:.5px solid var(--bd);border-radius:16px;padding:16px}
+.cmp-slot-h{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:var(--g700);margin-bottom:10px}
+.cmp-tag{width:22px;height:22px;border-radius:7px;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff}
+.cmp-tag.a{background:var(--gold)}.cmp-tag.b{background:var(--t600)}
+.cmp-search{position:relative;display:flex;align-items:center}
+.cmp-search>svg{position:absolute;left:14px;color:var(--g400);pointer-events:none}
+.cmp-search input{width:100%;height:46px;border:.5px solid var(--bdm);border-radius:12px;background:var(--bg);color:var(--g900);font-family:var(--f);font-size:14.5px;padding:0 40px 0 40px;outline:none;transition:border-color .15s,box-shadow .15s}
+.cmp-search input:hover{border-color:var(--g400)}
+.cmp-search input:focus{border-color:var(--t400);background:var(--sf);box-shadow:0 0 0 3px rgba(29,158,117,.15)}
+.cmp-x{position:absolute;right:8px;width:30px;height:30px;border:none;border-radius:8px;background:transparent;color:var(--g400);font-size:20px;line-height:1;cursor:pointer}
+.cmp-x:hover{background:var(--g100);color:var(--g900)}
+.cmp-results{position:absolute;top:calc(100% + 6px);left:0;right:0;z-index:20;background:var(--sf);border:.5px solid var(--bdm);border-radius:12px;box-shadow:0 10px 28px rgba(0,0,0,.14);max-height:280px;overflow-y:auto;padding:4px}
+.cmp-results:empty{display:none}
+.cmp-res{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;cursor:pointer}
+.cmp-res:hover{background:var(--t50)}
+.cmp-res img,.cmp-res .cmp-ph{width:34px;height:34px;border-radius:8px;object-fit:contain;background:#fff;flex-shrink:0;border:.5px solid var(--bd)}
+.cmp-ph{display:flex;align-items:center;justify-content:center;background:var(--gold-50)!important;color:var(--gold-dk);font-size:13px;font-weight:700}
+.cmp-res-t{min-width:0;flex:1}
+.cmp-res-n{display:block;font-size:13px;font-weight:500;color:var(--g900);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cmp-res-b{display:block;font-size:11px;color:var(--g400);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cmp-empty{border:1px dashed var(--bdm);border-radius:12px;padding:22px 16px;margin-top:12px;text-align:center;font-size:12.5px;color:var(--g400);line-height:1.6}
+.cmp-ej{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:8px}
+.cmp-ej button{border:.5px solid var(--bdm);background:var(--bg);border-radius:20px;padding:5px 12px;font-family:var(--f);font-size:12px;color:var(--g700);cursor:pointer}
+.cmp-ej button:hover{border-color:var(--t400);color:var(--t600);background:var(--t50)}
+.cmp-food{margin-top:14px}
+.cmp-food-top{display:flex;align-items:center;gap:12px}
+.cmp-img{width:56px;height:56px;border-radius:12px;object-fit:contain;background:#fff;border:.5px solid var(--bd);flex-shrink:0}
+.cmp-img.ph{display:flex;align-items:center;justify-content:center;background:var(--gold-50);color:var(--gold-dk);font-size:20px;font-weight:700}
+.cmp-food-info{min-width:0;flex:1}
+.cmp-food-name{font-size:14.5px;font-weight:700;color:var(--g900);line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.cmp-food-brand{font-size:11.5px;color:var(--g400);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cmp-ns{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:#fff;flex-shrink:0}
+.cmp-kcal{margin:14px 0 8px;display:flex;align-items:baseline;gap:6px}
+.cmp-kcal b{font-size:30px;font-weight:700;letter-spacing:-.02em;color:var(--g900)}
+.cmp-kcal span{font-size:12px;color:var(--g400)}
+.cmp-split{display:flex;height:10px;border-radius:999px;overflow:hidden;background:var(--g100)}
+.cmp-split i{display:block;height:100%}
+.cmp-leg{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:8px;font-size:11px;color:var(--g500)}
+.cmp-leg span{display:inline-flex;align-items:center;gap:5px}
+.cmp-leg i{width:8px;height:8px;border-radius:50%;display:inline-block}
+.cmp-compare{margin-top:16px;background:var(--sf);border:.5px solid var(--bd);border-radius:16px;padding:18px 20px}
+.cmp-sum{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:8px}
+.cmp-sum>div{background:var(--bg);border:.5px solid var(--bd);border-radius:12px;padding:10px 12px;font-size:12px;color:var(--g700);line-height:1.5}
+.cmp-sum b{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--g900);margin-bottom:3px}
+.cmp-sum em{font-style:normal;font-weight:600;color:var(--t600)}
+.cmp-group{font-size:10.5px;font-weight:700;color:var(--gold-dk);text-transform:uppercase;letter-spacing:.07em;margin:16px 0 2px}
+.cmp-row{display:grid;grid-template-columns:1fr 156px 1fr;align-items:center;gap:12px;padding:9px 0;border-bottom:.5px solid var(--bd)}
+.cmp-row:last-child{border-bottom:none}
+.cmp-lab{text-align:center;font-size:12.5px;font-weight:600;color:var(--g700)}
+.cmp-row.sub .cmp-lab{font-size:11.5px;font-weight:500;color:var(--g500)}
+.cmp-cell{display:flex;align-items:center;gap:10px}
+.cmp-cell.a{flex-direction:row-reverse}
+.cmp-track{flex:1;height:10px;background:var(--g100);border-radius:6px;display:flex}
+.cmp-cell.a .cmp-track{justify-content:flex-end}
+.cmp-track i{display:block;height:100%;border-radius:6px;min-width:2px}
+.cmp-cell.a .cmp-track i{background:var(--gold)}
+.cmp-cell.b .cmp-track i{background:var(--t600)}
+.cmp-cell.lose .cmp-track i{opacity:.4}
+.cmp-val{min-width:64px;font-size:13px;font-weight:600;color:var(--g900);white-space:nowrap}
+.cmp-cell.a .cmp-val{text-align:left}
+.cmp-cell.b .cmp-val{text-align:right}
+.cmp-cell.win .cmp-val{color:var(--t600);font-weight:800}
+.cmp-cell.win .cmp-val::after{content:' ✓'}
+body.dark-mode .cmp-seg-b.on,body.dark-mode .cmp-cell.win .cmp-val,body.dark-mode .cmp-sum em{color:#9FE1CB}
+body.dark-mode .cmp-cell.b .cmp-track i{background:var(--t400)}
+@media(max-width:760px){
+  .cmp-slots{grid-template-columns:1fr}
+  .cmp-sum{grid-template-columns:1fr}
+  .cmp-row{grid-template-columns:1fr;gap:5px;padding:10px 0}
+  .cmp-lab{text-align:left}
+  .cmp-cell.a,.cmp-cell.b{flex-direction:row}
+  .cmp-cell.a .cmp-track{justify-content:flex-start}
+  .cmp-cell.a::before,.cmp-cell.b::before{width:18px;height:18px;border-radius:6px;color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .cmp-cell.a::before{content:'A';background:var(--gold)}
+  .cmp-cell.b::before{content:'B';background:var(--t600)}
+  .cmp-cell.a .cmp-val,.cmp-cell.b .cmp-val{text-align:right;order:3}
+  .cmp-compare{padding:14px}
+}
 .menu-day{background:var(--sf);border-radius:16px;border:.5px solid var(--bd);padding:16px 18px;margin-bottom:12px}
 .menu-day-title{font-size:12.5px;font-weight:700;color:var(--t800);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--bd)}
 .menu-meal{display:flex;justify-content:space-between;padding:6px 0;font-size:12px}
@@ -434,7 +515,6 @@ body.dark-mode img{opacity:.92}
 .prog-ej{font-size:12px;font-weight:600;color:var(--g900)}
 .prog-val{font-size:12px;color:var(--t600);font-weight:700}
 .prog-nota{font-size:11px;color:var(--g400)}
-@media (max-width:860px){.comp-search-grid{grid-template-columns:1fr}}
 
 .rem-add{display:flex;gap:8px;margin-bottom:10px}
 .btn-rem-add{background:var(--t400);border:none;border-radius:8px;color:#fff;font-size:12px;font-weight:600;padding:0 16px;cursor:pointer;font-family:var(--f);white-space:nowrap}
@@ -1010,43 +1090,54 @@ body.dark-mode .frm select.inp{background-image:url("data:image/svg+xml,%3Csvg x
 <div id="vcomp" class="view">
   <div class="page">
     <div class="page-header">
-      <div><p class="page-title">Comparador de alimentos</p><p class="page-sub">Open Food Facts (productos de supermercado) + USDA FoodData Central (alimentos genéricos EE.UU.)</p></div>
+      <div><p class="page-title">Comparador de alimentos</p><p class="page-sub">Open Food Facts (productos de supermercado) + USDA FoodData Central (alimentos genéricos)</p></div>
     </div>
 
-    <div class="comp-controls">
-      <div class="agenda-tabs">
-        <button class="agenda-tab on" id="compSrcOff" onclick="setCompSource('off')">Supermercado (OFF)</button>
-        <button class="agenda-tab" id="compSrcUsda" onclick="setCompSource('usda')">USDA (genéricos EE.UU.)</button>
-      </div>
-      <div class="agenda-tabs">
-        <button class="agenda-tab on" id="compMode100" onclick="setCompMode('100g')">Por 100g</button>
-        <button class="agenda-tab" id="compModeIso" onclick="setCompMode('iso')">Isocalórico</button>
-      </div>
-      <div id="compIsoInput" style="display:none;align-items:center;gap:8px">
-        <label class="mfl" style="margin:0">kcal a comparar</label>
-        <input type="number" class="inp" id="compIsoKcal" value="200" style="width:90px" oninput="renderCompCards()">
-      </div>
-    </div>
-
-    <div class="comp-search-grid">
-      <div class="comp-search-col">
-        <div class="dep-search" style="width:100%">
-          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <input type="text" id="compSearchA" placeholder="Buscar alimento A…" oninput="compSearch('A')">
+    <div class="cmp-bar-top">
+      <div class="cmp-ctl">
+        <span class="cmp-ctl-l">Fuente</span>
+        <div class="cmp-seg">
+          <button class="cmp-seg-b on" id="compSrcOff" onclick="setCompSource('off')">Supermercado</button>
+          <button class="cmp-seg-b" id="compSrcUsda" onclick="setCompSource('usda')">Genéricos USDA</button>
         </div>
-        <div id="compResultsA" class="comp-results"></div>
+      </div>
+      <div class="cmp-ctl">
+        <span class="cmp-ctl-l">Comparar</span>
+        <div class="cmp-seg">
+          <button class="cmp-seg-b on" id="compMode100" onclick="setCompMode('100g')">Por 100 g</button>
+          <button class="cmp-seg-b" id="compModeIso" onclick="setCompMode('iso')">Isocalórico</button>
+        </div>
+        <div class="cmp-iso" id="compIsoInput" style="display:none">
+          <input type="number" id="compIsoKcal" value="200" min="1" aria-label="kcal a comparar" oninput="renderCompCards()"><span>kcal</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="cmp-slots">
+      <div class="cmp-slot">
+        <div class="cmp-slot-h"><span class="cmp-tag a">A</span>Alimento A</div>
+        <div class="cmp-search">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="compSearchA" placeholder="Buscar un alimento…" autocomplete="off" oninput="compSearch('A')">
+          <button class="cmp-x" id="compClearA" onclick="compClear('A')" title="Quitar alimento" style="display:none">×</button>
+          <div id="compResultsA" class="cmp-results"></div>
+        </div>
         <div id="compCardA"></div>
       </div>
-      <div class="comp-search-col">
-        <div class="dep-search" style="width:100%">
-          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <input type="text" id="compSearchB" placeholder="Buscar alimento B…" oninput="compSearch('B')">
+      <div class="cmp-slot">
+        <div class="cmp-slot-h"><span class="cmp-tag b">B</span>Alimento B</div>
+        <div class="cmp-search">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="compSearchB" placeholder="Buscar un alimento…" autocomplete="off" oninput="compSearch('B')">
+          <button class="cmp-x" id="compClearB" onclick="compClear('B')" title="Quitar alimento" style="display:none">×</button>
+          <div id="compResultsB" class="cmp-results"></div>
         </div>
-        <div id="compResultsB" class="comp-results"></div>
         <div id="compCardB"></div>
       </div>
     </div>
-    <p class="ref-note" style="margin-top:14px" id="compFootnote">Valores por 100g/100mL reportados por el fabricante o la fuente original. Verifica siempre en el envase real cuando sea posible.</p>
+
+    <div id="compTable"></div>
+    <p class="ref-note" style="margin-top:14px" id="compFootnote">Valores por 100g/100mL reportados por el fabricante o el usuario que subió el producto a Open Food Facts.</p>
   </div>
 </div>
 
@@ -2256,9 +2347,10 @@ function compSearch(side){
   clearTimeout(compTimers[side]);
   const q = document.getElementById('compSearch'+side).value.trim();
   const resEl = document.getElementById('compResults'+side);
+  document.getElementById('compClear'+side).style.display = document.getElementById('compSearch'+side).value ? 'block' : 'none';
   if(q.length < 3){ resEl.innerHTML = ''; return; }
   compTimers[side] = setTimeout(async ()=>{
-    resEl.innerHTML = '<p class="dash-empty">Buscando…</p>';
+    resEl.innerHTML = '<p class="dash-empty" style="padding:10px">Buscando…</p>';
     try{
       let items = [];
       if(compSource === 'off'){
@@ -2273,18 +2365,18 @@ function compSearch(side){
         items = data.foods || [];
       }
       compRawResults[side] = items;
-      if(!items.length){ resEl.innerHTML = '<p class="dash-empty">Sin resultados.</p>'; return; }
+      if(!items.length){ resEl.innerHTML = '<p class="dash-empty" style="padding:10px">Sin resultados.</p>'; return; }
       resEl.innerHTML = items.map((p,i)=>{
         const name = compSource==='off' ? (p.product_name||p.generic_name) : p.description;
         const brand = compSource==='off' ? (p.brands?p.brands.split(',')[0]:'') : (p.brandOwner||p.dataType||'');
         const img = compSource==='off' ? p.image_small_url : null;
-        return `<div class="comp-result-item" onclick="compSelect('${side}',${i})">
-          ${img?`<img src="${img}">`:''}
-          <span>${name}${brand?' · '+brand:''}</span>
+        return `<div class="cmp-res" onclick="compSelect('${side}',${i})">
+          ${img ? `<img src="${sudEsc(img)}" alt="">` : `<span class="cmp-ph">${sudEsc(String(name).charAt(0).toUpperCase())}</span>`}
+          <span class="cmp-res-t"><span class="cmp-res-n">${sudEsc(name)}</span>${brand?`<span class="cmp-res-b">${sudEsc(brand)}</span>`:''}</span>
         </div>`;
       }).join('');
     }catch(e){
-      resEl.innerHTML = '<p class="dash-empty">Error al buscar. Inténtalo de nuevo.</p>';
+      resEl.innerHTML = '<p class="dash-empty" style="padding:10px">Error al buscar. Inténtalo de nuevo.</p>';
     }
   }, 450);
 }
@@ -2296,7 +2388,8 @@ function compNormalize(raw, source){
     return {
       name: raw.product_name || raw.generic_name || 'Sin nombre',
       brand: raw.brands ? raw.brands.split(',')[0] : '',
-      extra: raw.nutriscore_grade ? 'Nutri-Score ' + raw.nutriscore_grade.toUpperCase() : '',
+      extra: '', nutri: raw.nutriscore_grade && /^[a-e]$/i.test(raw.nutriscore_grade) ? raw.nutriscore_grade.toUpperCase() : '',
+      img: raw.image_small_url || raw.image_front_small_url || '',
       kcal: n['energy-kcal_100g'], protein: n['proteins_100g'], carbs: n['carbohydrates_100g'],
       sugars: n['sugars_100g'], fat: n['fat_100g'], satfat: n['saturated-fat_100g'],
       fiber: n['fiber_100g'], sodium_mg: n['sodium_100g']!==undefined ? n['sodium_100g']*1000 : undefined
@@ -2309,7 +2402,7 @@ function compNormalize(raw, source){
     return {
       name: raw.description || 'Sin nombre',
       brand: raw.brandOwner || raw.dataType || '',
-      extra: raw.dataType || '',
+      extra: raw.brandOwner ? (raw.dataType || '') : '', nutri: '', img: '',
       kcal: get(1008), protein: get(1003), carbs: get(1005),
       sugars: get(2000), fat: get(1004), satfat: get(1258),
       fiber: get(1079), sodium_mg: get(1093)
@@ -2323,48 +2416,109 @@ function compSelect(side, idx){
   compData[side] = norm;
   document.getElementById('compResults'+side).innerHTML = '';
   document.getElementById('compSearch'+side).value = norm.name;
+  document.getElementById('compClear'+side).style.display = 'block';
   renderCompCards();
 }
+function compClear(side){
+  compData[side] = null; compRawResults[side] = [];
+  clearTimeout(compTimers[side]);
+  document.getElementById('compSearch'+side).value = '';
+  document.getElementById('compResults'+side).innerHTML = '';
+  document.getElementById('compClear'+side).style.display = 'none';
+  renderCompCards();
+  document.getElementById('compSearch'+side).focus();
+}
+// Botones de ejemplo: rellenan el primer hueco libre y lanzan la búsqueda
+function compEjemplo(txt){
+  const side = compData.A ? 'B' : 'A', inp = document.getElementById('compSearch'+side);
+  inp.value = txt; compSearch(side); inp.focus();
+}
 
-function compVal(n){ return (n===undefined||n===null||isNaN(n)) ? '—' : (Math.round(n*10)/10); }
+function compVal(n, d=1){ return (n===undefined||n===null||isNaN(n)) ? '—' : planF(Math.round(n*Math.pow(10,d))/Math.pow(10,d), d===0?0:(Math.abs(n)>=100?0:d)); }
+const CMP_NS_COLOR = {A:'#1E8F4E', B:'#85BB2F', C:'#E5B800', D:'#EE8100', E:'#E63E11'};
+// Criterios donde "más" o "menos" es lo que se suele buscar (better) y neutros (null)
+const CMP_CAMPOS = [
+  {g:'Energía', filas:[{k:'kcal', label:'Energía', unit:'kcal', better:null}]},
+  {g:'Macronutrientes', filas:[
+    {k:'protein', label:'Proteína', unit:'g', better:'high', dest:'más proteína'},
+    {k:'carbs', label:'Carbohidratos', unit:'g', better:null},
+    {k:'sugars', label:'de los cuales azúcares', unit:'g', better:'low', sub:true, dest:'menos azúcares'},
+    {k:'fat', label:'Grasas', unit:'g', better:null},
+    {k:'satfat', label:'de las cuales saturadas', unit:'g', better:'low', sub:true, dest:'menos grasa saturada'}]},
+  {g:'Otros', filas:[
+    {k:'fiber', label:'Fibra', unit:'g', better:'high', dest:'más fibra'},
+    {k:'sodium_mg', label:'Sodio', unit:'mg', better:'low', dest:'menos sodio'}]}
+];
+
+function compEscala(p){
+  const isoKcal = parseFloat(document.getElementById('compIsoKcal').value) || 200;
+  return (compMode==='iso' && p.kcal) ? (isoKcal / p.kcal) : (compMode==='iso' ? null : 1);
+}
+function compValor(p, k){
+  const sc = compEscala(p);
+  if(p[k]===undefined || p[k]===null || sc===null) return undefined;
+  return p[k]*sc;
+}
+
+function compFichaHtml(p, side){
+  const isoKcal = parseFloat(document.getElementById('compIsoKcal').value) || 200;
+  const kcal = compValor(p,'kcal');
+  const pr = p.protein, ch = p.carbs, fa = p.fat;
+  let split = '';
+  if([pr,ch,fa].every(x=>x!==undefined && x!==null)){
+    const e = [pr*4, ch*4, fa*9], t = e[0]+e[1]+e[2] || 1;
+    const pc = e.map(x=>Math.round(x/t*100));
+    split = `<div class="cmp-split" role="img" aria-label="Reparto de la energía: proteína ${pc[0]} %, carbohidratos ${pc[1]} %, grasas ${pc[2]} %">
+        <i style="width:${pc[0]}%;background:#c19a6b"></i><i style="width:${pc[1]}%;background:#5a9c68"></i><i style="width:${pc[2]}%;background:#6a9cc2"></i></div>
+      <div class="cmp-leg"><span><i style="background:#c19a6b"></i>Proteína ${pc[0]} %</span><span><i style="background:#5a9c68"></i>Carbohidratos ${pc[1]} %</span><span><i style="background:#6a9cc2"></i>Grasas ${pc[2]} %</span></div>`;
+  }
+  const img = p.img ? `<img class="cmp-img" src="${sudEsc(p.img)}" alt="">` : `<div class="cmp-img ph">${sudEsc(String(p.name).charAt(0).toUpperCase())}</div>`;
+  const ns = p.nutri ? `<div class="cmp-ns" style="background:${CMP_NS_COLOR[p.nutri]};${p.nutri==='C'?'color:#3a3200':''}" title="Nutri-Score ${p.nutri}">${p.nutri}</div>` : '';
+  return `<div class="cmp-food">
+    <div class="cmp-food-top">${img}<div class="cmp-food-info"><div class="cmp-food-name">${sudEsc(p.name)}</div><div class="cmp-food-brand">${sudEsc([p.brand||'Sin marca especificada', p.extra].filter(Boolean).join(' · '))}</div></div>${ns}</div>
+    <div class="cmp-kcal"><b>${compVal(kcal,0)}</b><span>${compMode==='iso' ? (p.kcal ? `kcal · equivale a ≈ ${compVal(isoKcal/p.kcal*100,0)} g` : 'kcal (sin dato de energía)') : 'kcal por 100 g'}</span></div>
+    ${split}
+  </div>`;
+}
+
+function compTablaHtml(A, B){
+  // Resumen: en qué destaca cada uno (más proteína/fibra, menos azúcares/saturadas/sodio)
+  const gana = {A:[], B:[]};
+  const filas = CMP_CAMPOS.map(g=>{
+    const rows = g.filas.map(f=>{
+      const a = compValor(A,f.k), b = compValor(B,f.k);
+      let win = null;
+      if(f.better && a!==undefined && b!==undefined && a!==b){
+        win = (f.better==='high') === (a>b) ? 'A' : 'B';
+        gana[win].push(f.dest);
+      }
+      const max = Math.max(a||0, b||0);
+      const w = v => (v===undefined || !max) ? 0 : Math.max(2, Math.round(v/max*100));
+      const cell = (lado, v) => `<div class="cmp-cell ${lado==='A'?'a':'b'}${win===lado?' win':''}${win && win!==lado?' lose':''}">
+          <span class="cmp-val">${compVal(v, f.unit==='kcal'||f.unit==='mg'?0:1)}${v===undefined?'':' '+f.unit}</span>
+          <div class="cmp-track"><i style="width:${w(v)}%"></i></div></div>`;
+      return `<div class="cmp-row${f.sub?' sub':''}">${cell('A',a)}<div class="cmp-lab">${f.label}</div>${cell('B',b)}</div>`;
+    }).join('');
+    return `<div class="cmp-group">${g.g}</div>${rows}`;
+  }).join('');
+  const lista = arr => arr.length ? `<em>${arr.join(', ')}</em>` : 'ningún criterio en concreto';
+  const resumen = `<div class="cmp-sum">
+      <div><b><span class="cmp-tag a">A</span>Destaca en</b>${lista(gana.A)}</div>
+      <div><b><span class="cmp-tag b">B</span>Destaca en</b>${lista(gana.B)}</div>
+    </div>`;
+  return `<div class="cmp-compare">${resumen}${filas}
+    <p class="ref-note" style="margin-top:12px">"Destaca" = más proteína y fibra, o menos azúcares, saturadas y sodio. Las grasas, los carbohidratos y la energía no se valoran: dependen del objetivo.</p></div>`;
+}
 
 function renderCompCards(){
-  const isoKcal = parseFloat(document.getElementById('compIsoKcal').value) || 200;
   ['A','B'].forEach(side=>{
-    const p = compData[side];
-    const el = document.getElementById('compCard'+side);
-    if(!p){ el.innerHTML = ''; return; }
-    const other = compData[side==='A'?'B':'A'];
-    // Factor de escala: 1.0 si es por 100g, o el que corresponda para igualar las kcal objetivo
-    const scale = (compMode==='iso' && p.kcal) ? (isoKcal / p.kcal) : 1;
-    const scaleOther = (other && compMode==='iso' && other.kcal) ? (isoKcal / other.kcal) : 1;
-    const fields = [
-      {k:'kcal', label:'Energía', unit:'kcal', better:null},
-      {k:'protein', label:'Proteína', unit:'g', better:'high'},
-      {k:'carbs', label:'Carbohidratos', unit:'g', better:null},
-      {k:'sugars', label:'Azúcares', unit:'g', better:'low'},
-      {k:'fat', label:'Grasas', unit:'g', better:null},
-      {k:'satfat', label:'Grasas saturadas', unit:'g', better:'low'},
-      {k:'fiber', label:'Fibra', unit:'g', better:'high'},
-      {k:'sodium_mg', label:'Sodio', unit:'mg', better:'low'}
-    ];
-    const basisLabel = compMode==='iso' ? `por ${isoKcal} kcal` : 'por 100g';
-    el.innerHTML = `<div class="comp-card">
-      <div class="comp-card-name">${p.name}</div>
-      <div class="comp-card-brand">${p.brand||'Sin marca especificada'} ${p.extra?'· '+p.extra:''} · <strong>${basisLabel}</strong></div>
-      ${fields.map(f=>{
-        let v = p[f.k];
-        if(v!==undefined && compMode==='iso') v = v*scale;
-        let hl = '';
-        if(other && f.better && other[f.k]!==undefined && v!==undefined){
-          let ov = other[f.k];
-          if(compMode==='iso') ov = ov*scaleOther;
-          if(f.better==='high' && v>ov) hl='hl'; if(f.better==='low' && v<ov) hl='hl';
-        }
-        return `<div class="comp-nutri-row ${hl}"><span>${f.label}</span><span>${compVal(v)} ${f.unit}</span></div>`;
-      }).join('')}
-    </div>`;
+    const p = compData[side], el = document.getElementById('compCard'+side);
+    el.innerHTML = p ? compFichaHtml(p, side) : `<div class="cmp-empty">Busca un alimento para verlo aquí.${
+      side==='A' ? '<div class="cmp-ej">'+['Avena','Lentejas','Plátano','Arroz integral'].map(t=>`<button onclick="compEjemplo('${t}')">${t}</button>`).join('')+'</div>' : ''}</div>`;
   });
+  const tabla = document.getElementById('compTable');
+  tabla.innerHTML = (compData.A && compData.B) ? compTablaHtml(compData.A, compData.B)
+    : (compData.A || compData.B) ? '<p class="hd-hint" style="text-align:center;margin-top:14px">Elige un segundo alimento para ver la comparativa.</p>' : '';
 }
 
 // ═══════════════ GENERADOR DE MENÚ SEMANAL (plant-based first) ═══════════════
@@ -2675,7 +2829,7 @@ function navTo(section){
   }
   else if(section==='referencia'){document.getElementById('sbRef').classList.add('on');show('vref');}
   else if(section==='suplementacion'){document.getElementById('sbSupl').classList.add('on');show('vsupl');}
-  else if(section==='comparador'){document.getElementById('sbComp').classList.add('on');show('vcomp');}
+  else if(section==='comparador'){document.getElementById('sbComp').classList.add('on');show('vcomp');renderCompCards();}
   else if(section==='menugen'){document.getElementById('sbMenu').classList.add('on');show('vmenu');}
   else if(section==='entreno'){document.getElementById('sbEntreno').classList.add('on');show('ventreno');loadEntreno();}
   closeMobileSidebar();
@@ -2766,10 +2920,6 @@ function openDet(id){
           <button class="btn-action primary" onclick="openUnlock(${id})">
             <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
             Desbloquear
-          </button>
-          <button class="btn-action" style="background:#E7F7EE;color:#1DA851" onclick="sendWhatsAppGenerico('${c.nombre.replace(/'/g,"\\'")}')">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21h.01c5.46 0 9.9-4.45 9.9-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.05 2zm5.72 14.17c-.24.68-1.39 1.3-1.91 1.35-.49.05-1.09.08-1.75-.11-.4-.12-.92-.29-1.58-.57-2.79-1.2-4.61-4-4.75-4.19-.14-.19-1.14-1.51-1.14-2.88 0-1.37.72-2.04.97-2.32.25-.28.55-.35.73-.35.19 0 .37 0 .53.01.17.01.4-.06.62.48.24.58.81 1.99.88 2.13.07.14.12.31.02.5-.09.19-.14.31-.28.48-.14.17-.29.37-.42.5-.14.14-.29.29-.12.57.17.28.75 1.24 1.61 2.01 1.11.99 2.04 1.3 2.32 1.44.28.14.44.12.61-.07.17-.19.71-.82.9-1.11.19-.28.38-.23.63-.14.26.09 1.65.78 1.93.92.28.14.47.21.53.33.07.12.07.68-.17 1.36z"/></svg>
-            WhatsApp
           </button>
           ${(c.semana||0)>0?`<button class="btn-action warning" onclick="openRelock(${id})">
             <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/><line x1="12" y1="15" x2="12" y2="17"/></svg>
@@ -3268,26 +3418,6 @@ function renderCitas() {
   listEl.innerHTML = html;
 }
 
-// ═══════════════ WHATSAPP RÁPIDO ═══════════════
-async function sendWhatsAppRecordatorio(citaId, cliente, fecha, hora, servicio){
-  const d = new Date(fecha+'T00:00:00');
-  const dateStr = d.toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long'});
-  const horaTxt = hora ? ` a las ${hora.slice(0,5)}h` : '';
-  const msg = `Hola ${cliente}! Te escribo para recordarte tu próxima cita de ${servicio} el ${dateStr}${horaTxt}. ¡Nos vemos! 💪`;
-  window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
-  if(citaId){
-    await patchCita(citaId, {recordatorio_enviado: true});
-    const c = citas.find(x=>x.id===citaId);
-    if(c) c.recordatorio_enviado = true;
-    renderCitas();
-    if(document.getElementById('vhome').classList.contains('active')) loadDashboard();
-  }
-}
-function sendWhatsAppGenerico(nombre){
-  const msg = `Hola ${nombre}! `;
-  window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
-}
-
 // ═══════════════ EXPORTAR PDF (vía impresión del navegador) ═══════════════
 // Antes de imprimir se calcula cuántas páginas A4 ocupa el informe (alto útil 269 mm) simulando cómo
 // se reparten las tarjetas entre páginas (una tarjeta no se parte), y se estira el área de impresión
@@ -3352,62 +3482,6 @@ function exportClientePDF(id){
     </div>
 
     <p class="pdf-foot">NutriLogos · Ciencia con propósito · Documento de uso interno — Método 3M</p>
-  `;
-  document.getElementById('printArea').innerHTML = html;
-  printNow();
-}
-
-async function exportDeportistaPDF(id){
-  const d = deportistas.find(x=>x.id===id); if(!d) return;
-  const revTxt = d.proxima_revision ? new Date(d.proxima_revision+'T00:00:00').toLocaleDateString('es-ES',{day:'numeric',month:'long',year:'numeric'}) : 'Sin fecha establecida';
-  const revDays = daysUntil(d.proxima_revision);
-  const revBadgeClass = (revDays!==null && revDays<=0) ? 'pending' : 'ok';
-
-  let histHtml = '<p style="font-size:11.5px;color:#8a8578">Sin registros en el historial.</p>';
-  try{
-    const hist = await getHistorial(id) || [];
-    if(hist.length){
-      histHtml = hist.slice(0,6).map(r=>{
-        const dStr = new Date(r.fecha+'T00:00:00').toLocaleDateString('es-ES',{day:'numeric',month:'short'});
-        return `<div class="pdf-hist-item"><span class="pdf-hist-date">${dStr}</span><span>${r.nota||'Contacto registrado'}</span></div>`;
-      }).join('');
-    }
-  }catch(e){}
-
-  const html = `
-    <div class="pdf-hero">
-      ${pdfLogoHtml()}
-      <div class="pdf-hero-txt">
-        <p class="pdf-brand">Nutrición Deportiva · Ficha de deportista</p>
-        <h1>${d.nombre}</h1>
-        <p>${d.deporte||'Modalidad sin especificar'} · Generado el ${new Date().toLocaleDateString('es-ES')}</p>
-      </div>
-    </div>
-
-    <div class="pdf-two-col">
-      <div class="pdf-section">
-        <p class="pdf-section-title">Datos generales</p>
-        <div class="pdf-row"><span class="l">Objetivo</span><span class="v">${d.objetivo||'—'}</span></div>
-        <div class="pdf-row"><span class="l">Próxima revisión</span><span class="v"><span class="pdf-badge ${revBadgeClass}">${revTxt}</span></span></div>
-        <div class="pdf-row"><span class="l">Próxima acción</span><span class="v">${d.proxima_accion||'—'}</span></div>
-      </div>
-      <div class="pdf-section">
-        <p class="pdf-section-title">Historial reciente</p>
-        ${histHtml}
-      </div>
-    </div>
-
-    <div class="pdf-section">
-      <p class="pdf-section-title">Descripción</p>
-      <div class="pdf-box">${(d.descripcion||'Sin descripción registrada.').replace(/\n/g,'<br>')}</div>
-    </div>
-
-    <div class="pdf-section">
-      <p class="pdf-section-title">Notas privadas</p>
-      <div class="pdf-box">${(d.notas||'Sin notas registradas.').replace(/\n/g,'<br>')}</div>
-    </div>
-
-    <p class="pdf-foot">NutriLogos · Ciencia con propósito · Documento de uso interno — Nutrición Deportiva</p>
   `;
   document.getElementById('printArea').innerHTML = html;
   printNow();
@@ -3772,7 +3846,6 @@ function renderCitaItem(c, isPast) {
   const payHtml = needsPay
     ? `<button class="pay-toggle ${paid?'paid':'pending'}" onclick="toggleCitaPago(${c.id})">${paid?'✓ Pagado':'Pendiente'}</button>`
     : `<span class="pay-toggle info">Sin pago individual</span>`;
-  const waSent = !!c.recordatorio_enviado;
   return `<div class="agenda-item${isPast?' past':''}">
     <div class="agenda-date-box">
       <div class="agenda-date-day">${day}</div>
@@ -3787,9 +3860,6 @@ function renderCitaItem(c, isPast) {
       <a class="agenda-cal" href="${googleCalLink(c)}" target="_blank" title="Añadir a Google Calendar">
         <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="12" y1="14" x2="12" y2="18"/><line x1="10" y1="16" x2="14" y2="16"/></svg>
       </a>
-      <button class="agenda-wa${waSent?' sent':''}" onclick="sendWhatsAppRecordatorio(${c.id},'${c.cliente.replace(/'/g,"\\'")}','${c.fecha}',${c.hora?`'${c.hora}'`:'null'},'${(c.servicio||'Revisión').replace(/'/g,"\\'")}')" title="${waSent?'Recordatorio ya enviado — reenviar':'Enviar recordatorio por WhatsApp'}">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21h.01c5.46 0 9.9-4.45 9.9-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.05 2zm5.72 14.17c-.24.68-1.39 1.3-1.91 1.35-.49.05-1.09.08-1.75-.11-.4-.12-.92-.29-1.58-.57-2.79-1.2-4.61-4-4.75-4.19-.14-.19-1.14-1.51-1.14-2.88 0-1.37.72-2.04.97-2.32.25-.28.55-.35.73-.35.19 0 .37 0 .53.01.17.01.4-.06.62.48.24.58.81 1.99.88 2.13.07.14.12.31.02.5-.09.19-.14.31-.28.48-.14.17-.29.37-.42.5-.14.14-.29.29-.12.57.17.28.75 1.24 1.61 2.01 1.11.99 2.04 1.3 2.32 1.44.28.14.44.12.61-.07.17-.19.71-.82.9-1.11.19-.28.38-.23.63-.14.26.09 1.65.78 1.93.92.28.14.47.21.53.33.07.12.07.68-.17 1.36z"/></svg>
-      </button>
       <button class="agenda-del" onclick="removeCita(${c.id})">
         <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>
       </button>
@@ -3941,26 +4011,20 @@ function openDepDet(id) {
         <div class="depd-sport">${d.deporte || 'Modalidad sin especificar'}</div>
         ${d.objetivo ? `<div class="dep-obj-badge" style="margin-top:6px">${d.objetivo}</div>` : ''}
       </div>
-      <button class="btn-action" style="background:var(--t50);color:var(--t600)" onclick="registrarContacto(${d.id})">
-        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-        Registrar contacto
-      </button>
-      <button class="btn-action" style="background:#E7F7EE;color:#1DA851" onclick="sendWhatsAppGenerico('${d.nombre.replace(/'/g,"\\'")}')">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21h.01c5.46 0 9.9-4.45 9.9-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.05 2zm5.72 14.17c-.24.68-1.39 1.3-1.91 1.35-.49.05-1.09.08-1.75-.11-.4-.12-.92-.29-1.58-.57-2.79-1.2-4.61-4-4.75-4.19-.14-.19-1.14-1.51-1.14-2.88 0-1.37.72-2.04.97-2.32.25-.28.55-.35.73-.35.19 0 .37 0 .53.01.17.01.4-.06.62.48.24.58.81 1.99.88 2.13.07.14.12.31.02.5-.09.19-.14.31-.28.48-.14.17-.29.37-.42.5-.14.14-.29.29-.12.57.17.28.75 1.24 1.61 2.01 1.11.99 2.04 1.3 2.32 1.44.28.14.44.12.61-.07.17-.19.71-.82.9-1.11.19-.28.38-.23.63-.14.26.09 1.65.78 1.93.92.28.14.47.21.53.33.07.12.07.68-.17 1.36z"/></svg>
-        WhatsApp
-      </button>
-      <button class="btn-action" style="background:var(--gold-50);color:var(--gold-dk)" onclick="openEditDep(${d.id})">
-        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-        Editar
-      </button>
-      <button class="btn-action" style="background:var(--t50);color:var(--t600)" onclick="exportDeportistaPDF(${d.id})">
-        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-        Exportar PDF
-      </button>
-      <button class="btn-action danger" onclick="openDelDep(${d.id})">
-        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>
-        Eliminar
-      </button>
+      <div class="depd-actions">
+        <button class="btn-action primary" onclick="registrarConsulta(${d.id})">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          Registrar consulta
+        </button>
+        <button class="btn-action" style="background:var(--gold-50);color:var(--gold-dk)" onclick="openEditDep(${d.id})">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          Editar
+        </button>
+        <button class="btn-action danger" onclick="openDelDep(${d.id})">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+          Eliminar
+        </button>
+      </div>
     </div>
 
     <div class="depd-section">
@@ -4011,6 +4075,17 @@ function openDepDet(id) {
     </div>
 
     <div class="depd-section">
+      <p class="sec-title">Historial de sesiones</p>
+      <div class="hist-add">
+        <input type="date" class="inp" id="histFecha" style="margin:0;max-width:150px">
+        <input type="text" class="inp" id="histNota" placeholder="Nota breve de la sesión…" style="margin:0;flex:1">
+        <button class="btn-hist-add" onclick="addHistorial(${d.id})">Añadir</button>
+      </div>
+      <div id="histList">Cargando…</div>
+    </div>
+
+    <div class="depd-cols">
+    <div class="depd-section">
       <p class="sec-title">Archivos · antropometrías, bioimpedancias, informes</p>
       <div class="files-box" id="filesDropZone" onclick="document.getElementById('fileInput').click()">
         <svg class="files-box-icon" width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
@@ -4023,22 +4098,13 @@ function openDepDet(id) {
     </div>
 
     <div class="depd-section">
-      <p class="sec-title">Historial de sesiones</p>
-      <div class="hist-add">
-        <input type="date" class="inp" id="histFecha" style="margin:0;max-width:150px">
-        <input type="text" class="inp" id="histNota" placeholder="Nota breve de la sesión…" style="margin:0;flex:1">
-        <button class="btn-hist-add" onclick="addHistorial(${d.id})">Añadir</button>
-      </div>
-      <div id="histList">Cargando…</div>
-    </div>
-
-    <div class="depd-section">
       <p class="sec-title">Notas privadas</p>
       <textarea class="notes-ta" id="depNotes" placeholder="Objetivos, ajustes, observaciones de seguimiento…">${d.notas || ''}</textarea>
       <div class="notes-foot">
         <button class="btn-save" onclick="saveDepNote(${d.id})">Guardar notas</button>
         <span class="save-ok" id="depSaveOk">✓ Guardado</span>
       </div>
+    </div>
     </div>
   `;
   show('vdepdet');
@@ -4615,7 +4681,7 @@ async function loadHistorial(depId){
   // Se fusionan los registros manuales del panel con las valoraciones antropométricas (de solo
   // lectura aquí — se gestionan desde la calculadora) en una única lista ordenada por fecha.
   const merged = [
-    ...(rows||[]).map(r=>({fecha:r.fecha, nota:r.nota||'Contacto registrado', id:r.id, auto:false})),
+    ...(rows||[]).map(r=>({fecha:r.fecha, nota:r.nota||'Consulta registrada', id:r.id, auto:false})),
     ...(antro||[]).map(r=>({fecha:r.fecha, nota:'📏 Valoración antropométrica', id:r.id, auto:true}))
   ].sort((a,b)=> new Date(b.fecha)-new Date(a.fecha));
   const el = document.getElementById('histList');
@@ -4662,9 +4728,9 @@ async function touchActividad(depId){
   if(d) d.ultima_actividad = now;
 }
 
-async function registrarContacto(depId){
+async function registrarConsulta(depId){
   const today = localISO(new Date());
-  await insertHistorial({deportista_id: depId, fecha: today, nota: 'Contacto registrado'});
+  await insertHistorial({deportista_id: depId, fecha: today, nota: 'Consulta registrada'});
   await touchActividad(depId);
   const d = deportistas.find(x => x.id === depId);
   openDepDet(depId);
