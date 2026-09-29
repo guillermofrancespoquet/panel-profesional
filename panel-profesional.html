@@ -38,7 +38,7 @@ body{font-family:var(--f);background:var(--bg);color:var(--g900);min-height:100v
 .login-logo img{width:100%;height:100%;object-fit:cover;display:block}
 .login-title{font-size:20px;font-weight:700;text-align:center;margin-bottom:6px;letter-spacing:-.02em}
 .login-sub{font-size:13px;color:var(--g400);text-align:center;margin-bottom:2rem;line-height:1.5}
-.inp{width:100%;padding:11px 14px;border:.5px solid var(--bdm);border-radius:10px;font-size:15px;font-family:var(--f);outline:none;transition:border-color .15s;background:var(--bg);margin-bottom:10px}
+.inp{width:100%;padding:11px 14px;border:.5px solid var(--bdm);border-radius:10px;font-size:15px;font-family:var(--f);color:var(--g900);outline:none;transition:border-color .15s;background:var(--bg);margin-bottom:10px}
 .inp:focus{border-color:var(--t400)}
 .btn-primary{width:100%;padding:12px;background:var(--t400);border:none;border-radius:10px;color:#fff;font-size:15px;font-weight:600;cursor:pointer;font-family:var(--f)}
 .login-err{font-size:12px;color:var(--red);text-align:center;margin-top:8px;min-height:16px}
@@ -124,7 +124,7 @@ body{font-family:var(--f);background:var(--bg);color:var(--g900);min-height:100v
 .ws{font-size:11px;color:var(--g400);margin-top:1px}
 
 /* NOTES */
-.notes-ta{width:100%;min-height:110px;padding:12px 14px;border:.5px solid var(--bdm);border-radius:10px;font-size:14px;font-family:var(--f);outline:none;resize:vertical;line-height:1.6;background:var(--bg);transition:border-color .15s}
+.notes-ta{width:100%;min-height:110px;padding:12px 14px;border:.5px solid var(--bdm);border-radius:10px;font-size:14px;font-family:var(--f);color:var(--g900);outline:none;resize:vertical;line-height:1.6;background:var(--bg);transition:border-color .15s}
 .notes-ta:focus{border-color:var(--t400)}
 .notes-foot{display:flex;align-items:center;gap:10px;margin-top:8px}
 .btn-save{padding:9px 18px;background:var(--t400);border:none;border-radius:8px;color:#fff;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--f)}
@@ -570,8 +570,10 @@ body.dark-mode img{opacity:.92}
 .calc-head{display:flex;align-items:center;justify-content:space-between}
 .calc-close{background:var(--g100);border:none;border-radius:8px;width:28px;height:28px;cursor:pointer;color:var(--g500);font-size:13px}
 .calc-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.plan-check{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--g700);line-height:1.4;cursor:pointer}
-.plan-check input{width:18px;height:18px;flex-shrink:0;accent-color:var(--t400)}
+.plan-check{display:flex;align-items:center;gap:10px;width:100%;min-height:46px;padding:8px 14px;border:.5px solid var(--bdm);border-radius:12px;background:var(--bg);font-size:12.5px;color:var(--g700);line-height:1.35;cursor:pointer;transition:border-color .15s,background .15s}
+.plan-check:hover{border-color:var(--g400)}
+.plan-check:has(input:checked){border-color:var(--t400);background:var(--t50);color:var(--t800)}
+.plan-check input{width:18px;height:18px;flex-shrink:0;accent-color:var(--t400);cursor:pointer}
 .plan-tl,.pdf-tl{display:flex;flex-direction:column;gap:12px;margin-top:14px}
 .plan-item,.pdf-tl-item{border-radius:12px;padding:14px 16px 14px 18px;break-inside:avoid;page-break-inside:avoid}
 .plan-item{background:var(--sf);border:.5px solid var(--bd);border-left:4px solid var(--gold)}
@@ -592,6 +594,29 @@ body.dark-mode img{opacity:.92}
 .plan-lista td{padding:8px 8px 8px 0;border-top:.5px solid var(--bd);vertical-align:middle;color:var(--g700)}
 .plan-lista td.n{font-weight:600;color:var(--g900);white-space:nowrap}
 .plan-lista .btn-action{padding:5px 10px;font-size:11px}
+/* Formularios de las calculadoras y del plan de competición (.frm): campos más altos, desplegables con
+   flecha propia, foco verde, sin flechas de número y casillas tipo pastilla. */
+.frm .calc-grid{gap:16px 14px}
+.frm .mfl{font-size:10.5px;font-weight:600;color:var(--g500);text-transform:uppercase;letter-spacing:.06em;margin-bottom:7px}
+.frm .mfl .hd-opt{text-transform:none;letter-spacing:0;font-weight:400;color:var(--g400)}
+.frm .inp{height:46px;padding:0 14px;margin-bottom:0;border-radius:12px;font-size:14.5px;background:var(--bg);transition:border-color .15s,box-shadow .15s,background .15s}
+.frm .inp:hover{border-color:var(--g400)}
+.frm .inp:focus{border-color:var(--t400);background:var(--sf);box-shadow:0 0 0 3px rgba(29,158,117,.15)}
+.frm .inp::placeholder{color:var(--g400)}
+body.dark-mode .frm .inp,body.dark-mode .frm .notes-ta{color-scheme:dark}
+.frm select.inp option{background:var(--sf);color:var(--g900)}
+.frm select.inp{appearance:none;-webkit-appearance:none;-moz-appearance:none;padding-right:40px;cursor:pointer;text-overflow:ellipsis;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%230F6E56' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 15px center;background-size:14px}
+body.dark-mode .frm select.inp{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%239FE1CB' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E")}
+.frm input[type=number]{-moz-appearance:textfield;appearance:textfield}
+.frm input[type=number]::-webkit-outer-spin-button,.frm input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.frm input[type=date]::-webkit-calendar-picker-indicator,.frm input[type=time]::-webkit-calendar-picker-indicator{cursor:pointer;opacity:.55}
+.frm input[type=date]::-webkit-calendar-picker-indicator:hover,.frm input[type=time]::-webkit-calendar-picker-indicator:hover{opacity:1}
+.frm .notes-ta{border-radius:12px;padding:12px 14px;background:var(--bg)}
+.frm .notes-ta:focus{background:var(--sf);box-shadow:0 0 0 3px rgba(29,158,117,.15)}
+.frm .hd-h{font-size:13px;font-weight:700;letter-spacing:-.01em;margin-bottom:14px}
+.frm .hd-hint{margin-top:8px}
 .hd-card{margin-bottom:12px}
 .hd-h{font-size:12px;font-weight:600;color:var(--g900);margin-bottom:12px}
 .hd-opt{font-weight:400;color:var(--g400)}
@@ -1025,7 +1050,7 @@ body.dark-mode img{opacity:.92}
 </div>
 
 <!-- PÁGINA: GENERADOR DE MENÚ SEMANAL -->
-<div id="vplan" class="view">
+<div id="vplan" class="view frm">
   <div class="page">
     <div class="page-header">
       <div><p class="page-title">Plan de partido</p><p class="page-sub">Hidratos y líquidos antes, durante y después · línea de tiempo y PDF para el deportista</p></div>
@@ -1083,7 +1108,7 @@ body.dark-mode img{opacity:.92}
           <input type="number" class="inp" id="planPeso" inputmode="decimal" min="20" step="0.1" placeholder="Ej. 72" oninput="calcPlanUI()">
         </div>
         <div style="display:flex;align-items:flex-end">
-          <label class="plan-check"><input type="checkbox" id="planRapida" onchange="calcPlanUI()"> Necesita recuperar rápido <span class="hd-opt">(otro esfuerzo en pocas horas)</span></label>
+          <label class="plan-check"><input type="checkbox" id="planRapida" onchange="calcPlanUI()"><span>Necesita recuperar rápido <span class="hd-opt">(otro esfuerzo en pocas horas)</span></span></label>
         </div>
       </div>
     </div>
@@ -1673,7 +1698,7 @@ body.dark-mode img{opacity:.92}
 </div>
 
 <!-- PÁGINA: CALCULADORA NUTRICIONAL -->
-<div id="vcalc" class="view">
+<div id="vcalc" class="view frm">
   <div class="page">
     <div class="page-header">
       <div><p class="page-title" id="calcTitle">Calculadora nutricional</p><p class="page-sub" id="calcSub">Energía y macros · Mifflin-St Jeor, Harris-Benedict revisada y Katch-McArdle</p></div>
@@ -1684,43 +1709,48 @@ body.dark-mode img{opacity:.92}
     </div>
 
     <div id="calcTabEnergia">
+    <div class="dash-card hd-card">
+      <p class="hd-h">1 · Datos personales</p>
     <div class="calc-grid">
       <div>
-        <label class="mfl">Sexo</label>
+        <label class="mfl" for="calcSexo">Sexo</label>
         <select class="inp" id="calcSexo" onchange="calcAll()">
           <option value="h">Hombre</option>
           <option value="m">Mujer</option>
         </select>
       </div>
       <div>
-        <label class="mfl">Edad (años)</label>
+        <label class="mfl" for="calcEdad">Edad (años)</label>
         <input type="number" class="inp" id="calcEdad" value="30" oninput="calcAll()">
       </div>
       <div>
-        <label class="mfl">Peso (kg)</label>
+        <label class="mfl" for="calcPeso">Peso (kg)</label>
         <input type="number" class="inp" id="calcPeso" value="70" step="0.1" oninput="calcAll()">
       </div>
       <div>
-        <label class="mfl">Altura (cm)</label>
+        <label class="mfl" for="calcAltura">Altura (cm)</label>
         <input type="number" class="inp" id="calcAltura" value="175" oninput="calcAll()">
       </div>
       <div>
-        <label class="mfl">% Grasa corporal (opcional)</label>
+        <label class="mfl" for="calcGrasa">% Grasa corporal (opcional)</label>
         <input type="number" class="inp" id="calcGrasa" placeholder="Solo para Katch-McArdle" step="0.1" oninput="calcAll()">
       </div>
+    </div>
+    </div>
+
+    <div class="dash-card hd-card">
+      <p class="hd-h">2 · Cálculo y objetivo</p>
+    <div class="calc-grid">
       <div>
-        <label class="mfl">Fórmula de BMR</label>
+        <label class="mfl" for="calcFormula">Fórmula de BMR</label>
         <select class="inp" id="calcFormula" onchange="calcAll()">
           <option value="mifflin">Mifflin-St Jeor (recomendada)</option>
           <option value="harris">Harris-Benedict revisada</option>
           <option value="katch">Katch-McArdle (requiere % grasa)</option>
         </select>
       </div>
-    </div>
-
-    <div class="calc-grid" style="margin-top:10px">
       <div>
-        <label class="mfl">Nivel de actividad</label>
+        <label class="mfl" for="calcActividad">Nivel de actividad</label>
         <select class="inp" id="calcActividad" onchange="calcAll()">
           <option value="1.2">Sedentario — poco o ningún ejercicio</option>
           <option value="1.375">Ligero — ejercicio 1-3 días/semana</option>
@@ -1730,7 +1760,7 @@ body.dark-mode img{opacity:.92}
         </select>
       </div>
       <div>
-        <label class="mfl">Objetivo calórico</label>
+        <label class="mfl" for="calcObjetivo">Objetivo calórico</label>
         <select class="inp" id="calcObjetivo" onchange="calcAll()">
           <option value="-20">Déficit agresivo (-20%)</option>
           <option value="-15">Déficit moderado (-15%)</option>
@@ -1741,7 +1771,7 @@ body.dark-mode img{opacity:.92}
         </select>
       </div>
       <div>
-        <label class="mfl">Proteína objetivo</label>
+        <label class="mfl" for="calcProteina">Proteína objetivo</label>
         <select class="inp" id="calcProteina" onchange="calcAll()">
           <option value="0.8">0.8 g/kg — Sedentario / RDA mínimo</option>
           <option value="1.2">1.2 g/kg — Salud general</option>
@@ -1751,9 +1781,10 @@ body.dark-mode img{opacity:.92}
         </select>
       </div>
       <div>
-        <label class="mfl">% Calorías de grasa</label>
+        <label class="mfl" for="calcPctGrasa">% Calorías de grasa</label>
         <input type="number" class="inp" id="calcPctGrasa" value="25" oninput="calcAll()">
       </div>
+    </div>
     </div>
 
     <p class="calc-warn" id="calcWarn" style="display:none"></p>
