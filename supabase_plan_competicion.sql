@@ -1,10 +1,10 @@
 -- ============================================================
--- PLAN DE PARTIDO — tabla nueva en el mismo proyecto Supabase
+-- PLAN DE COMPETICIÓN — tabla nueva en el mismo proyecto Supabase
 -- que ya usa panel-profesional.html.
 --
 -- Un plan por fila, ligado al deportista (clientes_deportivos).
--- Lo escribe la pestaña "Plan de partido" y lo lista la ficha
--- del deportista ("Planes de partido"). El plan (hidratos, líquidos,
+-- Lo escribe la pestaña "Plan de competición" y lo lista la ficha
+-- del deportista ("Planes de competición"). El plan (hidratos, líquidos,
 -- alimentos) se recalcula al abrirlo a partir de estos datos.
 --
 -- Ejecuta esto en Supabase → SQL Editor → New query → Run.

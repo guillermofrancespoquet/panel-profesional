@@ -803,7 +803,7 @@ body.dark-mode .frm select.inp{background-image:url("data:image/svg+xml,%3Csvg x
     </div>
     <button class="sb-item" id="sbPlan" onclick="navTo('plan')">
       <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 22V4"/><path d="M4 4h13l-2 4 2 4H4"/></svg>
-      Plan de partido
+      Plan de competición
     </button>
     <button class="sb-item" id="sbComp" onclick="navTo('comparador')">
       <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0H5a2 2 0 0 1-2-2v-4m6 6h10a2 2 0 0 0 2-2v-4"/></svg>
@@ -1053,7 +1053,7 @@ body.dark-mode .frm select.inp{background-image:url("data:image/svg+xml,%3Csvg x
 <div id="vplan" class="view frm">
   <div class="page">
     <div class="page-header">
-      <div><p class="page-title">Plan de partido</p><p class="page-sub">Hidratos y líquidos antes, durante y después · línea de tiempo y PDF para el deportista</p></div>
+      <div><p class="page-title">Plan de competición</p><p class="page-sub">Hidratos y líquidos antes, durante y después · línea de tiempo y PDF para el deportista</p></div>
       <button class="btn-add" onclick="exportPlanPDF()">
         <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
         Exportar PDF
@@ -4005,7 +4005,7 @@ function openDepDet(id) {
     </div>
 
     <div class="depd-section">
-      <p class="sec-title">Planes de partido</p>
+      <p class="sec-title">Planes de competición</p>
       <div class="med-box" id="planBox"><p class="med-empty">Cargando…</p></div>
     </div>
 
@@ -4226,7 +4226,7 @@ async function calcElegirDep(){
   calcAll();
 }
 
-// ═══════════════ PLAN DE PARTIDO ═══════════════
+// ═══════════════ PLAN DE COMPETICIÓN ═══════════════
 // Pautas (adultos): antes 1-4 g/kg en las horas previas y 8-12 g/kg/día el día anterior; durante 30-60 g/h
 // (hasta 90 g/h más allá de 2,5 h, con hidratos de fuentes múltiples); después 1,2 g/kg/h si la recuperación
 // es en menos de 4 h y 0,25-0,4 g/kg de proteína por toma. Fuentes: ISSN 2017 (Kerksick), Burke 2011,
@@ -4469,7 +4469,7 @@ function exportPlanPDF(){
       ${pdfLogoHtml()}
       <div class="pdf-hero-txt">
         <p class="pdf-brand">NutriLogos · Nutrición deportiva</p>
-        <h1>Plan de partido</h1>
+        <h1>Plan de competición</h1>
         <p>${sub||'Plan personalizado'}</p>
       </div>
     </div>
@@ -4495,7 +4495,7 @@ async function loadPlanes(depId){
   if(!el || currentDepId != depId) return;
   planesCache = {}; rows.forEach(r=>planesCache[r.id]=r);
   const nuevo = `<button class="btn-action" style="background:var(--t50);color:var(--t600)" onclick="abrirPlan(${depId})">Nuevo plan</button>`;
-  if(!rows.length){ el.innerHTML = `<p class="med-empty">Sin planes de partido todavía.</p>${nuevo}`; return; }
+  if(!rows.length){ el.innerHTML = `<p class="med-empty">Sin planes de competición todavía.</p>${nuevo}`; return; }
   const fmt = f=>new Date(f+'T00:00:00').toLocaleDateString('es-ES',{day:'numeric',month:'short',year:'numeric'});
   el.innerHTML = `<table class="plan-lista"><tbody>${rows.map(r=>`<tr>
       <td class="n">${fmt(r.fecha)}</td>
@@ -4523,7 +4523,7 @@ async function abrirPlan(depId, planId){
   }
 }
 async function deletePlan(id, depId){
-  if(!confirm('¿Eliminar este plan de partido?')) return;
+  if(!confirm('¿Eliminar este plan de competición?')) return;
   await sb(`planes_competicion?id=eq.${id}`, {method:'DELETE', headers:{'Prefer':'return=minimal'}});
   loadPlanes(depId);
 }
