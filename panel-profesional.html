@@ -642,17 +642,44 @@ body.dark-mode .cmp-cell.b .cmp-track i{background:var(--t400)}
 .accion-badge.subtle::before{width:10px;height:10px}
 
 
-.ref-jump{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0}
-.ref-body{}
-.ref-section{margin-bottom:20px;scroll-margin-top:10px}
-.ref-title{font-size:12.5px;font-weight:700;color:var(--t800);margin:0 0 8px;padding-bottom:6px;border-bottom:1px solid var(--bd)}
-.ref-table{width:100%;border-collapse:collapse;font-size:12px}
-.ref-table td{padding:5px 8px;border-bottom:.5px solid var(--bd)}
-.ref-table td:first-child{color:var(--g700)}
+.ref-jump{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 18px}
+.ref-body{column-width:340px;column-gap:16px}
+.ref-section{background:var(--sf);border:.5px solid var(--bd);border-radius:14px;padding:1.1rem 1.25rem 1rem;margin:0 0 16px;break-inside:avoid;-webkit-column-break-inside:avoid;scroll-margin-top:12px}
+.ref-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 10px;padding-bottom:10px;border-bottom:.5px solid var(--bd)}
+.ref-title{font-size:13.5px;font-weight:700;color:var(--t800);margin:0;line-height:1.35}
+.ref-src{font-size:10px;font-weight:600;color:var(--gold-dk);background:var(--gold-50);padding:3px 9px;border-radius:20px;white-space:nowrap;flex-shrink:0}
+.ref-table{width:100%;border-collapse:collapse;font-size:12.5px}
+.ref-table td{padding:6px 0;border-bottom:.5px solid var(--bd);vertical-align:top}
+.ref-table tr:last-child td{border-bottom:none}
+.ref-table td:first-child{color:var(--g700);padding-right:12px}
 .ref-table td:last-child{color:var(--g900);font-weight:600;text-align:right}
-.ref-sub{background:var(--g100);font-weight:700;color:var(--gold-dk) !important;text-align:left !important;font-size:10.5px;text-transform:uppercase;letter-spacing:.4px}
+.ref-table.stack tr{display:block;padding:7px 0;border-bottom:.5px solid var(--bd)}
+.ref-table.stack tr:last-child{border-bottom:none}
+.ref-table.stack td{display:block;border:none;padding:0}
+.ref-table.stack td:last-child{text-align:left;font-weight:500;color:var(--g900);margin-top:2px}
+.ref-sub{background:var(--g100);font-weight:700;color:var(--gold-dk) !important;text-align:left !important;font-size:10.5px;text-transform:uppercase;letter-spacing:.4px;padding:5px 9px !important;border-radius:6px;border-bottom:none !important}
 .ref-formula{background:var(--t50);border-radius:8px;padding:10px 14px;font-size:11.5px;color:var(--t800);font-family:monospace;line-height:1.7}
-.ref-note{font-size:10.5px;color:var(--g400);margin-top:6px;line-height:1.5;font-style:italic}
+.ref-note{font-size:11px;color:var(--g500);margin:10px 0 0;line-height:1.55;font-style:normal;background:var(--bg);border-radius:8px;padding:8px 10px}
+body.dark-mode .ref-title,body.dark-mode .ref-formula{color:#9FE1CB}
+body.dark-mode .ref-formula{background:rgba(29,158,117,.16)}
+.sup-body{display:block}
+.sup-group{margin-bottom:26px;scroll-margin-top:12px}
+.sup-gtitle{font-size:15px;font-weight:700;color:var(--g900);margin:0 0 2px;letter-spacing:-.01em}
+.sup-gdesc{font-size:12.5px;color:var(--g500);margin:0 0 12px;line-height:1.5}
+.sup-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;align-items:start}
+.sup-card{background:var(--sf);border:.5px solid var(--bd);border-radius:14px;padding:1rem 1.15rem}
+.sup-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;padding-bottom:9px;border-bottom:.5px solid var(--bd)}
+.sup-name{font-size:14px;font-weight:700;color:var(--g900);margin:0}
+.sup-badge{font-size:10px;font-weight:600;padding:3px 9px;border-radius:20px;white-space:nowrap}
+.sup-badge.strong{background:var(--t50);color:var(--t600)}
+.sup-badge.mid{background:var(--gold-50);color:var(--gold-dk)}
+.sup-badge.ctx{background:var(--g100);color:var(--g500)}
+.sup-badge.warn{background:var(--red-bg);color:var(--red)}
+.sup-row{display:grid;grid-template-columns:86px minmax(0,1fr);gap:10px;padding:6px 0;font-size:12.5px;border-bottom:.5px solid var(--bd)}
+.sup-row:last-of-type{border-bottom:none}
+.sup-row span{color:var(--g500);font-size:11.5px;font-weight:500;padding-top:1px}
+.sup-row p{margin:0;color:var(--g900);line-height:1.5}
+@media(max-width:560px){.sup-grid{grid-template-columns:minmax(0,1fr)}.sup-row{grid-template-columns:76px minmax(0,1fr)}}
 
 
 .calc-head{display:flex;align-items:center;justify-content:space-between}
@@ -1549,24 +1576,28 @@ body.dark-mode .frm select.inp{background-image:url("data:image/svg+xml,%3Csvg x
 <div id="vref" class="view">
   <div class="page">
     <div class="page-header">
-      <div><p class="page-title">Referencias clínicas</p><p class="page-sub">Valores estándar para adultos — los rangos de tu laboratorio siempre tienen prioridad</p></div>
+      <div><p class="page-title">Referencias clínicas</p><p class="page-sub">Valores estándar para adultos (salvo indicación) — los rangos de tu laboratorio siempre tienen prioridad</p></div>
     </div>
 
     <div class="ref-jump">
       <button class="dep-chip" onclick="refJump('refImc')">IMC</button>
+      <button class="dep-chip" onclick="refJump('refCintura')">Cintura</button>
+      <button class="dep-chip" onclick="refJump('refGrasa')">% Grasa</button>
       <button class="dep-chip" onclick="refJump('refLip')">Lípidos</button>
       <button class="dep-chip" onclick="refJump('refGlu')">Glucemia</button>
       <button class="dep-chip" onclick="refJump('refTa')">Presión arterial</button>
+      <button class="dep-chip" onclick="refJump('refHierro')">Hierro y anemia</button>
       <button class="dep-chip" onclick="refJump('refMicro')">Micronutrientes</button>
-      <button class="dep-chip" onclick="refJump('refGrasa')">% Grasa corporal</button>
+      <button class="dep-chip" onclick="refJump('refDieta')">Ingestas OMS/EFSA</button>
       <button class="dep-chip" onclick="refJump('refProt')">Proteína</button>
       <button class="dep-chip" onclick="refJump('refAgua')">Hidratación</button>
+      <button class="dep-chip" onclick="refJump('refActiv')">Actividad física</button>
     </div>
 
     <div class="ref-body">
 
       <div class="ref-section" id="refImc">
-        <p class="ref-title">IMC — Clasificación OMS (kg/m²)</p>
+        <div class="ref-head"><p class="ref-title">IMC en adultos</p><span class="ref-src">OMS</span></div>
         <table class="ref-table">
           <tr><td>Bajo peso</td><td>&lt; 18.5</td></tr>
           <tr><td>Normopeso</td><td>18.5 – 24.9</td></tr>
@@ -1574,12 +1605,50 @@ body.dark-mode .frm select.inp{background-image:url("data:image/svg+xml,%3Csvg x
           <tr><td>Obesidad grado I</td><td>30.0 – 34.9</td></tr>
           <tr><td>Obesidad grado II</td><td>35.0 – 39.9</td></tr>
           <tr><td>Obesidad grado III</td><td>≥ 40.0</td></tr>
-        </table>
+          </table>
         <p class="ref-note">El IMC no distingue masa grasa de masa magra — usar junto a composición corporal cuando sea posible.</p>
       </div>
-
+      <div class="ref-section" id="refImcMenor">
+        <div class="ref-head"><p class="ref-title">IMC en menores (5–19 años)</p><span class="ref-src">OMS 2007</span></div>
+        <table class="ref-table">
+          <tr><td>Delgadez severa</td><td>&lt; −3 DE</td></tr>
+          <tr><td>Delgadez</td><td>&lt; −2 DE</td></tr>
+          <tr><td>Normopeso</td><td>−2 a +1 DE</td></tr>
+          <tr><td>Sobrepeso</td><td>&gt; +1 DE (≈ 25 kg/m² a los 19 años)</td></tr>
+          <tr><td>Obesidad</td><td>&gt; +2 DE (≈ 30 kg/m² a los 19 años)</td></tr>
+          </table>
+        <p class="ref-note">En menores no se usan los cortes de adultos: se compara el IMC con las curvas OMS por sexo y edad (puntuación z, DE = desviaciones estándar). En jóvenes deportistas interpretarlo junto a la composición corporal.</p>
+      </div>
+      <div class="ref-section" id="refCintura">
+        <div class="ref-head"><p class="ref-title">Cintura y relación cintura-cadera</p><span class="ref-src">OMS 2008</span></div>
+        <table class="ref-table">
+          <tr><td colspan="2" class="ref-sub">Perímetro de cintura</td></tr>
+          <tr><td>Riesgo aumentado</td><td>H ≥ 94 cm · M ≥ 80 cm</td></tr>
+          <tr><td>Riesgo sustancialmente aumentado</td><td>H ≥ 102 cm · M ≥ 88 cm</td></tr>
+          <tr><td colspan="2" class="ref-sub">Relación cintura-cadera</td></tr>
+          <tr><td>Riesgo sustancialmente aumentado</td><td>H ≥ 0.90 · M ≥ 0.85</td></tr>
+          </table>
+        <p class="ref-note">Cortes de referencia para adultos; no son universales (varían con etnia, edad y país), úsalos como orientación. El protocolo OMS mide la cintura en el punto medio entre la última costilla y la cresta ilíaca: no es el mismo punto que la cintura mínima de ISAK.</p>
+      </div>
+      <div class="ref-section" id="refGrasa">
+        <div class="ref-head"><p class="ref-title">% Grasa corporal</p><span class="ref-src">ACE</span></div>
+        <table class="ref-table">
+          <tr><td colspan="2" class="ref-sub">Hombres</td></tr>
+          <tr><td>Grasa esencial</td><td>2 – 5%</td></tr>
+          <tr><td>Atlético</td><td>6 – 13%</td></tr>
+          <tr><td>Fitness</td><td>14 – 17%</td></tr>
+          <tr><td>Aceptable</td><td>18 – 24%</td></tr>
+          <tr><td>Obesidad</td><td>≥ 25%</td></tr>
+          <tr><td colspan="2" class="ref-sub">Mujeres</td></tr>
+          <tr><td>Grasa esencial</td><td>10 – 13%</td></tr>
+          <tr><td>Atlético</td><td>14 – 20%</td></tr>
+          <tr><td>Fitness</td><td>21 – 24%</td></tr>
+          <tr><td>Aceptable</td><td>25 – 31%</td></tr>
+          <tr><td>Obesidad</td><td>≥ 32%</td></tr>
+          </table>
+      </div>
       <div class="ref-section" id="refLip">
-        <p class="ref-title">Perfil lipídico — adultos en ayunas (mg/dL)</p>
+        <div class="ref-head"><p class="ref-title">Perfil lipídico en ayunas (mg/dL)</p><span class="ref-src">ESC/EAS 2019</span></div>
         <table class="ref-table">
           <tr><td colspan="2" class="ref-sub">Colesterol total</td></tr>
           <tr><td>Deseable</td><td>&lt; 200</td></tr>
@@ -1604,118 +1673,145 @@ body.dark-mode .frm select.inp{background-image:url("data:image/svg+xml,%3Csvg x
           <tr><td>Límite alto</td><td>150 – 199</td></tr>
           <tr><td>Alto</td><td>200 – 499</td></tr>
           <tr><td>Muy alto</td><td>≥ 500</td></tr>
-        </table>
+          </table>
         <p class="ref-note">Mantener el LDL por debajo de 70 mg/dL durante periodos prolongados reduce el riesgo cardiovascular de forma sustancial y sostenida (ESC/EAS 2019; cada reducción de 1 mmol/L mantenida 5 años reduce eventos mayores &gt;20%). El objetivo exacto depende del riesgo individual, no es un umbral único para toda la población.</p>
       </div>
-
       <div class="ref-section" id="refGlu">
-        <p class="ref-title">Glucemia y HbA1c — criterios ADA</p>
+        <div class="ref-head"><p class="ref-title">Glucemia y HbA1c</p><span class="ref-src">ADA · OMS</span></div>
         <table class="ref-table">
           <tr><td colspan="2" class="ref-sub">Glucosa en ayunas (mg/dL)</td></tr>
           <tr><td>Normal</td><td>&lt; 100</td></tr>
-          <tr><td>Prediabetes</td><td>100 – 125</td></tr>
+          <tr><td>Prediabetes (ADA)</td><td>100 – 125</td></tr>
           <tr><td>Diabetes</td><td>≥ 126 (confirmar en 2 ocasiones)</td></tr>
           <tr><td colspan="2" class="ref-sub">HbA1c (%)</td></tr>
           <tr><td>Normal</td><td>&lt; 5.7</td></tr>
           <tr><td>Prediabetes</td><td>5.7 – 6.4</td></tr>
           <tr><td>Diabetes</td><td>≥ 6.5</td></tr>
-        </table>
+          </table>
+        <p class="ref-note">Aquí se usan los criterios ADA. La OMS define la glucosa alterada en ayunas más tarde, desde 110 mg/dL (6.1 mmol/L) hasta 125 (6.9 mmol/L); el límite de diabetes coincide (≥ 126).</p>
       </div>
-
       <div class="ref-section" id="refTa">
-        <p class="ref-title">Presión arterial — ACC/AHA (mmHg)</p>
+        <div class="ref-head"><p class="ref-title">Presión arterial (mmHg)</p><span class="ref-src">ACC/AHA</span></div>
         <table class="ref-table">
           <tr><td>Normal</td><td>&lt; 120 / &lt; 80</td></tr>
           <tr><td>Elevada</td><td>120–129 / &lt; 80</td></tr>
           <tr><td>HTA grado 1</td><td>130–139 / 80–89</td></tr>
           <tr><td>HTA grado 2</td><td>≥ 140 / ≥ 90</td></tr>
           <tr><td>Crisis hipertensiva</td><td>&gt; 180 / &gt; 120 — derivar urgente</td></tr>
-        </table>
+          </table>
+        <p class="ref-note">ACC/AHA es más estricta: define HTA desde 130/80. Las guías europeas (ESC/ESH) mantienen el umbral de HTA en ≥ 140/90 en consulta.</p>
       </div>
-
-      <div class="ref-section" id="refMicro">
-        <p class="ref-title">Micronutrientes — rangos habituales en adultos</p>
+      <div class="ref-section" id="refHierro">
+        <div class="ref-head"><p class="ref-title">Anemia y estado del hierro (adultos)</p><span class="ref-src">OMS</span></div>
         <table class="ref-table">
-          <tr><td>Vitamina D (25-OH)</td><td>Suficiencia &gt; 30 ng/mL · Insuficiencia 20–29 · Deficiencia &lt; 20</td></tr>
+          <tr><td colspan="2" class="ref-sub">Hemoglobina — anemia</td></tr>
+          <tr><td>Hombres</td><td>&lt; 13.0 g/dL</td></tr>
+          <tr><td>Mujeres no gestantes</td><td>&lt; 12.0 g/dL</td></tr>
+          <tr><td colspan="2" class="ref-sub">Ferritina</td></tr>
+          <tr><td>Déficit de hierro</td><td>&lt; 15 µg/L</td></tr>
+          <tr><td>Déficit con infección o inflamación</td><td>&lt; 70 µg/L</td></tr>
+          <tr><td>Posible sobrecarga u otra enfermedad</td><td>&gt; 500 µg/L</td></tr>
+          </table>
+        <p class="ref-note">Interpretar siempre con hemoglobina, marcadores de inflamación (PCR) y clínica. En deporte muchos protocolos usan un corte más alto (p. ej. &lt; 30 ng/mL para suplementar): es criterio clínico, no umbral OMS. Suplementar solo ante déficit confirmado.</p>
+      </div>
+      <div class="ref-section" id="refMicro">
+        <div class="ref-head"><p class="ref-title">Micronutrientes</p><span class="ref-src">Varias</span></div>
+        <table class="ref-table stack">
+          <tr><td>Vitamina D (25-OH)</td><td>Suficiencia ≥ 30 ng/mL · Insuficiencia 20–29 · Deficiencia &lt; 20 (Endocrine Society)</td></tr>
+          <tr><td>Vitamina D — IOM / EFSA</td><td>≥ 20 ng/mL (50 nmol/L) cubre las necesidades de ≥ 97.5% de la población</td></tr>
+          <tr><td>Vitamina D — ingesta</td><td>RDA 600 UI (15 µg) · EFSA AI 15 µg · máximo tolerable 4000 UI (100 µg)</td></tr>
+          <tr><td>Calcio — ingesta (IOM)</td><td>RDA 1000 mg/día (19–50 años) · máximo tolerable 2500 mg</td></tr>
           <tr><td>Vitamina B12</td><td>200 – 900 pg/mL (varía por laboratorio)</td></tr>
-          <tr><td>Ferritina</td><td>Hombres 30–400 ng/mL · Mujeres 15–150 ng/mL</td></tr>
           <tr><td>Ácido fólico</td><td>2.7 – 17.0 ng/mL</td></tr>
-        </table>
+          </table>
         <p class="ref-note">Los puntos de corte de suficiencia de vitamina D varían según la sociedad científica de referencia — usar siempre el rango del laboratorio emisor.</p>
       </div>
-
-      <div class="ref-section" id="refGrasa">
-        <p class="ref-title">% Grasa corporal — categorías ACE</p>
+      <div class="ref-section" id="refDieta">
+        <div class="ref-head"><p class="ref-title">Ingestas de referencia (adultos sanos)</p><span class="ref-src">OMS · EFSA</span></div>
         <table class="ref-table">
-          <tr><td colspan="2" class="ref-sub">Hombres</td></tr>
-          <tr><td>Grasa esencial</td><td>2 – 5%</td></tr>
-          <tr><td>Atlético</td><td>6 – 13%</td></tr>
-          <tr><td>Fitness</td><td>14 – 17%</td></tr>
-          <tr><td>Aceptable</td><td>18 – 24%</td></tr>
-          <tr><td>Obesidad</td><td>≥ 25%</td></tr>
-          <tr><td colspan="2" class="ref-sub">Mujeres</td></tr>
-          <tr><td>Grasa esencial</td><td>10 – 13%</td></tr>
-          <tr><td>Atlético</td><td>14 – 20%</td></tr>
-          <tr><td>Fitness</td><td>21 – 24%</td></tr>
-          <tr><td>Aceptable</td><td>25 – 31%</td></tr>
-          <tr><td>Obesidad</td><td>≥ 32%</td></tr>
-        </table>
+          <tr><td colspan="2" class="ref-sub">OMS</td></tr>
+          <tr><td>Azúcares libres</td><td>&lt; 10% de las kcal (ideal &lt; 5%)</td></tr>
+          <tr><td>Grasa saturada</td><td>&lt; 10% de las kcal</td></tr>
+          <tr><td>Grasas trans</td><td>&lt; 1% de las kcal</td></tr>
+          <tr><td>Sal</td><td>&lt; 5 g/día (≈ 2 g de sodio)</td></tr>
+          <tr><td colspan="2" class="ref-sub">EFSA</td></tr>
+          <tr><td>Sodio</td><td>2.0 g/día — ingesta segura y adecuada</td></tr>
+          <tr><td>Potasio</td><td>3.5 g/día (ingesta adecuada)</td></tr>
+          <tr><td>Fibra</td><td>25 g/día</td></tr>
+          <tr><td>Grasa total</td><td>20 – 35% de las kcal</td></tr>
+          <tr><td>Hidratos de carbono</td><td>45 – 60% de las kcal</td></tr>
+          <tr><td>EPA + DHA</td><td>250 mg/día</td></tr>
+          </table>
+        <p class="ref-note">Referencias de población general sana. En deportistas la energía y los macros se ajustan a la carga de entrenamiento (ver Calculadora).</p>
       </div>
-
       <div class="ref-section" id="refProt">
-        <p class="ref-title">Requerimiento proteico — recomendaciones institucionales (g/kg/día)</p>
+        <div class="ref-head"><p class="ref-title">Proteína — recomendación institucional</p><span class="ref-src">OMS · EFSA · IOM</span></div>
         <table class="ref-table">
-          <tr><td>OMS / FAO / UNU (2007)</td><td>0.83 — ingesta segura, población adulta</td></tr>
-          <tr><td>EFSA (2012)</td><td>0.83 — PRI, población adulta ≥18 años</td></tr>
-          <tr><td>IOM / NAM (EE.UU., 2005)</td><td>0.8 — RDA · rango AMDR 10–35% de las kcal totales</td></tr>
-        </table>
-        <p class="ref-note">Son valores mínimos de seguridad para población general sana, calculados por balance nitrogenado. No están pensados para poblaciones entrenadas ni objetivos de composición corporal — para eso, ver la tabla por contexto de actividad justo debajo.</p>
-
-        <p class="ref-title" style="margin-top:16px">Ajuste por contexto de actividad (g/kg/día)</p>
-        <table class="ref-table">
-          <tr><td>Sedentario (RDA mínimo)</td><td>0.8</td></tr>
-          <tr><td>Actividad general</td><td>1.0 – 1.2</td></tr>
-          <tr><td>Resistencia / fondo</td><td>1.2 – 1.4</td></tr>
-          <tr><td>Fuerza / hipertrofia</td><td>1.6 – 2.2</td></tr>
-          <tr><td>Déficit preservando músculo</td><td>2.3 – 3.1</td></tr>
-        </table>
-        <p class="ref-note">Rangos superiores basados en revisiones ISSN/Helms para población entrenada en déficit calórico.</p>
+          <tr><td>OMS / FAO / UNU (2007)</td><td>0.83 — ingesta segura, adulto</td></tr>
+          <tr><td>EFSA (2012)</td><td>0.83 — PRI, adulto ≥ 18 años</td></tr>
+          <tr><td>IOM / NAM (EE.UU., 2005)</td><td>0.8 — RDA · AMDR 10–35% de las kcal</td></tr>
+          </table>
+        <p class="ref-note">0.8 g/kg/día es la recomendación óptima para la población general sana, calculada por balance nitrogenado. No está pensada para poblaciones entrenadas ni objetivos de composición corporal: ver la tarjeta siguiente.</p>
       </div>
-
+      <div class="ref-section" id="refProtDep">
+        <div class="ref-head"><p class="ref-title">Proteína según contexto (g/kg/día)</p><span class="ref-src">Evidencia</span></div>
+        <table class="ref-table stack">
+          <tr><td>Población general</td><td>0.8</td></tr>
+          <tr><td>Activo recreativo (orientativo)</td><td>1.0 – 1.2</td></tr>
+          <tr><td>Deportista entrenado, sin déficit calórico</td><td>1.2 – 1.6</td></tr>
+          <tr><td>Fuerza / hipertrofia</td><td>≈ 1.6 (techo práctico ≈ 2.0)</td></tr>
+          <tr><td>Déficit calórico en deportista</td><td>1.6 – 2.4 (≈ 2.3 – 3.1 por kg de masa libre de grasa)</td></tr>
+          </table>
+        <p class="ref-note">Sin déficit, la necesidad de un atleta sube respecto a la población general pero no se dispara: IAAO ≈ 1.2 en deporte de equipo (seguro 1.4) y ≈ 1.6 en resistencia (seguro ≈ 1.85); en fuerza las ganancias de masa se estabilizan en ≈ 1.6 g/kg. Subir más no aporta ventaja demostrada. En déficit las necesidades aumentan: con ≈ 1.0 g/kg se perdió más masa magra que con ≈ 2.3 g/kg. Fuentes: Packer 2017, Williamson 2023, Morton 2018, Mettler 2010, Helms 2014.</p>
+      </div>
       <div class="ref-section" id="refAgua">
-        <p class="ref-title">Hidratación — ingesta total de referencia (EFSA)</p>
-        <table class="ref-table">
+        <div class="ref-head"><p class="ref-title">Hidratación — ingesta total de referencia</p><span class="ref-src">EFSA</span></div>
+        <table class="ref-table stack">
           <tr><td>Hombres adultos</td><td>~2.5 L/día (incluye agua de alimentos)</td></tr>
           <tr><td>Mujeres adultas</td><td>~2.0 L/día (incluye agua de alimentos)</td></tr>
           <tr><td>Deportistas</td><td>Ajustar según tasa de sudoración individual y duración/intensidad</td></tr>
-        </table>
-
-        <p class="ref-title" style="margin-top:16px">Tasa de sudoración — fórmula de cálculo (ACSM)</p>
+          </table>
+      </div>
+      <div class="ref-section" id="refSudor">
+        <div class="ref-head"><p class="ref-title">Tasa de sudoración — fórmula</p><span class="ref-src">ACSM</span></div>
         <div class="ref-formula">Pérdida de sudor (L) = Peso antes (kg) − Peso después (kg) + Líquido ingerido (L) − Orina (L)<br>Tasa de sudoración (L/h) = Pérdida de sudor / Duración del ejercicio (h)</div>
         <p class="ref-note">Úsala en Calculadora → Hidratación para introducir los datos y obtener el resultado automáticamente.</p>
-
-        <p class="ref-title" style="margin-top:16px">Concentración de sodio en sudor — rangos habituales</p>
+      </div>
+      <div class="ref-section" id="refSodio">
+        <div class="ref-head"><p class="ref-title">Sodio en el sudor</p><span class="ref-src">Rangos habituales</span></div>
         <table class="ref-table">
           <tr><td>Sudorador bajo</td><td>~20 – 30 mmol/L</td></tr>
           <tr><td>Sudorador medio</td><td>~40 – 60 mmol/L</td></tr>
           <tr><td>Sudorador salado</td><td>~70 – 90+ mmol/L</td></tr>
-        </table>
-
-        <p class="ref-title" style="margin-top:16px">Reposición de líquidos</p>
-        <table class="ref-table">
+          </table>
+      </div>
+      <div class="ref-section" id="refRepos">
+        <div class="ref-head"><p class="ref-title">Reposición de líquidos</p><span class="ref-src">ACSM</span></div>
+        <table class="ref-table stack">
           <tr><td>Durante el ejercicio</td><td>≈ igual a la tasa de sudoración, sin superarla (riesgo de hiponatremia)</td></tr>
           <tr><td>Post-ejercicio</td><td>1.25 – 1.5 L por cada kg de peso perdido</td></tr>
-        </table>
-
-        <p class="ref-title" style="margin-top:16px">Carbohidratos durante el ejercicio — según duración</p>
-        <table class="ref-table">
+          </table>
+      </div>
+      <div class="ref-section" id="refCho">
+        <div class="ref-head"><p class="ref-title">Carbohidratos durante el ejercicio</p><span class="ref-src">ACSM · ISSN</span></div>
+        <table class="ref-table stack">
           <tr><td>&lt; 45 min</td><td>No necesario</td></tr>
           <tr><td>45 – 75 min</td><td>Cantidades pequeñas / enjuague bucal con CHO</td></tr>
           <tr><td>1 – 2 h</td><td>~30 g/h</td></tr>
           <tr><td>2 – 3 h</td><td>~60 g/h</td></tr>
           <tr><td>&gt; 2.5 – 3 h (ultra-resistencia)</td><td>Hasta 90 g/h — múltiples fuentes transportables (glucosa:fructosa)</td></tr>
-        </table>
+          </table>
         <p class="ref-note">Guías generales ACSM/ISSN. Los umbrales exactos varían según intensidad, clima, aclimatación y tolerancia digestiva individual.</p>
+      </div>
+      <div class="ref-section" id="refActiv">
+        <div class="ref-head"><p class="ref-title">Actividad física — adultos (18–64 años)</p><span class="ref-src">OMS 2020</span></div>
+        <table class="ref-table stack">
+          <tr><td>Aeróbica moderada</td><td>150 – 300 min/semana</td></tr>
+          <tr><td>o aeróbica vigorosa</td><td>75 – 150 min/semana</td></tr>
+          <tr><td>Fuerza (grandes grupos)</td><td>≥ 2 días/semana</td></tr>
+          <tr><td>Sedentarismo</td><td>Reducirlo y sustituirlo por actividad</td></tr>
+          </table>
+        <p class="ref-note">Cualquier combinación equivalente de moderada y vigorosa sirve, y los periodos de cualquier duración cuentan. Es la referencia para población general, no para deportistas.</p>
       </div>
 
     </div>
@@ -1739,7 +1835,7 @@ body.dark-mode .frm select.inp{background-image:url("data:image/svg+xml,%3Csvg x
 <div id="vsupl" class="view">
   <div class="page">
     <div class="page-header">
-      <div><p class="page-title">Suplementación</p><p class="page-sub">Clasificado por nivel de evidencia — ISSN (Kerksick et al., 2018) y position stands específicos</p></div>
+      <div><p class="page-title">Suplementación</p><p class="page-sub">Clasificado por nivel de evidencia — ISSN (Kerksick et al., 2018), consenso del COI (2018) y position stands específicos</p></div>
     </div>
 
     <div class="ref-jump">
@@ -1749,63 +1845,128 @@ body.dark-mode .frm select.inp{background-image:url("data:image/svg+xml,%3Csvg x
       <button class="dep-chip" onclick="refJump('supSeguridad')">Seguridad y contexto</button>
     </div>
 
-    <div class="ref-body">
+    <div class="sup-body">
 
-      <div class="ref-section" id="supFuerte">
-        <p class="ref-title">Evidencia sólida (ISSN — "strong evidence")</p>
-        <table class="ref-table">
-          <tr><td colspan="2" class="ref-sub">Creatina monohidrato</td></tr>
-          <tr><td>Dosis</td><td>3-5 g/día mantenimiento (o carga 20g/día × 5-7 días)</td></tr>
-          <tr><td>Timing</td><td>Indiferente — el efecto es acumulativo, no agudo</td></tr>
-          <tr><td>Efecto</td><td>↑ fuerza y potencia en esfuerzos cortos e intensos</td></tr>
-          <tr><td colspan="2" class="ref-sub">Cafeína</td></tr>
-          <tr><td>Dosis</td><td>3-6 mg/kg</td></tr>
-          <tr><td>Timing</td><td>30-60 min antes del ejercicio</td></tr>
-          <tr><td>Efecto</td><td>↑ rendimiento en resistencia y potencia, ↓ percepción del esfuerzo</td></tr>
-          <tr><td colspan="2" class="ref-sub">Beta-alanina</td></tr>
-          <tr><td>Dosis</td><td>3.2-6.4 g/día, repartida en tomas</td></tr>
-          <tr><td>Timing</td><td>Efecto acumulativo — requiere 2-4 semanas de uso continuado</td></tr>
-          <tr><td>Efecto</td><td>↑ rendimiento en esfuerzos de 1-4 min (tampón muscular vía carnosina)</td></tr>
-          <tr><td colspan="2" class="ref-sub">Nitratos (zumo de remolacha)</td></tr>
-          <tr><td>Dosis</td><td>300-600 mg nitrato (~300-500 mL zumo de remolacha)</td></tr>
-          <tr><td>Timing</td><td>2-3 h antes del ejercicio</td></tr>
-          <tr><td>Efecto</td><td>↑ eficiencia de oxígeno, ↑ rendimiento en resistencia</td></tr>
-          <tr><td colspan="2" class="ref-sub">Bicarbonato de sodio</td></tr>
-          <tr><td>Dosis</td><td>0.2-0.3 g/kg</td></tr>
-          <tr><td>Timing</td><td>60-90 min antes del ejercicio</td></tr>
-          <tr><td>Efecto</td><td>↑ rendimiento anaeróbico corto — puede causar molestias gastrointestinales</td></tr>
-        </table>
+      <div class="sup-group" id="supFuerte">
+        <p class="sup-gtitle">Evidencia sólida</p>
+        <p class="sup-gdesc">ISSN (Kerksick 2018) y consenso del COI (Maughan 2018): solo unos pocos suplementos tienen beneficios bien demostrados.</p>
+        <div class="sup-grid">
+        <div class="sup-card">
+          <div class="sup-top"><p class="sup-name">Creatina monohidrato</p><span class="sup-badge strong">Sólida</span></div>
+          <div class="sup-row"><span>Dosis</span><p>3-5 g/día mantenimiento (o carga 20 g/día × 5-7 días)</p></div>
+          <div class="sup-row"><span>Timing</span><p>Indiferente — el efecto es acumulativo, no agudo</p></div>
+          <div class="sup-row"><span>Efecto</span><p>↑ fuerza y potencia en esfuerzos cortos e intensos</p></div>
+          <div class="sup-row"><span>Seguridad</span><p>Segura y bien tolerada en sanos, incluso hasta 30 g/día durante 5 años (ISSN 2017)</p></div>
+        </div>
+        <div class="sup-card">
+          <div class="sup-top"><p class="sup-name">Cafeína</p><span class="sup-badge strong">Sólida</span></div>
+          <div class="sup-row"><span>Dosis</span><p>≈ 3 mg/kg (hasta 6 mg/kg)</p></div>
+          <div class="sup-row"><span>Timing</span><p>30-60 min antes del ejercicio</p></div>
+          <div class="sup-row"><span>Efecto</span><p>↑ rendimiento en resistencia y potencia, ↓ percepción del esfuerzo</p></div>
+          <div class="sup-row"><span>Seguridad</span><p>EFSA (2015): seguro hasta 400 mg/día y 200 mg en toma única en adultos sanos no gestantes. 6 mg/kg supera esos valores en la mayoría de adultos: empezar por la dosis mínima eficaz</p></div>
+          <p class="ref-note">Menores de 18: precaución (ISSN 2023 desaconseja &gt; 400 mg en adolescentes y las bebidas energéticas en &lt; 12 años). Evitar en embarazo, lactancia y sensibilidad a la cafeína.</p>
+        </div>
+        <div class="sup-card">
+          <div class="sup-top"><p class="sup-name">Beta-alanina</p><span class="sup-badge strong">Sólida</span></div>
+          <div class="sup-row"><span>Dosis</span><p>3.2-6.4 g/día, repartida en tomas</p></div>
+          <div class="sup-row"><span>Timing</span><p>Efecto acumulativo — requiere 2-4 semanas de uso continuado</p></div>
+          <div class="sup-row"><span>Efecto</span><p>↑ rendimiento en esfuerzos de 1-4 min (tampón muscular vía carnosina)</p></div>
+        </div>
+        <div class="sup-card">
+          <div class="sup-top"><p class="sup-name">Nitratos (zumo de remolacha)</p><span class="sup-badge strong">Sólida</span></div>
+          <div class="sup-row"><span>Dosis</span><p>300-600 mg nitrato (~300-500 mL zumo de remolacha)</p></div>
+          <div class="sup-row"><span>Timing</span><p>2-3 h antes del ejercicio</p></div>
+          <div class="sup-row"><span>Efecto</span><p>↑ eficiencia de oxígeno, ↑ rendimiento en resistencia</p></div>
+        </div>
+        <div class="sup-card">
+          <div class="sup-top"><p class="sup-name">Bicarbonato de sodio</p><span class="sup-badge strong">Sólida</span></div>
+          <div class="sup-row"><span>Dosis</span><p>0.2-0.3 g/kg</p></div>
+          <div class="sup-row"><span>Timing</span><p>60-90 min antes del ejercicio</p></div>
+          <div class="sup-row"><span>Efecto</span><p>↑ rendimiento anaeróbico corto — puede causar molestias gastrointestinales</p></div>
+        </div>
+        </div>
       </div>
-
-      <div class="ref-section" id="supModerada">
-        <p class="ref-title">Evidencia moderada o mixta</p>
-        <table class="ref-table">
-          <tr><td colspan="2" class="ref-sub">Citrulina malato</td></tr>
-          <tr><td>Dosis</td><td>6-8 g</td></tr>
-          <tr><td>Efecto</td><td>Posible mejora en resistencia a la fatiga — evidencia menos consistente que creatina/cafeína</td></tr>
-          <tr><td colspan="2" class="ref-sub">HMB</td></tr>
-          <tr><td>Dosis</td><td>3 g/día</td></tr>
-          <tr><td>Efecto</td><td>Puede atenuar la pérdida muscular en desentreno o en principiantes — efecto limitado en entrenados</td></tr>
-        </table>
-        <p class="ref-note">Proteína en polvo (whey o vegetal) no se clasifica aquí como ergogénico — es simplemente una herramienta práctica para completar la ingesta proteica diaria cuando no se alcanza con alimentos.</p>
+      <div class="sup-group" id="supModerada">
+        <p class="sup-gtitle">Evidencia moderada o mixta</p>
+        <p class="sup-gdesc">Posibles beneficios, pero menos consistentes que los anteriores.</p>
+        <div class="sup-grid">
+        <div class="sup-card">
+          <div class="sup-top"><p class="sup-name">Citrulina malato</p><span class="sup-badge mid">Moderada</span></div>
+          <div class="sup-row"><span>Dosis</span><p>6-8 g</p></div>
+          <div class="sup-row"><span>Efecto</span><p>Posible mejora en resistencia a la fatiga — evidencia menos consistente que creatina/cafeína</p></div>
+        </div>
+        <div class="sup-card">
+          <div class="sup-top"><p class="sup-name">HMB</p><span class="sup-badge mid">Mixta</span></div>
+          <div class="sup-row"><span>Dosis</span><p>38 mg/kg/día (≈ 3 g/día)</p></div>
+          <div class="sup-row"><span>Efecto</span><p>Puede reducir el daño muscular y mejorar la recuperación. En entrenados los resultados son mixtos y mejoran con &gt; 6 semanas de uso (ISSN 2024)</p></div>
+          <div class="sup-row"><span>Seguridad</span><p>Segura hasta al menos 1 año</p></div>
+        </div>
+        <div class="sup-card">
+          <div class="sup-top"><p class="sup-name">Proteína en polvo</p><span class="sup-badge ctx">Herramienta</span></div>
+          <div class="sup-row"><span>Uso</span><p>No es un ergogénico: es una forma práctica de completar la ingesta proteica diaria cuando no se alcanza con alimentos (whey o vegetal).</p></div>
+        </div>
+        </div>
       </div>
-
-      <div class="ref-section" id="supMicro">
-        <p class="ref-title">Vitaminas y minerales — solo con contexto clínico</p>
-        <table class="ref-table">
-          <tr><td>Vitamina D</td><td>600-2000 UI/día habitual — ajustar siempre según niveles séricos, no de forma genérica</td></tr>
-          <tr><td>Omega-3 (EPA/DHA)</td><td>1-2 g/día combinados — contexto cardiovascular y antiinflamatorio</td></tr>
-          <tr><td>Vitamina B12</td><td>Suplementación rutinaria recomendada en dietas veganas/vegetarianas estrictas</td></tr>
-          <tr><td>Hierro</td><td>Solo ante déficit confirmado por analítica — nunca de forma preventiva sin datos</td></tr>
-          <tr><td>Magnesio</td><td>200-400 mg — contexto de calambres o sueño, evidencia mixta</td></tr>
-        </table>
-        <p class="ref-note">A diferencia de los ergogénicos de la primera tabla, estos micronutrientes se suplementan por necesidad clínica individual, no por efecto directo sobre el rendimiento.</p>
+      <div class="sup-group" id="supMicro">
+        <p class="sup-gtitle">Vitaminas y minerales</p>
+        <p class="sup-gdesc">Solo con contexto clínico: se suplementan por necesidad individual, no por efecto directo sobre el rendimiento.</p>
+        <div class="sup-grid">
+        <div class="sup-card">
+          <div class="sup-top"><p class="sup-name">Vitamina D</p><span class="sup-badge ctx">Clínico</span></div>
+          <div class="sup-row"><span>Dosis</span><p>600-2000 UI/día habitual</p></div>
+          <div class="sup-row"><span>Referencias</span><p>IOM: RDA 600 UI · máximo tolerable 4000 UI (EFSA: 100 µg = 4000 UI)</p></div>
+          <div class="sup-row"><span>Criterio</span><p>Ajustar siempre según niveles séricos, no de forma genérica</p></div>
+        </div>
+        <div class="sup-card">
+          <div class="sup-top"><p class="sup-name">Omega-3 (EPA/DHA)</p><span class="sup-badge ctx">Clínico</span></div>
+          <div class="sup-row"><span>Dosis</span><p>1-2 g/día combinados — contexto cardiovascular y antiinflamatorio</p></div>
+          <div class="sup-row"><span>Referencias</span><p>EFSA: 250 mg/día de EPA+DHA como ingesta adecuada; hasta 5 g/día de suplemento sin problemas de seguridad en adultos</p></div>
+        </div>
+        <div class="sup-card">
+          <div class="sup-top"><p class="sup-name">Vitamina B12</p><span class="sup-badge ctx">Clínico</span></div>
+          <div class="sup-row"><span>Uso</span><p>Suplementación rutinaria recomendada en dietas veganas/vegetarianas estrictas</p></div>
+        </div>
+        <div class="sup-card">
+          <div class="sup-top"><p class="sup-name">Hierro</p><span class="sup-badge ctx">Clínico</span></div>
+          <div class="sup-row"><span>Uso</span><p>Solo ante déficit confirmado por analítica — nunca de forma preventiva sin datos</p></div>
+          <div class="sup-row"><span>Criterio</span><p>Ferritina &lt; 15 µg/L (OMS); en deporte se usan cortes más altos como criterio clínico. Ver Referencias clínicas → Hierro y anemia</p></div>
+        </div>
+        <div class="sup-card">
+          <div class="sup-top"><p class="sup-name">Magnesio</p><span class="sup-badge ctx">Clínico</span></div>
+          <div class="sup-row"><span>Dosis</span><p>200-400 mg</p></div>
+          <div class="sup-row"><span>Contexto</span><p>Calambres o sueño — evidencia mixta</p></div>
+        </div>
+        <div class="sup-card">
+          <div class="sup-top"><p class="sup-name">Calcio</p><span class="sup-badge ctx">Clínico</span></div>
+          <div class="sup-row"><span>Uso</span><p>Solo si la dieta no llega; primero alimentos</p></div>
+          <div class="sup-row"><span>Referencias</span><p>IOM: RDA 1000 mg/día (19-50 años) · máximo tolerable 2500 mg</p></div>
+        </div>
+        </div>
       </div>
-
-      <div class="ref-section" id="supSeguridad">
-        <p class="ref-title">Seguridad y contexto de uso</p>
-        <div class="pdf-box" style="background:var(--sf);border-color:var(--bd);color:var(--g700)">
-          Esta tabla es una referencia rápida para uso profesional, no sustituye la valoración individual ni la revisión de interacciones con medicación. La creatina y la cafeína son los dos suplementos con más respaldo científico y mejor perfil de seguridad. Cualquier suplementación con base clínica (hierro, vitamina D) debe apoyarse siempre en una analítica reciente, no en la sola percepción de síntomas.
+      <div class="sup-group" id="supSeguridad">
+        <p class="sup-gtitle">Seguridad y contexto de uso</p>
+        <p class="sup-gdesc">Reglas de uso profesional antes de recomendar cualquier suplemento.</p>
+        <div class="sup-grid">
+        <div class="sup-card">
+          <div class="sup-top"><p class="sup-name">Antes de suplementar</p><span class="sup-badge warn">Norma</span></div>
+          <div class="sup-row"><span>1</span><p>Valoración nutricional completa: la comida va primero (UEFA 2020, COI 2018).</p></div>
+          <div class="sup-row"><span>2</span><p>Probar cualquier suplemento de rendimiento en entrenamiento o simulación, nunca por primera vez en competición.</p></div>
+          <div class="sup-row"><span>3</span><p>La respuesta varía mucho entre personas (genética, microbioma, dieta habitual).</p></div>
+        </div>
+        <div class="sup-card">
+          <div class="sup-top"><p class="sup-name">Antidopaje y calidad</p><span class="sup-badge warn">Norma</span></div>
+          <div class="sup-row"><span>Riesgo</span><p>Algunos suplementos contienen sustancias prohibidas sin declararlas (COI 2018). En deportistas federados, comprobar el producto antes de usarlo y preferir marcas con control de calidad independiente.</p></div>
+        </div>
+        <div class="sup-card">
+          <div class="sup-top"><p class="sup-name">Poblaciones especiales</p><span class="sup-badge warn">Norma</span></div>
+          <div class="sup-row"><span>Menores</span><p>Adolescentes (12-18): precaución con cafeína y bebidas energéticas. Niños &lt; 12: no recomendadas (ISSN 2023).</p></div>
+          <div class="sup-row"><span>Embarazo y lactancia</span><p>Evitar bebidas energéticas y cafeína elevada.</p></div>
+          <div class="sup-row"><span>Enfermedad</span><p>Cardiovascular, metabólica, hepática, renal o neurológica: consultar con su médico.</p></div>
+        </div>
+        <div class="sup-card">
+          <div class="sup-top"><p class="sup-name">Interacciones</p><span class="sup-badge warn">Norma</span></div>
+          <div class="sup-row"><span>Uso</span><p>Esta sección es una referencia rápida: no sustituye la valoración individual ni la revisión de interacciones con medicación. Creatina y cafeína son los suplementos con más respaldo y mejor perfil de seguridad. Todo suplemento con base clínica (hierro, vitamina D) debe apoyarse en una analítica reciente.</p></div>
+        </div>
         </div>
       </div>
 
@@ -1896,9 +2057,9 @@ body.dark-mode .frm select.inp{background-image:url("data:image/svg+xml,%3Csvg x
         <label class="mfl" for="calcProteina">Proteína objetivo</label>
         <select class="inp" id="calcProteina" onchange="calcAll()">
           <option value="0.8">0.8 g/kg — Sedentario / RDA mínimo</option>
-          <option value="1.2">1.2 g/kg — Salud general</option>
-          <option value="1.6" selected>1.6 g/kg — Actividad moderada</option>
-          <option value="2.0">2.0 g/kg — Hipertrofia / rendimiento</option>
+          <option value="1.2">1.2 g/kg — Activo / deportista, mínimo eficaz</option>
+          <option value="1.6" selected>1.6 g/kg — Deportista entrenado / fuerza (sin déficit)</option>
+          <option value="2.0">2.0 g/kg — Déficit moderado / gran volumen</option>
           <option value="2.4">2.4 g/kg — Déficit agresivo (preservar músculo)</option>
         </select>
       </div>
@@ -3898,8 +4059,9 @@ function calcAll(){
     } else sem.push(['info','Indica las <b>kcal de entrenamiento al día</b> para calcular la disponibilidad energética (umbral de riesgo: 30 kcal/kg de masa libre de grasa).']);
     const pMlg = proteinaG/mlg;
     sem.push(['info', `<b>Proteína: ${planF(proteinaG,0)} g = ${planF(proteinaGkg,1)} g/kg de peso = ${planF(pMlg,1)} g/kg de masa libre de grasa.</b> ${ajuste<0
-      ? 'En déficit, deportistas magros y de fuerza pueden necesitar 2,3–3,1 g/kg de masa libre de grasa (Helms 2014); en otros casos 1,4–2,0 g/kg de peso (ISSN 2017).'
-      : 'Rango habitual: 1,4–2,0 g/kg de peso (ISSN 2017).'}`]);
+      ? 'En déficit las necesidades suben: 1,6–2,4 g/kg de peso, y 2,3–3,1 g/kg de masa libre de grasa en deportistas magros o de fuerza (Helms 2014). Con ≈ 1,0 g/kg se perdió más masa magra que con ≈ 2,3 g/kg (Mettler 2010).'
+      : 'Sin déficit, un deportista entrenado necesita unos 1,2–1,6 g/kg de peso (Packer 2017, Williamson 2023, Morton 2018); por encima de ≈ 1,6–2,0 no hay ventaja demostrada.'}`]);
+    if(ajuste<0 && proteinaGkg<1.6) sem.push(['warn', `<b>Proteína baja para un déficit (${planF(proteinaGkg,1)} g/kg).</b> Con déficit calórico conviene subir a 1,6–2,4 g/kg para proteger la masa muscular.`]);
   }
   avisos.forEach(a=>sem.unshift(a));
 
