@@ -632,6 +632,8 @@ body.dark-mode img{opacity:.92}
   .sidebar,.mobile-topbar,.sidebar-backdrop,.mbg,.view{display:none !important}
   body,body.has-sidebar{background:#fff !important;padding:0 !important;min-height:0 !important}
   @page{margin:14mm}
+  #printArea{display:flex !important;flex-direction:column;min-height:var(--pdf-min,268mm)}
+  #printArea .pdf-foot{margin-top:auto}
 }
 .pdf-hero{background:linear-gradient(135deg,#163a47 0%,#1f4d5e 100%);border-radius:18px;padding:22px 28px;color:#f7f4ee;margin-bottom:22px;display:flex;align-items:center;gap:18px}
 .pdf-hero-logo{width:44px;height:44px;border-radius:50%;border:1.5px solid rgba(217,184,140,.5);flex-shrink:0;overflow:hidden}
@@ -3250,10 +3252,32 @@ function sendWhatsAppGenerico(nombre){
 }
 
 // ═══════════════ EXPORTAR PDF (vía impresión del navegador) ═══════════════
+// Antes de imprimir se calcula cuántas páginas A4 ocupa el informe (alto útil 269 mm) simulando cómo
+// se reparten las tarjetas entre páginas (una tarjeta no se parte), y se estira el área de impresión
+// hasta esas páginas: así el pie (.pdf-foot) queda al final de la última página y no pegado a la
+// última tarjeta. Si la simulación se queda corta, el pie simplemente sigue al contenido.
 function printNow(){
+  const area = document.getElementById('printArea');
+  const prev = area.getAttribute('style') || '';
+  area.style.cssText = prev + ';display:block;position:absolute;visibility:hidden;left:0;top:0;width:182mm;min-height:0';
+  const PX = 96/25.4, H = 269;               // px por mm, alto útil de página en mm
+  const atomos = [];
+  [...area.children].forEach(el=>{
+    const cs = getComputedStyle(el);
+    if(el.classList.contains('pdf-tl')) [...el.children].forEach(c=>atomos.push(c.getBoundingClientRect().height/PX + 12/PX*1));
+    else atomos.push((el.getBoundingClientRect().height + parseFloat(cs.marginTop)+parseFloat(cs.marginBottom))/PX);
+  });
+  area.setAttribute('style', prev);
+  let paginas = 1, y = 0, huecos = 0;
+  atomos.forEach(h=>{
+    if(h > H){ y += h; while(y > H){ y -= H; paginas++; } }
+    else if(y + h > H){ huecos += H - y; paginas++; y = h; }   // hueco que deja una tarjeta al saltar de página
+    else y += h;
+  });
+  // Los huecos también desplazan al pie, así que se descuentan del alto total del área.
+  area.style.setProperty('--pdf-min', (paginas*H - 1 - huecos) + 'mm');
   setTimeout(()=>{ window.print(); }, 100);
 }
-
 function pdfLogoHtml(){
   const img = document.querySelector('.sb-logo img');
   const src = img ? img.getAttribute('src') : '';
