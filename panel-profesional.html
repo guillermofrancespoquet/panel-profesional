@@ -352,7 +352,9 @@ body.dark-mode img{opacity:.92}
   position:fixed;top:0;left:0;bottom:0;width:248px;
   background:var(--t900);display:none;flex-direction:column;
   padding:1.5rem 0;z-index:200;overflow-y:auto;
+  scrollbar-width:none;
 }
+.sidebar::-webkit-scrollbar{display:none}
 .sidebar.show{display:flex}
 .sb-brand{display:flex;align-items:center;gap:12px;padding:0 1.25rem 1.25rem;margin-bottom:.5rem;border-bottom:.5px solid rgba(255,255,255,.08)}
 .sb-logo{width:52px;height:52px;border-radius:50%;overflow:hidden;border:1.5px solid rgba(184,149,106,.5);flex-shrink:0}
