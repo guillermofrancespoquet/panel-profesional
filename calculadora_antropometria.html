@@ -122,6 +122,12 @@ tr:hover td{background:var(--bg);}
 .pill.warn{background:var(--red-bg);color:var(--red);}
 .pill.neutral{background:var(--g100);color:var(--g400);}
 .clientrow{cursor:pointer;}
+.clientrow .chev{display:inline-block;width:16px;color:var(--g400);font-size:11px;}
+.clientrow.open td{background:var(--t50);border-bottom-color:transparent;}
+.detailrow:hover td{background:transparent;}
+.detailrow>td{padding:0 0 10px;border-bottom:.5px solid var(--bd);}
+.client-detail{margin:0;padding:16px 18px;background:var(--bg);border:.5px solid var(--bd);border-radius:12px;}
+.client-detail table{background:var(--sf);border-radius:10px;}
 .client-head{display:flex;justify-content:space-between;align-items:flex-start;gap:22px;flex-wrap:wrap;margin-bottom:6px;}
 .client-head-info{flex:1;min-width:220px;}
 .client-head-name{margin:0 0 8px 0 !important;border:none !important;padding:0 !important;}
@@ -1127,21 +1133,22 @@ function viewClientes(){
   const rows = clients.map(c=>{
     const nVal = c.valoraciones.length;
     const last = lastValoracion(c);
-    return `<tr class="clientrow" data-id="${c.id}">
-      <td><strong>${esc(c.nombre)} ${esc(c.apellidos||"")}</strong></td>
+    const abierto = CURRENT_CLIENT_ID==c.id;
+    return `<tr class="clientrow${abierto?" open":""}" data-id="${c.id}">
+      <td><span class="chev" aria-hidden="true">${abierto?"▾":"▸"}</span><strong>${esc(c.nombre)} ${esc(c.apellidos||"")}</strong></td>
       <td>${esc(c.deporte||"—")}</td>
       <td>${c.sexo?esc(c.sexo):"—"}</td>
       <td>${nVal} <span class="small-note">valoración${nVal===1?"":"es"}</span></td>
       <td>${last?fmtDate(last.fecha):"—"}</td>
-      <td class="no-print"><div class="btn-group"><button class="btn ghost sm" data-open="${c.id}"><span class="ic">📂</span> Abrir</button> <button class="btn danger sm" data-del="${c.id}"><span class="ic">🗑️</span> Eliminar</button></div></td>
-    </tr>`;
+      <td class="no-print"><div class="btn-group"><button class="btn camel sm" data-newval="${c.id}" title="Empezar una valoración nueva de este cliente"><span class="ic">➕</span> Valoración</button> <button class="btn ghost sm" data-open="${c.id}" aria-expanded="${abierto}"><span class="ic">${abierto?"▴":"📂"}</span> ${abierto?"Cerrar":"Abrir"}</button> <button class="btn danger sm" data-del="${c.id}" title="Quitar el perfil antropométrico"><span class="ic">🗑️</span></button></div></td>
+    </tr>${abierto ? `<tr class="detailrow"><td colspan="6">${viewClienteDetalle(c)}</td></tr>` : ""}`;
   }).join("");
   return `
   <h2>Clientes</h2>
-  <p class="lead">Ficha de cada cliente con su historial completo de valoraciones antropométricas.</p>
+  <p class="lead">Pulsa <strong>Abrir</strong> para ver la ficha y el historial de valoraciones justo debajo del cliente, o <strong>+ Valoración</strong> para empezar una nueva.</p>
   <div class="card">
     <div class="searchbar">
-      <input type="text" id="searchClient" placeholder="Buscar cliente por nombre...">
+      <input type="text" id="searchClient" placeholder="Buscar cliente por nombre..." value="${esc(CLIENT_SEARCH)}">
       <button class="btn camel" id="btnNewClient"><span class="ic">➕</span> Nuevo cliente</button>
       <button class="btn ghost" id="btnImportClient"><span class="ic">📄</span> Importar cliente (PDF) <span class="unit-tag">beta</span></button>
     </div>
@@ -1151,9 +1158,9 @@ function viewClientes(){
       <tbody>${rows}</tbody>
     </table>`}
   </div>
-  ${CURRENT_CLIENT_ID ? viewClienteDetalle(getClient(CURRENT_CLIENT_ID)) : ""}
   `;
 }
+let CLIENT_SEARCH = "";
 
 function esc(s){ return (s===undefined||s===null) ? "" : String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
@@ -1172,14 +1179,14 @@ function viewClienteDetalle(c){
       <td>${R?fmt(R.imc,1):"—"}</td>
       <td class="no-print">
         <div class="btn-group">
-          <button class="btn ghost sm" data-usevalo="${v.id}"><span class="ic">📊</span> Ver resultados</button>
+          <button class="btn ghost sm" data-usevalo="${v.id}"><span class="ic">📊</span> Resultados</button>
           <button class="btn danger sm" data-delvalo="${v.id}"><span class="ic">🗑️</span> Eliminar</button>
         </div>
       </td>
     </tr>`;
   }).join("");
   return `
-  <div class="card">
+  <div class="client-detail">
     <div class="client-head">
       <div class="client-head-info">
         <h3 class="client-head-name">${esc(c.nombre)} ${esc(c.apellidos||"")}</h3>
@@ -1195,8 +1202,8 @@ function viewClienteDetalle(c){
     </div>
     ${c.lesiones ? `<p class="small-note"><strong>Lesiones:</strong> ${esc(c.lesiones)}</p>` : ""}
     ${c.notas ? `<p class="small-note"><strong>Notas:</strong> ${esc(c.notas)}</p>` : ""}
-    <h3>Historial de valoraciones</h3>
-    ${vals.length===0 ? `<div class="empty">Sin valoraciones todavía.</div>` : `
+    <h3 style="margin-top:14px;">Historial de valoraciones</h3>
+    ${vals.length===0 ? `<div class="empty">Sin valoraciones todavía. Pulsa "Nueva valoración" para crear la primera.</div>` : `
     <table>
       <thead><tr><th>Fecha</th><th>Peso</th><th>% Grasa</th><th>% Músculo</th><th>IMC</th><th></th></tr></thead>
       <tbody>${rows}</tbody>
@@ -1206,20 +1213,39 @@ function viewClienteDetalle(c){
 
 function wireClientes(){
   const search = document.getElementById("searchClient");
-  if(search) search.addEventListener("input", ()=>{
-    const q = search.value.toLowerCase();
-    document.querySelectorAll("#clientTable tbody tr").forEach(tr=>{
-      tr.style.display = tr.textContent.toLowerCase().includes(q) ? "" : "none";
+  // Filtra las filas de cliente; la ficha desplegada sigue a su fila (se oculta o muestra con ella).
+  const filtrar = ()=>{
+    const q = (search.value||"").toLowerCase();
+    CLIENT_SEARCH = search.value||"";
+    document.querySelectorAll("#clientTable tbody tr.clientrow").forEach(tr=>{
+      const visible = tr.textContent.toLowerCase().includes(q);
+      tr.style.display = visible ? "" : "none";
+      const next = tr.nextElementSibling;
+      if(next && next.classList.contains("detailrow")) next.style.display = visible ? "" : "none";
     });
-  });
+  };
+  if(search){ search.addEventListener("input", filtrar); if(search.value) filtrar(); }
   const btnNew = document.getElementById("btnNewClient");
   if(btnNew) btnNew.addEventListener("click", ()=>openClientForm(null));
   const btnImport = document.getElementById("btnImportClient");
   if(btnImport) btnImport.addEventListener("click", ()=>openImportClientModal());
-  document.querySelectorAll("[data-open]").forEach(b=>b.addEventListener("click", ()=>{
-    CURRENT_CLIENT_ID = b.dataset.open; renderView("clientes");
+  // Abrir/cerrar la ficha del cliente en su sitio (solo uno abierto a la vez)
+  const alternarCliente = id=>{
+    CURRENT_CLIENT_ID = (CURRENT_CLIENT_ID==id) ? null : id;
+    renderView("clientes");
+    const fila = document.querySelector("#clientTable tr.clientrow.open");
+    if(fila) fila.scrollIntoView({block:"start", behavior:"smooth"});
+  };
+  document.querySelectorAll("[data-open]").forEach(b=>b.addEventListener("click", e=>{ e.stopPropagation(); alternarCliente(b.dataset.open); }));
+  document.querySelectorAll("tr.clientrow").forEach(tr=>tr.addEventListener("click", e=>{
+    if(e.target.closest("button")) return;
+    alternarCliente(tr.dataset.id);
   }));
-  document.querySelectorAll("[data-del]").forEach(b=>b.addEventListener("click", ()=>{
+  document.querySelectorAll("[data-newval]").forEach(b=>b.addEventListener("click", e=>{
+    e.stopPropagation(); CURRENT_CLIENT_ID = b.dataset.newval; goView("valoracion");
+  }));
+  document.querySelectorAll("[data-del]").forEach(b=>b.addEventListener("click", e=>{
+    e.stopPropagation();
     const c = getClient(b.dataset.del);
     if(!c) return;
     confirmModal(`¿Quitar el perfil antropométrico de ${c.nombre} y todas sus valoraciones? El deportista seguirá existiendo en Nutrición Deportiva (Panel Profesional) — esto solo borra sus datos de antropometría.`, async ()=>{
