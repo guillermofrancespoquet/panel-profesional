@@ -12,7 +12,7 @@ Apps web de gestión para Guillermo Frances (nutrición deportiva, Valencia). To
 | `icon-192.png`, `icon-512.png` | Iconos PWA (los usan ambos manifests). |
 | `manifest-panel.json` | Manifest PWA del panel (`start_url` → `panel-profesional.html`). |
 | `manifest.json` | Manifest PWA del Método 3M (`start_url` → `metodo-3-meses-final.html`). |
-| `Logo.png` | Logo original. Ningún HTML lo referencia porque el logo va embebido en base64; se conserva como archivo fuente para regenerar ese base64. **No borrar.** |
+| `Logo.png` | Logo original (emblema sobre crema, 1015 px). Ningún HTML lo referencia porque el logo va embebido en base64; se conserva como archivo fuente para regenerar ese base64. **No borrar.** El logo de las apps es este mismo archivo a 256 px con esquinas redondeadas al 22 % y transparencia; los contenedores CSS usan `border-radius:22%`. `icon-192.png` / `icon-512.png` son el mismo logo cuadrado a sangre (iOS/Android aplican su propia máscara). |
 | `supabase_antropometria.sql` | Esquema de las tablas de antropometría (ya ejecutado en Supabase). |
 | `supabase_sudoracion.sql` | Tabla `tests_sudoracion` (test de sudoración por deportista). |
 | `supabase_plan_competicion.sql` | Tabla `planes_competicion` (plan de competición por deportista). |
