@@ -12,6 +12,7 @@
 --      profesional desde el Panel.
 --   3) Con esto, la página del cliente ya no necesita acceso directo a la tabla, y el
 --      paso 2 podrá cerrarla.
+--   4) Da permiso a tu sesión sobre el bucket de archivos `deportistas-docs` (sin quitar nada).
 -- ============================================================
 
 -- 0) Comprobar que las columnas son las esperadas (si no, se detiene con un aviso claro).
@@ -105,6 +106,24 @@ revoke all on function public.m3m_guardar_nota(text, int, text) from public;
 grant execute on function public.m3m_cliente(text) to anon, authenticated;
 grant execute on function public.m3m_guardar_checks(text, jsonb) to anon, authenticated;
 grant execute on function public.m3m_guardar_nota(text, int, text) to anon, authenticated;
+
+-- 3) Archivos de deportistas: permiso para el usuario que ha iniciado sesión.
+--    Hasta ahora el panel subía y leía archivos con la clave pública (rol `anon`). Ahora lo hace con tu sesión
+--    (rol `authenticated`) y, si el bucket solo tenía permisos para `anon`, Storage responde "Object not found"
+--    al firmar o subir. Esta política es ADITIVA (no quita nada) y es la misma que dejará el paso 2.
+do $$
+begin
+  if not exists (
+    select 1 from pg_policies
+     where schemaname = 'storage' and tablename = 'objects'
+       and policyname = 'deportistas-docs: solo autenticados'
+  ) then
+    create policy "deportistas-docs: solo autenticados" on storage.objects
+      for all to authenticated
+      using (bucket_id = 'deportistas-docs')
+      with check (bucket_id = 'deportistas-docs');
+  end if;
+end $$;
 
 -- ============================================================
 -- Comprobación (opcional): cada cliente debe tener su token y la función debe devolver su fila.
