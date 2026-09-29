@@ -25,6 +25,8 @@
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:var(--f);background:var(--bg);color:var(--g900);min-height:100vh;font-size:15px;-webkit-font-smoothing:antialiased;line-height:1.6}
 .view{display:none}.view.active{display:block}
+.antro-frame{display:block;width:100%;height:100vh;border:0;background:var(--bg)}
+@media(max-width:860px){.antro-frame{height:calc(100vh - 56px)}}
 
 /* LOADING */
 #vload{display:flex;align-items:center;justify-content:center;min-height:100vh;flex-direction:column;gap:12px}
@@ -853,7 +855,7 @@ body.dark-mode .frm select.inp{background-image:url("data:image/svg+xml,%3Csvg x
         <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
         Nutrición Deportiva
       </button>
-      <button class="sb-item sb-subitem" id="sbAntropo" onclick="openAntropometria()">
+      <button class="sb-item sb-subitem" id="sbAntropo" onclick="navTo('antropometria')">
         <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="5" r="2.5"/><path d="M12 8v6"/><path d="M8 22l2-8"/><path d="M16 22l-2-8"/><path d="M6 12h12"/></svg>
         Antropometría
       </button>
@@ -1139,6 +1141,11 @@ body.dark-mode .frm select.inp{background-image:url("data:image/svg+xml,%3Csvg x
     <div id="compTable"></div>
     <p class="ref-note" style="margin-top:14px" id="compFootnote">Valores por 100g/100mL reportados por el fabricante o el usuario que subió el producto a Open Food Facts.</p>
   </div>
+</div>
+
+<!-- ANTROPOMETRÍA (calculadora incrustada) -->
+<div id="vantro" class="view">
+  <iframe id="antroFrame" class="antro-frame" title="Calculadora de antropometría" onload="window.syncAntroDark && syncAntroDark()"></iframe>
 </div>
 
 <!-- PÁGINA: GENERADOR DE MENÚ SEMANAL -->
@@ -2782,6 +2789,7 @@ function toggleDarkMode(){
   const isDark = document.body.classList.toggle('dark-mode');
   localStorage.setItem('nutrilogos_dark', isDark ? '1' : '0');
   document.getElementById('darkModeLabel').textContent = isDark ? 'Modo claro' : 'Modo oscuro';
+  syncAntroDark();
 }
 function initDarkMode(){
   if(localStorage.getItem('nutrilogos_dark') === '1'){
@@ -2819,6 +2827,7 @@ function navTo(section){
   else if(section==='metodo'){document.getElementById('sbMetodo').classList.add('on');show('vdash');load();}
   else if(section==='deportiva'){document.getElementById('sbDep').classList.add('on');show('vdepdash');loadDeportistas();}
   else if(section==='facturacion'){document.getElementById('sbFact').classList.add('on');show('vfact');loadFacturacion();}
+  else if(section==='antropometria'){document.getElementById('sbAntropo').classList.add('on');show('vantro');cargarAntropometria();}
   else if(section==='plan'){document.getElementById('sbPlan').classList.add('on');show('vplan');initPlan();}
   else if(section==='calc-energia'||section==='calc-hidra'){
     const hidra = section==='calc-hidra';
@@ -3129,10 +3138,28 @@ let deportistas = [], currentDepId = null;
 
 // Abre la calculadora de antropometría (app satélite, mismo repo de GitHub Pages) en pestaña
 // nueva. Comparte los deportistas (clientes_deportivos) con esta app vía Supabase.
-function openAntropometria(){
+// La calculadora de antropometría (otra app, mismo repo) se muestra dentro del panel en un iframe con ?embed=1:
+// sin cabecera ni menú lateral propios. La ruta se calcula sin escribir el nombre del repo a mano.
+let antroSrc = '';
+function cargarAntropometria(depId){
   const base = window.location.origin + window.location.pathname.replace('panel-profesional.html', 'calculadora_antropometria.html');
-  window.open(base, '_blank');
+  const src = base + '?embed=1' + (depId ? '&c=' + encodeURIComponent(depId) : '');
+  const f = document.getElementById('antroFrame');
+  // Solo se recarga si cambia el destino: al volver a la pestaña se conserva lo que se estaba haciendo.
+  if(depId || !antroSrc){ f.src = src; antroSrc = src; }
   closeMobileSidebar();
+}
+// Desde la ficha de un deportista: abre la calculadora con ese deportista ya desplegado
+function abrirAntropometria(depId){
+  navTo('antropometria');
+  cargarAntropometria(depId);
+}
+// El modo oscuro lo decide el panel: se copia al documento del iframe
+function syncAntroDark(){
+  try{
+    const d = document.getElementById('antroFrame').contentDocument;
+    if(d && d.body) d.body.classList.toggle('dark-mode', document.body.classList.contains('dark-mode'));
+  }catch(e){}
 }
 const getDeportistas = () => sb('clientes_deportivos?select=*');
 const insertDep = (d) => sb('clientes_deportivos', {method:'POST', body: JSON.stringify(d)});
@@ -4170,7 +4197,7 @@ async function loadMediciones(depId){
   const pts = rows.map(medPunto).sort((a,b)=>new Date(a.fecha)-new Date(b.fecha));
   if(!pts.length){
     el.innerHTML = `<p class="med-empty">Sin valoraciones antropométricas todavía. Se registran desde la calculadora de antropometría.</p>
-      <button class="btn-action" style="background:var(--t50);color:var(--t600)" onclick="openAntropometria()">Abrir calculadora</button>`;
+      <button class="btn-action" style="background:var(--t50);color:var(--t600)" onclick="abrirAntropometria(${depId})">Abrir calculadora</button>`;
     return;
   }
   const last = pts[pts.length-1], prev = pts.length>1 ? pts[pts.length-2] : null;
@@ -4200,7 +4227,8 @@ async function loadMediciones(depId){
       ${stat('Masa grasa',last.masaGrasa,'kg','masaGrasa',1)}
     </div>
     ${pts.length>1 ? `<div class="med-series">${medSerie(pts,'peso','var(--t400)','Peso','kg')}${medSerie(pts,'grasa','var(--gold)','% grasa','%')}</div>` : ''}
-    ${nota ? `<p class="med-note">${nota}</p>` : ''}`;
+    ${nota ? `<p class="med-note">${nota}</p>` : ''}
+    <div style="margin-top:10px"><button class="btn-action" style="background:var(--t50);color:var(--t600)" onclick="abrirAntropometria(${depId})">Ver en antropometría</button></div>`;
 }
 
 

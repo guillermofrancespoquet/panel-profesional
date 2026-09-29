@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>try{ if(new URLSearchParams(location.search).get('embed')==='1') document.documentElement.classList.add('embed'); }catch(e){}</script>
 <title>Antropometría &amp; Somatocarta — NutriLogos</title>
 <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
 <link rel="icon" type="image/png" sizes="512x512" href="./icon-512.png">
@@ -122,6 +123,12 @@ tr:hover td{background:var(--bg);}
 .pill.warn{background:var(--red-bg);color:var(--red);}
 .pill.neutral{background:var(--g100);color:var(--g400);}
 .clientrow{cursor:pointer;}
+.clientrow .chev{display:inline-block;width:16px;color:var(--g400);font-size:11px;}
+.clientrow.open td{background:var(--t50);border-bottom-color:transparent;}
+.detailrow:hover td{background:transparent;}
+.detailrow>td{padding:0 0 10px;border-bottom:.5px solid var(--bd);}
+.client-detail{margin:0;padding:16px 18px;background:var(--bg);border:.5px solid var(--bd);border-radius:12px;}
+.client-detail table{background:var(--sf);border-radius:10px;}
 .client-head{display:flex;justify-content:space-between;align-items:flex-start;gap:22px;flex-wrap:wrap;margin-bottom:6px;}
 .client-head-info{flex:1;min-width:220px;}
 .client-head-name{margin:0 0 8px 0 !important;border:none !important;padding:0 !important;}
@@ -330,6 +337,25 @@ body.dark-mode canvas{background:#fff;border-radius:10px;}
   #clientTable td:nth-child(6) .btn{justify-content:center;}
   .modal{padding:16px;max-height:92vh;}
 }
+
+/* Modo incrustado (?embed=1, dentro del Panel Profesional): sin cabecera ni menú lateral; el menú pasa a
+   pestañas horizontales arriba y el modo oscuro lo decide el panel. */
+.newtab{display:none;}
+html.embed .app{flex-direction:column;min-height:0;}
+html.embed .sidebar{position:static;height:auto;width:auto;flex:0 0 auto;align-self:flex-start;flex-direction:row;flex-wrap:wrap;align-items:center;gap:4px;padding:4px;margin:20px 2rem 0;background:var(--g100);border-radius:12px;overflow:visible;}
+html.embed .brand,html.embed .sidebar .foot,html.embed .navsep{display:none;}
+html.embed .navbtn{width:auto;margin:0;padding:8px 16px;border-radius:9px;font-size:13px;color:var(--g500);white-space:nowrap;}
+html.embed .navbtn:hover{background:rgba(0,0,0,.05);color:var(--g900);}
+html.embed .navbtn.active{background:var(--sf);color:var(--t600);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.08);}
+html.embed .navbtn.active::before{display:none;}
+html.embed .newtab{display:inline-flex;font-size:12px;text-decoration:none;color:var(--g400);margin-left:6px;}
+html.embed .main{padding:1.25rem 2rem 2rem;}
+@media screen and (max-width:760px){
+  html.embed .sidebar{margin:12px 14px 0;max-width:calc(100% - 28px);flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;}
+  html.embed .sidebar::-webkit-scrollbar{display:none;}
+  html.embed .navbtn{flex:0 0 auto;padding:8px 12px;}
+  html.embed .main{padding:14px;}
+}
 </style>
 </head>
 <body>
@@ -343,11 +369,10 @@ body.dark-mode canvas{background:#fff;border-radius:10px;}
       </div>
     </div>
     <button class="navbtn active" data-view="clientes"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> Clientes</button>
-    <button class="navbtn" data-view="valoracion"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21.3 8.7 8.7 21.3a1 1 0 0 1-1.4 0L2.7 16.7a1 1 0 0 1 0-1.4L15.3 2.7a1 1 0 0 1 1.4 0l4.6 4.6a1 1 0 0 1 0 1.4z"/><path d="m7.5 10.5 2 2"/><path d="m10.5 7.5 2 2"/><path d="m13.5 4.5 2 2"/><path d="m4.5 13.5 2 2"/></svg> Nueva valoración</button>
-    <button class="navbtn" data-view="resultados"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg> Resultados</button>
     <button class="navbtn" data-view="informe"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> Informe / PDF</button>
     <div class="navsep"></div>
     <button class="navbtn" data-view="ajustes"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg> Ajustes</button>
+    <a class="navbtn newtab" id="lnkNewTab" href="calculadora_antropometria.html" target="_blank" rel="noopener" title="Abrir la calculadora en una pestaña aparte"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>Abrir aparte</a>
   <div class="foot">
       <button class="sb-toggle" id="darkModeBtn" type="button">
         <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
@@ -1090,7 +1115,9 @@ function compararValores(actual, referencia, etmSettings){
    ============================================================ */
 const VIEWS = ["clientes","valoracion","resultados","informe","ajustes"];
 function goView(v){
-  document.querySelectorAll(".navbtn").forEach(b=>b.classList.toggle("active", b.dataset.view===v));
+  // Valoración y Resultados ya no son pestañas: se abren desde un cliente y cuelgan de "Clientes".
+  const pestana = (v==="valoracion" || v==="resultados") ? "clientes" : v;
+  document.querySelectorAll(".navbtn").forEach(b=>b.classList.toggle("active", b.dataset.view===pestana));
   renderView(v);
 }
 function renderView(v){
@@ -1116,7 +1143,16 @@ document.addEventListener("DOMContentLoaded", async ()=>{
     root.innerHTML = `<div class="card"><div class="empty">⚠️ No se pudo conectar con Supabase. Comprueba tu conexion y recarga la pagina.</div></div>`;
     return;
   }
+  // ?c=<id> (desde la ficha del deportista en el panel): deja abierto a ese cliente
+  const cParam = new URLSearchParams(location.search).get("c");
+  if(cParam && getClient(cParam)) CURRENT_CLIENT_ID = cParam;
+  const lnk = document.getElementById("lnkNewTab");
+  if(lnk) lnk.href = location.pathname;
   goView("clientes");
+  if(cParam && CURRENT_CLIENT_ID==cParam){
+    const fila = document.querySelector("#clientTable tr.clientrow.open");
+    if(fila) fila.scrollIntoView({block:"start"});
+  }
 });
 
 /* ============================================================
@@ -1127,21 +1163,22 @@ function viewClientes(){
   const rows = clients.map(c=>{
     const nVal = c.valoraciones.length;
     const last = lastValoracion(c);
-    return `<tr class="clientrow" data-id="${c.id}">
-      <td><strong>${esc(c.nombre)} ${esc(c.apellidos||"")}</strong></td>
+    const abierto = CURRENT_CLIENT_ID==c.id;
+    return `<tr class="clientrow${abierto?" open":""}" data-id="${c.id}">
+      <td><span class="chev" aria-hidden="true">${abierto?"▾":"▸"}</span><strong>${esc(c.nombre)} ${esc(c.apellidos||"")}</strong></td>
       <td>${esc(c.deporte||"—")}</td>
       <td>${c.sexo?esc(c.sexo):"—"}</td>
       <td>${nVal} <span class="small-note">valoración${nVal===1?"":"es"}</span></td>
       <td>${last?fmtDate(last.fecha):"—"}</td>
-      <td class="no-print"><div class="btn-group"><button class="btn ghost sm" data-open="${c.id}"><span class="ic">📂</span> Abrir</button> <button class="btn danger sm" data-del="${c.id}"><span class="ic">🗑️</span> Eliminar</button></div></td>
-    </tr>`;
+      <td class="no-print"><div class="btn-group"><button class="btn camel sm" data-newval="${c.id}" title="Empezar una valoración nueva de este cliente"><span class="ic">➕</span> Valoración</button> <button class="btn ghost sm" data-open="${c.id}" aria-expanded="${abierto}"><span class="ic">${abierto?"▴":"📂"}</span> ${abierto?"Cerrar":"Abrir"}</button> <button class="btn danger sm" data-del="${c.id}" title="Quitar el perfil antropométrico"><span class="ic">🗑️</span></button></div></td>
+    </tr>${abierto ? `<tr class="detailrow"><td colspan="6">${viewClienteDetalle(c)}</td></tr>` : ""}`;
   }).join("");
   return `
   <h2>Clientes</h2>
-  <p class="lead">Ficha de cada cliente con su historial completo de valoraciones antropométricas.</p>
+  <p class="lead">Pulsa <strong>Abrir</strong> para ver la ficha y el historial de valoraciones justo debajo del cliente, o <strong>+ Valoración</strong> para empezar una nueva.</p>
   <div class="card">
     <div class="searchbar">
-      <input type="text" id="searchClient" placeholder="Buscar cliente por nombre...">
+      <input type="text" id="searchClient" placeholder="Buscar cliente por nombre..." value="${esc(CLIENT_SEARCH)}">
       <button class="btn camel" id="btnNewClient"><span class="ic">➕</span> Nuevo cliente</button>
       <button class="btn ghost" id="btnImportClient"><span class="ic">📄</span> Importar cliente (PDF) <span class="unit-tag">beta</span></button>
     </div>
@@ -1151,9 +1188,10 @@ function viewClientes(){
       <tbody>${rows}</tbody>
     </table>`}
   </div>
-  ${CURRENT_CLIENT_ID ? viewClienteDetalle(getClient(CURRENT_CLIENT_ID)) : ""}
   `;
 }
+let CLIENT_SEARCH = "";
+let INFORME_PRESEL = null; // valoración a preseleccionar (y generar) al abrir la pestaña Informe
 
 function esc(s){ return (s===undefined||s===null) ? "" : String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
@@ -1172,14 +1210,15 @@ function viewClienteDetalle(c){
       <td>${R?fmt(R.imc,1):"—"}</td>
       <td class="no-print">
         <div class="btn-group">
-          <button class="btn ghost sm" data-usevalo="${v.id}"><span class="ic">📊</span> Ver resultados</button>
+          <button class="btn ghost sm" data-usevalo="${v.id}"><span class="ic">📊</span> Resultados</button>
+          <button class="btn ghost sm" data-informe="${v.id}" title="Generar el informe PDF de esta valoración"><span class="ic">📄</span> Informe</button>
           <button class="btn danger sm" data-delvalo="${v.id}"><span class="ic">🗑️</span> Eliminar</button>
         </div>
       </td>
     </tr>`;
   }).join("");
   return `
-  <div class="card">
+  <div class="client-detail">
     <div class="client-head">
       <div class="client-head-info">
         <h3 class="client-head-name">${esc(c.nombre)} ${esc(c.apellidos||"")}</h3>
@@ -1195,8 +1234,8 @@ function viewClienteDetalle(c){
     </div>
     ${c.lesiones ? `<p class="small-note"><strong>Lesiones:</strong> ${esc(c.lesiones)}</p>` : ""}
     ${c.notas ? `<p class="small-note"><strong>Notas:</strong> ${esc(c.notas)}</p>` : ""}
-    <h3>Historial de valoraciones</h3>
-    ${vals.length===0 ? `<div class="empty">Sin valoraciones todavía.</div>` : `
+    <h3 style="margin-top:14px;">Historial de valoraciones</h3>
+    ${vals.length===0 ? `<div class="empty">Sin valoraciones todavía. Pulsa "Nueva valoración" para crear la primera.</div>` : `
     <table>
       <thead><tr><th>Fecha</th><th>Peso</th><th>% Grasa</th><th>% Músculo</th><th>IMC</th><th></th></tr></thead>
       <tbody>${rows}</tbody>
@@ -1206,20 +1245,39 @@ function viewClienteDetalle(c){
 
 function wireClientes(){
   const search = document.getElementById("searchClient");
-  if(search) search.addEventListener("input", ()=>{
-    const q = search.value.toLowerCase();
-    document.querySelectorAll("#clientTable tbody tr").forEach(tr=>{
-      tr.style.display = tr.textContent.toLowerCase().includes(q) ? "" : "none";
+  // Filtra las filas de cliente; la ficha desplegada sigue a su fila (se oculta o muestra con ella).
+  const filtrar = ()=>{
+    const q = (search.value||"").toLowerCase();
+    CLIENT_SEARCH = search.value||"";
+    document.querySelectorAll("#clientTable tbody tr.clientrow").forEach(tr=>{
+      const visible = tr.textContent.toLowerCase().includes(q);
+      tr.style.display = visible ? "" : "none";
+      const next = tr.nextElementSibling;
+      if(next && next.classList.contains("detailrow")) next.style.display = visible ? "" : "none";
     });
-  });
+  };
+  if(search){ search.addEventListener("input", filtrar); if(search.value) filtrar(); }
   const btnNew = document.getElementById("btnNewClient");
   if(btnNew) btnNew.addEventListener("click", ()=>openClientForm(null));
   const btnImport = document.getElementById("btnImportClient");
   if(btnImport) btnImport.addEventListener("click", ()=>openImportClientModal());
-  document.querySelectorAll("[data-open]").forEach(b=>b.addEventListener("click", ()=>{
-    CURRENT_CLIENT_ID = b.dataset.open; renderView("clientes");
+  // Abrir/cerrar la ficha del cliente en su sitio (solo uno abierto a la vez)
+  const alternarCliente = id=>{
+    CURRENT_CLIENT_ID = (CURRENT_CLIENT_ID==id) ? null : id;
+    renderView("clientes");
+    const fila = document.querySelector("#clientTable tr.clientrow.open");
+    if(fila) fila.scrollIntoView({block:"start", behavior:"smooth"});
+  };
+  document.querySelectorAll("[data-open]").forEach(b=>b.addEventListener("click", e=>{ e.stopPropagation(); alternarCliente(b.dataset.open); }));
+  document.querySelectorAll("tr.clientrow").forEach(tr=>tr.addEventListener("click", e=>{
+    if(e.target.closest("button")) return;
+    alternarCliente(tr.dataset.id);
   }));
-  document.querySelectorAll("[data-del]").forEach(b=>b.addEventListener("click", ()=>{
+  document.querySelectorAll("[data-newval]").forEach(b=>b.addEventListener("click", e=>{
+    e.stopPropagation(); CURRENT_CLIENT_ID = b.dataset.newval; goView("valoracion");
+  }));
+  document.querySelectorAll("[data-del]").forEach(b=>b.addEventListener("click", e=>{
+    e.stopPropagation();
     const c = getClient(b.dataset.del);
     if(!c) return;
     confirmModal(`¿Quitar el perfil antropométrico de ${c.nombre} y todas sus valoraciones? El deportista seguirá existiendo en Nutrición Deportiva (Panel Profesional) — esto solo borra sus datos de antropometría.`, async ()=>{
@@ -1236,6 +1294,10 @@ function wireClientes(){
   if(btnEdit) btnEdit.addEventListener("click", ()=>openClientForm(getClient(CURRENT_CLIENT_ID)));
   const btnNewV = document.getElementById("btnNewValoracion");
   if(btnNewV) btnNewV.addEventListener("click", ()=>{ goView("valoracion"); });
+  // Informe directo: abre la pestaña Informe con este cliente y esta valoración y genera la vista previa
+  document.querySelectorAll("[data-informe]").forEach(b=>b.addEventListener("click", ()=>{
+    INFORME_PRESEL = b.dataset.informe; goView("informe");
+  }));
   document.querySelectorAll("[data-usevalo]").forEach(b=>b.addEventListener("click", ()=>{
     RESULT_VALORACION_ID = b.dataset.usevalo; goView("resultados");
   }));
@@ -1810,20 +1872,13 @@ function viewValoracion(){
     return `<h2>Nueva valoración</h2><div class="card"><div class="empty">Todavía no hay clientes. Crea uno primero en la pestaña "Clientes".</div></div>`;
   }
   if(!CURRENT_CLIENT_ID || !getClient(CURRENT_CLIENT_ID)){
-    CURRENT_CLIENT_ID = allClients[0].id;
+    return `<h2>Nueva valoración</h2><div class="card"><div class="empty">Elige un cliente en Clientes (botón "+ Valoración") para empezar una valoración.</div>
+      <div class="btnbar"><button class="btn camel" data-back>Ir a Clientes</button></div></div>`;
   }
   const c = getClient(CURRENT_CLIENT_ID);
   const draft = ensureDraft(c);
   const prev = lastValoracion(c);
   const prevValores = prev ? valoresDesdeValoracion(prev, c) : null;
-
-  const clientSelector = `
-  <div class="card no-print">
-    <div class="field" style="max-width:340px;">
-      <label>Cliente</label>
-      <select id="valClientSelect">${allClients.map(cc=>`<option value="${cc.id}" ${cc.id==c.id?"selected":""}>${esc(cc.nombre)} ${esc(cc.apellidos||"")}</option>`).join("")}</select>
-    </div>
-  </div>`;
 
   const compareNote = prev ? `
     <div class="compare-box">
@@ -1832,9 +1887,9 @@ function viewValoracion(){
     <div class="compare-box">Esta será la primera valoración de ${esc(c.nombre)}. No hay datos anteriores con los que comparar todavía.</div>`;
 
   return `
+  <button class="btn ghost sm no-print" data-back style="margin-bottom:12px;">← Volver a ${esc(c.nombre)}</button>
   <h2>Nueva valoración — ${esc(c.nombre)} ${esc(c.apellidos||"")}</h2>
   <p class="lead">Introduce hasta 3 medidas por variable siguiendo el protocolo ISAK. La app valida automáticamente la tolerancia y calcula la media armónica o mediana. Si no tienes tiempo para repetir la medida, con rellenar el primer campo es suficiente: se usará ese valor directamente, sin aviso de tolerancia.</p>
-  ${clientSelector}
   ${compareNote}
 
   <div class="card no-print">
@@ -2127,9 +2182,9 @@ function pickResultValoracion(c){
 
 function viewResultados(){
   const c = pickResultClient();
-  if(!c) return `<h2>Resultados</h2><div class="card"><div class="empty">Selecciona un cliente con al menos una valoración.</div></div>`;
+  if(!c) return `<h2>Resultados</h2><div class="card"><div class="empty">Abre un cliente en Clientes y pulsa "Resultados" en una de sus valoraciones.</div><div class="btnbar"><button class="btn camel" data-back>Ir a Clientes</button></div></div>`;
   const v = pickResultValoracion(c);
-  if(!v) return `<h2>Resultados</h2><div class="card"><div class="empty">${esc(c.nombre)} todavía no tiene valoraciones. Ve a "Nueva valoración".</div></div>`;
+  if(!v) return `<h2>Resultados</h2><div class="card"><div class="empty">${esc(c.nombre)} todavía no tiene valoraciones. Vuelve a Clientes y pulsa "+ Valoración".</div><div class="btnbar"><button class="btn camel" data-back>← Volver a ${esc(c.nombre)}</button></div></div>`;
 
   const valores = valoresDesdeValoracion(v, c);
   const edad = edadDecimal(v.fecha, c.fechaNacimiento);
@@ -2147,10 +2202,12 @@ function viewResultados(){
   const footballCompareHtml = footballCompareCardHtml(c, R);
 
   if(!R){
-    return `<h2>Resultados — ${esc(c.nombre)}</h2><div class="card"><div class="empty">Esta valoración tiene datos incompletos.</div></div>`;
+    return `<button class="btn ghost sm no-print" data-back style="margin-bottom:12px;">← Volver a ${esc(c.nombre)}</button>
+      <h2>Resultados — ${esc(c.nombre)}</h2><div class="card"><div class="empty">Esta valoración tiene datos incompletos.</div></div>`;
   }
 
   return `
+  <button class="btn ghost sm no-print" data-back style="margin-bottom:12px;">← Volver a ${esc(c.nombre)}</button>
   <h2>Resultados — ${esc(c.nombre)} ${esc(c.apellidos||"")}</h2>
   <p class="lead">Valoración del <strong>${fmtDate(v.fecha)}</strong>${edad!==null?(" · "+fmt(edad,1)+" años"):""} ${prev?(" · comparado con la del "+fmtDate(prev.fecha)):""}</p>
 
@@ -2874,7 +2931,7 @@ function viewInforme(){
   const selClientId = CURRENT_CLIENT_ID || clients[0].id;
   const c = getClient(selClientId) || clients[0];
   const valOpts = c.valoraciones.slice().sort((a,b)=>new Date(b.fecha)-new Date(a.fecha))
-    .map(v=>`<option value="${v.id}">${fmtDate(v.fecha)}</option>`).join("");
+    .map(v=>`<option value="${v.id}" ${v.id==INFORME_PRESEL?"selected":""}>${fmtDate(v.fecha)}</option>`).join("");
   return `
   <h2>Informe / PDF</h2>
   <p class="lead">Genera el informe de una valoración y expórtalo a PDF usando el diálogo de impresión del navegador (100% offline).</p>
@@ -3051,6 +3108,10 @@ function wireInforme(){
     }
     window.print();
   });
+  if(INFORME_PRESEL){
+    valSel.value = INFORME_PRESEL; INFORME_PRESEL = null;
+    document.getElementById("btnGenerarInforme").click();
+  }
 }
 
 // Dibuja los gráficos canvas del informe (pliegues, tartas de composición, PHANTOM, somatocarta)
@@ -3352,6 +3413,8 @@ function wireAjustes(){
    DISPATCHER DE EVENTOS POR VISTA
    ============================================================ */
 function wireView(v){
+  // Enlace "← Volver a <cliente>" de las pantallas que cuelgan de un cliente
+  document.querySelectorAll("[data-back]").forEach(b=>b.addEventListener("click", ()=>goView("clientes")));
   if(v==="clientes") wireClientes();
   else if(v==="valoracion") wireValoracion();
   else if(v==="resultados") wireResultados();
