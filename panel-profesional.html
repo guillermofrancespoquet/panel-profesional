@@ -1712,6 +1712,11 @@ body.dark-mode .frm select.inp{background-image:url("data:image/svg+xml,%3Csvg x
     <div class="dash-card hd-card">
       <p class="hd-h">1 · Datos personales</p>
     <div class="calc-grid">
+      <div style="grid-column:1/-1">
+        <label class="mfl" for="calcDep">Deportista <span class="hd-opt">(opcional · rellena sus datos automáticamente)</span></label>
+        <select class="inp" id="calcDep" onchange="calcElegirDep()"><option value="">Sin deportista (introducir a mano)</option></select>
+        <div id="calcDepHint" class="hd-hint"></div>
+      </div>
       <div>
         <label class="mfl" for="calcSexo">Sexo</label>
         <select class="inp" id="calcSexo" onchange="calcAll()">
@@ -2665,7 +2670,7 @@ function navTo(section){
     document.getElementById(hidra?'sbCalcHidra':'sbCalcEnergia').classList.add('on');
     document.getElementById('sbCalcSub').classList.add('open');
     document.getElementById('sbCalcChevron').classList.add('open');
-    show('vcalc'); setCalcTab(hidra?'hidra':'energia'); if(hidra) initHidra(); else calcAll();
+    show('vcalc'); setCalcTab(hidra?'hidra':'energia'); if(hidra) initHidra(); else { initCalcEnergia(); calcAll(); }
   }
   else if(section==='referencia'){document.getElementById('sbRef').classList.add('on');show('vref');}
   else if(section==='suplementacion'){document.getElementById('sbSupl').classList.add('on');show('vsupl');}
@@ -4179,6 +4184,46 @@ async function deleteSudoracion(id, depId){
   if(!confirm('¿Eliminar este test de sudoración?')) return;
   await sb(`tests_sudoracion?id=eq.${id}`, {method:'DELETE', headers:{'Prefer':'return=minimal'}});
   loadSudoracion(depId);
+}
+
+// ── Calculadora de energía asociada a un deportista ──
+// Al elegir un deportista se rellenan sexo, edad, peso, altura y % de grasa a partir de su perfil y su
+// última valoración antropométrica; los campos siguen siendo editables.
+async function initCalcEnergia(){
+  let rows = [];
+  try{ const r = await sb('clientes_deportivos?select=id,nombre&order=nombre.asc'); if(Array.isArray(r)) rows = r; }catch(e){}
+  const sel = document.getElementById('calcDep'), actual = sel.value;
+  sel.innerHTML = '<option value="">Sin deportista (introducir a mano)</option>' + rows.map(d=>`<option value="${d.id}">${sudEsc(d.nombre)}</option>`).join('');
+  if(actual) sel.value = actual;
+}
+async function calcElegirDep(){
+  const id = document.getElementById('calcDep').value, hint = document.getElementById('calcDepHint');
+  if(!id){ hint.textContent = ''; return; }
+  hint.textContent = 'Cargando datos…';
+  const [per, val] = await Promise.all([
+    sb(`antropometria_perfil?deportista_id=eq.${id}&select=sexo,fecha_nacimiento,talla`).catch(()=>null),
+    sb(`antropometria_valoraciones?deportista_id=eq.${id}&order=fecha.desc&limit=1&select=fecha,resumen,peso:medidas->peso,talla:medidas->talla`).catch(()=>null)
+  ]);
+  if(document.getElementById('calcDep').value != id) return;   // se eligió otro mientras cargaba
+  const p = Array.isArray(per) && per[0] || null, v = Array.isArray(val) && val[0] || null;
+  const num = x => { if(x && typeof x==='object') x = x.value; x = parseFloat(x); return isNaN(x) ? null : x; };
+  const datos = [], faltan = [];
+  const poner = (campo, valor, texto) => { document.getElementById(campo).value = valor; datos.push(texto); };
+  const vaciar = campo => { document.getElementById(campo).value = ''; };   // no dejar datos del deportista anterior
+  if(p && p.sexo) poner('calcSexo', /^h/i.test(p.sexo) ? 'h' : 'm', p.sexo.toLowerCase()); else faltan.push('sexo');
+  if(p && p.fecha_nacimiento){
+    const edad = Math.floor((Date.now()-new Date(p.fecha_nacimiento).getTime())/(365.25*86400000));
+    poner('calcEdad', edad, `${edad} años`);
+  } else { faltan.push('edad'); vaciar('calcEdad'); }
+  const peso = v && (num(v.resumen && v.resumen.peso) ?? num(v.peso));
+  if(peso) poner('calcPeso', peso, `${planF(peso,1)} kg (valoración del ${v.fecha})`); else { faltan.push('peso'); vaciar('calcPeso'); }
+  const talla = (p && num(p.talla)) ?? (v && num(v.talla));
+  if(talla) poner('calcAltura', talla, `${planF(talla, talla%1 ? 1 : 0)} cm`); else { faltan.push('altura'); vaciar('calcAltura'); }
+  const grasa = v && v.resumen && num(v.resumen.pct_grasa);
+  if(grasa) poner('calcGrasa', +grasa.toFixed(1), `${planF(grasa,1)} % de grasa`); else vaciar('calcGrasa');
+  hint.textContent = (datos.length ? 'Datos cargados: ' + datos.join(', ') + '. ' : '') +
+    (faltan.length ? `Falta ${faltan.join(', ')}: complétalo a mano${!p && !v ? ' (este deportista aún no tiene perfil ni valoración de antropometría)' : ''}.` : '');
+  calcAll();
 }
 
 // ═══════════════ PLAN DE PARTIDO ═══════════════
