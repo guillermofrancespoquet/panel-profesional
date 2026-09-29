@@ -590,6 +590,7 @@ body.dark-mode img{opacity:.92}
 .plan-opt,.pdf-tl-opt{font-size:12px;line-height:1.5;margin:3px 0;padding-left:10px;border-left:2px solid #E2D8C5}
 .plan-opt b,.pdf-tl-opt b{font-weight:600}
 .plan-note,.pdf-tl-note{font-size:11px;line-height:1.5;margin-top:6px;color:var(--g400)}
+.plan-sh,.pdf-tl-sh{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#0F6E56;margin:12px 0 3px}
 .plan-lista{width:100%;border-collapse:collapse;font-size:12px;margin-top:10px}
 .plan-lista td{padding:8px 8px 8px 0;border-top:.5px solid var(--bd);vertical-align:middle;color:var(--g700)}
 .plan-lista td.n{font-weight:600;color:var(--g900);white-space:nowrap}
@@ -690,7 +691,7 @@ body.dark-mode .frm select.inp{background-image:url("data:image/svg+xml,%3Csvg x
 .pdf-two-col > div{flex:1}
 .pdf-hist-item{display:flex;gap:10px;padding:5px 0;font-size:11.5px;border-bottom:.5px solid #f0ebe0}
 .pdf-hist-date{color:#c19a6b;font-weight:700;white-space:nowrap;min-width:55px}
-.pdf-tl-when{color:#c19a6b}.pdf-tl-hora{color:#163a47}.pdf-tl-h{color:#163a47}.pdf-tl-li,.pdf-tl-opt{color:#3a3a3a}.pdf-tl-note{color:#8a7f6d}
+.pdf-tl-sh{color:#3f7a4c}.pdf-tl-when{color:#c19a6b}.pdf-tl-hora{color:#163a47}.pdf-tl-h{color:#163a47}.pdf-tl-li,.pdf-tl-opt{color:#3a3a3a}.pdf-tl-note{color:#8a7f6d}
 .pdf-tl-chip{background:#e4f0e6;color:#3f7a4c}
 .pdf-sum{display:flex;gap:10px;margin-bottom:18px}
 .pdf-sum div{flex:1;background:#faf8f3;border:1px solid #ece4d6;border-radius:10px;padding:9px 12px}
@@ -4240,16 +4241,28 @@ const PLAN_DEPORTES = {
   otro:{n:'Otro deporte',dur:60,tip:''}
 };
 const PLAN_INT = {baja:'Baja',media:'Media',alta:'Alta',competicion:'Competición'};
-// c = gramos de hidratos por 100 g/mL (u='g'|'ml') o por unidad (u='ud'). Valores aproximados.
+// c = gramos de hidratos por 100 g/mL (u='g'|'ml') o por unidad (u='ud'). Valores aproximados de tablas de
+// composición: ajusta según marca y cocción. r = redondeo de la cantidad; ent = unidades enteras.
 const PLAN_ALIM = {
-  arroz:{n:'arroz blanco cocido',c:28,u:'g'}, pasta:{n:'pasta cocida',c:31,u:'g'}, patata:{n:'patata cocida',c:20,u:'g'},
-  avena:{n:'copos de avena (en crudo)',c:66,u:'g'}, pan:{n:'pan de masa madre',c:50,u:'g'}, pasas:{n:'pasas',c:79,u:'g'},
-  zumo:{n:'zumo de naranja',c:10,u:'ml'},
-  platano:{n:'plátano',c:27,u:'ud',s:'plátano',p:'plátanos'}, datil:{n:'dátil medjool',c:18,u:'ud',s:'dátil',p:'dátiles'},
-  manzana:{n:'manzana',c:25,u:'ud',s:'manzana',p:'manzanas'}
+  arroz:{n:'arroz blanco cocido (o integral)',c:28,u:'g'}, pasta:{n:'pasta blanca cocida (o integral)',c:31,u:'g'},
+  cuscus:{n:'cuscús cocido',c:23,u:'g'}, mijo:{n:'mijo cocido',c:24,u:'g'},
+  patata:{n:'patata cocida',c:20,u:'g'}, boniato:{n:'boniato cocido',c:20,u:'g'},
+  avena:{n:'avena en porridge (hecho la noche anterior con bebida vegetal)',c:66,u:'g'}, pasas:{n:'pasas',c:79,u:'g'},
+  zumo:{n:'zumo de fruta',c:10,u:'ml',r:50}, isot:{n:'bebida isotónica con hidratos (6-8 %)',c:7,u:'ml',r:50},
+  pan:{s:'rebanada de pan blanco',p:'rebanadas de pan blanco',c:15,u:'ud',ent:true},
+  tortita:{s:'tortita de arroz o de maíz',p:'tortitas de arroz o de maíz',c:7,u:'ud',ent:true},
+  miel:{s:'cucharada de miel',p:'cucharadas de miel',c:16,u:'ud',ent:true},
+  mermelada:{s:'cucharada de mermelada',p:'cucharadas de mermelada',c:12,u:'ud',ent:true},
+  platano:{s:'plátano',p:'plátanos',c:27,u:'ud'}, datil:{s:'dátil medjool',p:'dátiles',c:18,u:'ud'},
+  manzana:{s:'manzana',p:'manzanas',c:25,u:'ud'}, guayaba:{s:'guayaba',p:'guayabas',c:8,u:'ud'}
 };
-// p = gramos de proteína por 100 g/mL
-const PLAN_PROT = {tofu:{n:'tofu firme',p:12,u:'g'}, tempeh:{n:'tempeh',p:19,u:'g'}, lentejas:{n:'lentejas cocidas',p:9,u:'g'}, soja:{n:'bebida de soja',p:3.3,u:'mL'}};
+const PLAN_GEL_S = 27, PLAN_GEL_L = 57;   // hidratos por gel de 25-30 g y de 55-60 g
+// p = gramos de proteína por 100 g/mL (cocinado). Vegetales primero; animales como opción.
+const PLAN_PROT = {
+  tofu:{n:'tofu firme',p:12,u:'g'}, tempeh:{n:'tempeh',p:19,u:'g'}, lentejas:{n:'lentejas cocidas',p:9,u:'g'},
+  garbanzos:{n:'garbanzos cocidos',p:9,u:'g'}, soja:{n:'bebida de soja',p:3.3,u:'mL'},
+  pollo:{n:'pechuga de pollo cocinada',p:31,u:'g'}, pescado:{n:'pescado cocinado (merluza, salmón…)',p:23,u:'g'}
+};
 
 let planDeps = [], planEdad = null, planSudor = null, planDefDur = 90, lastPlan = null, planGuardadoOk = false;
 
@@ -4264,14 +4277,36 @@ function planHora(hhmm, offMin){
 }
 function planPorcion(k, gCho){
   const a = PLAN_ALIM[k];
-  if(a.u==='ud'){ const q = Math.max(0.5, Math.round(gCho/a.c*2)/2); return {t:`${planQty(q)} ${q===1?a.s:a.p}`, cho:q*a.c}; }
-  const q = Math.max(10, Math.round(gCho/a.c*10)*10);
+  if(a.u==='ud'){
+    const q = a.ent ? Math.max(1, Math.round(gCho/a.c)) : Math.max(0.5, Math.round(gCho/a.c*2)/2);
+    return {t:`${planQty(q)} ${q===1?a.s:a.p}`, cho:q*a.c};
+  }
+  const r = a.r || 10, q = Math.max(r, Math.round(gCho/a.c*100/r)*r);
   return {t:`${q} ${a.u==='ml'?'mL':'g'} de ${a.n}`, cho:q*a.c/100};
 }
-// Reparte los hidratos objetivo entre alimentos ([clave, proporción]) y devuelve el texto con el total real.
+// Reparte los hidratos objetivo entre alimentos. partes: [{k, f, max}] donde f es la proporción y max (opcional)
+// el tope de hidratos de ese alimento (p. ej. 66 g para 100 g de avena); lo que sobra pasa a los demás.
 function planCombo(gCho, partes){
-  const it = partes.map(([k,f])=>planPorcion(k, gCho*f));
+  const fijas = partes.filter(x=>x.max), libres = partes.filter(x=>!x.max), cho = new Map();
+  let resto = gCho;
+  fijas.forEach(x=>{ const c = Math.min(x.max, gCho*x.f); cho.set(x, c); resto -= c; });
+  const suma = libres.reduce((a,x)=>a+x.f,0) || 1;
+  libres.forEach(x=>cho.set(x, Math.max(0,resto)*x.f/suma));
+  const it = partes.map(x=>planPorcion(x.k, cho.get(x)));
   return `<b>${it.map(x=>x.t).join(' + ')}</b> · ≈ ${Math.round(it.reduce((a,x)=>a+x.cho,0))} g de hidratos`;
+}
+// Combinación de geles (55-60 g y 25-30 g) que más se acerca a los hidratos objetivo.
+function planGeles(gCho){
+  let mejor = null;
+  for(let a=0;a<=3;a++) for(let b=0;b<=4;b++){
+    if(!a && !b) continue;
+    const tot = a*PLAN_GEL_L + b*PLAN_GEL_S, d = Math.abs(tot-gCho) + (a+b)*4;
+    if(!mejor || d<mejor.d) mejor = {a,b,tot,d};
+  }
+  const t = [];
+  if(mejor.a) t.push(`${mejor.a} gel${mejor.a>1?'es':''} de 55–60 g`);
+  if(mejor.b) t.push(`${mejor.b} gel${mejor.b>1?'es':''} de 25–30 g`);
+  return {t:t.join(' + '), cho:mejor.tot};
 }
 function planProteina(k, gProt){
   const a = PLAN_PROT[k], q = Math.max(10, Math.round(gProt/a.p*10)*10);
@@ -4283,78 +4318,108 @@ function calcPlan(p){
   const peso = p.peso, horas = p.duracion/60, adulto = !(p.edad!==null && p.edad<18);
   const alta = p.intensidad==='alta' || p.intensidad==='competicion';
   const R = { bloques:[], avisos:[], p };
+  const C = (g, ...partes) => planCombo(g, partes.map(([k,f,max])=>({k,f,max})));
   if(!adulto) R.avisos.push('Deportista menor de edad: las pautas son de adultos y no se aplica la carga de hidratos del día anterior. Úsalas con criterio.');
 
-  // Día anterior (solo adultos, esfuerzos de 90 min o más y no suaves)
+  // ── Día anterior: solo adultos y esfuerzos de 90 min o más que no sean suaves
   if(adulto && p.duracion>=90 && p.intensidad!=='baja'){
+    const g = 2.5*peso, cab = `≈ ${planF(g)} g de hidratos (2,5 g/kg)`;
     R.bloques.push({t:'antes', cuando:'Día anterior', hora:null, titulo:'Llena el depósito',
       chips:[`${planF(8*peso)}–${planF(12*peso)} g de hidratos en el día`, '8–12 g/kg'],
-      lineas:['Comidas ricas en hidratos repartidas durante todo el día: cereales integrales, tubérculos, legumbres y fruta.'],
-      nota:'Una dieta rica en hidratos maximiza las reservas de glucógeno (ISSN 2017).'});
+      lineas:['Prioriza alimentos bajos en fibra y fáciles de digerir: pasta blanca, arroz blanco, cuscús, tubérculos (patata, boniato)… Evita alimentos nuevos, muy grasos o picantes.',
+              'Haz dos comidas de carga de hidratos, una comida y una cena, y reparte el resto en el desayuno, los snacks y la fruta.'],
+      secciones:[
+        {h:`Comida de carga · ${cab}`, opciones:[C(g,['arroz',.6],['boniato',.4]), C(g,['pasta',.6],['patata',.4]), C(g,['cuscus',.6],['platano',.4])]},
+        {h:`Cena de carga · ${cab}`, opciones:[C(g,['mijo',.6],['patata',.4]), C(g,['pasta',.6],['boniato',.4]), C(g,['arroz',.6],['platano',.4])]}],
+      nota:'Una dieta rica en hidratos maximiza las reservas de glucógeno (ISSN 2017). Cantidades aproximadas: con arroz o pasta integral salen algo menos hidratos.'});
   }
-  // Comida previa: 3 h antes
+
+  // ── 3 h antes: desayuno o comida previa
   const hComida = planHora(p.hora,-180), temprano = hComida && +hComida.slice(0,2) < 10;
   const gkgComida = (alta && p.duracion>=120) ? 3 : 2, gComida = gkgComida*peso;
   R.bloques.push({t:'antes', cuando:'3 h antes', hora:hComida, titulo:temprano?'Desayuno previo':'Comida previa',
     chips:[`${planF(gComida)} g de hidratos`, `${gkgComida} g/kg`],
-    lineas:['Alimentos que ya conozcas y toleres bien. Bebe con la comida para empezar bien hidratado.'],
+    lineas:['Pocos alimentos ricos en fibra y grasa, y solo cosas que ya conozcas y toleres. Bebe con la comida para empezar bien hidratado.'],
     opciones: temprano
-      ? [planCombo(gComida,[['avena',.7],['platano',.3]]), planCombo(gComida,[['pan',.7],['datil',.3]])]
-      : [planCombo(gComida,[['arroz',.7],['platano',.3]]), planCombo(gComida,[['pasta',.7],['manzana',.3]]), planCombo(gComida,[['patata',.7],['pasas',.3]])],
-    nota:'Regla práctica dentro del rango de 1–4 g/kg en las horas previas.'});
-  // Snack: 1 h antes
-  const gSnack = 1*peso;
+      ? [C(gComida,['avena',.5,66],['platano',.3],['datil',.2]),
+         C(gComida,['pan',.5],['miel',.25],['zumo',.25]),
+         C(gComida,['pan',.55],['mermelada',.2],['platano',.25]),
+         C(gComida,['tortita',.35],['miel',.3],['zumo',.35])]
+      : [C(gComida,['arroz',.7],['platano',.3]), C(gComida,['pasta',.7],['zumo',.3]), C(gComida,['cuscus',.7],['datil',.3])],
+    nota: temprano ? 'El porridge, con un máximo de 100 g de copos de avena, se deja hecho la noche anterior con bebida vegetal. Regla práctica dentro del rango de 1–4 g/kg en las horas previas.'
+                   : 'Regla práctica dentro del rango de 1–4 g/kg en las horas previas.'});
+
+  // ── 1 h antes: snack
+  const gSnack = 1*peso, gel = planGeles(gSnack);
   R.bloques.push({t:'antes', cuando:'1 h antes', hora:planHora(p.hora,-60), titulo:'Snack previo',
     chips:[`${planF(gSnack)} g de hidratos`, '1 g/kg'],
-    lineas:['Algo ligero y fácil de digerir.'],
-    opciones:[planCombo(gSnack,[['platano',.6],['datil',.4]]), planCombo(gSnack,[['pan',.6],['pasas',.4]])]});
+    lineas:['Algo ligero y fácil de digerir. Elige una opción:'],
+    opciones:[C(gSnack,['tortita',.6],['miel',.4]), C(gSnack,['pan',.6],['miel',.4]), C(gSnack,['platano',.6],['datil',.4]),
+      `<b>${gel.t}</b> con agua · ≈ ${gel.cho} g de hidratos`, C(gSnack,['isot',.5],['platano',.5])]});
 
-  // Durante
+  // ── Durante
   let rate = 0, rango = '', notaDur = '';
-  if(p.duracion<=60){ notaDur = 'En esfuerzos de hasta ~1 h bastan pequeñas cantidades o incluso un enjuague bucal con una bebida con hidratos (Burke 2011).'; }
-  else if(p.duracion<=150){ rate = p.intensidad==='baja'?30:p.intensidad==='media'?45:60; rango='30–60 g/h'; notaDur = p.intensidad==='baja' ? 'Con intensidad baja, ajusta hacia el extremo inferior del rango (Jeukendrup 2014).' : 'El rango depende de la duración y la intensidad (Jeukendrup 2014).'; }
-  else { rate = p.intensidad==='baja'?30:p.intensidad==='media'?60:90; rango='60–90 g/h'; notaDur = 'Por encima de 60 g/h conviene mezclar fuentes de hidratos (glucosa y fructosa) para absorberlos bien. Entrena esta pauta antes (Jeukendrup 2014).'; }
+  if(p.duracion<=45){ notaDur = 'En esfuerzos cortos basta con agua; si es muy intenso, un gel pequeño o un enjuague con una bebida con hidratos (Burke 2011).'; }
+  else if(p.duracion<=75){ rate = alta ? 45 : 30; rango = '30–60 g/h'; notaDur = 'Esfuerzos de alrededor de una hora: cantidades pequeñas (Burke 2011, Jeukendrup 2014).'; }
+  else if(p.duracion<=150){ rate = p.intensidad==='baja' ? 30 : 60; rango = p.intensidad==='baja' ? '30–60 g/h' : '60–90 g/h'; notaDur = 'A partir de una hora y pico se sube a 60–90 g/h si lo has entrenado y lo toleras. Con intensidad baja, ajusta hacia el extremo inferior (Jeukendrup 2014).'; }
+  else { rate = p.intensidad==='baja' ? 45 : p.intensidad==='media' ? 60 : 90; rango = '60–90 g/h'; notaDur = 'En esfuerzos de más de 2,5 h, hasta 90 g/h con hidratos de fuentes múltiples (glucosa y fructosa). Entrena esta pauta antes (Jeukendrup 2014).'; }
   const durLineas = [], durOpc = [], durDespues = [];
-  if(rate>0){
-    durOpc.push(planCombo(rate,[['datil',.5],['platano',.5]]), planCombo(rate,[['pasas',.5],['zumo',.5]]));
-    durLineas.push(`En total, unos ${planF(rate*horas)} g de hidratos durante el esfuerzo. Cada hora, por ejemplo:`);
-  } else durLineas.push('No hace falta una pauta fija de hidratos; puedes tomar pequeñas cantidades si lo toleras.');
-  // Líquido según el último test de sudoración
-  const t = planSudor;
+  // Líquido según el último test de sudoración (si lo hay)
+  const t = planSudor; let fluido = 0;
   if(t && t.tasa>0){
-    const need = Math.max(0, t.tasa*horas - 0.02*peso)/horas*1000;
+    const need = Math.max(0, t.tasa*horas - 0.02*peso)/horas*1000; fluido = need;
     durDespues.push(need>0
       ? `Líquido: ~${Math.round(need/10)*10} mL/h para no perder más del 2 % del peso (según su tasa de sudoración de ${planF(t.tasa,2)} L/h, test del ${t.fecha}).`
       : `Líquido: con su tasa de sudoración (${planF(t.tasa,2)} L/h, test del ${t.fecha}) no llegaría al 2 % de pérdida en esta duración; bebe según lo que necesite sin forzar.`);
   } else durDespues.push('Líquido: sin test de sudoración no hay pauta personalizada. Hazlo desde Calculadora → Hidratación.');
+  if(rate>0){
+    durLineas.push(`En total, unos ${planF(rate*horas)} g de hidratos durante el esfuerzo. Cada hora, por ejemplo:`);
+    // Opción A: bebida isotónica + geles. Opción B: solo geles con agua.
+    let mL = Math.round((fluido>0 ? fluido : 500)/50)*50; mL = Math.max(200, Math.min(mL, Math.round(rate/7*100/50)*50));
+    const cDrink = mL*7/100, resto = rate - cDrink;
+    if(resto >= 15){ const g = planGeles(resto); durOpc.push(`<b>${mL} mL de bebida isotónica con hidratos + ${g.t}</b> · ≈ ${Math.round(cDrink+g.cho)} g de hidratos`); }
+    else durOpc.push(`<b>${mL} mL de bebida isotónica con hidratos</b> · ≈ ${Math.round(cDrink)} g de hidratos`);
+    const gs = planGeles(rate); durOpc.push(`<b>${gs.t}</b> con agua · ≈ ${gs.cho} g de hidratos`);
+    durDespues.push(rate>=60
+      ? 'Los geles grandes (55–60 g) llevan menos unidades en esfuerzos largos e intensos; los de 25–30 g, si tomas cada 20–30 min o el esfuerzo es más suave. Tómalos con agua.'
+      : 'En esfuerzos cortos o suaves, con un gel de 25–30 g por hora suele bastar. Tómalo con agua.');
+    durDespues.push(`Sólido, lo mínimo y solo si lo toleras: ½–1 plátano (≈ ${Math.round(PLAN_ALIM.platano.c/2)}–${PLAN_ALIM.platano.c} g de hidratos) o 1 guayaba (≈ ${PLAN_ALIM.guayaba.c} g).`);
+  } else durLineas.push('No hace falta una pauta fija de hidratos.');
   const tip = PLAN_DEPORTES[p.deporte] ? PLAN_DEPORTES[p.deporte].tip : '';
   if(tip) durDespues.push(tip);
   R.bloques.push({t:'durante', cuando:`Durante · ${p.duracion} min`, hora:p.hora?`${p.hora} – ${planHora(p.hora,p.duracion)}`:null, titulo:'Durante el esfuerzo',
-    chips: rate>0 ? [`${rate} g/h`, `Rango ${rango}`] : ['Pequeñas cantidades'], lineas:durLineas, opciones:durOpc, despues:durDespues, nota:notaDur});
+    chips: rate>0 ? [`${rate} g/h`, `Rango ${rango}`] : ['Solo agua'], lineas:durLineas, opciones:durOpc, despues:durDespues, nota:notaDur});
 
-  // Después
-  const pMin = 0.25*peso, pMax = 0.4*peso, pMed = 0.3*peso;
-  const dlineas = [], ddespues = [];
-  if(p.rapida){
-    dlineas.push(`Si el siguiente esfuerzo es en menos de 4 h: ${planF(1.2*peso)} g de hidratos cada hora durante las primeras 4 h (1,2 g/kg/h). Cada hora, por ejemplo:`);
-  } else dlineas.push('Si no hay otro esfuerzo pronto: una comida completa rica en hidratos y proteína en cuanto puedas.');
-  ddespues.push(`Proteína: ${planF(pMin)}–${planF(pMax)} g (0,25–0,4 g/kg) en la primera toma, por ejemplo ${planProteina('tofu',pMed)}, ${planProteina('tempeh',pMed)} o ${planProteina('lentejas',pMed)}.`);
-  ddespues.push('Líquidos: pésate antes y después; repón 1,25–1,5 L por cada kg perdido.');
-  const dop = p.rapida ? [planCombo(1.2*peso,[['arroz',.7],['platano',.3]]), planCombo(1.2*peso,[['pasta',.7],['pasas',.3]])] : [];
+  // ── Después: hidratos, proteína (vegetal primero, animal opcional) y líquidos
+  const pMin = 0.25*peso, pMax = 0.4*peso, pMed = 0.3*peso, gPost = p.rapida ? 1.2*peso : 1*peso;
   R.bloques.push({t:'despues', cuando:'Después', hora:p.hora?planHora(p.hora,p.duracion):null, titulo:'Recuperación',
-    chips: p.rapida ? [`${planF(1.2*peso)} g/h de hidratos`, '1,2 g/kg/h'] : [`${planF(pMin)}–${planF(pMax)} g de proteína`],
-    lineas:dlineas, opciones:dop, despues:ddespues});
+    chips:[ p.rapida ? `${planF(1.2*peso)} g/h de hidratos` : `≈ ${planF(gPost)} g de hidratos`, `${planF(pMin)}–${planF(pMax)} g de proteína`],
+    secciones:[
+      {h:'Hidratos', lineas:[ p.rapida
+          ? `Si el siguiente esfuerzo es en menos de 4 h: ${planF(1.2*peso)} g de hidratos cada hora durante las primeras 4 h (1,2 g/kg/h). Cada hora, por ejemplo:`
+          : `En la primera comida, en cuanto puedas (regla práctica de ≈ 1 g/kg), por ejemplo:`],
+        opciones:[C(gPost,['arroz',.65],['platano',.35]), C(gPost,['pasta',.65],['pasas',.35]), C(gPost,['patata',.6],['pan',.4])]},
+      {h:`Proteína · ${planF(pMin)}–${planF(pMax)} g por toma (0,25–0,4 g/kg)`,
+        lineas:['Prioridad vegetal, para una toma de ≈ '+planF(pMed)+' g de proteína:'],
+        opciones:[`<b>${planProteina('tofu',pMed)}</b> o <b>${planProteina('tempeh',pMed)}</b>`, `<b>${planProteina('lentejas',pMed)}</b> o <b>${planProteina('garbanzos',pMed)}</b>`, `<b>${planProteina('soja',pMed)}</b>`],
+        despues:['Si incluyes proteína animal (opcional): '+planProteina('pollo',pMed)+' o '+planProteina('pescado',pMed)+'.']},
+      {h:'Líquidos y recomendaciones', lineas:[
+        'Pésate antes y después: repón 1,25–1,5 L por cada kg perdido, en pequeñas tomas y con las comidas.',
+        'Empieza a comer pronto, sobre todo si hay otro esfuerzo en pocas horas.',
+        'Incluye verduras y fruta para reponer micronutrientes.']}
+    ]});
   return R;
 }
 
 function planBloqueHtml(b, c){
-  const opc = (b.opciones||[]).map(o=>`<p class="${c}-opt">${o}</p>`).join('');
+  const lis = a => (a||[]).map(l=>`<p class="${c}-li">${sudEsc(l)}</p>`).join('');
+  const opts = a => (a||[]).map(o=>`<p class="${c}-opt">${o}</p>`).join('');
+  const secs = (b.secciones||[]).map(x=>`<p class="${c}-sh">${sudEsc(x.h)}</p>${lis(x.lineas)}${opts(x.opciones)}${lis(x.despues)}`).join('');
   return `<div class="${c}-item" data-t="${b.t}">
     <div class="${c}-top"><span class="${c}-when">${sudEsc(b.cuando)}</span>${b.hora?`<span class="${c}-hora">${sudEsc(b.hora)}</span>`:''}</div>
     <div class="${c}-h">${sudEsc(b.titulo)}</div>
     <div class="${c}-chips">${b.chips.map(x=>`<span class="${c}-chip">${sudEsc(x)}</span>`).join('')}</div>
-    ${(b.lineas||[]).map(l=>`<p class="${c}-li">${sudEsc(l)}</p>`).join('')}${opc}
-    ${(b.despues||[]).map(l=>`<p class="${c}-li">${sudEsc(l)}</p>`).join('')}
+    ${lis(b.lineas)}${opts(b.opciones)}${lis(b.despues)}${secs}
     ${b.nota?`<p class="${c}-note">${sudEsc(b.nota)}</p>`:''}
   </div>`;
 }
