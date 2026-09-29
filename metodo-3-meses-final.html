@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no,viewport-fit=cover">
 <title>Método 3 Meses · Guillermo Francés</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="manifest" href="./manifest.json">
@@ -37,7 +37,10 @@ body{font-family:var(--f);background:var(--bg);color:var(--g900);min-height:100v
 .spin-txt{font-size:13px;color:var(--g400)}
 
 /* NAV */
-.nav{position:sticky;top:0;z-index:50;background:rgba(250,250,248,.95);backdrop-filter:blur(12px);border-bottom:.5px solid var(--bd);padding:0 2rem;height:52px;display:flex;align-items:center;justify-content:space-between}
+/* iPhone con notch (web instalada): franja verde bajo la barra de estado y contenido desplazado; en pantallas sin notch vale 0 */
+body{padding-top:env(safe-area-inset-top,0px)}
+body::before{content:'';position:fixed;top:0;left:0;right:0;height:env(safe-area-inset-top,0px);background:#04342C;z-index:60;pointer-events:none}
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:rgba(250,250,248,.95);backdrop-filter:blur(12px);border-bottom:.5px solid var(--bd);padding:0 2rem;height:52px;display:flex;align-items:center;justify-content:space-between}
 .nav-brand{font-size:14px;font-weight:600;color:var(--t800);letter-spacing:-.01em}
 .nav-tabs{display:flex;gap:2px;background:var(--g100);border-radius:8px;padding:3px}
 .ntab{font-size:12px;padding:5px 14px;border-radius:6px;border:none;background:transparent;color:var(--g500);cursor:pointer;font-family:var(--f);transition:all .15s;font-weight:500}
