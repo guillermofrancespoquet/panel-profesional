@@ -200,11 +200,16 @@ body.dark-mode canvas{background:#fff;border-radius:10px;}
 @page{size:A4;margin:0;}
 @media print{
   .sidebar,.no-print{display:none !important;}
-  .main{padding:0;}
+  html,body{margin:0 !important;padding:0 !important;background:#fff !important;}
+  .main,html.embed .main{padding:0 !important;}
+  .app{display:block !important;min-height:0 !important;}
   body *{visibility:hidden;}
   #reportPreviewWrap, #reportPreviewWrap *{visibility:visible;}
   #reportPreviewWrap{position:absolute;left:0;top:0;width:100%;}
-  .rep-page{box-shadow:none !important;margin:0 !important;border-radius:0 !important;}
+  .rep-page{box-shadow:none !important;margin:0 !important;border-radius:0 !important;
+    width:210mm !important;max-width:none !important;min-height:296mm !important;height:296mm !important;
+    padding:14mm 14mm 10mm !important;overflow:hidden !important;box-sizing:border-box !important;}
+  .rep-foot{left:14mm !important;right:14mm !important;}
   .rep-page-break{page-break-before:always;break-before:page;}
   .rep-sec{page-break-inside:avoid;break-inside:avoid;margin-bottom:10px;}
   .rep-table{page-break-inside:avoid;break-inside:avoid;}
@@ -336,6 +341,31 @@ body.dark-mode canvas{background:#fff;border-radius:10px;}
   #clientTable td:nth-child(6) .btn-group{display:grid;grid-template-columns:1fr 1fr;}
   #clientTable td:nth-child(6) .btn{justify-content:center;}
   .modal{padding:16px;max-height:92vh;}
+
+  /* Lista de clientes: tarjetas separadas (antes solo una línea fina entre filas) */
+  #clientTable tbody{display:flex;flex-direction:column;gap:10px;}
+  #clientTable tr.clientrow{padding:12px 14px;background:var(--sf);border:.5px solid var(--bdm);border-radius:12px;box-shadow:0 1px 2px rgba(0,0,0,.04);}
+  #clientTable tr.clientrow.open{background:var(--t50);border-color:var(--t400);}
+  #clientTable tr.clientrow.open td{background:transparent;}
+  #clientTable tr.detailrow{display:block;margin:-4px 0 4px;}
+  #clientTable tr.detailrow>td{display:block;padding:0;border:none;}
+  .client-detail{padding:12px;}
+  .client-head{flex-direction:column;align-items:stretch;gap:10px;}
+  .client-head .btn-group{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  .client-head .btn-group .btn{justify-content:center;white-space:normal;}
+  /* Historial de valoraciones: cada valoración es una tarjeta con fecha, 4 datos rotulados y acciones */
+  .client-detail{overflow-x:visible;}
+  #clientTable table.hist-table{min-width:0;width:100%;background:transparent;}
+  #clientTable table.hist-table thead{display:none;}
+  #clientTable table.hist-table,#clientTable table.hist-table tbody{display:block;gap:0;}
+  #clientTable table.hist-table tbody tr{display:grid;grid-template-columns:repeat(4,1fr);gap:8px 6px;padding:12px;margin-bottom:10px;background:var(--sf);border:.5px solid var(--bd);border-radius:10px;}
+  #clientTable table.hist-table td{display:block;grid-column:auto;text-align:left;margin:0;padding:0;border:none;white-space:normal !important;font-size:13px;font-weight:600;color:var(--g900);}
+  #clientTable table.hist-table td.h-fecha{grid-column:1/-1;font-size:14px;padding-bottom:8px;border-bottom:.5px solid var(--bd);color:var(--t600);}
+  #clientTable table.hist-table td[data-l]::before{content:attr(data-l);display:block;font-size:10px;font-weight:500;letter-spacing:.04em;text-transform:uppercase;color:var(--g400);margin-bottom:2px;}
+  #clientTable table.hist-table td.no-print{grid-column:1/-1;padding-top:8px;border-top:.5px solid var(--bd);}
+  #clientTable table.hist-table td.no-print .btn-group{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+  #clientTable table.hist-table td.no-print .btn{justify-content:center;white-space:normal;}
+  #clientTable table.hist-table td.no-print .btn.danger{grid-column:1/-1;}
 }
 
 /* Modo incrustado (?embed=1, dentro del Panel Profesional): sin cabecera ni menú lateral; el menú pasa a
@@ -1203,11 +1233,11 @@ function viewClienteDetalle(c){
     const edad = edadDecimal(v.fecha, c.fechaNacimiento);
     const R = calcularResultados(valores, c, edad);
     return `<tr>
-      <td>${fmtDate(v.fecha)}</td>
-      <td>${valores.peso?fmt(valores.peso,1)+" kg":"—"}</td>
-      <td>${R?fmt(R.pctGrasaPrimaria,1)+"%":"—"}</td>
-      <td>${R?fmt(R.pctMasaMuscular,1)+"%":"—"}</td>
-      <td>${R?fmt(R.imc,1):"—"}</td>
+      <td class="h-fecha">${fmtDate(v.fecha)}</td>
+      <td data-l="Peso">${valores.peso?fmt(valores.peso,1)+" kg":"—"}</td>
+      <td data-l="% Grasa">${R?fmt(R.pctGrasaPrimaria,1)+"%":"—"}</td>
+      <td data-l="% Músc.">${R?fmt(R.pctMasaMuscular,1)+"%":"—"}</td>
+      <td data-l="IMC">${R?fmt(R.imc,1):"—"}</td>
       <td class="no-print">
         <div class="btn-group">
           <button class="btn ghost sm" data-usevalo="${v.id}"><span class="ic">📊</span> Resultados</button>
@@ -1236,7 +1266,7 @@ function viewClienteDetalle(c){
     ${c.notas ? `<p class="small-note"><strong>Notas:</strong> ${esc(c.notas)}</p>` : ""}
     <h3 style="margin-top:14px;">Historial de valoraciones</h3>
     ${vals.length===0 ? `<div class="empty">Sin valoraciones todavía. Pulsa "Nueva valoración" para crear la primera.</div>` : `
-    <table>
+    <table class="hist-table">
       <thead><tr><th>Fecha</th><th>Peso</th><th>% Grasa</th><th>% Músculo</th><th>IMC</th><th></th></tr></thead>
       <tbody>${rows}</tbody>
     </table>`}
@@ -3106,6 +3136,10 @@ function wireInforme(){
     if(!document.getElementById("reportPreviewWrap").innerHTML.trim()){
       toast("Genera primero la vista previa"); return;
     }
+    // El navegador imprime el título de la página en la cabecera: que sea el del informe, no el de la app.
+    const c = getClient(clientSel.value), t0 = document.title;
+    document.title = "Informe antropometría" + (c ? " - " + (c.nombre||"") + " " + (c.apellidos||"") : "");
+    window.addEventListener("afterprint", ()=>{ document.title = t0; }, {once:true});
     window.print();
   });
   if(INFORME_PRESEL){
