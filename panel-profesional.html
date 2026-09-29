@@ -568,6 +568,21 @@ body.dark-mode img{opacity:.92}
 .calc-head{display:flex;align-items:center;justify-content:space-between}
 .calc-close{background:var(--g100);border:none;border-radius:8px;width:28px;height:28px;cursor:pointer;color:var(--g500);font-size:13px}
 .calc-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.hd-card{margin-bottom:12px}
+.hd-h{font-size:12px;font-weight:600;color:var(--g900);margin-bottom:12px}
+.hd-opt{font-weight:400;color:var(--g400)}
+.hd-hint{font-size:11px;color:var(--g400);margin-top:6px;line-height:1.5}
+.hd-note{background:var(--gold-50);color:var(--gold-dk);border-radius:8px;padding:9px 12px;font-size:12px;margin-top:10px;line-height:1.5}
+.hd-actions{display:flex;align-items:center;gap:12px;margin-top:14px;flex-wrap:wrap}
+.hd-actions .btn-add:disabled{opacity:.45;cursor:not-allowed}
+.hd-status{font-size:12px;color:var(--t600)}
+.hd-status.err{color:var(--red)}
+.sud-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:12px}
+.sud-table th{font-size:10.5px;font-weight:500;color:var(--g400);text-transform:uppercase;letter-spacing:.05em;text-align:left;padding:6px 8px 6px 0}
+.sud-table td{padding:8px 8px 8px 0;border-top:.5px solid var(--bd);color:var(--g700);vertical-align:top}
+.sud-table td.n{white-space:nowrap;font-weight:600;color:var(--g900)}
+.sud-cond{display:block;font-size:11px;color:var(--g400)}
+@media(max-width:560px){.sud-table .hide-m{display:none}}
 .calc-warn{background:#FEF2F2;color:var(--red);border-radius:8px;padding:8px 12px;font-size:12px;margin-top:10px}
 .calc-results{background:var(--t900);border-radius:14px;padding:16px 18px;margin-top:14px;color:#fff}
 .calc-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.1)}
@@ -1638,50 +1653,116 @@ body.dark-mode img{opacity:.92}
     </div>
 
     <div id="calcTabHidra" style="display:none">
-      <div class="calc-grid">
-        <div>
-          <label class="mfl">Peso antes del ejercicio (kg)</label>
-          <input type="number" class="inp" id="hidraPesoAntes" step="0.1" placeholder="Ej. 72.4" oninput="calcHidra()">
-        </div>
-        <div>
-          <label class="mfl">Peso después del ejercicio (kg)</label>
-          <input type="number" class="inp" id="hidraPesoDespues" step="0.1" placeholder="Ej. 71.6" oninput="calcHidra()">
-        </div>
-        <div>
-          <label class="mfl">Líquido ingerido durante (mL)</label>
-          <input type="number" class="inp" id="hidraLiquido" placeholder="Ej. 500" oninput="calcHidra()">
-        </div>
-        <div>
-          <label class="mfl">Orina durante (mL, opcional)</label>
-          <input type="number" class="inp" id="hidraOrina" placeholder="0" oninput="calcHidra()">
-        </div>
-        <div>
-          <label class="mfl">Duración del ejercicio (h)</label>
-          <input type="number" class="inp" id="hidraDuracion" step="0.1" placeholder="Ej. 1.5" oninput="calcHidra()">
-        </div>
-        <div>
-          <label class="mfl">Tipo de sudorador</label>
-          <select class="inp" id="hidraTipoSudor" onchange="calcHidra()">
-            <option value="25">Bajo (~20-30 mmol/L Na)</option>
-            <option value="50" selected>Medio (~40-60 mmol/L Na)</option>
-            <option value="80">Salado (~70-90+ mmol/L Na)</option>
-          </select>
-        </div>
-      </div>
-      <div class="calc-grid" style="margin-top:10px">
-        <div style="grid-column:1/-1">
-          <label class="mfl">Duración total prevista del evento (para objetivo de CHO)</label>
-          <select class="inp" id="hidraChoRango" onchange="calcHidra()">
-            <option value="0">Menos de 45 min — no necesario</option>
-            <option value="0">45–75 min — cantidades pequeñas</option>
-            <option value="30">1–2 h — ~30 g/h</option>
-            <option value="60" selected>2–3 h — ~60 g/h</option>
-            <option value="90">Más de 3 h (ultra-resistencia) — hasta 90 g/h</option>
-          </select>
+      <div class="dash-card hd-card">
+        <p class="hd-h">1 · Deportista y sesión</p>
+        <div class="calc-grid">
+          <div style="grid-column:1/-1">
+            <label class="mfl" for="hidraDep">Deportista <span class="hd-opt">(opcional · para guardar el test)</span></label>
+            <select class="inp" id="hidraDep" onchange="hidraElegirDep()"><option value="">Sin guardar (solo calcular)</option></select>
+            <div id="hidraDepHint" class="hd-hint"></div>
+          </div>
+          <div>
+            <label class="mfl" for="hidraFecha">Fecha</label>
+            <input type="date" class="inp" id="hidraFecha" oninput="hidraCambio()">
+          </div>
+          <div>
+            <label class="mfl" for="hidraActividad">Actividad</label>
+            <input type="text" class="inp" id="hidraActividad" list="hidraActividades" placeholder="Ej. Fútbol, carrera, ciclismo…" oninput="hidraCambio()">
+            <datalist id="hidraActividades"><option value="Fútbol"><option value="Carrera"><option value="Ciclismo"><option value="Triatlón"><option value="Natación"><option value="Baloncesto"><option value="Tenis / pádel"><option value="Fuerza / gimnasio"><option value="Otro"></datalist>
+          </div>
+          <div>
+            <label class="mfl" for="hidraDuracion">Duración (min)</label>
+            <input type="number" class="inp" id="hidraDuracion" inputmode="decimal" min="1" step="1" placeholder="Ej. 90" oninput="calcHidra()">
+          </div>
+          <div>
+            <label class="mfl" for="hidraIntensidad">Intensidad</label>
+            <select class="inp" id="hidraIntensidad" onchange="hidraCambio()">
+              <option value="">Sin indicar</option>
+              <option value="baja">Baja</option>
+              <option value="media">Media</option>
+              <option value="alta">Alta</option>
+              <option value="competicion">Competición</option>
+            </select>
+          </div>
         </div>
       </div>
-      <p class="calc-warn" id="hidraWarn" style="display:none"></p>
-      <div class="calc-results" id="hidraResults"></div>
+
+      <div class="dash-card hd-card">
+        <p class="hd-h">2 · Condiciones</p>
+        <div class="calc-grid">
+          <div>
+            <label class="mfl" for="hidraTemp">Temperatura (°C)</label>
+            <input type="number" class="inp" id="hidraTemp" inputmode="decimal" step="0.5" placeholder="Ej. 28" oninput="hidraCambio()">
+          </div>
+          <div>
+            <label class="mfl" for="hidraHumedad">Humedad (%)</label>
+            <input type="number" class="inp" id="hidraHumedad" inputmode="decimal" min="0" max="100" step="1" placeholder="Ej. 60" oninput="hidraCambio()">
+          </div>
+          <div>
+            <label class="mfl" for="hidraAmbiente">Ambiente</label>
+            <select class="inp" id="hidraAmbiente" onchange="hidraCambio()">
+              <option value="">Sin indicar</option>
+              <option value="interior">Interior</option>
+              <option value="exterior-sombra">Exterior · sombra o nublado</option>
+              <option value="exterior-sol">Exterior · sol directo</option>
+            </select>
+          </div>
+          <div>
+            <label class="mfl" for="hidraRopa">Ropa o equipación</label>
+            <input type="text" class="inp" id="hidraRopa" placeholder="Ej. Camiseta técnica y pantalón corto" oninput="hidraCambio()">
+          </div>
+        </div>
+      </div>
+
+      <div class="dash-card hd-card">
+        <p class="hd-h">3 · Pesada y líquidos</p>
+        <div class="calc-grid">
+          <div>
+            <label class="mfl" for="hidraPesoAntes">Peso antes (kg)</label>
+            <input type="number" class="inp" id="hidraPesoAntes" inputmode="decimal" step="0.05" placeholder="Ej. 72.4" oninput="calcHidra()">
+          </div>
+          <div>
+            <label class="mfl" for="hidraPesoDespues">Peso después (kg)</label>
+            <input type="number" class="inp" id="hidraPesoDespues" inputmode="decimal" step="0.05" placeholder="Ej. 71.6" oninput="calcHidra()">
+          </div>
+          <div>
+            <label class="mfl" for="hidraLiquido">Líquido ingerido (mL)</label>
+            <input type="number" class="inp" id="hidraLiquido" inputmode="decimal" min="0" step="10" placeholder="Ej. 500" oninput="calcHidra()">
+          </div>
+          <div>
+            <label class="mfl" for="hidraOrina">Orina durante (mL) <span class="hd-opt">(opcional)</span></label>
+            <input type="number" class="inp" id="hidraOrina" inputmode="decimal" min="0" step="10" placeholder="0" oninput="calcHidra()">
+          </div>
+        </div>
+        <p class="hd-hint">Pesa con poca ropa y la piel seca, antes y después. La ropa empapada o ir al baño falsean el resultado: si ocurre, anótalo.</p>
+      </div>
+
+      <div class="dash-card hd-card">
+        <p class="hd-h">4 · Sodio en el sudor <span class="hd-opt">(opcional)</span></p>
+        <div class="calc-grid">
+          <div>
+            <label class="mfl" for="hidraNaMedido">Medido (mmol/L)</label>
+            <input type="number" class="inp" id="hidraNaMedido" inputmode="decimal" min="0" step="1" placeholder="Si lo has medido" oninput="calcHidra()">
+          </div>
+          <div>
+            <label class="mfl" for="hidraTipoSudor">Estimado, si no hay medición</label>
+            <select class="inp" id="hidraTipoSudor" onchange="calcHidra()">
+              <option value="bajo">Bajo (~20-30 mmol/L)</option>
+              <option value="medio" selected>Medio (~40-60 mmol/L)</option>
+              <option value="salado">Salado (~70-90+ mmol/L)</option>
+            </select>
+          </div>
+        </div>
+        <label class="mfl" for="hidraNotas" style="margin-top:12px">Notas del test</label>
+        <textarea class="notes-ta" id="hidraNotas" style="min-height:64px" placeholder="Observaciones, incidencias, sensaciones…" oninput="hidraCambio()"></textarea>
+      </div>
+
+      <div id="hidraAvisos" aria-live="polite"></div>
+      <div class="calc-results" id="hidraResults" aria-live="polite"></div>
+      <div class="hd-actions">
+        <button class="btn-add" id="hidraGuardar" onclick="guardarTestSudoracion()" disabled>Guardar test</button>
+        <span class="hd-status" id="hidraStatus" role="status"></span>
+      </div>
     </div>
   </div>
 </div>
@@ -2443,7 +2524,7 @@ function navTo(section){
     document.getElementById(hidra?'sbCalcHidra':'sbCalcEnergia').classList.add('on');
     document.getElementById('sbCalcSub').classList.add('open');
     document.getElementById('sbCalcChevron').classList.add('open');
-    show('vcalc'); setCalcTab(hidra?'hidra':'energia'); if(hidra) calcHidra(); else calcAll();
+    show('vcalc'); setCalcTab(hidra?'hidra':'energia'); if(hidra) initHidra(); else calcAll();
   }
   else if(section==='referencia'){document.getElementById('sbRef').classList.add('on');show('vref');}
   else if(section==='suplementacion'){document.getElementById('sbSupl').classList.add('on');show('vsupl');}
@@ -3206,50 +3287,151 @@ function setCalcTab(tab){
   document.getElementById('calcTabHidra').style.display = tab==='hidra' ? 'block' : 'none';
 }
 
+// ═══════════════ TEST DE SUDORACIÓN ═══════════════
+// Método por cambio de peso (ACSM, Sawka et al. 2007; Baker 2017). Se guarda por deportista en
+// tests_sudoracion para ver la evolución. Los umbrales (2 % del peso) son de adultos.
+const HIDRA_NA = { bajo:25, medio:50, salado:80 }; // mmol/L, estimación por categoría
+let hidraDeps = [], hidraEdad = null, hidraGuardadoOk = false;
+
+function hidraVal(id){ const v = parseFloat(document.getElementById(id).value); return isNaN(v) ? null : v; }
+
+function calcSudoracion(d){
+  if(!d.pesoAntes || !d.pesoDespues || !d.duracionMin || d.pesoAntes<=0 || d.duracionMin<=0) return null;
+  const horas = d.duracionMin/60;
+  const perdidaPesoKg = d.pesoAntes - d.pesoDespues;
+  const sudorL = perdidaPesoKg + (d.liquidoMl||0)/1000 - (d.orinaMl||0)/1000;
+  const tasa = sudorL/horas;
+  const pctPeso = perdidaPesoKg/d.pesoAntes*100;
+  const na = d.naMmol;
+  const naMg = sudorL>0 ? sudorL*na*23 : 0;
+  const permitidoL = 0.02*d.pesoAntes; // pérdida tolerada: 2 % del peso
+  const reposMlH = sudorL>0 ? Math.max(0, sudorL - permitidoL)/horas*1000 : 0;
+  const minHasta2 = tasa>0 ? permitidoL/tasa*60 : null; // minutos hasta el 2 % sin beber
+  return {
+    sudorL, tasa, pctPeso, perdidaPesoKg, naMmol:na, naMg, naMgH: naMg/horas, salG: naMg*2.54/1000,
+    reposMlH, minHasta2, postMinL: perdidaPesoKg>0 ? perdidaPesoKg*1.25 : 0, postMaxL: perdidaPesoKg>0 ? perdidaPesoKg*1.5 : 0
+  };
+}
+
+function hidraLeerEntrada(){
+  const medido = hidraVal('hidraNaMedido');
+  const cat = document.getElementById('hidraTipoSudor').value;
+  return {
+    pesoAntes: hidraVal('hidraPesoAntes'), pesoDespues: hidraVal('hidraPesoDespues'),
+    liquidoMl: hidraVal('hidraLiquido')||0, orinaMl: hidraVal('hidraOrina')||0,
+    duracionMin: hidraVal('hidraDuracion'),
+    naMmol: medido!==null ? medido : HIDRA_NA[cat], naMedido: medido!==null, naCategoria: cat
+  };
+}
+
+function hidraCambio(){
+  hidraGuardadoOk = false;
+  document.getElementById('hidraStatus').textContent = '';
+  hidraActualizarBoton();
+}
+function hidraActualizarBoton(){
+  const btn = document.getElementById('hidraGuardar'); if(!btn) return;
+  const ok = !!document.getElementById('hidraDep').value && !!lastHidra && !!document.getElementById('hidraFecha').value && !hidraGuardadoOk;
+  btn.disabled = !ok;
+  btn.textContent = hidraGuardadoOk ? '✓ Test guardado' : 'Guardar test';
+  btn.title = document.getElementById('hidraDep').value ? '' : 'Elige un deportista para poder guardar el test';
+}
+
 function calcHidra(){
-  const pesoAntes = parseFloat(document.getElementById('hidraPesoAntes').value);
-  const pesoDespues = parseFloat(document.getElementById('hidraPesoDespues').value);
-  const liquidoMl = parseFloat(document.getElementById('hidraLiquido').value) || 0;
-  const orinaMl = parseFloat(document.getElementById('hidraOrina').value) || 0;
-  const duracion = parseFloat(document.getElementById('hidraDuracion').value);
-  const naConc = parseFloat(document.getElementById('hidraTipoSudor').value);
-  const choObjetivo = parseFloat(document.getElementById('hidraChoRango').value);
-  const choLabel = document.getElementById('hidraChoRango').selectedOptions[0].text;
-
-  const warnEl = document.getElementById('hidraWarn');
-  warnEl.style.display = 'none';
-
-  if(!pesoAntes || !pesoDespues || !duracion){
-    document.getElementById('hidraResults').innerHTML = '<p style="font-size:12px;color:rgba(255,255,255,.6);text-align:center;padding:10px 0">Rellena peso antes, peso después y duración para calcular.</p>';
+  hidraCambio();
+  const e = hidraLeerEntrada();
+  const r = calcSudoracion(e);
+  const res = document.getElementById('hidraResults'), av = document.getElementById('hidraAvisos');
+  const avisos = [];
+  const f1 = n=>n.toLocaleString('es-ES',{minimumFractionDigits:1,maximumFractionDigits:1});
+  const f2 = n=>n.toLocaleString('es-ES',{minimumFractionDigits:2,maximumFractionDigits:2});
+  if(hidraEdad!==null && hidraEdad<18) avisos.push(['hd-note','Deportista menor de edad: los umbrales de referencia (pérdida del 2 % del peso) son de adultos. Usa estos resultados con criterio.']);
+  if(!r){
+    lastHidra = null;
+    res.innerHTML = '<p style="font-size:12px;color:rgba(255,255,255,.6);text-align:center;padding:10px 0">Rellena peso antes, peso después y duración para calcular.</p>';
+    av.innerHTML = avisos.map(a=>`<p class="${a[0]}">${a[1]}</p>`).join('');
+    hidraActualizarBoton();
     return;
   }
+  if(r.sudorL<=0) avisos.push(['calc-warn','El sudor calculado sale cero o negativo (bebió más de lo que perdió, o hay un error en los datos): revisa las cifras.']);
+  else if(r.pctPeso<0) avisos.push(['calc-warn','El peso ha subido: puede indicar que bebió más de lo que sudó. Revisa los datos.']);
+  else if(r.pctPeso>=2) avisos.push(['calc-warn',`Pérdida del ${f1(r.pctPeso)} % del peso: supera el 2 % que el ACSM recomienda no sobrepasar.`]);
+  av.innerHTML = avisos.map(a=>`<p class="${a[0]}" role="${a[0]==='calc-warn'?'alert':'note'}">${a[1]}</p>`).join('');
+  lastHidra = { e, r };
+  res.innerHTML = `
+    <div class="calc-row hl"><span class="l">Tasa de sudoración</span><span class="v">${f2(r.tasa)} L/h</span></div>
+    <div class="calc-row"><span class="l">Pérdida de sudor total</span><span class="v">${f2(r.sudorL)} L</span></div>
+    <div class="calc-row"><span class="l">Pérdida de peso corporal</span><span class="v">${f1(r.pctPeso)} %</span></div>
+    <div class="calc-row"><span class="l">Sodio perdido${e.naMedido?'':' (estimado)'}</span><span class="v">${Math.round(r.naMg)} mg · ${Math.round(r.naMgH)} mg/h</span></div>
+    <div class="calc-row"><span class="l">Equivale a sal (NaCl)</span><span class="v">${f1(r.salG)} g</span></div>
+    <div class="calc-row"><span class="l">Reposición durante (para no pasar del 2 %)</span><span class="v">${r.reposMlH>0?`~${Math.round(r.reposMlH)} mL/h`:'No hace falta con esta duración'}</span></div>
+    ${r.minHasta2!==null?`<div class="calc-row"><span class="l">Sin beber, llegaría al 2 % a los</span><span class="v">~${Math.round(r.minHasta2)} min</span></div>`:''}
+    <div class="calc-row"><span class="l">Reposición después</span><span class="v">${r.perdidaPesoKg>0?`${f2(r.postMinL)} – ${f2(r.postMaxL)} L`:'—'}</span></div>`;
+  hidraActualizarBoton();
+}
 
-  const perdidaSudorL = (pesoAntes - pesoDespues) + (liquidoMl/1000) - (orinaMl/1000);
-  if(perdidaSudorL < 0){
-    warnEl.style.display = 'block';
-    warnEl.textContent = 'Los datos indican ganancia de peso neta — revisa las cifras introducidas.';
+async function initHidra(){
+  const fecha = document.getElementById('hidraFecha');
+  if(!fecha.value) fecha.value = localISO(new Date());
+  try{
+    const rows = await sb('clientes_deportivos?select=id,nombre,deporte&order=nombre.asc');
+    hidraDeps = Array.isArray(rows) ? rows : [];
+  }catch(e){ hidraDeps = []; }
+  const sel = document.getElementById('hidraDep'), actual = sel.value;
+  sel.innerHTML = '<option value="">Sin guardar (solo calcular)</option>' + hidraDeps.map(d=>`<option value="${d.id}">${sudEsc(d.nombre)}</option>`).join('');
+  if(actual) sel.value = actual;
+  calcHidra();
+}
+
+async function hidraElegirDep(){
+  const id = document.getElementById('hidraDep').value, hint = document.getElementById('hidraDepHint');
+  hidraEdad = null; hint.textContent = '';
+  if(id){
+    const d = hidraDeps.find(x=>x.id==id);
+    const act = document.getElementById('hidraActividad');
+    if(d && d.deporte && !act.value) act.value = d.deporte;
+    try{
+      const r = await sb(`antropometria_perfil?deportista_id=eq.${id}&select=fecha_nacimiento`);
+      const fn = Array.isArray(r) && r[0] && r[0].fecha_nacimiento;
+      if(fn) hidraEdad = (Date.now()-new Date(fn).getTime())/(365.25*86400000);
+      else hint.textContent = 'Sin fecha de nacimiento en su perfil de antropometría: no se puede comprobar si es menor de edad.';
+    }catch(e){}
   }
-  const tasaSudorLh = perdidaSudorL / duracion;
-  const sodioPerdidoMg = perdidaSudorL * naConc * 23;
-  const fluidoHoraMl = Math.round(tasaSudorLh * 1000);
-  const postEjercicioL_min = perdidaSudorL * 1.25;
-  const postEjercicioL_max = perdidaSudorL * 1.5;
+  calcHidra();
+}
 
-  lastHidra = {
-    perdidaSudorL: perdidaSudorL.toFixed(2), tasaSudorLh: tasaSudorLh.toFixed(2),
-    sodioPerdidoMg: Math.round(sodioPerdidoMg), fluidoHoraMl,
-    postEjercicioL_min: postEjercicioL_min.toFixed(2), postEjercicioL_max: postEjercicioL_max.toFixed(2),
-    choObjetivo, choLabel
+async function guardarTestSudoracion(){
+  if(!lastHidra) return;
+  const depId = document.getElementById('hidraDep').value, st = document.getElementById('hidraStatus'), btn = document.getElementById('hidraGuardar');
+  if(!depId) return;
+  const { e, r } = lastHidra, txt = id => document.getElementById(id).value.trim() || null;
+  const fila = {
+    deportista_id: +depId, fecha: document.getElementById('hidraFecha').value,
+    actividad: txt('hidraActividad'), duracion_min: e.duracionMin, intensidad: txt('hidraIntensidad'),
+    temperatura_c: hidraVal('hidraTemp'), humedad_pct: hidraVal('hidraHumedad'), ambiente: txt('hidraAmbiente'), ropa: txt('hidraRopa'),
+    peso_antes: e.pesoAntes, peso_despues: e.pesoDespues, liquido_ml: e.liquidoMl, orina_ml: e.orinaMl,
+    sodio_mmol_l: e.naMedido ? e.naMmol : null, sodio_categoria: e.naMedido ? null : e.naCategoria,
+    notas: txt('hidraNotas'),
+    resultados: { sudor_l:+r.sudorL.toFixed(3), tasa_l_h:+r.tasa.toFixed(3), pct_peso:+r.pctPeso.toFixed(2), sodio_mmol_l:e.naMmol,
+      sodio_mg:Math.round(r.naMg), sodio_mg_h:Math.round(r.naMgH), sal_g:+r.salG.toFixed(2), repos_ml_h:Math.round(r.reposMlH), min_hasta_2pct:r.minHasta2!==null?Math.round(r.minHasta2):null,
+      post_min_l:+r.postMinL.toFixed(2), post_max_l:+r.postMaxL.toFixed(2) }
   };
+  btn.disabled = true; st.className = 'hd-status'; st.textContent = 'Guardando…';
+  let out = null;
+  try{ out = await sb('tests_sudoracion',{method:'POST',body:JSON.stringify(fila)}); }catch(err){}
+  if(Array.isArray(out) && out[0] && out[0].id){
+    hidraGuardadoOk = true; st.textContent = 'Guardado en la ficha del deportista.'; hidraActualizarBoton();
+  } else {
+    st.className = 'hd-status err'; st.textContent = 'No se pudo guardar. Comprueba la conexión y que se haya ejecutado el SQL de tests_sudoracion.'; hidraActualizarBoton();
+  }
+}
 
-  document.getElementById('hidraResults').innerHTML = `
-    <div class="calc-row hl"><span class="l">Tasa de sudoración</span><span class="v">${tasaSudorLh.toFixed(2)} L/h</span></div>
-    <div class="calc-row"><span class="l">Pérdida total de sudor</span><span class="v">${perdidaSudorL.toFixed(2)} L</span></div>
-    <div class="calc-row"><span class="l">Sodio perdido estimado</span><span class="v">${Math.round(sodioPerdidoMg)} mg</span></div>
-    <div class="calc-row"><span class="l">Reposición durante (objetivo)</span><span class="v">~${fluidoHoraMl} mL/h</span></div>
-    <div class="calc-row"><span class="l">Reposición post-ejercicio</span><span class="v">${postEjercicioL_min.toFixed(2)} – ${postEjercicioL_max.toFixed(2)} L</span></div>
-    <div class="calc-row"><span class="l">Carbohidratos objetivo (${choLabel})</span><span class="v">${choObjetivo>0?choObjetivo+' g/h':'No necesario'}</span></div>
-  `;
+// Desde la ficha del deportista: abre la calculadora de hidratación con el deportista elegido.
+async function abrirTestSudoracion(depId){
+  navTo('calc-hidra');
+  await initHidra();
+  document.getElementById('hidraDep').value = String(depId);
+  await hidraElegirDep();
 }
 
 function exportCalcPDF(){
@@ -3288,15 +3470,16 @@ function exportCalcPDF(){
   }
 
   if(lastHidra){
+    const h = lastHidra.r, f2 = n=>n.toLocaleString('es-ES',{minimumFractionDigits:2,maximumFractionDigits:2});
     html += `
     <div class="pdf-section">
       <p class="pdf-section-title">Hidratación deportiva</p>
-      <div class="pdf-row"><span class="l">Tasa de sudoración</span><span class="v">${lastHidra.tasaSudorLh} L/h</span></div>
-      <div class="pdf-row"><span class="l">Pérdida total de sudor</span><span class="v">${lastHidra.perdidaSudorL} L</span></div>
-      <div class="pdf-row"><span class="l">Sodio perdido estimado</span><span class="v">${lastHidra.sodioPerdidoMg} mg</span></div>
-      <div class="pdf-row"><span class="l">Reposición durante el ejercicio</span><span class="v">~${lastHidra.fluidoHoraMl} mL/h</span></div>
-      <div class="pdf-row"><span class="l">Reposición post-ejercicio</span><span class="v">${lastHidra.postEjercicioL_min} – ${lastHidra.postEjercicioL_max} L</span></div>
-      <div class="pdf-row"><span class="l">Carbohidratos objetivo</span><span class="v">${lastHidra.choObjetivo>0?lastHidra.choObjetivo+' g/h':'No necesario'} (${lastHidra.choLabel})</span></div>
+      <div class="pdf-row"><span class="l">Tasa de sudoración</span><span class="v">${f2(h.tasa)} L/h</span></div>
+      <div class="pdf-row"><span class="l">Pérdida total de sudor</span><span class="v">${f2(h.sudorL)} L</span></div>
+      <div class="pdf-row"><span class="l">Pérdida de peso corporal</span><span class="v">${h.pctPeso.toLocaleString('es-ES',{minimumFractionDigits:1,maximumFractionDigits:1})} %</span></div>
+      <div class="pdf-row"><span class="l">Sodio perdido${lastHidra.e.naMedido?'':' (estimado)'}</span><span class="v">${Math.round(h.naMg)} mg</span></div>
+      <div class="pdf-row"><span class="l">Reposición durante el ejercicio</span><span class="v">${h.reposMlH>0?'~'+Math.round(h.reposMlH)+' mL/h':'No necesaria con esta duración'}</span></div>
+      <div class="pdf-row"><span class="l">Reposición post-ejercicio</span><span class="v">${h.perdidaPesoKg>0?f2(h.postMinL)+' – '+f2(h.postMaxL)+' L':'—'}</span></div>
     </div>`;
   }
 
@@ -3649,6 +3832,11 @@ function openDepDet(id) {
     </div>
 
     <div class="depd-section">
+      <p class="sec-title">Test de sudoración</p>
+      <div class="med-box" id="sudBox"><p class="med-empty">Cargando…</p></div>
+    </div>
+
+    <div class="depd-section">
       <p class="sec-title">Archivos · antropometrías, bioimpedancias, informes</p>
       <div class="files-box" id="filesDropZone" onclick="document.getElementById('fileInput').click()">
         <svg class="files-box-icon" width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
@@ -3682,6 +3870,7 @@ function openDepDet(id) {
   show('vdepdet');
   loadHistorial(d.id);
   loadMediciones(d.id);
+  loadSudoracion(d.id);
 }
 
 
@@ -3711,7 +3900,7 @@ function medPunto(r){
 }
 
 // Una mini gráfica por magnitud, cada una con su propia escala (peso y % grasa no comparten eje).
-function medSerie(pts,key,color,titulo,unit){
+function medSerie(pts,key,color,titulo,unit,dec=1){
   const sr=pts.filter(p=>p[key]!==null);
   if(sr.length<2) return '';
   const W=260,H=84,padL=22,padR=22,padT=18,padB=16;
@@ -3724,10 +3913,10 @@ function medSerie(pts,key,color,titulo,unit){
   const a=sr[0], z=sr[sr.length-1];
   const fmtF=f=>new Date(f+'T00:00:00').toLocaleDateString('es-ES',{day:'numeric',month:'short',year:'2-digit'});
   return `<div><div class="med-serie-t"><i style="background:${color}"></i>${titulo} (${unit})</div>
-    <svg class="med-chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Evolución de ${titulo}: de ${medNum(a[key])} a ${medNum(z[key])} ${unit}">
+    <svg class="med-chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Evolución de ${titulo}: de ${medNum(a[key],dec)} a ${medNum(z[key],dec)} ${unit}">
       <path d="${path}" fill="none" stroke="${color}" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>${dots}
-      <text class="v" x="${xAt(a.fecha).toFixed(1)}" y="${(yAt(a[key])-7).toFixed(1)}" text-anchor="middle">${medNum(a[key])}</text>
-      <text class="v" x="${xAt(z.fecha).toFixed(1)}" y="${(yAt(z[key])-7).toFixed(1)}" text-anchor="middle">${medNum(z[key])}</text>
+      <text class="v" x="${xAt(a.fecha).toFixed(1)}" y="${(yAt(a[key])-7).toFixed(1)}" text-anchor="middle">${medNum(a[key],dec)}</text>
+      <text class="v" x="${xAt(z.fecha).toFixed(1)}" y="${(yAt(z[key])-7).toFixed(1)}" text-anchor="middle">${medNum(z[key],dec)}</text>
       <text x="${padL}" y="${H-3}" text-anchor="start">${fmtF(a.fecha)}</text>
       <text x="${W-padR}" y="${H-3}" text-anchor="end">${fmtF(z.fecha)}</text>
     </svg></div>`;
@@ -3773,6 +3962,55 @@ async function loadMediciones(depId){
     ${nota ? `<p class="med-note">${nota}</p>` : ''}`;
 }
 
+
+// ═══════════════ TEST DE SUDORACIÓN (historial en la ficha) ═══════════════
+const sudEsc = s => String(s==null?'':s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const SUD_AMB = {'interior':'interior','exterior-sombra':'exterior, sombra','exterior-sol':'exterior, sol'};
+
+async function loadSudoracion(depId){
+  let rows = [];
+  try{ const r = await sb(`tests_sudoracion?deportista_id=eq.${depId}&order=fecha.asc,id.asc&select=*`); if(Array.isArray(r)) rows = r; }catch(e){}
+  const el = document.getElementById('sudBox');
+  if(!el || currentDepId != depId) return;
+  const nuevo = `<button class="btn-action" style="background:var(--t50);color:var(--t600)" onclick="abrirTestSudoracion(${depId})">Nuevo test</button>`;
+  if(!rows.length){
+    el.innerHTML = `<p class="med-empty">Sin tests de sudoración todavía. Se hacen desde Calculadora → Hidratación.</p>${nuevo}`;
+    return;
+  }
+  const fmt = f=>new Date(f+'T00:00:00').toLocaleDateString('es-ES',{day:'numeric',month:'short',year:'numeric'});
+  const cond = t=>[t.temperatura_c!=null?`${medNum(+t.temperatura_c,0)} °C`:'', t.humedad_pct!=null?`${medNum(+t.humedad_pct,0)} % hum.`:'', SUD_AMB[t.ambiente]||'', t.intensidad?`intensidad ${sudEsc(t.intensidad)}`:''].filter(Boolean).join(' · ');
+  const res = t=>t.resultados||{};
+  const pts = rows.map(t=>({fecha:t.fecha, tasa:res(t).tasa_l_h!=null?+res(t).tasa_l_h:null}));
+  const ult = rows[rows.length-1], ur = res(ult);
+  const tabla = rows.slice().reverse().map(t=>{
+    const r = res(t);
+    return `<tr><td class="n">${fmt(t.fecha)}</td>
+      <td>${sudEsc(t.actividad||'—')}<span class="sud-cond">${cond(t)||'sin condiciones'}</span></td>
+      <td class="n">${r.tasa_l_h!=null?medNum(+r.tasa_l_h,2)+' L/h':'—'}</td>
+      <td class="n hide-m">${r.pct_peso!=null?medNum(+r.pct_peso,1)+' %':'—'}</td>
+      <td><button class="hist-del" style="opacity:1" title="Eliminar test" onclick="deleteSudoracion(${t.id},${depId})"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg></button></td></tr>`;
+  }).join('');
+  el.innerHTML = `
+    <div class="med-head">
+      <span class="med-date">Último test · ${fmt(ult.fecha)}</span>
+      <span class="med-ago">${rows.length} en total</span>
+    </div>
+    <div class="med-stats">
+      <div class="med-stat"><div class="med-stat-l">Sudoración</div><div class="med-stat-v">${ur.tasa_l_h!=null?medNum(+ur.tasa_l_h,2):'—'}<small>L/h</small></div><div class="med-delta">${cond(ult)||'&nbsp;'}</div></div>
+      <div class="med-stat"><div class="med-stat-l">Pérdida de peso</div><div class="med-stat-v">${ur.pct_peso!=null?medNum(+ur.pct_peso,1):'—'}<small>%</small></div><div class="med-delta">&nbsp;</div></div>
+      <div class="med-stat"><div class="med-stat-l">Sodio perdido</div><div class="med-stat-v">${ur.sodio_mg_h!=null?ur.sodio_mg_h:'—'}<small>mg/h</small></div><div class="med-delta">${ult.sodio_mmol_l!=null?'medido':'estimado'}</div></div>
+    </div>
+    ${rows.length>1 ? `<div class="med-series">${medSerie(pts,'tasa','var(--t400)','Sudoración','L/h',2)}</div>` : ''}
+    <table class="sud-table"><thead><tr><th>Fecha</th><th>Sesión</th><th>Sudor</th><th class="hide-m">Peso</th><th></th></tr></thead><tbody>${tabla}</tbody></table>
+    <p class="med-note">Compara tests en condiciones parecidas: la temperatura, la humedad y la intensidad cambian mucho la sudoración.</p>
+    <div style="margin-top:10px">${nuevo}</div>`;
+}
+
+async function deleteSudoracion(id, depId){
+  if(!confirm('¿Eliminar este test de sudoración?')) return;
+  await sb(`tests_sudoracion?id=eq.${id}`, {method:'DELETE', headers:{'Prefer':'return=minimal'}});
+  loadSudoracion(depId);
+}
 
 // ═══════════════ HISTORIAL DE SESIONES + ACTIVIDAD ═══════════════
 function actividadTexto(ultima){
