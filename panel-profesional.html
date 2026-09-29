@@ -224,7 +224,8 @@ body{font-family:var(--f);background:var(--bg);color:var(--g900);min-height:100v
 .depd-info{flex:1;min-width:180px}
 .depd-name{font-size:22px;font-weight:700;letter-spacing:-.02em;margin-bottom:3px}
 .depd-sport{font-size:13px;color:var(--gold-dk);font-weight:500}
-.depd-section{margin-bottom:1.25rem}
+.depd-section{margin-bottom:2rem}
+@media(max-width:860px){.depd-section{margin-bottom:1.75rem}}
 .depd-cols{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;align-items:start}
 .depd-cols .notes-ta{min-height:170px}
 @media(max-width:860px){.depd-cols{grid-template-columns:1fr;gap:0}}
@@ -263,7 +264,9 @@ body{font-family:var(--f);background:var(--bg);color:var(--g900);min-height:100v
 .dep-chip.active{background:var(--gold-50);border-color:rgba(184,149,106,.3);color:var(--gold-dk)}
 .dep-chip:hover:not(.active){background:var(--g200)}
 .depd-actividad-line{font-size:11px;color:var(--g400);margin-top:8px;padding-left:2px}
-.hist-add{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.hist-add{display:grid;grid-template-columns:150px minmax(0,1fr) auto;gap:8px;margin-bottom:14px;align-items:stretch}
+.hist-add .inp{margin:0;min-width:0;width:100%;max-width:none;box-sizing:border-box}
+.hist-add .btn-hist-add{min-height:38px}
 .btn-hist-add{background:var(--t400);border:none;border-radius:8px;color:#fff;font-size:12px;font-weight:600;padding:0 16px;cursor:pointer;font-family:var(--f);white-space:nowrap}
 .hist-item{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:.5px solid var(--bd)}
 .hist-del{background:none;border:none;color:var(--g400);cursor:pointer;padding:3px;flex-shrink:0;opacity:0;transition:opacity .15s}
@@ -283,10 +286,12 @@ body{font-family:var(--f);background:var(--bg);color:var(--g900);min-height:100v
 .med-stat-v{font-size:20px;font-weight:700;letter-spacing:-.02em;color:var(--g900)}
 .med-stat-v small{font-size:12px;font-weight:500;color:var(--g500);margin-left:2px}
 .med-delta{font-size:11px;color:var(--g500);margin-top:2px}
-.med-series{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
+.med-series{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-top:2px}
+.med-series>.med-serie:only-child{max-width:460px}
+.med-serie{background:var(--bg);border:.5px solid var(--bd);border-radius:12px;padding:12px 14px 8px;min-width:0}
 .med-serie-t{font-size:11px;font-weight:600;color:var(--g500);margin-bottom:2px;display:flex;align-items:center;gap:6px}
 .med-serie-t i{display:inline-block;width:9px;height:9px;border-radius:50%}
-.med-chart{width:100%;max-width:340px;height:auto;display:block}
+.med-chart{width:100%;height:auto;display:block;overflow:visible}
 .med-chart text{font-family:var(--f);font-size:10px;fill:var(--g500)}
 .med-chart text.v{font-weight:600;fill:var(--g900)}
 .med-note{font-size:11px;color:var(--g400);margin-top:8px;line-height:1.5}
@@ -615,8 +620,9 @@ body.dark-mode .cmp-cell.b .cmp-track i{background:var(--t400)}
   .week-grid{grid-template-columns:repeat(7,minmax(104px,1fr));width:max-content;min-width:100%}
   .week-nav{flex-wrap:wrap}
   .mc{padding:1.4rem 1.25rem;max-width:100%}
-  .hist-add{flex-direction:column}
-  .hist-add .inp{max-width:100% !important}
+  .hist-add{grid-template-columns:minmax(0,1fr)}
+  .hist-add .btn-hist-add{width:100%}
+  .hist-add input[type=date]{-webkit-appearance:none;appearance:none;min-height:40px}
   .depd-hero{flex-wrap:wrap}
   .plan-box{flex-wrap:wrap}
   .gsearch-modal{max-width:100%;margin:0 .75rem}
@@ -700,6 +706,17 @@ body.dark-mode .frm select.inp{background-image:url("data:image/svg+xml,%3Csvg x
 .frm .notes-ta:focus{background:var(--sf);box-shadow:0 0 0 3px rgba(29,158,117,.15)}
 .frm .hd-h{font-size:13px;font-weight:700;letter-spacing:-.01em;margin-bottom:14px}
 .frm .hd-hint{margin-top:8px}
+.calc-comp{margin-top:14px;background:var(--bg);border:.5px solid var(--bd);border-radius:12px;padding:12px 14px;font-size:12.5px;color:var(--g700);line-height:1.6}
+.calc-comp b{color:var(--g900)}
+.calc-comp .warn{color:var(--gold-dk);font-weight:600}
+.calc-alt{font-size:11.5px;color:rgba(255,255,255,.6);padding:6px 0 2px;line-height:1.6}
+.calc-alt b{color:#fff;font-weight:600}
+.calc-sem-h{font-size:10.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#d9b88c;margin:14px 0 2px}
+.calc-sem{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.1);font-size:12px;line-height:1.5;color:rgba(255,255,255,.85)}
+.calc-sem:last-child{border-bottom:none}
+.calc-sem i{width:10px;height:10px;border-radius:50%;margin-top:4px;flex-shrink:0}
+.calc-sem.ok i{background:#4fcf9f}.calc-sem.warn i{background:#E8B04B}.calc-sem.bad i{background:#F26B5B}.calc-sem.info i{background:rgba(255,255,255,.35)}
+.calc-sem b{color:#fff}
 .hd-card{margin-bottom:12px}
 .hd-h{font-size:12px;font-weight:600;color:var(--g900);margin-bottom:12px}
 .hd-opt{font-weight:400;color:var(--g400)}
@@ -1840,6 +1857,7 @@ body.dark-mode .frm select.inp{background-image:url("data:image/svg+xml,%3Csvg x
         <input type="number" class="inp" id="calcGrasa" placeholder="Solo para Katch-McArdle" step="0.1" oninput="calcAll()">
       </div>
     </div>
+      <div id="calcCompCard"></div>
     </div>
 
     <div class="dash-card hd-card">
@@ -1887,6 +1905,10 @@ body.dark-mode .frm select.inp{background-image:url("data:image/svg+xml,%3Csvg x
       <div>
         <label class="mfl" for="calcPctGrasa">% Calorías de grasa</label>
         <input type="number" class="inp" id="calcPctGrasa" value="25" oninput="calcAll()">
+      </div>
+      <div>
+        <label class="mfl" for="calcEntreno">Kcal de entrenamiento al día <span class="hd-opt">(opcional)</span></label>
+        <input type="number" class="inp" id="calcEntreno" inputmode="decimal" min="0" step="50" placeholder="Ej. 600 · para la disponibilidad energética" oninput="calcAll()">
       </div>
     </div>
     </div>
@@ -3720,7 +3742,7 @@ function exportCalcPDF(){
     html += `
     <div class="pdf-section">
       <p class="pdf-section-title">Energía y macronutrientes</p>
-      <div class="pdf-row"><span class="l">BMR (metabolismo basal)</span><span class="v">${lastCalc.bmr} kcal</span></div>
+      <div class="pdf-row"><span class="l">BMR (metabolismo basal) · rango ±13 %</span><span class="v">${lastCalc.bmr} kcal (${lastCalc.bmrMin}–${lastCalc.bmrMax})</span></div>
       <div class="pdf-row"><span class="l">TDEE (gasto total diario)</span><span class="v">${lastCalc.tdee} kcal</span></div>
       <div class="pdf-row"><span class="l">Calorías objetivo</span><span class="v" style="color:#c19a6b">${lastCalc.kcalObjetivo} kcal</span></div>
       <div class="pdf-macro-bar">
@@ -3736,6 +3758,9 @@ function exportCalcPDF(){
       <div class="pdf-row" style="margin-top:8px"><span class="l">Proteína</span><span class="v">${lastCalc.proteinaG} g</span></div>
       <div class="pdf-row"><span class="l">Grasa</span><span class="v">${lastCalc.grasaG} g</span></div>
       <div class="pdf-row"><span class="l">Carbohidratos</span><span class="v">${lastCalc.carbosG} g</span></div>
+      ${lastCalc.mlg!==null ? `<div class="pdf-row"><span class="l">Masa libre de grasa</span><span class="v">${lastCalc.mlg} kg</span></div>` : ''}
+      ${lastCalc.ea!==null ? `<div class="pdf-row"><span class="l">Disponibilidad energética</span><span class="v">${lastCalc.ea} kcal/kg MLG/día</span></div>` : ''}
+      ${(lastCalc.avisos||[]).length ? `<div class="pdf-box" style="margin-top:10px">${lastCalc.avisos.map(a=>`<p style="margin:0 0 6px">${sudEsc(a.txt)}</p>`).join('')}</div>` : ''}
     </div>`;
   }
 
@@ -3759,41 +3784,72 @@ function exportCalcPDF(){
   printNow();
 }
 
+// Energía y macros. Estimaciones orientativas: el basal tiene un error de ~13-16 % (Jagim 2026) y los límites
+// de seguridad (ritmo de pérdida, disponibilidad energética) orientan, no diagnostican. Con menores de 18
+// años no se usa la masa libre de grasa ni se aplican déficits.
+let calcComp = null;   // composición de la última valoración del deportista elegido {fecha, modelo, pct, mg}
+const CALC_ERR_BMR = 0.13;
+
 function calcAll(){
   const sexo = document.getElementById('calcSexo').value;
   const edad = parseFloat(document.getElementById('calcEdad').value) || 0;
   const peso = parseFloat(document.getElementById('calcPeso').value) || 0;
   const altura = parseFloat(document.getElementById('calcAltura').value) || 0;
   const grasaPct = parseFloat(document.getElementById('calcGrasa').value);
-  const formula = document.getElementById('calcFormula').value;
+  let formula = document.getElementById('calcFormula').value;
   const pal = parseFloat(document.getElementById('calcActividad').value);
-  const ajuste = parseFloat(document.getElementById('calcObjetivo').value);
+  let ajuste = parseFloat(document.getElementById('calcObjetivo').value);
   const proteinaGkg = parseFloat(document.getElementById('calcProteina').value);
   const pctGrasaCal = parseFloat(document.getElementById('calcPctGrasa').value) || 25;
+  const entreno = parseFloat(document.getElementById('calcEntreno').value);
 
   const warnEl = document.getElementById('calcWarn');
+  const compEl = document.getElementById('calcCompCard');
   warnEl.style.display = 'none';
+  const avisos = [];
+  const menor = edad > 0 && edad < 18;
+  const conGrasa = grasaPct > 0 && grasaPct < 100 && peso > 0;
+  const mlg = (!menor && conGrasa) ? peso*(1-grasaPct/100) : null;   // masa libre de grasa (kg)
+
+  // ── Tarjeta de composición corporal
+  if(peso && conGrasa){
+    const mg = peso*grasaPct/100;
+    let origen = '';
+    if(calcComp && calcComp.fecha){
+      const dias = Math.floor((Date.now()-new Date(calcComp.fecha+'T00:00:00').getTime())/86400000);
+      const f = new Date(calcComp.fecha+'T00:00:00').toLocaleDateString('es-ES',{day:'numeric',month:'short',year:'numeric'});
+      origen = `<br>De la valoración del <b>${f}</b> (hace ${dias} días${calcComp.modelo?` · ${sudEsc(calcComp.modelo)}`:''}).` +
+        (dias>90 ? ' <span class="warn">Tiene más de 90 días: puede estar desfasada, conviene una valoración nueva.</span>' : '');
+    }
+    compEl.innerHTML = menor
+      ? `<div class="calc-comp"><span class="warn">Menor de 18 años:</span> no se usa la masa libre de grasa (los pliegues no están pensados para el crecimiento).${origen}</div>`
+      : `<div class="calc-comp">Masa grasa <b>${planF(mg,1)} kg</b> (${planF(grasaPct,1)} %) · Masa libre de grasa <b>${planF(mlg,1)} kg</b>${origen}</div>`;
+  } else compEl.innerHTML = '';
 
   if(!peso || !altura || !edad){
     document.getElementById('calcResults').innerHTML = '<p style="font-size:12px;color:rgba(255,255,255,.6);text-align:center;padding:10px 0">Rellena peso, altura y edad para calcular.</p>';
     return;
   }
 
-  let bmr;
-  if(formula === 'mifflin'){
-    bmr = sexo==='h' ? (10*peso + 6.25*altura - 5*edad + 5) : (10*peso + 6.25*altura - 5*edad - 161);
-  } else if(formula === 'harris'){
-    bmr = sexo==='h' ? (88.362 + 13.397*peso + 4.799*altura - 5.677*edad) : (447.593 + 9.247*peso + 3.098*altura - 4.330*edad);
-  } else if(formula === 'katch'){
-    if(!grasaPct){
-      warnEl.style.display = 'block';
-      warnEl.textContent = 'Katch-McArdle requiere el % de grasa corporal. Usando Mifflin-St Jeor mientras tanto.';
-      bmr = sexo==='h' ? (10*peso + 6.25*altura - 5*edad + 5) : (10*peso + 6.25*altura - 5*edad - 161);
-    } else {
-      const lbm = peso * (1 - grasaPct/100);
-      bmr = 370 + 21.6*lbm;
-    }
+  // ── Menores: sin masa libre de grasa ni déficits
+  if(menor){
+    if(formula === 'katch') formula = 'mifflin';
+    if(ajuste < 0){ ajuste = 0; avisos.push(['bad','Menor de 18 años: no se aplican déficits. Se calcula el mantenimiento; en la adolescencia la prioridad es sostener el crecimiento.']); }
+    avisos.push(['info','Fórmulas de adultos: para menores la estimación es solo orientativa. Prioriza comidas regulares y completas, y vigila calcio, vitamina D y hierro (SDA 2014).']);
   }
+
+  // ── Metabolismo basal: todas las fórmulas, con la elegida como principal
+  const mifflin = sexo==='h' ? (10*peso + 6.25*altura - 5*edad + 5) : (10*peso + 6.25*altura - 5*edad - 161);
+  const harris = sexo==='h' ? (88.362 + 13.397*peso + 4.799*altura - 5.677*edad) : (447.593 + 9.247*peso + 3.098*altura - 4.330*edad);
+  const katch = mlg ? 370 + 21.6*mlg : null;
+  const cunningham = mlg ? 500 + 22*mlg : null;
+  let bmr = mifflin;
+  if(formula === 'harris') bmr = harris;
+  else if(formula === 'katch'){
+    if(katch) bmr = katch;
+    else { warnEl.style.display = 'block'; warnEl.textContent = 'Katch-McArdle requiere el % de grasa corporal. Usando Mifflin-St Jeor mientras tanto.'; }
+  }
+  const bmrMin = bmr*(1-CALC_ERR_BMR), bmrMax = bmr*(1+CALC_ERR_BMR);
 
   const tdee = bmr * pal;
   const kcalObjetivo = tdee * (1 + ajuste/100);
@@ -3815,14 +3871,43 @@ function calcAll(){
   const pctF = Math.round(grasaKcal/kcalObjetivo*100);
   const pctC = 100 - pctP - pctF;
 
+  // ── Semáforos
+  const sem = [];
+  const imc = peso/Math.pow(altura/100,2);
+  if(ajuste < 0){
+    const deficit = tdee - kcalObjetivo, ritmo = deficit*7/7700/peso*100;   // ≈ 7700 kcal por kg de peso
+    sem.push([ritmo>1 ? 'warn' : 'ok', `<b>Ritmo de pérdida ≈ ${planF(ritmo,2)} % del peso por semana.</b> ${ritmo>1
+      ? 'Es alto: en deportistas, perder ~0,7 %/semana conservó mejor la masa magra que 1,4 % (Garthe 2011).' : 'Dentro de un ritmo prudente (Garthe 2011: ~0,7 %/semana).'}`]);
+    if(!menor && imc < 18.5) sem.push(['bad', `<b>IMC ${planF(imc,1)} (< 18,5):</b> no se recomienda un déficit calórico.`]);
+  }
+  let ea = null;
+  if(mlg){
+    if(entreno >= 0){
+      ea = (kcalObjetivo - entreno)/mlg;
+      const minKcal = 30*mlg + entreno;
+      sem.push([ea < 30 ? 'bad' : 'ok', ea < 30
+        ? `<b>Disponibilidad energética ≈ ${planF(ea,0)} kcal/kg MLG/día (< 30).</b> Riesgo de baja disponibilidad energética (RED-S). Para no bajar de 30 harían falta al menos ${planF(minKcal,0)} kcal: reduce el déficit. Es una orientación, no un diagnóstico.`
+        : `<b>Disponibilidad energética ≈ ${planF(ea,0)} kcal/kg MLG/día</b>, por encima del umbral de riesgo de 30. En deportes de equipo se observan 40–60.`]);
+    } else sem.push(['info','Indica las <b>kcal de entrenamiento al día</b> para calcular la disponibilidad energética (umbral de riesgo: 30 kcal/kg de masa libre de grasa).']);
+    const pMlg = proteinaG/mlg;
+    sem.push(['info', `<b>Proteína: ${planF(proteinaG,0)} g = ${planF(proteinaGkg,1)} g/kg de peso = ${planF(pMlg,1)} g/kg de masa libre de grasa.</b> ${ajuste<0
+      ? 'En déficit, deportistas magros y de fuerza pueden necesitar 2,3–3,1 g/kg de masa libre de grasa (Helms 2014); en otros casos 1,4–2,0 g/kg de peso (ISSN 2017).'
+      : 'Rango habitual: 1,4–2,0 g/kg de peso (ISSN 2017).'}`]);
+  }
+  avisos.forEach(a=>sem.unshift(a));
+
   lastCalc = {
-    bmr: Math.round(bmr), tdee: Math.round(tdee), kcalObjetivo: Math.round(kcalObjetivo),
+    bmr: Math.round(bmr), bmrMin: Math.round(bmrMin), bmrMax: Math.round(bmrMax), tdee: Math.round(tdee), kcalObjetivo: Math.round(kcalObjetivo),
     proteinaG: Math.round(proteinaG), grasaG: Math.round(grasaG), carbosG: Math.round(carbosG),
-    pctP, pctF, pctC: Math.max(pctC,0), formula, sexo, edad, peso, altura
+    pctP, pctF, pctC: Math.max(pctC,0), formula, sexo, edad, peso, altura,
+    mlg: mlg ? +mlg.toFixed(1) : null, ea: ea!==null ? Math.round(ea) : null, avisos: sem.map(x=>({t:x[0], txt:x[1].replace(/<[^>]+>/g,'')}))
   };
 
+  const alt = [['Mifflin-St Jeor',mifflin],['Harris-Benedict',harris],['Katch-McArdle',katch],['Cunningham',cunningham]]
+    .filter(x=>x[1]!==null).map(x=>`${x[0]} <b>${Math.round(x[1])}</b>`).join(' · ');
   document.getElementById('calcResults').innerHTML = `
     <div class="calc-row"><span class="l">BMR (metabolismo basal)</span><span class="v">${Math.round(bmr)} kcal</span></div>
+    <div class="calc-alt">Rango orientativo ±13 %: ${Math.round(bmrMin)}–${Math.round(bmrMax)} kcal · Otras fórmulas: ${alt}</div>
     <div class="calc-row"><span class="l">TDEE (gasto total diario)</span><span class="v">${Math.round(tdee)} kcal</span></div>
     <div class="calc-row hl"><span class="l">Calorías objetivo</span><span class="v">${Math.round(kcalObjetivo)} kcal</span></div>
     <div class="calc-macro-bar">
@@ -3837,7 +3922,8 @@ function calcAll(){
     </div>
     <div class="calc-row" style="margin-top:10px"><span class="l">Proteína (${proteinaGkg} g/kg)</span><span class="v">${Math.round(proteinaG)} g</span></div>
     <div class="calc-row"><span class="l">Grasa (${pctGrasaCal}%)</span><span class="v">${Math.round(grasaG)} g</span></div>
-    <div class="calc-row"><span class="l">Carbohidratos (resto)</span><span class="v">${Math.round(carbosG)} g</span></div>
+    <div class="calc-row"><span class="l">Carbohidratos (resto) · ${planF(carbosG/peso,1)} g/kg</span><span class="v">${Math.round(carbosG)} g</span></div>
+    ${sem.length ? `<div class="calc-sem-h">Análisis · orientativo</div>${sem.map(x=>`<div class="calc-sem ${x[0]}" role="${x[0]==='bad'?'alert':'note'}"><i></i><span>${x[1]}</span></div>`).join('')}` : ''}
   `;
 }
 
@@ -4104,8 +4190,8 @@ function openDepDet(id) {
     <div class="depd-section">
       <p class="sec-title">Historial de sesiones</p>
       <div class="hist-add">
-        <input type="date" class="inp" id="histFecha" style="margin:0;max-width:150px">
-        <input type="text" class="inp" id="histNota" placeholder="Nota breve de la sesión…" style="margin:0;flex:1">
+        <input type="date" class="inp" id="histFecha">
+        <input type="text" class="inp" id="histNota" placeholder="Nota breve de la sesión…">
         <button class="btn-hist-add" onclick="addHistorial(${d.id})">Añadir</button>
       </div>
       <div id="histList">Cargando…</div>
@@ -4180,8 +4266,10 @@ function medSerie(pts,key,color,titulo,unit,dec=1){
   const dots=sr.map(p=>`<circle cx="${xAt(p.fecha).toFixed(1)}" cy="${yAt(p[key]).toFixed(1)}" r="2.8" fill="${color}"/>`).join('');
   const a=sr[0], z=sr[sr.length-1];
   const fmtF=f=>new Date(f+'T00:00:00').toLocaleDateString('es-ES',{day:'numeric',month:'short',year:'2-digit'});
-  return `<div><div class="med-serie-t"><i style="background:${color}"></i>${titulo} (${unit})</div>
+  return `<div class="med-serie"><div class="med-serie-t"><i style="background:${color}"></i>${titulo} (${unit})</div>
     <svg class="med-chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Evolución de ${titulo}: de ${medNum(a[key],dec)} a ${medNum(z[key],dec)} ${unit}">
+      <line x1="${padL}" x2="${W-padR}" y1="${H-padB}" y2="${H-padB}" stroke="var(--bd)" stroke-width=".8"/>
+      <path d="${path} L${xAt(z.fecha).toFixed(1)} ${H-padB} L${xAt(a.fecha).toFixed(1)} ${H-padB} Z" fill="${color}" opacity=".10" stroke="none"/>
       <path d="${path}" fill="none" stroke="${color}" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>${dots}
       <text class="v" x="${xAt(a.fecha).toFixed(1)}" y="${(yAt(a[key])-7).toFixed(1)}" text-anchor="middle">${medNum(a[key],dec)}</text>
       <text class="v" x="${xAt(z.fecha).toFixed(1)}" y="${(yAt(z[key])-7).toFixed(1)}" text-anchor="middle">${medNum(z[key],dec)}</text>
@@ -4293,7 +4381,7 @@ async function initCalcEnergia(){
 }
 async function calcElegirDep(){
   const id = document.getElementById('calcDep').value, hint = document.getElementById('calcDepHint');
-  if(!id){ hint.textContent = ''; return; }
+  if(!id){ hint.textContent = ''; calcComp = null; calcAll(); return; }
   hint.textContent = 'Cargando datos…';
   const [per, val] = await Promise.all([
     sb(`antropometria_perfil?deportista_id=eq.${id}&select=sexo,fecha_nacimiento,talla`).catch(()=>null),
@@ -4315,6 +4403,7 @@ async function calcElegirDep(){
   const talla = (p && num(p.talla)) ?? (v && num(v.talla));
   if(talla) poner('calcAltura', talla, `${planF(talla, talla%1 ? 1 : 0)} cm`); else { faltan.push('altura'); vaciar('calcAltura'); }
   const grasa = v && v.resumen && num(v.resumen.pct_grasa);
+  calcComp = (v && grasa) ? { fecha:v.fecha, modelo:v.resumen.modelo||'', pct:grasa, mg:num(v.resumen.masa_grasa_kg) } : null;
   if(grasa) poner('calcGrasa', +grasa.toFixed(1), `${planF(grasa,1)} % de grasa`); else vaciar('calcGrasa');
   hint.textContent = (datos.length ? 'Datos cargados: ' + datos.join(', ') + '. ' : '') +
     (faltan.length ? `Falta ${faltan.join(', ')}: complétalo a mano${!p && !v ? ' (este deportista aún no tiene perfil ni valoración de antropometría)' : ''}.` : '');
