@@ -296,7 +296,18 @@ body{font-family:var(--f);background:var(--bg);color:var(--g900);min-height:100v
 .med-chart text.v{font-weight:600;fill:var(--g900)}
 .med-note{font-size:11px;color:var(--g400);margin-top:8px;line-height:1.5}
 .med-empty{font-size:13px;color:var(--g400);line-height:1.6}
-.med-empty button{margin-top:8px}
+.med-actions{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:14px;padding-top:12px;border-top:.5px solid var(--bd)}
+.med-empty+.med-actions{margin-top:12px;padding-top:0;border-top:none}
+.btn-soft{display:inline-flex;align-items:center;justify-content:center;gap:6px;background:var(--t50);color:var(--t600);border:.5px solid rgba(29,158,117,.28);border-radius:9px;font-size:12.5px;font-weight:600;line-height:1;padding:8px 13px;cursor:pointer;font-family:var(--f);white-space:nowrap;transition:background .15s,border-color .15s,transform .15s}
+.btn-soft svg{flex-shrink:0}
+.btn-soft:hover{border-color:var(--t400);background:rgba(29,158,117,.14)}
+.btn-soft:active{transform:translateY(1px)}
+.btn-soft:focus-visible{outline:2px solid var(--t400);outline-offset:2px}
+.btn-soft.sm{font-size:11.5px;padding:6px 10px;border-radius:8px}
+body.dark-mode .btn-soft{color:var(--t100);border-color:rgba(159,225,203,.22)}
+.row-actions{display:inline-flex;align-items:center;gap:6px;justify-content:flex-end}
+.row-actions .file-btn{width:28px;height:28px;border-radius:8px}
+
 @media(max-width:560px){.med-stats{grid-template-columns:1fr 1fr 1fr;gap:6px}.med-stat{padding:8px 9px}.med-stat-v{font-size:17px}}
 .dep-obj-badge{font-size:9.5px;font-weight:600;color:var(--t600);background:var(--t50);padding:2px 8px;border-radius:20px;margin-top:6px;display:inline-block}
 .rev-badge{font-size:10px;font-weight:600;padding:3px 8px;border-radius:20px;margin-top:6px;display:inline-block}
@@ -709,7 +720,7 @@ body.dark-mode .ref-formula{background:rgba(29,158,117,.16)}
 .plan-lista{width:100%;border-collapse:collapse;font-size:12px;margin-top:10px}
 .plan-lista td{padding:8px 8px 8px 0;border-top:.5px solid var(--bd);vertical-align:middle;color:var(--g700)}
 .plan-lista td.n{font-weight:600;color:var(--g900);white-space:nowrap}
-.plan-lista .btn-action{padding:5px 10px;font-size:11px}
+.plan-lista td.act,.sud-table td.act{text-align:right;white-space:nowrap;width:1%;padding-right:0;vertical-align:middle}
 /* Formularios de las calculadoras y del plan de competición (.frm): campos más altos, desplegables con
    flecha propia, foco verde, sin flechas de número y casillas tipo pastilla. */
 .frm .calc-grid{gap:16px 14px}
@@ -4423,6 +4434,21 @@ function medPunto(r){
   return { fecha:r.fecha, peso, grasa:g, masaGrasa:mg, modelo:res.modelo||null, tieneResumen:!!r.resumen };
 }
 
+// Botón secundario común de la ficha del deportista (icono + texto), con la misma forma en todas las cajas.
+const BS_ICON={
+  plus:'<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>',
+  ext:'<line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/>',
+  chart:'<line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>',
+  doc:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>',
+  trash:'<polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/>'
+};
+function btnSoft(label,onclick,icon,sm){
+  return `<button class="btn-soft${sm?' sm':''}" onclick="${onclick}"><svg width="${sm?12:13}" height="${sm?12:13}" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">${BS_ICON[icon]}</svg>${label}</button>`;
+}
+function btnDel(title,onclick){
+  return `<button class="file-btn del" title="${title}" aria-label="${title}" onclick="${onclick}"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">${BS_ICON.trash}</svg></button>`;
+}
+
 // Una mini gráfica por magnitud, cada una con su propia escala (peso y % grasa no comparten eje).
 function medSerie(pts,key,color,titulo,unit,dec=1){
   const sr=pts.filter(p=>p[key]!==null);
@@ -4455,7 +4481,7 @@ async function loadMediciones(depId){
   const pts = rows.map(medPunto).sort((a,b)=>new Date(a.fecha)-new Date(b.fecha));
   if(!pts.length){
     el.innerHTML = `<p class="med-empty">Sin valoraciones antropométricas todavía. Se registran desde la calculadora de antropometría.</p>
-      <button class="btn-action" style="background:var(--t50);color:var(--t600)" onclick="abrirAntropometria(${depId})">Abrir calculadora</button>`;
+      <div class="med-actions">${btnSoft('Abrir calculadora',`abrirAntropometria(${depId})`,'ext')}</div>`;
     return;
   }
   const last = pts[pts.length-1], prev = pts.length>1 ? pts[pts.length-2] : null;
@@ -4486,7 +4512,7 @@ async function loadMediciones(depId){
     </div>
     ${pts.length>1 ? `<div class="med-series">${medSerie(pts,'peso','var(--t400)','Peso','kg')}${medSerie(pts,'grasa','var(--gold)','% grasa','%')}</div>` : ''}
     ${nota ? `<p class="med-note">${nota}</p>` : ''}
-    <div style="margin-top:10px"><button class="btn-action" style="background:var(--t50);color:var(--t600)" onclick="abrirAntropometria(${depId})">Ver en antropometría</button></div>`;
+    <div class="med-actions">${btnSoft('Ver en antropometría',`abrirAntropometria(${depId})`,'chart')}</div>`;
 }
 
 
@@ -4499,7 +4525,7 @@ async function loadSudoracion(depId){
   try{ const r = await sb(`tests_sudoracion?deportista_id=eq.${depId}&order=fecha.asc,id.asc&select=*`); if(Array.isArray(r)) rows = r; }catch(e){}
   const el = document.getElementById('sudBox');
   if(!el || currentDepId != depId) return;
-  const nuevo = `<button class="btn-action" style="background:var(--t50);color:var(--t600)" onclick="abrirTestSudoracion(${depId})">Nuevo test</button>`;
+  const nuevo = `<div class="med-actions">${btnSoft('Nuevo test',`abrirTestSudoracion(${depId})`,'plus')}</div>`;
   if(!rows.length){
     el.innerHTML = `<p class="med-empty">Sin tests de sudoración todavía. Se hacen desde Calculadora → Hidratación.</p>${nuevo}`;
     return;
@@ -4515,7 +4541,7 @@ async function loadSudoracion(depId){
       <td>${sudEsc(t.actividad||'—')}<span class="sud-cond">${cond(t)||'sin condiciones'}</span></td>
       <td class="n">${r.tasa_l_h!=null?medNum(+r.tasa_l_h,2)+' L/h':'—'}</td>
       <td class="n hide-m">${r.pct_peso!=null?medNum(+r.pct_peso,1)+' %':'—'}</td>
-      <td><button class="hist-del" style="opacity:1" title="Eliminar test" onclick="deleteSudoracion(${t.id},${depId})"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg></button></td></tr>`;
+      <td class="act">${btnDel('Eliminar test',`deleteSudoracion(${t.id},${depId})`)}</td></tr>`;
   }).join('');
   el.innerHTML = `
     <div class="med-head">
@@ -4530,7 +4556,7 @@ async function loadSudoracion(depId){
     ${rows.length>1 ? `<div class="med-series">${medSerie(pts,'tasa','var(--t400)','Sudoración','L/h',2)}</div>` : ''}
     <table class="sud-table"><thead><tr><th>Fecha</th><th>Sesión</th><th>Sudor</th><th class="hide-m">Peso</th><th></th></tr></thead><tbody>${tabla}</tbody></table>
     <p class="med-note">Compara tests en condiciones parecidas: la temperatura, la humedad y la intensidad cambian mucho la sudoración.</p>
-    <div style="margin-top:10px">${nuevo}</div>`;
+    ${nuevo}`;
 }
 
 async function deleteSudoracion(id, depId){
@@ -4912,15 +4938,14 @@ async function loadPlanes(depId){
   const el = document.getElementById('planBox');
   if(!el || currentDepId != depId) return;
   planesCache = {}; rows.forEach(r=>planesCache[r.id]=r);
-  const nuevo = `<button class="btn-action" style="background:var(--t50);color:var(--t600)" onclick="abrirPlan(${depId})">Nuevo plan</button>`;
+  const nuevo = `<div class="med-actions">${btnSoft('Nuevo plan',`abrirPlan(${depId})`,'plus')}</div>`;
   if(!rows.length){ el.innerHTML = `<p class="med-empty">Sin planes de competición todavía.</p>${nuevo}`; return; }
   const fmt = f=>new Date(f+'T00:00:00').toLocaleDateString('es-ES',{day:'numeric',month:'short',year:'numeric'});
   el.innerHTML = `<table class="plan-lista"><tbody>${rows.map(r=>`<tr>
       <td class="n">${fmt(r.fecha)}</td>
       <td>${sudEsc(r.evento||'Sin evento')}<span class="sud-cond">${sudEsc((PLAN_DEPORTES[r.deporte]||{}).n||'')} · ${r.duracion_min} min · ${sudEsc(PLAN_INT[r.intensidad]||'')}</span></td>
-      <td style="white-space:nowrap"><button class="btn-action" style="background:var(--t50);color:var(--t600)" onclick="abrirPlan(${depId},${r.id})">Ver / PDF</button>
-        <button class="hist-del" style="opacity:1" title="Eliminar plan" onclick="deletePlan(${r.id},${depId})"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg></button></td></tr>`).join('')}</tbody></table>
-    <div style="margin-top:10px">${nuevo}</div>`;
+      <td class="act"><div class="row-actions">${btnSoft('Ver / PDF',`abrirPlan(${depId},${r.id})`,'doc',true)}${btnDel('Eliminar plan',`deletePlan(${r.id},${depId})`)}</div></td></tr>`).join('')}</tbody></table>
+    ${nuevo}`;
 }
 async function abrirPlan(depId, planId){
   navTo('plan'); await initPlan();
