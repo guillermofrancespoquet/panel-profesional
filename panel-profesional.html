@@ -261,6 +261,26 @@ body{font-family:var(--f);background:var(--bg);color:var(--g900);min-height:100v
 .hist-date{font-size:11px;font-weight:600;color:var(--gold-dk);white-space:nowrap;padding-top:1px}
 .hist-nota{font-size:12.5px;color:var(--g700);flex:1}
 .hist-tag{font-size:9.5px;font-weight:600;color:var(--t600);background:var(--t50);padding:2px 8px;border-radius:20px;flex-shrink:0;white-space:nowrap}
+.med-box{background:var(--sf);border:.5px solid var(--bd);border-radius:12px;padding:1.1rem 1.25rem}
+.med-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.med-date{font-size:13px;font-weight:600;color:var(--g900)}
+.med-ago{font-size:11px;color:var(--g400)}
+.med-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.med-stat{background:var(--bg);border:.5px solid var(--bd);border-radius:10px;padding:10px 12px}
+.med-stat-l{font-size:10.5px;font-weight:500;color:var(--g400);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
+.med-stat-v{font-size:20px;font-weight:700;letter-spacing:-.02em;color:var(--g900)}
+.med-stat-v small{font-size:12px;font-weight:500;color:var(--g500);margin-left:2px}
+.med-delta{font-size:11px;color:var(--g500);margin-top:2px}
+.med-series{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
+.med-serie-t{font-size:11px;font-weight:600;color:var(--g500);margin-bottom:2px;display:flex;align-items:center;gap:6px}
+.med-serie-t i{display:inline-block;width:9px;height:9px;border-radius:50%}
+.med-chart{width:100%;max-width:340px;height:auto;display:block}
+.med-chart text{font-family:var(--f);font-size:10px;fill:var(--g500)}
+.med-chart text.v{font-weight:600;fill:var(--g900)}
+.med-note{font-size:11px;color:var(--g400);margin-top:8px;line-height:1.5}
+.med-empty{font-size:13px;color:var(--g400);line-height:1.6}
+.med-empty button{margin-top:8px}
+@media(max-width:560px){.med-stats{grid-template-columns:1fr 1fr 1fr;gap:6px}.med-stat{padding:8px 9px}.med-stat-v{font-size:17px}}
 .dep-obj-badge{font-size:9.5px;font-weight:600;color:var(--t600);background:var(--t50);padding:2px 8px;border-radius:20px;margin-top:6px;display:inline-block}
 .rev-badge{font-size:10px;font-weight:600;padding:3px 8px;border-radius:20px;margin-top:6px;display:inline-block}
 .rev-badge.urgent{background:#FEF2F2;color:var(--red)}
@@ -3772,6 +3792,11 @@ function openDepDet(id) {
     </div>
 
     <div class="depd-section">
+      <p class="sec-title">Mediciones · antropometría</p>
+      <div class="med-box" id="medBox"><p class="med-empty">Cargando…</p></div>
+    </div>
+
+    <div class="depd-section">
       <p class="sec-title">Archivos · antropometrías, bioimpedancias, informes</p>
       <div class="files-box" id="filesDropZone" onclick="document.getElementById('fileInput').click()">
         <svg class="files-box-icon" width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
@@ -3804,6 +3829,96 @@ function openDepDet(id) {
   `;
   show('vdepdet');
   loadHistorial(d.id);
+  loadMediciones(d.id);
+}
+
+
+// ═══════════════ MEDICIONES (antropometría en la ficha) ═══════════════
+// Solo lectura: usa el resumen (peso, % grasa) que la calculadora guarda en cada valoración.
+// El % de grasa es el que calcula la calculadora (Durnin & Womersley, o Yuhász si no hay edad).
+async function getMediciones(depId){
+  const base = `antropometria_valoraciones?deportista_id=eq.${depId}&order=fecha.asc&select=id,fecha,peso:medidas->peso`;
+  // sb() no lanza en errores HTTP: devuelve el cuerpo del error, así que se comprueba que sea un array.
+  // Si la columna resumen aún no existe en Supabase, se pide solo el peso.
+  for(const q of [base + ',resumen', base]){
+    try{ const r = await sb(q); if(Array.isArray(r)) return r; }catch(e){}
+  }
+  return [];
+}
+const medNum = (n,dec=1) => n.toLocaleString('es-ES',{minimumFractionDigits:dec,maximumFractionDigits:dec});
+const medSigned = (n,dec=1) => (n>0?'+':n<0?'−':'') + medNum(Math.abs(n),dec);
+
+function medPunto(r){
+  const res = r.resumen || {};
+  let peso = res.peso!=null ? res.peso : r.peso;
+  if(peso && typeof peso==='object') peso = peso.value;
+  peso = (peso===null||peso===undefined||isNaN(peso)) ? null : +peso;
+  const g = res.pct_grasa!=null ? +res.pct_grasa : null;
+  const mg = res.masa_grasa_kg!=null ? +res.masa_grasa_kg : null;
+  return { fecha:r.fecha, peso, grasa:g, masaGrasa:mg, modelo:res.modelo||null, tieneResumen:!!r.resumen };
+}
+
+// Una mini gráfica por magnitud, cada una con su propia escala (peso y % grasa no comparten eje).
+function medSerie(pts,key,color,titulo,unit){
+  const sr=pts.filter(p=>p[key]!==null);
+  if(sr.length<2) return '';
+  const W=260,H=84,padL=22,padR=22,padT=18,padB=16;
+  const x0=new Date(sr[0].fecha).getTime(), x1=new Date(sr[sr.length-1].fecha).getTime();
+  const xAt=f=> x1===x0 ? W/2 : padL+(new Date(f).getTime()-x0)/(x1-x0)*(W-padL-padR);
+  const vals=sr.map(p=>p[key]), mn=Math.min(...vals), mx=Math.max(...vals), rng=(mx-mn)||1;
+  const yAt=v=> padT+(1-(v-mn)/rng)*(H-padT-padB);
+  const path=sr.map((p,i)=>(i?'L':'M')+xAt(p.fecha).toFixed(1)+' '+yAt(p[key]).toFixed(1)).join(' ');
+  const dots=sr.map(p=>`<circle cx="${xAt(p.fecha).toFixed(1)}" cy="${yAt(p[key]).toFixed(1)}" r="2.8" fill="${color}"/>`).join('');
+  const a=sr[0], z=sr[sr.length-1];
+  const fmtF=f=>new Date(f+'T00:00:00').toLocaleDateString('es-ES',{day:'numeric',month:'short',year:'2-digit'});
+  return `<div><div class="med-serie-t"><i style="background:${color}"></i>${titulo} (${unit})</div>
+    <svg class="med-chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Evolución de ${titulo}: de ${medNum(a[key])} a ${medNum(z[key])} ${unit}">
+      <path d="${path}" fill="none" stroke="${color}" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>${dots}
+      <text class="v" x="${xAt(a.fecha).toFixed(1)}" y="${(yAt(a[key])-7).toFixed(1)}" text-anchor="middle">${medNum(a[key])}</text>
+      <text class="v" x="${xAt(z.fecha).toFixed(1)}" y="${(yAt(z[key])-7).toFixed(1)}" text-anchor="middle">${medNum(z[key])}</text>
+      <text x="${padL}" y="${H-3}" text-anchor="start">${fmtF(a.fecha)}</text>
+      <text x="${W-padR}" y="${H-3}" text-anchor="end">${fmtF(z.fecha)}</text>
+    </svg></div>`;
+}
+
+async function loadMediciones(depId){
+  const rows = await getMediciones(depId);
+  const el = document.getElementById('medBox');
+  if(!el || currentDepId != depId) return;
+  const pts = rows.map(medPunto).sort((a,b)=>new Date(a.fecha)-new Date(b.fecha));
+  if(!pts.length){
+    el.innerHTML = `<p class="med-empty">Sin valoraciones antropométricas todavía. Se registran desde la calculadora de antropometría.</p>
+      <button class="btn-action" style="background:var(--t50);color:var(--t600)" onclick="openAntropometria()">Abrir calculadora</button>`;
+    return;
+  }
+  const last = pts[pts.length-1], prev = pts.length>1 ? pts[pts.length-2] : null;
+  const dias = Math.floor((new Date()-new Date(last.fecha+'T00:00:00'))/86400000);
+  const hace = dias<=0 ? 'hoy' : dias===1 ? 'hace 1 día' : dias<60 ? `hace ${dias} días` : `hace ${Math.round(dias/30.4)} meses`;
+  const stat=(label,val,unit,key,dec,deltaUnit)=>{
+    const has = val!==null && val!==undefined;
+    let delta='';
+    if(prev && has && prev[key]!==null && prev[key]!==undefined) delta = `${medSigned(val-prev[key],dec)} ${deltaUnit||unit} vs. anterior`;
+    else if(!prev) delta = 'Sin valoración anterior';
+    return `<div class="med-stat"><div class="med-stat-l">${label}</div><div class="med-stat-v">${has?medNum(val,dec):'—'}${has?`<small>${unit}</small>`:''}</div><div class="med-delta">${delta||'&nbsp;'}</div></div>`;
+  };
+  let nota='';
+  if(pts.length===1) nota='Con una sola valoración aún no hay comparación ni gráfica.';
+  else if(last.grasa===null) nota = last.tieneResumen
+    ? 'No se ha podido calcular el % de grasa: completa el perfil del deportista en la calculadora (talla, diámetros óseos, sexo y fecha de nacimiento).'
+    : 'El % de grasa aparecerá cuando abras la calculadora de antropometría una vez.';
+  if(last.grasa!==null && last.modelo) nota += (nota?' ':'') + `% de grasa: ${last.modelo}.`;
+  el.innerHTML = `
+    <div class="med-head">
+      <span class="med-date">Última valoración · ${new Date(last.fecha+'T00:00:00').toLocaleDateString('es-ES',{day:'numeric',month:'long',year:'numeric'})}</span>
+      <span class="med-ago">${hace} · ${pts.length} en total</span>
+    </div>
+    <div class="med-stats">
+      ${stat('Peso',last.peso,'kg','peso',1)}
+      ${stat('% grasa',last.grasa,'%','grasa',1,'pts')}
+      ${stat('Masa grasa',last.masaGrasa,'kg','masaGrasa',1)}
+    </div>
+    ${pts.length>1 ? `<div class="med-series">${medSerie(pts,'peso','var(--t400)','Peso','kg')}${medSerie(pts,'grasa','var(--gold)','% grasa','%')}</div>` : ''}
+    ${nota ? `<p class="med-note">${nota}</p>` : ''}`;
 }
 
 

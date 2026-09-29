@@ -452,7 +452,7 @@ const sbGetValoraciones  = () => sb('antropometria_valoraciones?select=*&order=f
 const sbInsertValoracion = (d) => sb('antropometria_valoraciones', {method:'POST', body:JSON.stringify(d)});
 const sbDeleteValoracion = (id) => sb(`antropometria_valoraciones?id=eq.${id}`, {method:'DELETE', headers:{'Prefer':'return=minimal'}});
 async function syncPerfilFields(deportistaId, fields){
-  try{ await sbUpsertPerfil(Object.assign({deportista_id: deportistaId}, fields)); }
+  try{ await sbUpsertPerfil(Object.assign({deportista_id: deportistaId}, fields)); programarSyncResumenes(); }
   catch(e){ console.error("Error sincronizando perfil antropometrico:", e); toast("⚠️ No se pudo guardar en el servidor"); }
 }
 
@@ -666,7 +666,7 @@ function buildClientFromRows(dep, perfil, valoraciones){
     talla: (perfil && perfil.talla!=null) ? perfil.talla : "",
     tallaSentado: (perfil && perfil.talla_sentado!=null) ? perfil.talla_sentado : "",
     envergadura: (perfil && perfil.envergadura!=null) ? perfil.envergadura : "",
-    valoraciones: (valoraciones||[]).map(v=>({ id:v.id, fecha:v.fecha, medidas:v.medidas||{} }))
+    valoraciones: (valoraciones||[]).map(v=>({ id:v.id, fecha:v.fecha, medidas:v.medidas||{}, resumen:v.resumen||null }))
   };
 }
 
@@ -679,6 +679,9 @@ async function loadStateFromSupabase(){
   const valsByDep = {};
   (valoraciones||[]).forEach(v=>{ (valsByDep[v.deportista_id] = valsByDep[v.deportista_id]||[]).push(v); });
   STATE.clients = (deportistas||[]).map(dep=>buildClientFromRows(dep, perfilByDep[dep.id], valsByDep[dep.id]));
+  // Las filas solo traen la clave "resumen" si la columna existe en Supabase.
+  if(valoraciones && valoraciones.length) SYNC_RESUMEN_DISPONIBLE = ('resumen' in valoraciones[0]) ? true : false;
+  programarSyncResumenes();
 }
 
 function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,8); }
@@ -1015,6 +1018,48 @@ function valoresDesdeValoracion(valoracion, client){
   return v;
 }
 
+// Resumen que se guarda con cada valoración (columna resumen de antropometria_valoraciones) para que
+// el Panel Profesional muestre peso y % de grasa sin duplicar aquí las fórmulas. El % de grasa es el
+// "primario" del informe: Durnin & Womersley si hay edad, Yuhász / Ross-Kerr si no. Si faltan datos
+// del perfil (talla, diámetros...) no hay resultados y pct_grasa queda en null.
+function resumenValoracion(client, valoracion){
+  const valores = valoresDesdeValoracion(valoracion, client);
+  const peso = (valores.peso===undefined || valores.peso===null || isNaN(valores.peso)) ? null : valores.peso;
+  const R = calcularResultados(valores, client, edadDecimal(valoracion.fecha, client.fechaNacimiento));
+  const ok = R && R.pctGrasaPrimaria!==null && R.pctGrasaPrimaria!==undefined && !isNaN(R.pctGrasaPrimaria);
+  const r2 = n => Math.round(n*100)/100;
+  return {
+    peso,
+    pct_grasa: ok ? r2(R.pctGrasaPrimaria) : null,
+    masa_grasa_kg: ok && !isNaN(R.pesoGrasoPrimario) ? r2(R.pesoGrasoPrimario) : null,
+    modelo: ok ? R.grasaModeloPrimario : null
+  };
+}
+// Recalcula el resumen de todas las valoraciones y guarda solo las que cambian (valoraciones antiguas
+// sin resumen, o perfiles editados después). Si la columna aún no existe en Supabase no hace nada.
+async function sincronizarResumenes(){
+  const todas = STATE.clients.reduce((acc,c)=>acc.concat(c.valoraciones.map(v=>({c,v}))), []);
+  if(!todas.length) return;
+  if(SYNC_RESUMEN_DISPONIBLE===false) return;
+  for(const {c,v} of todas){
+    let nuevo;
+    try{ nuevo = resumenValoracion(c, v); }catch(e){ continue; }
+    if(JSON.stringify(nuevo)===JSON.stringify(v.resumen)) continue;
+    try{
+      await sb(`antropometria_valoraciones?id=eq.${v.id}`, {method:'PATCH', headers:{'Prefer':'return=minimal'}, body:JSON.stringify({resumen:nuevo})});
+      v.resumen = nuevo;
+    }catch(e){
+      console.warn("No se pudo guardar el resumen (¿falta la columna resumen en Supabase?)", e);
+      SYNC_RESUMEN_DISPONIBLE = false; return;
+    }
+  }
+}
+let SYNC_RESUMEN_DISPONIBLE = null, _syncResumenTimer = null;
+function programarSyncResumenes(){
+  clearTimeout(_syncResumenTimer);
+  _syncResumenTimer = setTimeout(()=>{ sincronizarResumenes().catch(e=>console.warn(e)); }, 1500);
+}
+
 // Compara dos conjuntos de "valores" base (actual vs anterior/objetivo) aplicando ETM si existe
 function compararValores(actual, referencia, etmSettings){
   const out = {};
@@ -1322,6 +1367,7 @@ function openClientForm(client, prefill){
       } else {
         await sbPatchDeportista(client.id, { nombre: nombreCompleto, deporte: deporte || null });
         await sbUpsertPerfil(Object.assign({deportista_id: client.id}, perfilData));
+        programarSyncResumenes();
         Object.assign(client, {
           nombre: nombreCompleto, apellidos: "", deporte,
           sexo: perfilData.sexo,
@@ -2016,7 +2062,17 @@ async function guardarValoracion(client){
   if(btnSave) btnSave.disabled = true;
   let inserted;
   try{
-    inserted = await sbInsertValoracion({ deportista_id: client.id, fecha: draft.fecha, medidas });
+    let resumen = null;
+    try{ resumen = resumenValoracion(client, { fecha: draft.fecha, medidas }); }catch(e){}
+    try{
+      inserted = await sbInsertValoracion({ deportista_id: client.id, fecha: draft.fecha, medidas, resumen });
+    }catch(e0){
+      if(SYNC_RESUMEN_DISPONIBLE===true) throw e0;
+      resumen = null; // la columna resumen puede no existir todavía: se guarda sin ella
+      inserted = await sbInsertValoracion({ deportista_id: client.id, fecha: draft.fecha, medidas });
+    }
+    inserted = Array.isArray(inserted) ? inserted : [inserted];
+    inserted[0].__resumen = resumen;
   }catch(e){
     console.error(e);
     toast("⚠️ No se pudo guardar en el servidor — inténtalo de nuevo");
@@ -2024,7 +2080,7 @@ async function guardarValoracion(client){
     return;
   }
   const row = Array.isArray(inserted) ? inserted[0] : inserted;
-  const valoracion = { id: row.id, fecha: draft.fecha, medidas };
+  const valoracion = { id: row.id, fecha: draft.fecha, medidas, resumen: row.__resumen || row.resumen || null };
   client.valoraciones.push(valoracion);
   CURRENT_VALORACION_DRAFT = null;
   RESULT_VALORACION_ID = valoracion.id;

@@ -59,3 +59,11 @@ create policy "anon full access valoraciones" on antropometria_valoraciones
 alter table antropometria_perfil add column if not exists talla         numeric;
 alter table antropometria_perfil add column if not exists talla_sentado numeric;
 alter table antropometria_perfil add column if not exists envergadura   numeric;
+
+-- ------------------------------------------------------------
+-- Resumen de cada valoración (peso y % de grasa calculado con Durnin & Womersley,
+-- o Yuhász / Ross-Kerr si no hay edad). Lo escribe la calculadora al guardar
+-- y lo lee el Panel Profesional en la ficha del deportista. Ejecutar antes de
+-- publicar los cambios.
+-- ------------------------------------------------------------
+alter table antropometria_valoraciones add column if not exists resumen jsonb;
