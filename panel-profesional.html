@@ -709,25 +709,32 @@ body.dark-mode img{opacity:.92}
       Facturación
     </button>
     <p class="sb-divider">Herramientas</p>
-    <button class="sb-item" id="sbConsulta" onclick="navTo('consulta')">
-      <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-      Modo consulta
-    </button>
-    <button class="sb-item" id="sbCalc" onclick="navTo('calculadora')">
-      <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="8" y2="10.01"/><line x1="12" y1="10" x2="12" y2="10.01"/><line x1="16" y1="10" x2="16" y2="10.01"/><line x1="8" y1="14" x2="8" y2="14.01"/><line x1="12" y1="14" x2="12" y2="14.01"/><line x1="16" y1="14" x2="16" y2="14.01"/><line x1="8" y1="18" x2="16" y2="18"/></svg>
-      Calculadora
-    </button>
     <button class="sb-item" id="sbRef" onclick="navTo('referencia')">
       <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-      Referencia clínica
+      Referencias clínicas
+    </button>
+    <button class="sb-item sb-group-toggle" id="sbCalcToggle" onclick="toggleCalcGroup()">
+      <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="8" y2="10.01"/><line x1="12" y1="10" x2="12" y2="10.01"/><line x1="16" y1="10" x2="16" y2="10.01"/><line x1="8" y1="14" x2="8" y2="14.01"/><line x1="12" y1="14" x2="12" y2="14.01"/><line x1="16" y1="14" x2="16" y2="14.01"/><line x1="8" y1="18" x2="16" y2="18"/></svg>
+      Calculadora
+      <svg class="sb-chevron" id="sbCalcChevron" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="margin-left:auto"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+    <div class="sb-subnav" id="sbCalcSub">
+      <button class="sb-item sb-subitem" id="sbCalcEnergia" onclick="navTo('calc-energia')">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        Energía y macros
+      </button>
+      <button class="sb-item sb-subitem" id="sbCalcHidra" onclick="navTo('calc-hidra')">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2.7l5.7 5.7a8 8 0 1 1-11.4 0z"/></svg>
+        Hidratación
+      </button>
+    </div>
+    <button class="sb-item" id="sbComp" onclick="navTo('comparador')">
+      <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0H5a2 2 0 0 1-2-2v-4m6 6h10a2 2 0 0 0 2-2v-4"/></svg>
+      Comparador de alimentos
     </button>
     <button class="sb-item" id="sbSupl" onclick="navTo('suplementacion')">
       <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20 5 5 0 0 1 0-10 5 5 0 0 0 0-10z"/></svg>
       Suplementación
-    </button>
-    <button class="sb-item" id="sbComp" onclick="navTo('comparador')">
-      <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0H5a2 2 0 0 1-2-2v-4m6 6h10a2 2 0 0 0 2-2v-4"/></svg>
-      Comparador de alimentos
     </button>
     <button class="sb-item" id="sbMenu" onclick="navTo('menugen')">
       <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><line x1="9" y1="7" x2="15" y2="7"/><line x1="9" y1="11" x2="15" y2="11"/></svg>
@@ -817,70 +824,6 @@ body.dark-mode img{opacity:.92}
 
 <!-- DEPORTISTAS DASHBOARD -->
 <!-- FACTURACIÓN -->
-<!-- PÁGINA: MODO CONSULTA -->
-<div id="vconsulta" class="view">
-  <div class="page">
-    <div class="page-header">
-      <div><p class="page-title">Modo consulta</p><p class="page-sub">Todo lo que necesitas durante la sesión, en una sola pantalla</p></div>
-    </div>
-
-    <div class="calc-grid" style="margin-bottom:16px">
-      <div style="grid-column:1/-1">
-        <label class="mfl">Cliente o deportista</label>
-        <select class="inp" id="consultaSelect" onchange="loadConsulta()">
-          <option value="">Selecciona…</option>
-        </select>
-      </div>
-    </div>
-
-    <div id="consultaBody" style="display:none">
-      <div class="dash-card" style="margin-bottom:1.25rem">
-        <div class="dash-card-head">
-          <span class="dash-card-title"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/></svg>Datos de la ficha</span>
-        </div>
-        <div id="consultaInfo"></div>
-      </div>
-
-      <div class="dash-card" style="margin-bottom:1.25rem">
-        <div class="dash-card-head">
-          <span class="dash-card-title"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/></svg>Cálculo rápido</span>
-        </div>
-        <div class="calc-grid">
-          <div>
-            <label class="mfl">Sexo</label>
-            <select class="inp" id="qcSexo" onchange="calcConsulta()"><option value="h">Hombre</option><option value="m">Mujer</option></select>
-          </div>
-          <div><label class="mfl">Edad</label><input type="number" class="inp" id="qcEdad" oninput="calcConsulta()"></div>
-          <div><label class="mfl">Peso (kg)</label><input type="number" class="inp" id="qcPeso" step="0.1" oninput="calcConsulta()"></div>
-          <div><label class="mfl">Altura (cm)</label><input type="number" class="inp" id="qcAltura" oninput="calcConsulta()"></div>
-          <div style="grid-column:1/-1">
-            <label class="mfl">Actividad</label>
-            <select class="inp" id="qcActividad" onchange="calcConsulta()">
-              <option value="1.2">Sedentario</option>
-              <option value="1.375">Ligero</option>
-              <option value="1.55" selected>Moderado</option>
-              <option value="1.725">Activo</option>
-              <option value="1.9">Muy activo</option>
-            </select>
-          </div>
-        </div>
-        <div id="qcResults" style="margin-top:10px"></div>
-      </div>
-
-      <div class="dash-card">
-        <div class="dash-card-head">
-          <span class="dash-card-title"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Notas de hoy</span>
-        </div>
-        <textarea class="notes-ta" id="consultaNotas" placeholder="Apunta lo que trabajéis en esta sesión…"></textarea>
-        <div class="notes-foot">
-          <button class="btn-save" onclick="saveConsultaNotas()">Guardar nota de hoy</button>
-          <span class="save-ok" id="consultaSaveOk">✓ Guardado</span>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
 <div id="vfact" class="view">
   <div class="page">
     <div class="page-header">
@@ -1341,7 +1284,7 @@ body.dark-mode img{opacity:.92}
 <div id="vref" class="view">
   <div class="page">
     <div class="page-header">
-      <div><p class="page-title">Referencia clínica</p><p class="page-sub">Valores estándar para adultos — los rangos de tu laboratorio siempre tienen prioridad</p></div>
+      <div><p class="page-title">Referencias clínicas</p><p class="page-sub">Valores estándar para adultos — los rangos de tu laboratorio siempre tienen prioridad</p></div>
     </div>
 
     <div class="ref-jump">
@@ -1484,7 +1427,7 @@ body.dark-mode img{opacity:.92}
 
         <p class="ref-title" style="margin-top:16px">Tasa de sudoración — fórmula de cálculo (ACSM)</p>
         <div class="ref-formula">Pérdida de sudor (L) = Peso antes (kg) − Peso después (kg) + Líquido ingerido (L) − Orina (L)<br>Tasa de sudoración (L/h) = Pérdida de sudor / Duración del ejercicio (h)</div>
-        <p class="ref-note">Úsala en la Calculadora → pestaña "Hidratación deportiva" para introducir los datos y obtener el resultado automáticamente.</p>
+        <p class="ref-note">Úsala en Calculadora → Hidratación para introducir los datos y obtener el resultado automáticamente.</p>
 
         <p class="ref-title" style="margin-top:16px">Concentración de sodio en sudor — rangos habituales</p>
         <table class="ref-table">
@@ -1609,16 +1552,11 @@ body.dark-mode img{opacity:.92}
 <div id="vcalc" class="view">
   <div class="page">
     <div class="page-header">
-      <div><p class="page-title">Calculadora nutricional</p><p class="page-sub">Mifflin-St Jeor, Harris-Benedict revisada, Katch-McArdle y estimación de sudoración ACSM</p></div>
+      <div><p class="page-title" id="calcTitle">Calculadora nutricional</p><p class="page-sub" id="calcSub">Energía y macros · Mifflin-St Jeor, Harris-Benedict revisada y Katch-McArdle</p></div>
       <button class="btn-add" onclick="exportCalcPDF()">
         <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
         Exportar PDF
       </button>
-    </div>
-
-    <div class="agenda-tabs" style="margin-bottom:14px">
-      <button class="agenda-tab on" id="calcTabEnergiaBtn" onclick="setCalcTab('energia')">Energía y macros</button>
-      <button class="agenda-tab" id="calcTabHidraBtn" onclick="setCalcTab('hidra')">Hidratación deportiva</button>
     </div>
 
     <div id="calcTabEnergia">
@@ -2273,103 +2211,6 @@ function generarMenu(){
   document.getElementById('menuResult').innerHTML = html;
 }
 
-// ═══════════════ MODO CONSULTA ═══════════════
-let consultaCtx = null; // {tipo:'cliente'|'deportista', id, record}
-
-async function loadConsultaOptions(){
-  const [cs, ds] = await Promise.all([getAll(), getDeportistas()]);
-  const sel = document.getElementById('consultaSelect');
-  let html = '<option value="">Selecciona…</option>';
-  html += '<optgroup label="Método 3M">' + (cs||[]).map(c=>`<option value="cliente:${c.id}">${c.nombre}</option>`).join('') + '</optgroup>';
-  html += '<optgroup label="Nutrición Deportiva">' + (ds||[]).map(d=>`<option value="deportista:${d.id}">${d.nombre}</option>`).join('') + '</optgroup>';
-  sel.innerHTML = html;
-  document.getElementById('consultaBody').style.display = 'none';
-}
-
-async function loadConsulta(){
-  const val = document.getElementById('consultaSelect').value;
-  if(!val){ document.getElementById('consultaBody').style.display = 'none'; return; }
-  const [tipo, idStr] = val.split(':');
-  const id = parseInt(idStr);
-
-  if(tipo === 'cliente'){
-    const all = await getAll() || [];
-    const c = all.find(x=>x.id===id);
-    if(!c) return;
-    consultaCtx = {tipo:'cliente', id, record:c};
-    const wNum = Math.min((c.semana||0)+1,12);
-    document.getElementById('consultaInfo').innerHTML = `
-      <div class="pdf-row"><span class="l">Servicio</span><span class="v">Método 3M</span></div>
-      <div class="pdf-row"><span class="l">Semana actual</span><span class="v">${wNum} de 12</span></div>
-      <div class="pdf-row"><span class="l">Pago del programa</span><span class="v"><span class="pdf-badge ${c.pagado?'ok':'pending'}">${c.pagado?'✓ Pagado':'Pendiente'}</span></span></div>
-      <div class="pdf-row"><span class="l">Próxima acción</span><span class="v">${c.proxima_accion||'—'}</span></div>
-    `;
-  } else {
-    const all = await getDeportistas() || [];
-    const d = all.find(x=>x.id===id);
-    if(!d) return;
-    consultaCtx = {tipo:'deportista', id, record:d};
-    const revTxt = d.proxima_revision ? new Date(d.proxima_revision+'T00:00:00').toLocaleDateString('es-ES',{day:'numeric',month:'short'}) : '—';
-    document.getElementById('consultaInfo').innerHTML = `
-      <div class="pdf-row"><span class="l">Servicio</span><span class="v">Nutrición Deportiva</span></div>
-      <div class="pdf-row"><span class="l">Deporte</span><span class="v">${d.deporte||'—'}</span></div>
-      <div class="pdf-row"><span class="l">Objetivo</span><span class="v">${d.objetivo||'—'}</span></div>
-      <div class="pdf-row"><span class="l">Próxima revisión</span><span class="v">${revTxt}</span></div>
-      <div class="pdf-row"><span class="l">Próxima acción</span><span class="v">${d.proxima_accion||'—'}</span></div>
-    `;
-  }
-
-  document.getElementById('consultaNotas').value = '';
-  document.getElementById('qcResults').innerHTML = '';
-  document.getElementById('consultaBody').style.display = 'block';
-}
-
-function calcConsulta(){
-  const sexo = document.getElementById('qcSexo').value;
-  const edad = parseFloat(document.getElementById('qcEdad').value);
-  const peso = parseFloat(document.getElementById('qcPeso').value);
-  const altura = parseFloat(document.getElementById('qcAltura').value);
-  const pal = parseFloat(document.getElementById('qcActividad').value);
-  const resEl = document.getElementById('qcResults');
-
-  if(!peso || !altura || !edad){ resEl.innerHTML = ''; return; }
-
-  const bmr = sexo==='h' ? (10*peso + 6.25*altura - 5*edad + 5) : (10*peso + 6.25*altura - 5*edad - 161);
-  const tdee = bmr * pal;
-  const proteinaG = peso * 1.6;
-
-  resEl.innerHTML = `
-    <div class="calc-results">
-      <div class="calc-row"><span class="l">BMR (Mifflin-St Jeor)</span><span class="v">${Math.round(bmr)} kcal</span></div>
-      <div class="calc-row hl"><span class="l">TDEE estimado</span><span class="v">${Math.round(tdee)} kcal</span></div>
-      <div class="calc-row"><span class="l">Proteína orientativa (1.6 g/kg)</span><span class="v">${Math.round(proteinaG)} g</span></div>
-    </div>
-    <p style="font-size:10.5px;color:var(--g400);margin-top:6px">Cálculo rápido con Mifflin-St Jeor. Para más fórmulas y ajuste fino, usa la Calculadora completa.</p>
-  `;
-}
-
-async function saveConsultaNotas(){
-  if(!consultaCtx) return;
-  const texto = document.getElementById('consultaNotas').value.trim();
-  if(!texto) return;
-  const hoy = new Date().toLocaleDateString('es-ES',{day:'numeric',month:'short',year:'numeric'});
-
-  if(consultaCtx.tipo === 'cliente'){
-    const prev = consultaCtx.record.notas || '';
-    const nuevo = `[${hoy}] ${texto}${prev?'\n\n'+prev:''}`;
-    await patch(consultaCtx.id, {notas: nuevo});
-    consultaCtx.record.notas = nuevo;
-  } else {
-    await insertHistorial({deportista_id: consultaCtx.id, fecha: localISO(new Date()), nota: texto});
-    await touchActividad(consultaCtx.id);
-  }
-
-  const ok = document.getElementById('consultaSaveOk');
-  ok.classList.add('show');
-  setTimeout(()=>ok.classList.remove('show'), 2000);
-  document.getElementById('consultaNotas').value = '';
-}
-
 async function loadFacturacion(){
   const [c, ci] = await Promise.all([getAll(), getCitas()]);
   factData.clients = c || [];
@@ -2581,6 +2422,10 @@ function closeMobileSidebar(){
   document.getElementById('sidebar').classList.remove('mobile-open');
   document.getElementById('sidebarBackdrop').classList.remove('show');
 }
+function toggleCalcGroup(){
+  document.getElementById('sbCalcSub').classList.toggle('open');
+  document.getElementById('sbCalcChevron').classList.toggle('open');
+}
 function toggleServiciosGroup(){
   document.getElementById('sbServiciosSub').classList.toggle('open');
   document.getElementById('sbServiciosChevron').classList.toggle('open');
@@ -2593,10 +2438,15 @@ function navTo(section){
   else if(section==='metodo'){document.getElementById('sbMetodo').classList.add('on');show('vdash');load();}
   else if(section==='deportiva'){document.getElementById('sbDep').classList.add('on');show('vdepdash');loadDeportistas();}
   else if(section==='facturacion'){document.getElementById('sbFact').classList.add('on');show('vfact');loadFacturacion();}
-  else if(section==='calculadora'){document.getElementById('sbCalc').classList.add('on');show('vcalc');calcAll();}
+  else if(section==='calc-energia'||section==='calc-hidra'){
+    const hidra = section==='calc-hidra';
+    document.getElementById(hidra?'sbCalcHidra':'sbCalcEnergia').classList.add('on');
+    document.getElementById('sbCalcSub').classList.add('open');
+    document.getElementById('sbCalcChevron').classList.add('open');
+    show('vcalc'); setCalcTab(hidra?'hidra':'energia'); if(hidra) calcHidra(); else calcAll();
+  }
   else if(section==='referencia'){document.getElementById('sbRef').classList.add('on');show('vref');}
   else if(section==='suplementacion'){document.getElementById('sbSupl').classList.add('on');show('vsupl');}
-  else if(section==='consulta'){document.getElementById('sbConsulta').classList.add('on');show('vconsulta');loadConsultaOptions();}
   else if(section==='comparador'){document.getElementById('sbComp').classList.add('on');show('vcomp');}
   else if(section==='menugen'){document.getElementById('sbMenu').classList.add('on');show('vmenu');}
   else if(section==='entreno'){document.getElementById('sbEntreno').classList.add('on');show('ventreno');loadEntreno();}
@@ -3348,8 +3198,10 @@ function refJump(sectionId){
 let lastCalc = null, lastHidra = null;
 
 function setCalcTab(tab){
-  document.getElementById('calcTabEnergiaBtn').classList.toggle('on', tab==='energia');
-  document.getElementById('calcTabHidraBtn').classList.toggle('on', tab==='hidra');
+  document.getElementById('calcTitle').textContent = tab==='hidra' ? 'Calculadora de hidratación' : 'Calculadora nutricional';
+  document.getElementById('calcSub').textContent = tab==='hidra'
+    ? 'Tasa de sudoración y reposición de líquidos · ACSM'
+    : 'Energía y macros · Mifflin-St Jeor, Harris-Benedict revisada y Katch-McArdle';
   document.getElementById('calcTabEnergia').style.display = tab==='energia' ? 'block' : 'none';
   document.getElementById('calcTabHidra').style.display = tab==='hidra' ? 'block' : 'none';
 }
