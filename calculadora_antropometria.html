@@ -88,7 +88,7 @@ p.lead{color:var(--g400);margin:0 0 18px 0;font-size:13px;}
 .grid.cols3{grid-template-columns:1fr 1fr 1fr;}
 .grid.cols4{grid-template-columns:repeat(4,1fr);}
 label{display:block;font-size:11px;color:var(--g400);margin-bottom:4px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;}
-input[type=text],input[type=number],input[type=date],select,textarea{
+input[type=text],input[type=number],input[type=date],input[type=email],input[type=password],select,textarea{
   width:100%;padding:10px 13px;border:.5px solid var(--bdm);border-radius:10px;font-size:14px;
   background:var(--bg);color:var(--g900);font-family:var(--f);outline:none;transition:border-color .15s;
 }
@@ -493,12 +493,72 @@ const LOGO_DATA_URI = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPAAAADwCAY
    ============================================================ */
 const SURL = 'https://knmucvrbxpzmrjwxyksj.supabase.co';
 const SKEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtubXVjdnJieHB6bXJqd3h5a3NqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODExOTE4NTgsImV4cCI6MjA5Njc2Nzg1OH0.DRKDDzKlxCXFedofGvXF0dLhWtSQ4LLI9oLWItEYJGQ';
-const SB_HEADERS = {'apikey':SKEY,'Authorization':'Bearer '+SKEY,'Content-Type':'application/json'};
+/* Sesión de Supabase Auth: la misma que usa el Panel Profesional (clave `nl_session` de localStorage, mismo origen),
+   así dentro del panel no pide login. Solo en su propia URL y sin sesión muestra el formulario de acceso. */
+const AUTH_KEY = 'nl_session';
+function authLoad(){ try{ return JSON.parse(localStorage.getItem(AUTH_KEY)||'null'); }catch(e){ return null; } }
+function authSave(j){ localStorage.setItem(AUTH_KEY, JSON.stringify({access_token:j.access_token, refresh_token:j.refresh_token, expires_at:Date.now()+Math.max((j.expires_in||3600)-60,30)*1000})); }
+function authClear(){ try{ localStorage.removeItem(AUTH_KEY); }catch(e){} }
+async function authPost(grant, body){
+  const r = await fetch(SURL+'/auth/v1/token?grant_type='+grant, {method:'POST', headers:{'apikey':SKEY,'Content-Type':'application/json'}, body:JSON.stringify(body)});
+  const j = await r.json().catch(()=>({}));
+  if(!r.ok || !j.access_token){ const e = new Error(j.error_description||j.msg||'auth'); e.status = r.status; throw e; }
+  return j;
+}
+async function authLogin(email, password){ authSave(await authPost('password', {email, password})); }
+let _authRefreshing = null;
+function authRefresh(){
+  if(_authRefreshing) return _authRefreshing;
+  const s = authLoad(); if(!s || !s.refresh_token) return Promise.resolve(null);
+  _authRefreshing = authPost('refresh_token', {refresh_token:s.refresh_token})
+    .then(j=>{ authSave(j); return j.access_token; })
+    .catch(e=>{ if(e.status>=400 && e.status<500) authClear(); return null; })
+    .finally(()=>{ _authRefreshing = null; });
+  return _authRefreshing;
+}
+async function authToken(){ const s = authLoad(); if(!s) return null; return Date.now()<s.expires_at ? s.access_token : authRefresh(); }
+async function authFetch(url, opts={}){
+  const go = async tok => fetch(url, {...opts, headers:{'apikey':SKEY,'Authorization':'Bearer '+(tok||SKEY),...(opts.headers||{})}});
+  const habiaSesion = !!authLoad();
+  const tok = await authToken();
+  if(habiaSesion && !tok && !authLoad()){ location.reload(); return new Response('[]', {status:401}); }   // renovación rechazada: al recargar pide el acceso
+  let r = await go(tok);
+  if(r.status===401 && authLoad()){
+    const t = await authRefresh();
+    if(t) r = await go(t); else location.reload();   // sesión caducada: al recargar pide el acceso
+  }
+  return r;
+}
 async function sb(path, opts={}){
-  const r = await fetch(SURL+'/rest/v1/'+path, {...opts, headers:{...SB_HEADERS,'Prefer':'return=representation',...(opts.headers||{})}});
+  const r = await authFetch(SURL+'/rest/v1/'+path, {...opts, headers:{'Content-Type':'application/json','Prefer':'return=representation',...(opts.headers||{})}});
   const t = await r.text();
   if(!r.ok) throw new Error('Supabase '+r.status+': '+t);
   return t ? JSON.parse(t) : null;
+}
+// Formulario de acceso (solo si no hay sesión). Se resuelve al entrar correctamente.
+function pedirLogin(root){
+  return new Promise(resolve=>{
+    root.innerHTML = `<div class="card" style="max-width:380px;margin:8vh auto 0">
+      <h2 style="margin-bottom:6px">Acceso profesional</h2>
+      <p class="small-note" style="margin-bottom:14px">Entra con tu correo y tu contraseña para ver las valoraciones.</p>
+      <label for="lgEmail">Correo</label>
+      <input type="email" id="lgEmail" autocomplete="username" autocapitalize="off" spellcheck="false" style="width:100%;margin-bottom:10px">
+      <label for="lgPass">Contraseña</label>
+      <input type="password" id="lgPass" autocomplete="current-password" style="width:100%;margin-bottom:12px">
+      <button class="btn camel" id="lgBtn" style="width:100%;justify-content:center">Entrar</button>
+      <p class="small-note" id="lgErr" style="color:var(--red);min-height:18px;margin-top:8px"></p>
+    </div>`;
+    const go = async ()=>{
+      const em = document.getElementById("lgEmail").value.trim(), pw = document.getElementById("lgPass").value;
+      const err = document.getElementById("lgErr");
+      if(!em || !pw){ err.textContent = "Introduce tu correo y tu contraseña"; return; }
+      err.textContent = "Entrando…";
+      try{ await authLogin(em, pw); resolve(); }
+      catch(e){ err.textContent = (e.status>=400 && e.status<500) ? "Correo o contraseña incorrectos" : "No se pudo conectar. Inténtalo de nuevo."; }
+    };
+    document.getElementById("lgBtn").addEventListener("click", go);
+    document.getElementById("lgPass").addEventListener("keydown", e=>{ if(e.key==="Enter") go(); });
+  });
 }
 const sbGetDeportistas   = () => sb('clientes_deportivos?select=*&order=nombre.asc');
 const sbInsertDeportista = (d) => sb('clientes_deportivos', {method:'POST', body:JSON.stringify(d)});
@@ -1165,6 +1225,7 @@ document.addEventListener("DOMContentLoaded", async ()=>{
     b.addEventListener("click", ()=>goView(b.dataset.view));
   });
   const root = document.getElementById("view-root");
+  if(!(await authToken())) await pedirLogin(root);
   root.innerHTML = `<div class="empty">Cargando clientes desde Supabase...</div>`;
   try{
     await loadStateFromSupabase();
