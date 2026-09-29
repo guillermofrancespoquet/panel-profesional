@@ -1161,6 +1161,7 @@ function viewClientes(){
   `;
 }
 let CLIENT_SEARCH = "";
+let INFORME_PRESEL = null; // valoración a preseleccionar (y generar) al abrir la pestaña Informe
 
 function esc(s){ return (s===undefined||s===null) ? "" : String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
@@ -1180,6 +1181,7 @@ function viewClienteDetalle(c){
       <td class="no-print">
         <div class="btn-group">
           <button class="btn ghost sm" data-usevalo="${v.id}"><span class="ic">📊</span> Resultados</button>
+          <button class="btn ghost sm" data-informe="${v.id}" title="Generar el informe PDF de esta valoración"><span class="ic">📄</span> Informe</button>
           <button class="btn danger sm" data-delvalo="${v.id}"><span class="ic">🗑️</span> Eliminar</button>
         </div>
       </td>
@@ -1262,6 +1264,10 @@ function wireClientes(){
   if(btnEdit) btnEdit.addEventListener("click", ()=>openClientForm(getClient(CURRENT_CLIENT_ID)));
   const btnNewV = document.getElementById("btnNewValoracion");
   if(btnNewV) btnNewV.addEventListener("click", ()=>{ goView("valoracion"); });
+  // Informe directo: abre la pestaña Informe con este cliente y esta valoración y genera la vista previa
+  document.querySelectorAll("[data-informe]").forEach(b=>b.addEventListener("click", ()=>{
+    INFORME_PRESEL = b.dataset.informe; goView("informe");
+  }));
   document.querySelectorAll("[data-usevalo]").forEach(b=>b.addEventListener("click", ()=>{
     RESULT_VALORACION_ID = b.dataset.usevalo; goView("resultados");
   }));
@@ -2895,7 +2901,7 @@ function viewInforme(){
   const selClientId = CURRENT_CLIENT_ID || clients[0].id;
   const c = getClient(selClientId) || clients[0];
   const valOpts = c.valoraciones.slice().sort((a,b)=>new Date(b.fecha)-new Date(a.fecha))
-    .map(v=>`<option value="${v.id}">${fmtDate(v.fecha)}</option>`).join("");
+    .map(v=>`<option value="${v.id}" ${v.id==INFORME_PRESEL?"selected":""}>${fmtDate(v.fecha)}</option>`).join("");
   return `
   <h2>Informe / PDF</h2>
   <p class="lead">Genera el informe de una valoración y expórtalo a PDF usando el diálogo de impresión del navegador (100% offline).</p>
@@ -3072,6 +3078,10 @@ function wireInforme(){
     }
     window.print();
   });
+  if(INFORME_PRESEL){
+    valSel.value = INFORME_PRESEL; INFORME_PRESEL = null;
+    document.getElementById("btnGenerarInforme").click();
+  }
 }
 
 // Dibuja los gráficos canvas del informe (pliegues, tartas de composición, PHANTOM, somatocarta)
