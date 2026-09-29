@@ -7,7 +7,7 @@ Apps web de gestión para Guillermo Frances (nutrición deportiva, Valencia). To
 | Archivo | Qué es |
 |---|---|
 | `panel-profesional.html` | App principal (login con PIN, dashboard, agenda, facturación, Método 3M, Nutrición Deportiva, herramientas). |
-| `calculadora_antropometria.html` | Calculadora ISAK de antropometría. Se abre en pestaña nueva desde el panel (`openAntropometria()`). Guarda en Supabase. |
+| `calculadora_antropometria.html` | Calculadora ISAK de antropometría. Se muestra **dentro del panel** en un iframe con `?embed=1` (`cargarAntropometria()` / `abrirAntropometria(depId)`, que pasa `&c=<id>` para dejar abierto a ese deportista) y también funciona sola en su propia URL. Guarda en Supabase. |
 | `metodo-3-meses-final.html` | Programa Método 3 Meses (satélite, abierto desde el panel). **No revisado en la sesión donde se creó este archivo: léelo entero antes de tocarlo.** |
 | `icon-192.png`, `icon-512.png` | Iconos PWA (los usan ambos manifests). |
 | `manifest-panel.json` | Manifest PWA del panel (`start_url` → `panel-profesional.html`). |
@@ -55,6 +55,7 @@ Apps web de gestión para Guillermo Frances (nutrición deportiva, Valencia). To
 
 ## Decisiones ya tomadas (no reabrir sin que el usuario lo pida)
 
+- Calculadora de antropometría: el menú tiene solo **Clientes, Informe y Ajustes**. Nueva valoración y Resultados son pantallas a las que se llega desde la ficha desplegable de cada cliente (con "← Volver"), y cada valoración del historial tiene un botón Informe. En modo `?embed=1` se oculta su cabecera y su menú lateral y el menú pasa a pestañas arriba; el modo oscuro lo decide el panel (`syncAntroDark()`). Ojo: iframe y panel solo se pueden comunicar si se sirven desde el mismo origen (en Pages sí; en local hace falta un servidor, no `file://`).
 - La calculadora **ya no funciona offline** (depende de Supabase); no se ha querido añadir cola local.
 - Talla, talla sentado y envergadura son medidas **fijas por cliente**, igual que los diámetros óseos.
 - En el historial de sesiones de un deportista se muestran, solo lectura y con etiqueta "Auto", las valoraciones antropométricas.

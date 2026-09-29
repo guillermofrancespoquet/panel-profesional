@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>try{ if(new URLSearchParams(location.search).get('embed')==='1') document.documentElement.classList.add('embed'); }catch(e){}</script>
 <title>Antropometría &amp; Somatocarta — NutriLogos</title>
 <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
 <link rel="icon" type="image/png" sizes="512x512" href="./icon-512.png">
@@ -336,6 +337,25 @@ body.dark-mode canvas{background:#fff;border-radius:10px;}
   #clientTable td:nth-child(6) .btn{justify-content:center;}
   .modal{padding:16px;max-height:92vh;}
 }
+
+/* Modo incrustado (?embed=1, dentro del Panel Profesional): sin cabecera ni menú lateral; el menú pasa a
+   pestañas horizontales arriba y el modo oscuro lo decide el panel. */
+.newtab{display:none;}
+html.embed .app{flex-direction:column;min-height:0;}
+html.embed .sidebar{position:static;height:auto;width:auto;flex:0 0 auto;align-self:flex-start;flex-direction:row;flex-wrap:wrap;align-items:center;gap:4px;padding:4px;margin:20px 2rem 0;background:var(--g100);border-radius:12px;overflow:visible;}
+html.embed .brand,html.embed .sidebar .foot,html.embed .navsep{display:none;}
+html.embed .navbtn{width:auto;margin:0;padding:8px 16px;border-radius:9px;font-size:13px;color:var(--g500);white-space:nowrap;}
+html.embed .navbtn:hover{background:rgba(0,0,0,.05);color:var(--g900);}
+html.embed .navbtn.active{background:var(--sf);color:var(--t600);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.08);}
+html.embed .navbtn.active::before{display:none;}
+html.embed .newtab{display:inline-flex;font-size:12px;text-decoration:none;color:var(--g400);margin-left:6px;}
+html.embed .main{padding:1.25rem 2rem 2rem;}
+@media screen and (max-width:760px){
+  html.embed .sidebar{margin:12px 14px 0;max-width:calc(100% - 28px);flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;}
+  html.embed .sidebar::-webkit-scrollbar{display:none;}
+  html.embed .navbtn{flex:0 0 auto;padding:8px 12px;}
+  html.embed .main{padding:14px;}
+}
 </style>
 </head>
 <body>
@@ -352,6 +372,7 @@ body.dark-mode canvas{background:#fff;border-radius:10px;}
     <button class="navbtn" data-view="informe"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> Informe / PDF</button>
     <div class="navsep"></div>
     <button class="navbtn" data-view="ajustes"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg> Ajustes</button>
+    <a class="navbtn newtab" id="lnkNewTab" href="calculadora_antropometria.html" target="_blank" rel="noopener" title="Abrir la calculadora en una pestaña aparte"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>Abrir aparte</a>
   <div class="foot">
       <button class="sb-toggle" id="darkModeBtn" type="button">
         <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
@@ -1122,7 +1143,16 @@ document.addEventListener("DOMContentLoaded", async ()=>{
     root.innerHTML = `<div class="card"><div class="empty">⚠️ No se pudo conectar con Supabase. Comprueba tu conexion y recarga la pagina.</div></div>`;
     return;
   }
+  // ?c=<id> (desde la ficha del deportista en el panel): deja abierto a ese cliente
+  const cParam = new URLSearchParams(location.search).get("c");
+  if(cParam && getClient(cParam)) CURRENT_CLIENT_ID = cParam;
+  const lnk = document.getElementById("lnkNewTab");
+  if(lnk) lnk.href = location.pathname;
   goView("clientes");
+  if(cParam && CURRENT_CLIENT_ID==cParam){
+    const fila = document.querySelector("#clientTable tr.clientrow.open");
+    if(fila) fila.scrollIntoView({block:"start"});
+  }
 });
 
 /* ============================================================
