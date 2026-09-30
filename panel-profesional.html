@@ -4609,6 +4609,11 @@ function openDepDet(id) {
     </div>
 
     <div class="depd-section">
+      <p class="sec-title">Formularios del cliente</p>
+      <div class="med-box" id="frmBox">${frmHtml(d)}</div>
+    </div>
+
+    <div class="depd-section">
       <p class="sec-title">Mediciones · antropometría</p>
       <div class="med-box" id="medBox"><p class="med-empty">Cargando…</p></div>
     </div>
@@ -4703,6 +4708,43 @@ function btnSoft(label,onclick,icon,sm){
 }
 function btnDel(title,onclick){
   return `<button class="file-btn del" title="${title}" aria-label="${title}" onclick="${onclick}"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">${BS_ICON.trash}</svg></button>`;
+}
+
+// ── Formularios del cliente (Google Forms): estado guardado en clientes_deportivos.formularios ──
+// El cliente los marca como enviados desde su área; aquí puedes marcarlos o desmarcarlos tú y activar el seguimiento semanal.
+const FRM_LISTA=[{k:'inicial',t:'Cuestionario inicial'},{k:'anamnesis',t:'Anamnesis nutricional'}];
+function frmFecha(f){ return f?new Date(f+'T00:00:00').toLocaleDateString('es-ES',{day:'numeric',month:'short',year:'numeric'}):''; }
+function frmHoy(){ return localISO(new Date()); }
+function frmHtml(d){
+  const f=(d.formularios&&typeof d.formularios==='object')?d.formularios:{}, seg=f.seguimiento||{};
+  const fila=(t,on,txt,btn)=>`<div class="acc-row" style="justify-content:space-between;margin-bottom:8px"><span style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><span class="acc-pill${on?' on':''}">${txt}</span><b style="font-size:13px">${t}</b></span>${btn}</div>`;
+  const main=FRM_LISTA.map(x=>{
+    const h=(f[x.k]||{}).hecho;
+    return fila(x.t,!!h,h?'Hecho · '+frmFecha(h):'Pendiente',
+      btnSoft(h?'Volver a pendiente':'Marcar como hecho',`frmToggle(${d.id},'${x.k}')`,h?'trash':'plus',false));
+  }).join('');
+  const u=seg.ultimo;
+  const segRow=fila('Seguimiento semanal',!!seg.activo,seg.activo?'Activo'+(u?' · último '+frmFecha(u):' · sin enviar'):'No activo',
+    btnSoft(seg.activo?'Desactivar':'Activar cada semana',`frmSeguimiento(${d.id})`,seg.activo?'trash':'plus',false));
+  return main+segRow+'<p class="med-note">El cliente los ve en su área («Mis formularios») y marca cada uno cuando lo envía. El seguimiento solo le aparece si lo activas, y vuelve a quedar pendiente cada lunes.</p>';
+}
+async function frmGuardar(depId,nuevo){
+  const d=deportistas.find(x=>x.id==depId); if(!d) return;
+  const box=document.getElementById('frmBox');
+  try{ await patchDep(depId,{formularios:nuevo}); d.formularios=nuevo; }
+  catch(e){ if(box) box.insertAdjacentHTML('beforeend','<p class="med-note" style="color:var(--red)">No se pudo guardar. ¿Has ejecutado supabase_formularios.sql en Supabase?</p>'); return; }
+  if(box&&currentDepId==depId) box.innerHTML=frmHtml(d);
+}
+function frmActual(depId){ const d=deportistas.find(x=>x.id==depId); const f=d&&d.formularios&&typeof d.formularios==='object'?d.formularios:{}; return JSON.parse(JSON.stringify(f)); }
+function frmToggle(depId,k){
+  const f=frmActual(depId);
+  if((f[k]||{}).hecho) delete f[k]; else f[k]={hecho:frmHoy()};
+  frmGuardar(depId,f);
+}
+function frmSeguimiento(depId){
+  const f=frmActual(depId), s=f.seguimiento||{};
+  f.seguimiento={...s,activo:!s.activo};
+  frmGuardar(depId,f);
 }
 
 // ── Acceso del cliente (área de clientes): vincula el correo de una cuenta de Supabase con este deportista ──
