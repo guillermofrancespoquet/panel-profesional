@@ -435,6 +435,21 @@ body.dark-mode img{opacity:.92}
 .sb-search-wrap{padding:0 .75rem;margin-bottom:.75rem}
 .sb-search-btn{width:100%;display:flex;align-items:center;gap:9px;background:rgba(255,255,255,.06);border:.5px solid rgba(255,255,255,.1);border-radius:10px;color:rgba(255,255,255,.45);font-size:13px;padding:9px 12px;cursor:pointer;font-family:var(--f);text-align:left;transition:background .15s}
 .sb-search-btn:hover{background:rgba(255,255,255,.1)}
+/* En móvil la búsqueda es un campo dentro de la barra lateral con una lista compacta debajo (sin ventana aparte) */
+.sb-search-inline{display:none;align-items:center;gap:9px;height:40px;padding:0 6px 0 12px;background:rgba(255,255,255,.07);border:.5px solid rgba(255,255,255,.14);border-radius:10px;color:rgba(255,255,255,.5);transition:border-color .15s,background .15s}
+.sb-search-inline:focus-within{border-color:rgba(255,255,255,.34);background:rgba(255,255,255,.1)}
+.sb-search-inline input{flex:1;min-width:0;background:transparent;border:none;outline:none;color:#fff;font-family:var(--f);font-size:16px;padding:0;-webkit-appearance:none;appearance:none}
+.sb-search-inline input::placeholder{color:rgba(255,255,255,.45)}
+.sb-search-clear{width:28px;height:28px;border:none;background:rgba(255,255,255,.1);color:rgba(255,255,255,.75);border-radius:50%;cursor:pointer;align-items:center;justify-content:center;flex-shrink:0;padding:0}
+.sb-search-results{display:none;margin-top:6px;max-height:min(44vh,320px);overflow-y:auto;background:rgba(0,0,0,.2);border-radius:10px;padding:4px;-webkit-overflow-scrolling:touch}
+.sb-search-results.on{display:block}
+.sb-search-results .gsearch-group-label{color:rgba(255,255,255,.4);padding:8px 8px 3px}
+.sb-search-results .gsearch-item{padding:7px 8px;gap:10px}
+.sb-search-results .gsearch-item:hover,.sb-search-results .gsearch-item:active{background:rgba(255,255,255,.09)}
+.sb-search-results .gsearch-item-name{color:#fff;font-size:13px}
+.sb-search-results .gsearch-item-sub{color:rgba(255,255,255,.5);font-size:11px}
+.sb-search-results .gsearch-avatar{width:28px;height:28px;font-size:11px}
+.sb-search-results .gsearch-empty{padding:.9rem .5rem;color:rgba(255,255,255,.5);font-size:12.5px}
 .gsearch-modal{background:#fff;border-radius:16px;width:100%;max-width:520px;max-height:70vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.25)}
 .gsearch-input-wrap{display:flex;align-items:center;gap:10px;padding:1rem 1.25rem;border-bottom:.5px solid var(--bd)}
 .gsearch-input-wrap svg{color:var(--g400);flex-shrink:0}
@@ -604,7 +619,7 @@ body.dark-mode .cmp-cell.b .cmp-track i{background:var(--t400)}
 .fact-card-txt{font-size:12.5px;line-height:1.55;color:rgba(255,255,255,.92)}
 .dash-hero{margin-bottom:1.75rem}
 .dash-greet{font-size:22px;font-weight:700;letter-spacing:-.02em;margin-bottom:3px}
-.dash-date{font-size:13px;color:var(--g400);text-transform:capitalize}
+.dash-date{font-size:13px;color:var(--g400)}
 .dash-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:1.5rem}
 .dash-card{background:var(--sf);border-radius:16px;border:.5px solid var(--bd);padding:1.25rem 1.4rem;box-shadow:0 2px 10px rgba(0,0,0,.04)}
 .dash-card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:.9rem}
@@ -644,6 +659,13 @@ body.dark-mode .cmp-cell.b .cmp-track i{background:var(--t400)}
 
   html,body{overflow-x:hidden}
   .page{padding:1rem;max-width:100%}
+  /* iOS hace zoom al enfocar campos con letra menor de 16 px: se fija ese tamaño en móvil */
+  input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]):not([type=color]),select,textarea{font-size:16px !important}
+  .agenda-toolbar{display:block}
+  .agenda-toolbar .dep-search{margin-bottom:10px}
+  .agenda-chips{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;margin:0 -1rem;padding:2px 1rem 4px}
+  .agenda-chips::-webkit-scrollbar{display:none}
+  .agenda-chips .dep-chip{flex-shrink:0}
   .page-header{margin-bottom:1.25rem}
   .page-title{font-size:19px}
   .dash-grid{grid-template-columns:1fr}
@@ -666,7 +688,9 @@ body.dark-mode .cmp-cell.b .cmp-track i{background:var(--t400)}
   .hist-add input[type=date]{-webkit-appearance:none;appearance:none;min-height:40px}
   .depd-hero{flex-wrap:wrap}
   .plan-box{flex-wrap:wrap}
-  .gsearch-modal{max-width:100%;margin:0 .75rem}
+  .gsearch-modal{width:calc(100% - 1.5rem);max-width:100%;margin:0 auto}
+  .sb-search-btn{display:none}
+  .sb-search-inline{display:flex}
 }
 
 
@@ -866,6 +890,22 @@ body.dark-mode .frm select.inp{background-image:url("data:image/svg+xml,%3Csvg x
 .pdf-sum span{font-size:14px;font-weight:700;color:#163a47}
 .pdf-foot{text-align:center;margin-top:26px;padding-top:14px;border-top:1px solid #ece4d6;font-size:9px;color:#a89c89;letter-spacing:1px;text-transform:uppercase}
 
+
+/* ═══ PÍLDORAS: tonos algo más oscuros y borde fino para que se distingan del fondo ═══ */
+:root{--pill-n:#E3DFD2;--pill-n-h:#D9D4C4;--pill-n-bd:rgba(70,58,30,.18);--pill-g:#C4E8D6;--pill-g-bd:rgba(15,110,86,.30);--pill-au:#EAD9BD;--pill-au-bd:rgba(122,90,56,.30);--pill-r:#F7D0D0;--pill-r-bd:rgba(192,57,43,.28)}
+body.dark-mode{--pill-n:#343a3d;--pill-n-h:#3e4548;--pill-n-bd:rgba(255,255,255,.14);--pill-g:#21493f;--pill-g-bd:rgba(159,225,203,.26);--pill-au:#463c22;--pill-au-bd:rgba(217,184,140,.28);--pill-r:#4e2828;--pill-r-bd:rgba(255,140,140,.24)}
+.dep-chip{background:var(--pill-n);border-color:var(--pill-n-bd);color:var(--g700)}
+.dep-chip:hover:not(.active){background:var(--pill-n-h)}
+.dep-chip.active{background:var(--pill-au);border-color:var(--pill-au-bd);color:var(--gold-dk)}
+body.dark-mode .dep-chip.active{color:var(--gold)}
+.hist-tag,.dep-obj-badge,.cbadge.on,.rev-badge.ok,.sup-badge.strong,.pay-toggle.paid{background:var(--pill-g);color:var(--t800);box-shadow:inset 0 0 0 .5px var(--pill-g-bd)}
+body.dark-mode .hist-tag,body.dark-mode .dep-obj-badge,body.dark-mode .cbadge.on,body.dark-mode .rev-badge.ok,body.dark-mode .sup-badge.strong,body.dark-mode .pay-toggle.paid{color:var(--t100)}
+.rev-badge.soon,.dash-card-count,.ref-src,.sup-badge.mid{background:var(--pill-au);color:var(--gold-dk);box-shadow:inset 0 0 0 .5px var(--pill-au-bd)}
+body.dark-mode .rev-badge.soon,body.dark-mode .dash-card-count,body.dark-mode .ref-src,body.dark-mode .sup-badge.mid{color:var(--gold)}
+.rev-badge.urgent,.pay-toggle.pending,.sup-badge.warn{background:var(--pill-r);color:#B3261E;box-shadow:inset 0 0 0 .5px var(--pill-r-bd)}
+body.dark-mode .rev-badge.urgent,body.dark-mode .pay-toggle.pending,body.dark-mode .sup-badge.warn{color:#ff9b93}
+.rev-badge.none,.cbadge.off,.pay-toggle.info,.accion-badge.subtle,.sup-badge.ctx{background:var(--pill-n);color:var(--g700);box-shadow:inset 0 0 0 .5px var(--pill-n-bd)}
+.cmp-ej button{background:var(--pill-n);border-color:var(--pill-n-bd)}
 </style>
 </head>
 <body>
@@ -927,6 +967,14 @@ body.dark-mode .frm select.inp{background-image:url("data:image/svg+xml,%3Csvg x
       <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
       Buscar…
     </button>
+    <div class="sb-search-inline">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="sbSearchInput" placeholder="Buscar…" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="search" oninput="runSidebarSearch()" onfocus="loadSearchData()" onkeydown="sbSearchKey(event)">
+      <button type="button" class="sb-search-clear" id="sbSearchClear" onclick="clearSidebarSearch(true)" aria-label="Borrar búsqueda" style="display:none">
+        <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" viewBox="0 0 24 24"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="sb-search-results" id="sbSearchResults"></div>
   </div>
   <div class="sb-nav">
     <button class="sb-item" id="sbHome" onclick="navTo('home')">
@@ -2296,6 +2344,11 @@ function sesionCaducada(){
   logout();
   document.getElementById('lerr').textContent='La sesión ha caducado. Vuelve a entrar.';
 }
+// «martes, 29 de septiembre de 2026» → «Martes, 29 de Septiembre de 2026»: día de la semana y mes con mayúscula, «de» en minúscula
+function fechaLarga(d){
+  return d.toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long',year:'numeric'})
+    .replace(/(^|\s)([a-záéíóúñ])/g,(m,a,b)=>a+b.toUpperCase()).replace(/ De /g,' de ');
+}
 // Fecha local en formato YYYY-MM-DD, sin pasar por UTC (toISOString() desplaza un día en husos horarios positivos como España)
 function localISO(d){ return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
 const WKT=['¿Dónde estás ahora?','Cómo funciona la energía','Los mejores alimentos según la ciencia','Hambre, saciedad y señales reales','Proteína: la gran incomprendida','Carbohidratos sin miedo','Grasas, inflamación y longevidad','Construye tu menú semanal','Nutrición en el mundo real','Leer etiquetas y no morir en el intento','Tu cuerpo a largo plazo','Cierre y entrega de autonomía'];
@@ -2407,6 +2460,7 @@ async function removeRecordatorio(id){
 let gsClients = [], gsDeps = [], gsCitas = [];
 
 async function openGlobalSearch(){
+  if(window.matchMedia('(max-width:860px)').matches){ openSidebarSearch(); return; }
   document.getElementById('mGlobalSearch').style.display = 'flex';
   document.getElementById('gsearchInput').value = '';
   document.getElementById('gsearchResults').innerHTML = '<p class="gsearch-empty">Escribe para buscar…</p>';
@@ -2416,19 +2470,19 @@ async function openGlobalSearch(){
 }
 function closeGlobalSearch(){
   document.getElementById('mGlobalSearch').style.display = 'none';
+  clearSidebarSearch(false);
+  if(document.getElementById('sidebar').classList.contains('mobile-open')) closeMobileSidebar();
 }
-function runGlobalSearch(){
-  const q = document.getElementById('gsearchInput').value.trim().toLowerCase();
-  const el = document.getElementById('gsearchResults');
-  if(!q){ el.innerHTML = '<p class="gsearch-empty">Escribe para buscar…</p>'; return; }
-
+// Devuelve el HTML de resultados para el texto buscado ('' si no hay texto). Lo usan la ventana (escritorio) y la barra lateral (móvil).
+function searchHtml(qRaw){
+  const q = String(qRaw||'').trim().toLowerCase();
+  if(!q) return '';
   const mClients = gsClients.filter(c=>c.nombre.toLowerCase().includes(q)).slice(0,6);
   const mDeps = gsDeps.filter(d=>d.nombre.toLowerCase().includes(q)).slice(0,6);
   const mCitas = gsCitas.filter(c=>c.cliente.toLowerCase().includes(q)).slice(0,6);
 
   if(!mClients.length && !mDeps.length && !mCitas.length){
-    el.innerHTML = '<p class="gsearch-empty">Sin resultados para "'+q+'".</p>';
-    return;
+    return '<p class="gsearch-empty">Sin resultados para "'+sudEsc(q)+'".</p>';
   }
 
   let html = '';
@@ -2458,7 +2512,43 @@ function runGlobalSearch(){
     </div>`;
     }).join('');
   }
-  el.innerHTML = html;
+  return html;
+}
+function runGlobalSearch(){
+  const el = document.getElementById('gsearchResults');
+  el.innerHTML = searchHtml(document.getElementById('gsearchInput').value) || '<p class="gsearch-empty">Escribe para buscar…</p>';
+}
+// ── Búsqueda dentro de la barra lateral (móvil) ──
+let _gsLoadedAt = 0;
+async function loadSearchData(){
+  if(Date.now() - _gsLoadedAt < 60000) return;
+  _gsLoadedAt = Date.now();
+  try{
+    const [c, d, ci] = await Promise.all([getAll(), getDeportistas(), getCitas()]);
+    gsClients = Array.isArray(c) ? c : []; gsDeps = Array.isArray(d) ? d : []; gsCitas = Array.isArray(ci) ? ci : [];
+  }catch(e){ _gsLoadedAt = 0; }
+  runSidebarSearch();
+}
+function runSidebarSearch(){
+  const i = document.getElementById('sbSearchInput'), r = document.getElementById('sbSearchResults');
+  const h = searchHtml(i.value);
+  r.innerHTML = h; r.classList.toggle('on', !!h);
+  document.getElementById('sbSearchClear').style.display = i.value ? 'flex' : 'none';
+}
+function clearSidebarSearch(focus){
+  const i = document.getElementById('sbSearchInput'); if(!i) return;
+  i.value = ''; runSidebarSearch();
+  if(focus) i.focus();
+}
+function sbSearchKey(e){
+  if(e.key === 'Enter'){ const f = document.querySelector('#sbSearchResults .gsearch-item'); if(f){ e.preventDefault(); f.click(); } }
+  else if(e.key === 'Escape'){ clearSidebarSearch(false); }
+}
+// Abre el menú lateral y deja el cursor en el campo (se llama desde el gesto del usuario para que iOS abra el teclado).
+function openSidebarSearch(){
+  if(!document.getElementById('sidebar').classList.contains('mobile-open')) toggleMobileSidebar();
+  document.getElementById('sbSearchInput').focus();
+  loadSearchData();
 }
 
 async function jumpToClient(id){
@@ -2974,7 +3064,7 @@ function renderFactOfDay(){
 }
 
 async function loadDashboard(){
-  document.getElementById('dashDate').textContent=new Date().toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  document.getElementById('dashDate').textContent=fechaLarga(new Date());
   renderFactOfDay();
   loadRecordatorios();
   let [dashClients,dashCitas,dashDeps]=await Promise.all([getAll(),getCitas(),getDeportistas()]);
