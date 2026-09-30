@@ -6,6 +6,11 @@
 <title>Área de clientes · NutriLogos</title>
 <meta name="robots" content="noindex,nofollow">
 <meta name="theme-color" content="#04342C">
+<link rel="manifest" href="./manifest-cliente.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="NutriLogos">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
 <link rel="apple-touch-icon" href="./icon-512.png">
@@ -23,6 +28,16 @@ html{background:var(--bg)}
 body{font-family:var(--f);background:var(--bg);color:var(--g900);min-height:100vh;font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
 button{font-family:var(--f);cursor:pointer}
 .view{display:none}.view.active{display:block}
+
+/* ── Planificación dentro de la app (marco a pantalla completa con barra "Inicio") ── */
+#vplan.active{display:flex;flex-direction:column;height:100vh;height:100dvh}
+.plan-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:calc(env(safe-area-inset-top,0px) + 8px) 14px 8px;background:var(--sf);border-bottom:.5px solid var(--bd);flex:none}
+.plan-bar .back{margin:0}
+.plan-t{font-size:14px;font-weight:700;color:var(--g900)}
+.plan-ext{font-size:12.5px;font-weight:600;color:var(--t600);text-decoration:none;min-width:64px;text-align:right}
+#planBody{flex:1;min-height:0;display:flex;flex-direction:column}
+.plan-frame{flex:1;width:100%;border:0;background:#fff}
+.plan-msg{max-width:720px;width:100%;margin:0 auto;padding:1.5rem 1.1rem}
 input{font-size:16px}
 
 /* ── Acceso (mismo estilo que el del profesional) ── */
@@ -56,6 +71,7 @@ input{font-size:16px}
 /* ── App ── */
 .topbar{display:none;position:sticky;top:0;z-index:50;background:var(--t900);height:58px;align-items:center;padding:0 1rem;gap:11px}
 body.in-app .topbar{display:flex}
+body.in-plan .topbar{display:none}
 .topbar-logo{width:32px;height:32px;border-radius:22%;overflow:hidden;flex-shrink:0}
 .topbar-logo img{width:100%;height:100%;object-fit:cover;display:block}
 .topbar-brand{color:#fff;font-size:15px;font-weight:700;letter-spacing:-.01em;flex:1}
@@ -212,11 +228,14 @@ table.hist td.n{font-weight:600;white-space:nowrap}
   <div id="datosBody"><div class="spin" style="margin-top:6vh"></div></div>
 </div></div>
 
-<div id="vplan" class="view"><div class="wrap">
-  <button class="back" onclick="show('vhome')"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Inicio</button>
-  <h2 class="h2">Mi planificación nutricional</h2>
+<div id="vplan" class="view">
+  <div class="plan-bar">
+    <button class="back" onclick="cerrarPlan()"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Inicio</button>
+    <span class="plan-t">Mi planificación</span>
+    <a class="plan-ext" id="planExt" href="#" target="_blank" rel="noopener noreferrer">Abrir aparte</a>
+  </div>
   <div id="planBody"></div>
-</div></div>
+</div>
 
 <div id="vsin" class="view"><div class="wrap"><div class="center">
   <h2 id="sinTitle">Tu cuenta aún no está activada</h2>
@@ -240,6 +259,7 @@ function show(v){
   document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));
   $(v).classList.add('active');
   document.body.classList.toggle('in-app',APP_VIEWS.includes(v));
+  document.body.classList.toggle('in-plan',v==='vplan');
   window.scrollTo(0,0);
 }
 function togglePw(id,btn){
@@ -432,14 +452,17 @@ async function abrirArchivo(i){
 // ═══ Mi planificación ═══
 function abrirPlan(){
   show('vplan');
-  const url=FICHA&&FICHA.plan_url;
-  if(url&&/^https?:\/\//i.test(url)){
-    $('planBody').innerHTML=`<div class="card"><p class="empty" style="margin-bottom:14px">Tu planificación nutricional personalizada está lista. Se abrirá en una pestaña nueva.</p>
-      <a class="btn" href="${esc(url)}" target="_blank" rel="noopener noreferrer">Abrir mi planificación <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></a></div>`;
+  const url=FICHA&&FICHA.plan_url, ok=!!(url&&/^https?:\/\//i.test(url));
+  $('planExt').style.visibility=ok?'visible':'hidden';
+  if(ok){
+    $('planExt').href=url;
+    // Dentro de la propia app: así, si la tienes en la pantalla de inicio del móvil, no salta al navegador.
+    $('planBody').innerHTML=`<iframe class="plan-frame" src="${esc(url)}" title="Mi planificación nutricional"></iframe>`;
   }else{
-    $('planBody').innerHTML='<div class="card"><p class="empty">Todavía no tienes una planificación asignada. Tu nutricionista te avisará cuando esté lista.</p></div>';
+    $('planBody').innerHTML='<div class="plan-msg"><div class="card"><p class="empty">Todavía no tienes una planificación asignada. Tu nutricionista te avisará cuando esté lista.</p></div></div>';
   }
 }
+function cerrarPlan(){ $('planBody').innerHTML=''; show('vhome'); }
 
 // ═══ Arranque: enlaces de invitación o recuperación (llegan con la sesión en la parte # de la dirección) ═══
 (async()=>{
