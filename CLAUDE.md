@@ -18,6 +18,7 @@ Apps web de gestión para Guillermo Frances (nutrición deportiva, Valencia). To
 | `supabase_sudoracion.sql` | Tabla `tests_sudoracion` (test de sudoración por deportista). |
 | `supabase_plan_competicion.sql` | Tabla `planes_competicion` (plan de competición por deportista). |
 | `supabase_seguridad_1_tokens.sql` | Seguridad, paso 1 (aditivo): `clientes.token` y funciones `m3m_cliente`, `m3m_guardar_checks`, `m3m_guardar_nota` para la página del cliente del Método 3M. |
+| `plantillas_correo/` | Plantillas HTML en español de los correos de Supabase Auth (`invitacion.html`, `recuperacion.html`) con la marca NutriLogos. Se pegan a mano en Supabase → Authentication → Email Templates (Invite user / Reset password). Usan `{{ .ConfirmationURL }}` y `{{ .SiteURL }}`; el logo se carga de `icon-192.png` en GitHub Pages. |
 | `supabase_clientes_acceso.sql` | Seguridad, paso 3 (profesional vs cliente): tabla `profesionales`, tabla `clientes_acceso` (correo ↔ deportista), funciones `es_profesional`, `vincular_acceso_cliente`, `desvincular_acceso_cliente`, `cliente_mi_ficha`, `cliente_mis_valoraciones`, `cliente_mis_archivos`, `puede_ver_archivo`, y cambia las políticas de tablas y Storage a «solo profesional». **Hay que cambiar `TU_CORREO@EJEMPLO.COM` antes de ejecutarlo.** Probado en Postgres 16 con una imitación de Supabase. |
 | `supabase_seguridad_2_cerrar.sql` | Seguridad, paso 2: quita el acceso anónimo (RLS solo para `authenticated`) y pone privado el bucket `deportistas-docs`. **Solo ejecutarlo cuando se cumplan las condiciones de su cabecera.** |
 
