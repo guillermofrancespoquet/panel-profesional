@@ -274,6 +274,16 @@ body.dark-mode .login-btn:hover{background:var(--t600)}
 .file-btn{background:var(--g100);border:none;border-radius:6px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--g500);transition:background .15s}
 .file-btn:hover{background:var(--g200)}
 .file-btn.del:hover{background:var(--red-bg);color:var(--red)}
+.file-btn.on{background:var(--pill-g);color:var(--t800)}
+body.dark-mode .file-btn.on{color:var(--t100)}
+.file-vis{color:var(--t600);font-weight:600}
+.acc-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:4px}
+.acc-pill{font-size:10.5px;font-weight:600;padding:3px 10px;border-radius:20px;background:var(--pill-n);color:var(--g700);box-shadow:inset 0 0 0 .5px var(--pill-n-bd)}
+.acc-pill.on{background:var(--pill-g);color:var(--t800);box-shadow:inset 0 0 0 .5px var(--pill-g-bd)}
+body.dark-mode .acc-pill.on{color:var(--t100)}
+.acc-mail{font-size:13px;font-weight:600;color:var(--g900);word-break:break-all}
+.acc-form{display:flex;gap:8px;align-items:stretch;margin-top:8px;flex-wrap:wrap}
+.acc-form .inp{flex:1;min-width:200px;margin:0}
 .upload-progress{font-size:12px;color:var(--gold-dk);margin-top:8px;min-height:16px}
 
 
@@ -3133,6 +3143,21 @@ async function loadDashboard(){
   `;
 }
 
+// Enlace al área de clientes (misma carpeta, sin escribir el nombre del repo a mano)
+function urlCliente(){ return window.location.origin + window.location.pathname.replace('panel-profesional.html','cliente.html'); }
+// Solo la cuenta del profesional entra en el panel: una cuenta de cliente (área de clientes) inicia sesión igual en Supabase, pero
+// aquí se rechaza. Si la función aún no existe en Supabase (SQL sin ejecutar) o falla la red, se deja pasar: la RLS ya protege los datos.
+async function comprobarProfesional(){
+  try{
+    const r=await authFetch(SURL+'/rest/v1/rpc/es_profesional',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});
+    if(!r.ok) return true;
+    return (await r.json())!==false;
+  }catch(e){ return true; }
+}
+function avisoCuentaCliente(){
+  const e=document.getElementById('lerr');
+  e.innerHTML='Esta cuenta es de un cliente. <a href="'+urlCliente()+'" style="color:inherit;text-decoration:underline">Entra en el área de clientes</a>.';
+}
 async function doLogin(){
   const em=document.getElementById('lemail').value.trim(), pw=document.getElementById('linp').value;
   const err=document.getElementById('lerr'), btn=document.getElementById('lbtn');
@@ -3141,6 +3166,10 @@ async function doLogin(){
   btn.disabled=true; btn.textContent='Entrando…'; err.textContent='';
   try{
     await authLogin(em,pw);
+    if(!(await comprobarProfesional())){
+      authClear(); document.getElementById('linp').value=''; avisoCuentaCliente();
+      btn.disabled=false; btn.textContent='Entrar'; return;
+    }
     document.getElementById('linp').value=''; err.textContent='';
     enterApp();
   }catch(e){
@@ -3445,9 +3474,12 @@ function renderFilesList(archivos, depId) {
       <div class="file-icon">${iconSvg}</div>
       <div class="file-info">
         <div class="file-name">${f.nombre}</div>
-        <div class="file-date">${dateStr}</div>
+        <div class="file-date">${dateStr}${f.visible_cliente?' · <span class="file-vis">Visible para el cliente</span>':''}</div>
       </div>
       <div class="file-actions">
+        <button class="file-btn${f.visible_cliente?' on':''}" title="${f.visible_cliente?'Visible para el cliente (pulsa para ocultar)':'Mostrar al cliente'}" onclick="toggleVisibleCliente(${depId},${i})">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
         <button class="file-btn" title="Ver / descargar" onclick="abrirArchivo(${depId},${i})">
           <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
         </button>
@@ -3525,6 +3557,20 @@ async function abrirArchivo(depId, index) {
     if (w) w.close();
     alert('No se pudo abrir el archivo. Vuelve a intentarlo.');
   }
+}
+
+// Marca o desmarca un archivo como visible para el cliente en su área de clientes. Guarda también `path` (necesario para firmar la URL).
+async function toggleVisibleCliente(depId, index) {
+  const d = deportistas.find(x => x.id == depId);
+  const archivos = (d && d.archivos) || [];
+  const f = archivos[index];
+  if (!f) return;
+  const path = archivoPath(f);
+  if (!path) { alert('Este archivo no tiene ruta en el almacenamiento. Súbelo de nuevo para poder mostrarlo al cliente.'); return; }
+  f.path = path; f.visible_cliente = !f.visible_cliente;
+  await patchDep(depId, { archivos });
+  d.archivos = archivos;
+  document.getElementById('filesList').innerHTML = renderFilesList(archivos, depId);
 }
 
 async function deleteFile(depId, index) {
@@ -4558,6 +4604,11 @@ function openDepDet(id) {
     </div>
 
     <div class="depd-section">
+      <p class="sec-title">Acceso del cliente</p>
+      <div class="med-box" id="accBox"><p class="med-empty">Cargando…</p></div>
+    </div>
+
+    <div class="depd-section">
       <p class="sec-title">Mediciones · antropometría</p>
       <div class="med-box" id="medBox"><p class="med-empty">Cargando…</p></div>
     </div>
@@ -4607,6 +4658,7 @@ function openDepDet(id) {
   `;
   show('vdepdet');
   loadHistorial(d.id);
+  loadAccesoCliente(d.id);
   loadMediciones(d.id);
   loadSudoracion(d.id);
   loadPlanes(d.id);
@@ -4651,6 +4703,47 @@ function btnSoft(label,onclick,icon,sm){
 }
 function btnDel(title,onclick){
   return `<button class="file-btn del" title="${title}" aria-label="${title}" onclick="${onclick}"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">${BS_ICON.trash}</svg></button>`;
+}
+
+// ── Acceso del cliente (área de clientes): vincula el correo de una cuenta de Supabase con este deportista ──
+async function loadAccesoCliente(depId){
+  const el=document.getElementById('accBox');
+  let r=null;
+  try{ r=await sb(`clientes_acceso?deportista_id=eq.${depId}&select=email,creado`); }catch(e){}
+  if(!el||currentDepId!=depId) return;
+  if(!Array.isArray(r)){
+    el.innerHTML='<p class="med-empty">Esta función necesita el SQL <b>supabase_clientes_acceso.sql</b> ejecutado en Supabase.</p>';
+    return;
+  }
+  if(r.length){
+    const a=r[0], desde=a.creado?new Date(a.creado).toLocaleDateString('es-ES',{day:'numeric',month:'short',year:'numeric'}):'';
+    el.innerHTML=`<div class="acc-row"><span class="acc-pill on">Acceso activo</span><span class="acc-mail">${sudEsc(a.email)}</span></div>
+      <p class="med-note">El cliente entra con ese correo${desde?' (vinculado el '+desde+')':''} y ve sus datos y los archivos que marques como visibles.</p>
+      <div class="med-actions">${btnSoft('Copiar enlace del área de clientes',`copyDepUrl('${urlCliente()}')`,'ext')}${btnSoft('Quitar acceso',`quitarAccesoCliente(${depId})`,'trash',false)}</div>`;
+    return;
+  }
+  el.innerHTML=`<div class="acc-row"><span class="acc-pill">Sin acceso</span></div>
+    <div class="acc-form">
+      <input type="email" class="inp" id="accEmail" placeholder="correo@del-cliente.com" autocomplete="off" autocapitalize="off" spellcheck="false" onkeydown="if(event.key==='Enter')darAccesoCliente(${depId})">
+      ${btnSoft('Dar acceso',`darAccesoCliente(${depId})`,'plus')}
+    </div>
+    <p class="med-note" id="accMsg">Primero invita al cliente en Supabase (Authentication → Users → Invite user); después escribe aquí el mismo correo.</p>`;
+}
+async function darAccesoCliente(depId){
+  const em=(document.getElementById('accEmail').value||'').trim(), msg=document.getElementById('accMsg');
+  if(!em){ msg.textContent='Escribe el correo del cliente.'; return; }
+  msg.textContent='Vinculando…';
+  let r=null; try{ r=await sb('rpc/vincular_acceso_cliente',{method:'POST',body:JSON.stringify({p_deportista:depId,p_email:em})}); }catch(e){}
+  if(r&&r.ok){ loadAccesoCliente(depId); return; }
+  const m={usuario_no_existe:'Ese correo todavía no existe en Supabase: invítalo primero en Authentication → Users → Invite user.',
+           es_profesional:'Ese correo es el de una cuenta de profesional.',
+           ya_vinculado:'Ese correo ya está vinculado a otro deportista.'};
+  msg.textContent=(r&&m[r.motivo])||'No se pudo vincular. Comprueba que has ejecutado supabase_clientes_acceso.sql.';
+}
+async function quitarAccesoCliente(depId){
+  if(!confirm('¿Quitar el acceso de este cliente? Ya no podrá entrar en el área de clientes.')) return;
+  try{ await sb('rpc/desvincular_acceso_cliente',{method:'POST',body:JSON.stringify({p_deportista:depId})}); }catch(e){}
+  loadAccesoCliente(depId);
 }
 
 // Una mini gráfica por magnitud, cada una con su propia escala (peso y % grasa no comparten eje).
@@ -5292,7 +5385,10 @@ document.addEventListener('keydown',e=>{
 // ── INIT ──
 document.getElementById('vload').style.display='none';
 initDarkMode();
-authToken().then(t=>{ if(t) enterApp(); else show('vlogin'); });
+authToken().then(async t=>{
+  if(t && await comprobarProfesional()) enterApp();
+  else { if(t){ authClear(); show('vlogin'); avisoCuentaCliente(); } else show('vlogin'); }
+});
 const GUION = [
   // S1
   {
