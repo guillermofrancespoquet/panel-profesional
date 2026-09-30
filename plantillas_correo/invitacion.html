@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>Tu acceso al área de cliente · NutriLogos</title>
+</head>
+<body style="margin:0;padding:0;background:#F4F2ED;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F4F2ED;padding:32px 12px;">
+  <tr><td align="center">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;">
+
+      <tr><td align="center" style="padding-bottom:24px;">
+        <img src="https://guillermofrancespoquet.github.io/panel-profesional/icon-192.png" width="72" height="72" alt="NutriLogos" style="display:block;border:0;border-radius:16px;">
+        <div style="font-family:Arial,Helvetica,sans-serif;font-size:24px;font-weight:700;letter-spacing:-0.5px;color:#04342C;margin-top:14px;">NutriLogos</div>
+        <div style="font-family:Arial,Helvetica,sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;color:#7A5A38;margin-top:6px;">ÁREA DE CLIENTES</div>
+      </td></tr>
+
+      <tr><td style="background:#FFFFFF;border:1px solid #E6E2D8;border-radius:16px;padding:32px 28px;font-family:Arial,Helvetica,sans-serif;color:#1A1A18;">
+        <p style="margin:0 0 16px;font-size:20px;font-weight:700;letter-spacing:-0.3px;color:#04342C;">Te damos la bienvenida</p>
+        <p style="margin:0 0 14px;font-size:15px;line-height:1.65;color:#444441;">Ya tienes tu acceso al <strong>área de cliente de NutriLogos</strong>. Desde ahí podrás consultar tus datos y tu planificación nutricional cuando quieras, también desde el móvil.</p><p style="margin:0 0 14px;font-size:15px;line-height:1.65;color:#444441;">Solo tienes que crear tu contraseña:</p>
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+          <tr><td align="center" style="padding:12px 0 24px;">
+            <a href="{{ .ConfirmationURL }}" style="display:inline-block;background:#04342C;color:#FFFFFF;text-decoration:none;font-size:15px;font-weight:700;padding:14px 30px;border-radius:12px;">Crear mi contraseña</a>
+          </td></tr>
+        </table>
+        <p style="margin:0 0 18px;font-size:13px;line-height:1.6;color:#5F5E5A;">Después entrarás siempre con este correo y tu contraseña desde esta dirección (guárdala o añádela a la pantalla de inicio de tu móvil):<br><a href="{{ .SiteURL }}" style="color:#0F6E56;word-break:break-all;">{{ .SiteURL }}</a></p>
+        <div style="border-top:1px solid #ECE8DE;padding-top:16px;font-size:12px;line-height:1.6;color:#888780;">
+          Si el botón no funciona, copia y pega este enlace en tu navegador:<br>
+          <span style="word-break:break-all;color:#5F5E5A;">{{ .ConfirmationURL }}</span>
+        </div>
+      </td></tr>
+
+      <tr><td align="center" style="padding-top:22px;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:1.7;color:#888780;">
+        <strong style="color:#5F5E5A;">Guillermo Francés</strong> · Nutricionista<br>
+        Si no esperabas este correo, puedes ignorarlo.
+      </td></tr>
+
+    </table>
+  </td></tr>
+</table>
+</body>
+</html>
