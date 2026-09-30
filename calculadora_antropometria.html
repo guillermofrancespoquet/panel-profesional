@@ -330,6 +330,8 @@ body.dark-mode canvas{background:#fff;border-radius:10px;}
   #clientTable,#clientTable tbody{display:block;width:100%;min-width:0;}
   #clientTable thead{display:none;}
   #clientTable tr.clientrow{display:grid;grid-template-columns:1fr 1fr;gap:2px 12px;padding:12px 2px;border-bottom:.5px solid var(--bd);}
+  /* iOS hace zoom al enfocar campos con letra menor de 16 px */
+  input[type=text],input[type=number],input[type=date],input[type=email],input[type=password],input[type=search],select,textarea{font-size:16px !important;}
   #clientTable tr.clientrow:hover td{background:transparent;}
   #clientTable td{display:block;padding:0;border:none;white-space:normal !important;font-size:13px;}
   #clientTable td:nth-child(1){grid-column:1/-1;font-size:15px;}
@@ -344,7 +346,8 @@ body.dark-mode canvas{background:#fff;border-radius:10px;}
 
   /* Lista de clientes: tarjetas separadas (antes solo una línea fina entre filas) */
   #clientTable tbody{display:flex;flex-direction:column;gap:10px;}
-  #clientTable tr.clientrow{padding:12px 14px;background:var(--sf);border:.5px solid var(--bdm);border-radius:12px;box-shadow:0 1px 2px rgba(0,0,0,.04);}
+  #clientTable tr.clientrow{padding:12px 14px;background:var(--sf);border:1px solid rgba(0,0,0,.24);border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.06);}
+  body.dark-mode #clientTable tr.clientrow{border-color:rgba(255,255,255,.24);}
   #clientTable tr.clientrow.open{background:var(--t50);border-color:var(--t400);}
   #clientTable tr.clientrow.open td{background:transparent;}
   #clientTable tr.detailrow{display:block;margin:-4px 0 4px;}
@@ -358,7 +361,8 @@ body.dark-mode canvas{background:#fff;border-radius:10px;}
   #clientTable table.hist-table{min-width:0;width:100%;background:transparent;}
   #clientTable table.hist-table thead{display:none;}
   #clientTable table.hist-table,#clientTable table.hist-table tbody{display:block;gap:0;}
-  #clientTable table.hist-table tbody tr{display:grid;grid-template-columns:repeat(4,1fr);gap:8px 6px;padding:12px;margin-bottom:10px;background:var(--sf);border:.5px solid var(--bd);border-radius:10px;}
+  #clientTable table.hist-table tbody tr{display:grid;grid-template-columns:repeat(4,1fr);gap:8px 6px;padding:12px;margin-bottom:10px;background:var(--sf);border:1px solid rgba(0,0,0,.20);border-radius:10px;}
+  body.dark-mode #clientTable table.hist-table tbody tr{border-color:rgba(255,255,255,.2);}
   #clientTable table.hist-table td{display:block;grid-column:auto;text-align:left;margin:0;padding:0;border:none;white-space:normal !important;font-size:13px;font-weight:600;color:var(--g900);}
   #clientTable table.hist-table td.h-fecha{grid-column:1/-1;font-size:14px;padding-bottom:8px;border-bottom:.5px solid var(--bd);color:var(--t600);}
   #clientTable table.hist-table td[data-l]::before{content:attr(data-l);display:block;font-size:10px;font-weight:500;letter-spacing:.04em;text-transform:uppercase;color:var(--g400);margin-bottom:2px;}
@@ -386,6 +390,18 @@ html.embed .main{padding:1.25rem 2rem 2rem;}
   html.embed .navbtn{flex:0 0 auto;padding:8px 12px;}
   html.embed .main{padding:14px;}
 }
+
+/* ═══ PÍLDORAS: tonos algo más oscuros y borde fino para que se distingan del fondo (mismos tonos que el panel) ═══ */
+:root{--pill-n:#E3DFD2;--pill-n-h:#D9D4C4;--pill-n-bd:rgba(70,58,30,.18);--pill-g:#C4E8D6;--pill-g-bd:rgba(15,110,86,.30);--pill-au:#EAD9BD;--pill-au-bd:rgba(122,90,56,.30);--pill-r:#F7D0D0;--pill-r-bd:rgba(192,57,43,.28)}
+body.dark-mode{--pill-n:#343a3d;--pill-n-h:#3e4548;--pill-n-bd:rgba(255,255,255,.14);--pill-g:#21493f;--pill-g-bd:rgba(159,225,203,.26);--pill-au:#463c22;--pill-au-bd:rgba(217,184,140,.28);--pill-r:#4e2828;--pill-r-bd:rgba(255,140,140,.24)}
+.pill.ok,.tolbadge.ok,.unit-tag,.badge-count{background:var(--pill-g);color:var(--t800,#085041);box-shadow:inset 0 0 0 .5px var(--pill-g-bd)}
+body.dark-mode .pill.ok,body.dark-mode .tolbadge.ok,body.dark-mode .unit-tag,body.dark-mode .badge-count{color:#9FE1CB}
+.pill.warn,.tolbadge.bad{background:var(--pill-r);color:#B3261E;box-shadow:inset 0 0 0 .5px var(--pill-r-bd)}
+body.dark-mode .pill.warn,body.dark-mode .tolbadge.bad{color:#ff9b93}
+.pill.neutral,.tolbadge.pending{background:var(--pill-n);color:var(--g700);box-shadow:inset 0 0 0 .5px var(--pill-n-bd)}
+.tolbadge.single{background:var(--pill-au);color:var(--gold-dk,#7A5A38);box-shadow:inset 0 0 0 .5px var(--pill-au-bd)}
+body.dark-mode .tolbadge.single{color:var(--gold)}
+.tab{background:var(--pill-n);border-color:var(--pill-n-bd);color:var(--g700)}
 </style>
 </head>
 <body>
