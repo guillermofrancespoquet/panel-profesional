@@ -30,7 +30,7 @@ button{font-family:var(--f);cursor:pointer}
 .view{display:none}.view.active{display:block}
 
 /* ── Planificación dentro de la app (marco a pantalla completa con barra "Inicio") ── */
-#vplan.active{display:flex;flex-direction:column;height:100vh;height:100dvh}
+#vplan.active,#vform.active{display:flex;flex-direction:column;height:100vh;height:100dvh}
 .plan-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:calc(env(safe-area-inset-top,0px) + 8px) 14px 8px;background:var(--sf);border-bottom:.5px solid var(--bd);flex:none}
 .plan-bar .back{margin:0}
 .plan-t{font-size:14px;font-weight:700;color:var(--g900)}
@@ -72,6 +72,20 @@ input{font-size:16px}
 .topbar{display:none;position:sticky;top:0;z-index:50;background:var(--t900);height:58px;align-items:center;padding:0 1rem;gap:11px}
 body.in-app .topbar{display:flex}
 body.in-plan .topbar{display:none}
+.tile-badge{display:inline-block;margin-top:5px;font-size:11px;font-weight:700;padding:2px 10px;border-radius:20px;background:var(--pill-au);color:var(--gold-dk);box-shadow:inset 0 0 0 .5px var(--pill-au-bd)}
+.tile-badge.ok{background:var(--pill-g);color:var(--t800);box-shadow:inset 0 0 0 .5px var(--pill-g-bd)}
+.fcard{display:flex;align-items:center;gap:13px;width:100%;text-align:left;background:var(--sf);border:.5px solid var(--bdm);border-radius:14px;padding:1rem 1.1rem;margin-bottom:10px;box-shadow:0 2px 10px rgba(4,52,44,.05)}
+.fcard:hover{border-color:var(--t400)}
+.fchk{width:30px;height:30px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:var(--pill-n);color:var(--g400);box-shadow:inset 0 0 0 .5px var(--pill-n-bd)}
+.fchk.on{background:var(--t400);color:#fff;box-shadow:none}
+.fcard-t{font-size:15px;font-weight:700;letter-spacing:-.01em}
+.fcard-d{font-size:12.5px;color:var(--g500);line-height:1.45;margin-top:2px}
+.fcard-s{font-size:11.5px;font-weight:600;margin-top:5px;color:var(--gold-dk)}
+.fcard-s.on{color:var(--t600)}
+.fcard-h{font-size:12px;color:var(--g500);margin:.2rem 0 1rem;line-height:1.55}
+.plan-foot{flex:none;padding:10px 14px calc(env(safe-area-inset-bottom,0px) + 10px);background:var(--sf);border-top:.5px solid var(--bd);display:flex;flex-direction:column;gap:6px;align-items:stretch}
+.plan-foot .btn{width:100%}
+.plan-foot small{font-size:11.5px;color:var(--g500);text-align:center}
 .topbar-logo{width:32px;height:32px;border-radius:22%;overflow:hidden;flex-shrink:0}
 .topbar-logo img{width:100%;height:100%;object-fit:cover;display:block}
 .topbar-brand{color:#fff;font-size:15px;font-weight:700;letter-spacing:-.01em;flex:1}
@@ -210,6 +224,11 @@ table.hist td.n{font-weight:600;white-space:nowrap}
 <div id="vhome" class="view"><div class="wrap">
   <h1 class="hello" id="hello">Hola</h1>
   <p class="hello-sub" id="helloSub"></p>
+  <button class="tile" id="tileForms" style="display:none" onclick="abrirForms()">
+    <span class="tile-ic au"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span>
+    <span><span class="tile-t">Mis formularios</span><br><span class="tile-d" id="tileFormsD">Cuestionarios de tu nutricionista</span><br><span class="tile-badge" id="tileFormsB"></span></span>
+    <span class="tile-go"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></span>
+  </button>
   <button class="tile" onclick="abrirDatos()">
     <span class="tile-ic"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>
     <span><span class="tile-t">Mis datos</span><br><span class="tile-d">Antropometría, bioimpedancia y evolución</span></span>
@@ -237,6 +256,23 @@ table.hist td.n{font-weight:600;white-space:nowrap}
   <div id="planBody"></div>
 </div>
 
+<div id="vforms" class="view"><div class="wrap">
+  <button class="back" onclick="show('vhome')"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Inicio</button>
+  <h2 class="h2">Mis formularios</h2>
+  <p class="fcard-h">Rellénalos con calma: nos ayudan a preparar tu planificación. Cuando termines cada uno, pulsa «Ya lo he enviado» para que quede marcado.</p>
+  <div id="formsBody"></div>
+</div></div>
+
+<div id="vform" class="view">
+  <div class="plan-bar">
+    <button class="back" onclick="cerrarForm()"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Formularios</button>
+    <span class="plan-t" id="formT"></span>
+    <a class="plan-ext" id="formExt" href="#" target="_blank" rel="noopener noreferrer">Abrir aparte</a>
+  </div>
+  <div id="formBody" style="flex:1;min-height:0;display:flex;flex-direction:column"></div>
+  <div class="plan-foot" id="formFoot"></div>
+</div>
+
 <div id="vsin" class="view"><div class="wrap"><div class="center">
   <h2 id="sinTitle">Tu cuenta aún no está activada</h2>
   <p class="empty" id="sinMsg">Tu perfil todavía no está vinculado a esta cuenta. Escribe a tu nutricionista para que active tu acceso.</p>
@@ -254,12 +290,12 @@ const BUCKET='deportistas-docs';
 let FICHA=null, DATOS=null;
 
 // ═══ Vistas ═══
-const APP_VIEWS=['vhome','vdatos','vplan','vsin'];
+const APP_VIEWS=['vhome','vdatos','vplan','vforms','vform','vsin'];
 function show(v){
   document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));
   $(v).classList.add('active');
   document.body.classList.toggle('in-app',APP_VIEWS.includes(v));
-  document.body.classList.toggle('in-plan',v==='vplan');
+  document.body.classList.toggle('in-plan',v==='vplan'||v==='vform');
   window.scrollTo(0,0);
 }
 function togglePw(id,btn){
@@ -371,6 +407,7 @@ async function entrar(){
   const nombre=String(FICHA.nombre||'').trim().split(/\s+/)[0]||'';
   $('hello').textContent=nombre?('Hola, '+nombre):'Hola';
   $('helloSub').textContent=[FICHA.deporte,FICHA.objetivo].filter(Boolean).join(' · ')||'Aquí tienes tu información.';
+  pintarTileForms();
   show('vhome');
 }
 function mostrarSin(t,m){ $('sinTitle').textContent=t; $('sinMsg').textContent=m; show('vsin'); }
@@ -463,6 +500,66 @@ function abrirPlan(){
   }
 }
 function cerrarPlan(){ $('planBody').innerHTML=''; show('vhome'); }
+
+// ═══ Formularios (Google Forms): los enlaces son de Guillermo; el «hecho» lo marca el cliente con un botón ═══
+const FORMS=[
+  {k:'inicial',t:'Cuestionario inicial',d:'Cuéntanos quién eres y qué quieres conseguir.',url:'https://docs.google.com/forms/d/e/1FAIpQLSeyPobu4XOuFfC5u0HWPyANBPfAcsMAh-RSF-tJn1YH8IsyUA/viewform'},
+  {k:'anamnesis',t:'Anamnesis nutricional',d:'Tu historial de salud y tus hábitos de alimentación.',url:'https://docs.google.com/forms/d/e/1FAIpQLSeLg2sJIH7lHZLj8KprznzpV87g_WjF0ZzLv4WqzPGC_hvzrg/viewform'},
+  {k:'seguimiento',t:'Seguimiento semanal',d:'Cuéntanos cómo ha ido tu semana.',url:'https://docs.google.com/forms/d/e/1FAIpQLSdnTwOaqw2EqOCS_1uWHAM3ZV_242Ti-tyMIaLm2mQcC4n5-g/viewform',semanal:true}
+];
+// Formularios que ve este cliente y su estado. Si la función SQL aún no está (sin `forms`), no se muestra nada.
+function estadoForms(){
+  const f=FICHA&&FICHA.forms; if(!f) return null;
+  return FORMS.filter(x=>!x.semanal||f.seguimiento_activo).map(x=>{
+    const fecha=x.semanal?f.seguimiento_ultimo:f[x.k+'_hecho'];
+    const pend=x.semanal?!!f.seguimiento_pendiente:!f[x.k+'_hecho'];
+    return {...x,fecha,pend};
+  });
+}
+function pintarTileForms(){
+  const l=estadoForms(), t=$('tileForms'); if(!t) return;
+  if(!l){ t.style.display='none'; return; }
+  const n=l.filter(x=>x.pend).length, b=$('tileFormsB');
+  t.style.display='flex';
+  b.textContent=n?(n===1?'1 pendiente':n+' pendientes'):'Todo al día ✓';
+  b.className='tile-badge'+(n?'':' ok');
+  // con formularios pendientes van los primeros; si no, al final
+  const cont=t.parentNode;
+  if(n) cont.insertBefore(t,cont.querySelector('.tile')); else cont.appendChild(t);
+}
+const CHECK_SVG='<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>';
+function abrirForms(){
+  const l=estadoForms()||[];
+  $('formsBody').innerHTML=l.map(x=>`<button class="fcard" onclick="abrirForm('${x.k}')">
+      <span class="fchk${x.pend?'':' on'}">${x.pend?'':CHECK_SVG}</span>
+      <span style="flex:1;min-width:0"><span class="fcard-t">${esc(x.t)}</span><br><span class="fcard-d">${esc(x.d)}</span><br>
+        <span class="fcard-s${x.pend?'':' on'}">${x.pend?(x.semanal?'Pendiente esta semana':'Pendiente'):(x.semanal?'Enviado esta semana':'Hecho')+(x.fecha?' · '+fmtF(x.fecha,true):'')}</span></span>
+      <span class="tile-go"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></span>
+    </button>`).join('')||'<div class="card"><p class="empty">Ahora mismo no tienes formularios pendientes.</p></div>';
+  show('vforms');
+}
+function abrirForm(k){
+  const x=(estadoForms()||[]).find(y=>y.k===k); if(!x) return;
+  $('formT').textContent=x.t; $('formExt').href=x.url;
+  // Dentro de la app (embedded=true): así, desde la pantalla de inicio del móvil no salta al navegador.
+  $('formBody').innerHTML=`<iframe class="plan-frame" src="${esc(x.url)}?embedded=true" title="${esc(x.t)}"></iframe>`;
+  $('formFoot').innerHTML=x.pend
+    ?`<button class="btn" id="formOk" onclick="marcarForm('${x.k}')">Ya lo he enviado ✓</button><small>Pulsa aquí cuando hayas terminado y enviado el formulario.</small>`
+    :`<small>${x.semanal?'Ya enviaste el de esta semana':'Ya lo tienes marcado como hecho'}${x.fecha?' ('+fmtF(x.fecha,true)+')':''}.</small>`;
+  show('vform');
+}
+function cerrarForm(){ $('formBody').innerHTML=''; abrirForms(); }
+async function marcarForm(k){
+  const b=$('formOk'); if(b){ b.disabled=true; b.textContent='Guardando…'; }
+  try{
+    await rpc('cliente_marcar_formulario',{p_tipo:k});
+    const f=await rpc('cliente_mi_ficha'); if(f) FICHA=f;
+  }catch(e){
+    if(b){ b.disabled=false; b.textContent='Ya lo he enviado ✓'; }
+    alert('No se pudo guardar. Comprueba tu conexión y vuelve a intentarlo.'); return;
+  }
+  pintarTileForms(); cerrarForm();
+}
 
 // ═══ Arranque: enlaces de invitación o recuperación (llegan con la sesión en la parte # de la dirección) ═══
 (async()=>{
