@@ -4706,7 +4706,7 @@ function btnDel(title,onclick){
 }
 
 // ── Acceso del cliente (área de clientes): vincula el correo de una cuenta de Supabase con este deportista ──
-async function loadAccesoCliente(depId){
+async function loadAccesoCliente(depId,aviso){
   const el=document.getElementById('accBox');
   let r=null;
   try{ r=await sb(`clientes_acceso?deportista_id=eq.${depId}&select=email,creado`); }catch(e){}
@@ -4718,27 +4718,53 @@ async function loadAccesoCliente(depId){
   if(r.length){
     const a=r[0], desde=a.creado?new Date(a.creado).toLocaleDateString('es-ES',{day:'numeric',month:'short',year:'numeric'}):'';
     el.innerHTML=`<div class="acc-row"><span class="acc-pill on">Acceso activo</span><span class="acc-mail">${sudEsc(a.email)}</span></div>
-      <p class="med-note">El cliente entra con ese correo${desde?' (vinculado el '+desde+')':''} y ve sus datos y los archivos que marques como visibles.</p>
-      <div class="med-actions">${btnSoft('Copiar enlace del área de clientes',`copyDepUrl('${urlCliente()}')`,'ext')}${btnSoft('Quitar acceso',`quitarAccesoCliente(${depId})`,'trash',false)}</div>`;
+      <p class="med-note" id="accMsg">${aviso?sudEsc(aviso):'El cliente entra con ese correo'+(desde?' (vinculado el '+desde+')':'')+' y ve sus datos y los archivos que marques como visibles.'}</p>
+      <div class="med-actions">${btnSoft('Reenviar invitación',`reenviarInvitacion(${depId})`,'ext')}${btnSoft('Copiar enlace del área de clientes',`copyDepUrl('${urlCliente()}')`,'ext')}${btnSoft('Quitar acceso',`quitarAccesoCliente(${depId})`,'trash',false)}</div>`;
     return;
   }
   el.innerHTML=`<div class="acc-row"><span class="acc-pill">Sin acceso</span></div>
     <div class="acc-form">
       <input type="email" class="inp" id="accEmail" placeholder="correo@del-cliente.com" autocomplete="off" autocapitalize="off" spellcheck="false" onkeydown="if(event.key==='Enter')darAccesoCliente(${depId})">
-      ${btnSoft('Dar acceso',`darAccesoCliente(${depId})`,'plus')}
+      ${btnSoft('Invitar y dar acceso',`darAccesoCliente(${depId})`,'plus')}
     </div>
-    <p class="med-note" id="accMsg">Primero invita al cliente en Supabase (Authentication → Users → Invite user); después escribe aquí el mismo correo.</p>`;
+    <p class="med-note" id="accMsg">Escribe el correo del cliente: se le envía por correo la invitación para crear su contraseña y queda vinculado a este deportista.</p>`;
 }
+// Invita por correo y vincula en un paso mediante la función «invitar-cliente» de Supabase (supabase_funcion_invitar_cliente.ts).
+// Si esa función no está instalada (404), se usa el método de siempre: solo vincula un correo ya invitado a mano.
+async function invitarCliente(depId,em){
+  let r=null;
+  try{ r=await authFetch(SURL+'/functions/v1/invitar-cliente',{method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({deportista:depId,email:em,redirectTo:urlCliente()})}); }catch(e){ return {fallo:'red'}; }
+  if(r.status===404) return {sinFuncion:true};
+  let j=null; try{ j=await r.json(); }catch(e){}
+  return j||{fallo:'respuesta'};
+}
+const ACC_MOTIVOS={usuario_no_existe:'Ese correo todavía no existe en Supabase: invítalo primero en Authentication → Users → Invite user.',
+  es_profesional:'Ese correo es el de una cuenta de profesional.',
+  ya_vinculado:'Ese correo ya está vinculado a otro deportista.',
+  datos_no_validos:'El correo no parece válido.',
+  no_autorizado:'Tu cuenta no está autorizada como profesional.',
+  invitacion_fallida:'Supabase no pudo enviar la invitación (¿límite de correos por hora o SMTP mal configurado?). Espera un poco y vuelve a intentarlo.'};
 async function darAccesoCliente(depId){
-  const em=(document.getElementById('accEmail').value||'').trim(), msg=document.getElementById('accMsg');
+  const inp=document.getElementById('accEmail'), msg=document.getElementById('accMsg');
+  const em=(inp.value||'').trim();
   if(!em){ msg.textContent='Escribe el correo del cliente.'; return; }
-  msg.textContent='Vinculando…';
-  let r=null; try{ r=await sb('rpc/vincular_acceso_cliente',{method:'POST',body:JSON.stringify({p_deportista:depId,p_email:em})}); }catch(e){}
-  if(r&&r.ok){ loadAccesoCliente(depId); return; }
-  const m={usuario_no_existe:'Ese correo todavía no existe en Supabase: invítalo primero en Authentication → Users → Invite user.',
-           es_profesional:'Ese correo es el de una cuenta de profesional.',
-           ya_vinculado:'Ese correo ya está vinculado a otro deportista.'};
-  msg.textContent=(r&&m[r.motivo])||'No se pudo vincular. Comprueba que has ejecutado supabase_clientes_acceso.sql.';
+  msg.textContent='Enviando invitación…';
+  const r=await invitarCliente(depId,em);
+  if(r.ok){ loadAccesoCliente(depId,r.invitado===false?'Ese correo ya tenía cuenta: se ha vinculado, pero no se envía otro correo. Si no recuerda su contraseña, que use «¿Has olvidado tu contraseña?» en la pantalla de entrada.':'Invitación enviada a '+em+'. El cliente recibirá un correo para crear su contraseña.'); return; }
+  if(r.sinFuncion){
+    let v=null; try{ v=await sb('rpc/vincular_acceso_cliente',{method:'POST',body:JSON.stringify({p_deportista:depId,p_email:em})}); }catch(e){}
+    if(v&&v.ok){ loadAccesoCliente(depId); return; }
+    msg.textContent=(v&&ACC_MOTIVOS[v.motivo])||'No se pudo vincular. Comprueba que has ejecutado supabase_clientes_acceso.sql.'; return;
+  }
+  msg.textContent=(r.motivo&&ACC_MOTIVOS[r.motivo])||'No se pudo enviar la invitación. Inténtalo de nuevo.';
+}
+async function reenviarInvitacion(depId){
+  const em=(document.querySelector('#accBox .acc-mail')||{}).textContent||'';
+  const nota=document.getElementById('accMsg'); if(nota) nota.textContent='Reenviando…';
+  const r=await invitarCliente(depId,em);
+  if(r.ok) loadAccesoCliente(depId,r.invitado===false?'Ese correo ya había activado su cuenta, así que no se envía otra invitación. Si no recuerda su contraseña, que use «¿Has olvidado tu contraseña?».':'Invitación reenviada a '+em+'.');
+  else if(nota) nota.textContent=r.sinFuncion?'Para reenviar desde aquí hace falta instalar la función «invitar-cliente» en Supabase.':((r.motivo&&ACC_MOTIVOS[r.motivo])||'No se pudo reenviar. Inténtalo de nuevo.');
 }
 async function quitarAccesoCliente(depId){
   if(!confirm('¿Quitar el acceso de este cliente? Ya no podrá entrar en el área de clientes.')) return;
