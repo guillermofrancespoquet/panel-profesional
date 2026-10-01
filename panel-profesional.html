@@ -5034,9 +5034,9 @@ const PLAN_ALIM = {
 const PLAN_GEL_S = 27, PLAN_GEL_L = 57;   // hidratos por gel de 25-30 g y de 55-60 g
 // p = gramos de proteína por 100 g/mL (cocinado). Vegetales primero; animales como opción.
 const PLAN_PROT = {
-  tofu:{n:'tofu firme',p:12,u:'g'}, tempeh:{n:'tempeh',p:19,u:'g'}, lentejas:{n:'lentejas',p:9,u:'g',k:25,x:250},
-  garbanzos:{n:'garbanzos',p:9,u:'g',k:19,x:230}, soja:{n:'bebida de soja',p:3.3,u:'mL'},
-  pollo:{n:'pechuga de pollo',p:31,u:'g',k:23,x:75}, pescado:{n:'pescado (merluza, salmón…)',p:23,u:'g',k:19,x:80}
+  tofu:{n:'tofu firme',p:12,u:'g'}, tempeh:{n:'tempeh',p:19,u:'g'}, lentejas:{n:'lentejas cocidas',p:9,u:'g'},
+  garbanzos:{n:'garbanzos cocidos',p:9,u:'g'}, soja:{n:'bebida de soja',p:3.3,u:'mL'},
+  pollo:{n:'pechuga de pollo',p:23,u:'g'}, pescado:{n:'pescado (merluza, salmón…)',p:19,u:'g'}
 };
 
 let planDeps = [], planEdad = null, planSudor = null, planDefDur = 90, lastPlan = null, planGuardadoOk = false, planActualId = null;
@@ -5064,7 +5064,7 @@ function planPorcion(k, gCho){
   return {t:`${q} ${a.u==='ml'?'mL':'g'} de ${a.n}`, cho:q*a.c/100};
 }
 // La cantidad principal va en CRUDO (peso antes de cocinar, de donde salen los hidratos exactos) y entre paréntesis el equivalente cocinado.
-// Por alimento: `k` = g de hidratos (o de proteína) por 100 g en crudo y `x` = g ya cocinados por cada 100 g en crudo (p. ej. arroz: 100 g crudos ≈ 250 g cocidos).
+// Solo hidratos cocinables (arroz, pasta, cuscús, mijo, patata, boniato): `k` = g de hidratos por 100 g en crudo y `x` = g ya cocinados por cada 100 g en crudo (p. ej. arroz: 100 g crudos ≈ 250 g cocidos).
 // Son valores típicos, aproximados y editables. Si el peso apenas cambia al cocinar (< 10 %), no se indica el equivalente.
 function planCocido(gCrudo, x){
   if(!x || Math.abs(x/100-1) < 0.1) return '';
@@ -5095,16 +5095,13 @@ function planGeles(gCho){
   return {t:t.join(' + '), cho:mejor.tot};
 }
 function planProteina(k, gProt){
-  const a = PLAN_PROT[k];
-  if(a.k){ const q = Math.max(10, Math.round(gProt/a.k*100/10)*10); return `${q} g de ${a.n} en crudo${planCocido(q,a.x)}`; }
-  const q = Math.max(10, Math.round(gProt/a.p*10)*10);
+  const a = PLAN_PROT[k], q = Math.max(10, Math.round(gProt/a.p*10)*10);
   return `${q} ${a.u} de ${a.n}`;
 }
-// Proteína orientativa para las comidas previas (carga de hidratos y comida de las 3 h antes): 70–100 g de tofu, pollo o pescado
-// (en crudo, con su equivalente cocinado). En estas comidas se prefieren a las legumbres, cuya fibra y volumen no ayudan a llenar el glucógeno.
+// Proteína orientativa para las comidas previas (carga de hidratos y comida de las 3 h antes): 70–100 g de tofu, pollo o pescado.
+// En estas comidas se prefieren a las legumbres, cuya fibra y volumen no ayudan a llenar el glucógeno.
 function planProteinaPrevia(){
-  const co = (k, g) => Math.round(g*PLAN_PROT[k].x/100/5)*5;
-  return `Proteína orientativa: 70–100 g de tofu firme, de pechuga de pollo en crudo (≈ ${co('pollo',70)}–${co('pollo',100)} g cocinada) o de pescado en crudo (≈ ${co('pescado',70)}–${co('pescado',100)} g cocinado). En estas comidas mejor que las legumbres: su fibra y su volumen no ayudan a llenar el glucógeno.`;
+  return 'Proteína orientativa: 70–100 g de tofu firme, de pechuga de pollo o de pescado. En estas comidas mejor que las legumbres: su fibra y su volumen no ayudan a llenar el glucógeno.';
 }
 
 function calcPlan(p){
