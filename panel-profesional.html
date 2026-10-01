@@ -5019,9 +5019,9 @@ const PLAN_INT = {baja:'Baja',media:'Media',alta:'Alta',competicion:'Competició
 // c = gramos de hidratos por 100 g/mL (u='g'|'ml') o por unidad (u='ud'). Valores aproximados de tablas de
 // composición: ajusta según marca y cocción. r = redondeo de la cantidad; ent = unidades enteras.
 const PLAN_ALIM = {
-  arroz:{n:'arroz blanco cocido',c:28,u:'g',k:80}, pasta:{n:'pasta blanca cocida',c:31,u:'g',k:75},
-  cuscus:{n:'cuscús cocido',c:23,u:'g',k:77}, mijo:{n:'mijo cocido',c:24,u:'g',k:73},
-  patata:{n:'patata cocida',c:20,u:'g',k:17.5}, boniato:{n:'boniato cocido',c:20,u:'g',k:20},
+  arroz:{n:'arroz blanco',c:28,u:'g',k:78,x:250}, pasta:{n:'pasta blanca',c:31,u:'g',k:73,x:230},
+  cuscus:{n:'cuscús',c:23,u:'g',k:73,x:250}, mijo:{n:'mijo',c:24,u:'g',k:72,x:280},
+  patata:{n:'patata',c:20,u:'g',k:17,x:100}, boniato:{n:'boniato',c:20,u:'g',k:20,x:100},
   avena:{n:'copos de avena en seco (porridge hecho con bebida vegetal)',c:66,u:'g'}, pasas:{n:'pasas',c:79,u:'g'},
   zumo:{n:'zumo de fruta',c:10,u:'ml',r:50}, isot:{n:'bebida isotónica con hidratos (6-8 %)',c:7,u:'ml',r:50},
   pan:{s:'rebanada de pan blanco',p:'rebanadas de pan blanco',c:15,u:'ud',ent:true},
@@ -5034,9 +5034,9 @@ const PLAN_ALIM = {
 const PLAN_GEL_S = 27, PLAN_GEL_L = 57;   // hidratos por gel de 25-30 g y de 55-60 g
 // p = gramos de proteína por 100 g/mL (cocinado). Vegetales primero; animales como opción.
 const PLAN_PROT = {
-  tofu:{n:'tofu firme',p:12,u:'g'}, tempeh:{n:'tempeh',p:19,u:'g'}, lentejas:{n:'lentejas cocidas',p:9,u:'g',k:25},
-  garbanzos:{n:'garbanzos cocidos',p:9,u:'g',k:19}, soja:{n:'bebida de soja',p:3.3,u:'mL'},
-  pollo:{n:'pechuga de pollo cocinada',p:31,u:'g',k:23}, pescado:{n:'pescado cocinado (merluza, salmón…)',p:23,u:'g',k:19}
+  tofu:{n:'tofu firme',p:12,u:'g'}, tempeh:{n:'tempeh',p:19,u:'g'}, lentejas:{n:'lentejas',p:9,u:'g',k:25,x:250},
+  garbanzos:{n:'garbanzos',p:9,u:'g',k:19,x:230}, soja:{n:'bebida de soja',p:3.3,u:'mL'},
+  pollo:{n:'pechuga de pollo',p:31,u:'g',k:23,x:75}, pescado:{n:'pescado (merluza, salmón…)',p:23,u:'g',k:19,x:80}
 };
 
 let planDeps = [], planEdad = null, planSudor = null, planDefDur = 90, lastPlan = null, planGuardadoOk = false, planActualId = null;
@@ -5056,16 +5056,19 @@ function planPorcion(k, gCho){
     const q = a.ent ? Math.max(1, Math.round(gCho/a.c)) : Math.max(0.5, Math.round(gCho/a.c*2)/2);
     return {t:`${planQty(q)} ${q===1?a.s:a.p}`, cho:q*a.c};
   }
+  if(a.k){   // alimento cocinable: la cantidad va en crudo (de ahí salen los hidratos) y entre paréntesis lo cocinado
+    const q = Math.max(5, Math.round(gCho/a.k*100/5)*5);
+    return {t:`${q} g de ${a.n} en crudo${planCocido(q,a.x)}`, cho:q*a.k/100};
+  }
   const r = a.r || 10, q = Math.max(r, Math.round(gCho/a.c*100/r)*r);
-  return {t:`${q} ${a.u==='ml'?'mL':'g'} de ${a.n}${a.u==='g'?planCrudo(q,a.c,a.k):''}`, cho:q*a.c/100};
+  return {t:`${q} ${a.u==='ml'?'mL':'g'} de ${a.n}`, cho:q*a.c/100};
 }
-// Alimentos cocidos: `k` son los g de hidratos (o de proteína) por 100 g EN CRUDO; con ellos se calcula el peso en crudo equivalente
-// (valores típicos de tablas USDA, aproximados). Si el crudo apenas difiere del cocido (< 10 %), no se indica.
-function planCrudo(gCocido, porCien100Cocido, kCrudo){
-  if(!kCrudo) return '';
-  const raw = gCocido*porCien100Cocido/kCrudo;
-  if(Math.abs(raw/gCocido-1) < 0.1) return '';
-  return ` (≈ ${Math.max(5,Math.round(raw/5)*5)} g en crudo)`;
+// La cantidad principal va en CRUDO (peso antes de cocinar, de donde salen los hidratos exactos) y entre paréntesis el equivalente cocinado.
+// Por alimento: `k` = g de hidratos (o de proteína) por 100 g en crudo y `x` = g ya cocinados por cada 100 g en crudo (p. ej. arroz: 100 g crudos ≈ 250 g cocidos).
+// Son valores típicos, aproximados y editables. Si el peso apenas cambia al cocinar (< 10 %), no se indica el equivalente.
+function planCocido(gCrudo, x){
+  if(!x || Math.abs(x/100-1) < 0.1) return '';
+  return ` (≈ ${Math.max(5,Math.round(gCrudo*x/100/5)*5)} g cocinado)`;
 }
 // Reparte los hidratos objetivo entre alimentos. partes: [{k, f, max}] donde f es la proporción y max (opcional)
 // el tope de hidratos de ese alimento (p. ej. 66 g para 100 g de avena); lo que sobra pasa a los demás.
@@ -5092,14 +5095,16 @@ function planGeles(gCho){
   return {t:t.join(' + '), cho:mejor.tot};
 }
 function planProteina(k, gProt){
-  const a = PLAN_PROT[k], q = Math.max(10, Math.round(gProt/a.p*10)*10);
-  return `${q} ${a.u} de ${a.n}${a.u==='g'?planCrudo(q,a.p,a.k):''}`;
+  const a = PLAN_PROT[k];
+  if(a.k){ const q = Math.max(10, Math.round(gProt/a.k*100/10)*10); return `${q} g de ${a.n} en crudo${planCocido(q,a.x)}`; }
+  const q = Math.max(10, Math.round(gProt/a.p*10)*10);
+  return `${q} ${a.u} de ${a.n}`;
 }
-// Proteína orientativa para las comidas previas (carga de hidratos y comida de las 3 h antes): 70–100 g de tofu, pollo o pescado.
-// En estas comidas se prefieren a las legumbres, cuya fibra y volumen no ayudan a llenar el glucógeno.
+// Proteína orientativa para las comidas previas (carga de hidratos y comida de las 3 h antes): 70–100 g de tofu, pollo o pescado
+// (en crudo, con su equivalente cocinado). En estas comidas se prefieren a las legumbres, cuya fibra y volumen no ayudan a llenar el glucógeno.
 function planProteinaPrevia(){
-  const raw = (k, g) => Math.round(g*PLAN_PROT[k].p/PLAN_PROT[k].k/5)*5;
-  return `Proteína orientativa: 70–100 g de tofu firme, de pechuga de pollo cocinada (≈ ${raw('pollo',70)}–${raw('pollo',100)} g en crudo) o de pescado cocinado (≈ ${raw('pescado',70)}–${raw('pescado',100)} g en crudo). En estas comidas mejor que las legumbres: su fibra y su volumen no ayudan a llenar el glucógeno.`;
+  const co = (k, g) => Math.round(g*PLAN_PROT[k].x/100/5)*5;
+  return `Proteína orientativa: 70–100 g de tofu firme, de pechuga de pollo en crudo (≈ ${co('pollo',70)}–${co('pollo',100)} g cocinada) o de pescado en crudo (≈ ${co('pescado',70)}–${co('pescado',100)} g cocinado). En estas comidas mejor que las legumbres: su fibra y su volumen no ayudan a llenar el glucógeno.`;
 }
 
 function calcPlan(p){
@@ -5120,7 +5125,7 @@ function calcPlan(p){
       secciones:[
         {h:`Comida de carga · ${cab}`, opciones:[C(g,['arroz',.6],['boniato',.4]), C(g,['pasta',.6],['patata',.4]), C(g,['cuscus',.6],['platano',.4])], despues:[planProteinaPrevia()]},
         {h:`Cena de carga · ${cab}`, opciones:[C(g,['mijo',.6],['patata',.4]), C(g,['pasta',.6],['boniato',.4]), C(g,['arroz',.6],['platano',.4])], despues:[planProteinaPrevia()]}],
-      nota:'Una dieta rica en hidratos maximiza las reservas de glucógeno (ISSN 2017). Cantidades aproximadas, en peso cocido y, entre paréntesis, en crudo: con arroz o pasta integral salen algo menos hidratos.'});
+      nota:'Una dieta rica en hidratos maximiza las reservas de glucógeno (ISSN 2017). Cantidades aproximadas, en peso en crudo y, entre paréntesis, el equivalente cocinado: con arroz o pasta integral salen algo menos hidratos.'});
   }
 
   // ── 3 h antes: desayuno o comida previa
@@ -5137,7 +5142,7 @@ function calcPlan(p){
       : [C(gComida,['arroz',.7],['platano',.3]), C(gComida,['pasta',.7],['zumo',.3]), C(gComida,['cuscus',.7],['datil',.3])],
     despues: temprano ? [] : [planProteinaPrevia()],
     nota: temprano ? 'El porridge, con un máximo de 100 g de copos de avena en seco, se prepara con bebida vegetal y se deja hecho la noche anterior. Regla práctica dentro del rango de 1–4 g/kg en las horas previas.'
-                   : 'Regla práctica dentro del rango de 1–4 g/kg en las horas previas. Cantidades en peso cocido y, entre paréntesis, en crudo.'});
+                   : 'Regla práctica dentro del rango de 1–4 g/kg en las horas previas. Cantidades en peso en crudo y, entre paréntesis, el equivalente cocinado.'});
 
   // ── 1 h antes: snack
   const gSnack = 1*peso, gel = planGeles(gSnack);
