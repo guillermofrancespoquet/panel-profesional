@@ -1371,6 +1371,7 @@ body.dark-mode .rev-badge.urgent,body.dark-mode .pay-toggle.pending,body.dark-mo
     <div id="planOut"></div>
     <div class="hd-actions">
       <button class="btn-add" id="planGuardar" onclick="guardarPlan()" disabled>Guardar plan</button>
+      <button class="btn-add" id="planCompartir" onclick="compartirPlan()" disabled title="Guarda el plan y lo muestra al cliente en su área de clientes hasta el día siguiente a la competición">Compartir con el cliente</button>
       <span class="hd-status" id="planStatus" role="status"></span>
     </div>
   </div>
@@ -5008,7 +5009,7 @@ const PLAN_PROT = {
   pollo:{n:'pechuga de pollo cocinada',p:31,u:'g'}, pescado:{n:'pescado cocinado (merluza, salmón…)',p:23,u:'g'}
 };
 
-let planDeps = [], planEdad = null, planSudor = null, planDefDur = 90, lastPlan = null, planGuardadoOk = false;
+let planDeps = [], planEdad = null, planSudor = null, planDefDur = 90, lastPlan = null, planGuardadoOk = false, planActualId = null;
 
 const planNum = id => { const v = parseFloat(document.getElementById(id).value); return isNaN(v) ? null : v; };
 const planF = (n,d=0) => n.toLocaleString('es-ES',{minimumFractionDigits:d,maximumFractionDigits:d});
@@ -5174,7 +5175,7 @@ function planLeer(){
     rapida:document.getElementById('planRapida').checked, edad:planEdad };
 }
 function planCambio(){
-  planGuardadoOk = false;
+  planGuardadoOk = false; planActualId = null;
   document.getElementById('planStatus').textContent = '';
   planActualizarBoton();
 }
@@ -5183,6 +5184,8 @@ function planActualizarBoton(){
   const ok = !!document.getElementById('planDep').value && !!lastPlan && !!document.getElementById('planFecha').value && !planGuardadoOk;
   b.disabled = !ok; b.textContent = planGuardadoOk ? '✓ Plan guardado' : 'Guardar plan';
   b.title = document.getElementById('planDep').value ? '' : 'Elige un deportista para poder guardar el plan';
+  const c = document.getElementById('planCompartir');
+  if(c) c.disabled = !(document.getElementById('planDep').value && lastPlan && document.getElementById('planFecha').value);
 }
 function calcPlanUI(){
   planCambio();
@@ -5260,9 +5263,43 @@ async function guardarPlan(){
   btn.disabled = true; st.className = 'hd-status'; st.textContent = 'Guardando…';
   let out = null;
   try{ out = await sb('planes_competicion',{method:'POST',body:JSON.stringify(fila)}); }catch(e){}
-  if(Array.isArray(out) && out[0] && out[0].id){ planGuardadoOk = true; st.textContent = 'Guardado en la ficha del deportista.'; }
+  if(Array.isArray(out) && out[0] && out[0].id){ planGuardadoOk = true; planActualId = out[0].id; st.textContent = 'Guardado en la ficha del deportista.'; }
   else { st.className = 'hd-status err'; st.textContent = 'No se pudo guardar. Comprueba la conexión y que se haya ejecutado el SQL de planes_competicion.'; }
   planActualizarBoton();
+}
+
+// Fecha de hoy (Madrid) menos un día: hasta ese margen el cliente ve el plan (el «después» de la competición sigue siendo útil el día siguiente).
+function planLimiteCliente(){ const d = new Date(); d.setDate(d.getDate()-1); return localISO(d); }
+// Comparte el plan con el cliente: se guarda una copia ya calculada (`snapshot`) junto a `visible_cliente`, para que el cliente vea exactamente
+// lo que has revisado. Hasta el día siguiente a la competición; después deja de verlo (el plan sigue guardado en la ficha).
+async function compartirPlan(){
+  if(!lastPlan) return;
+  const depId = document.getElementById('planDep').value, st = document.getElementById('planStatus'), btn = document.getElementById('planCompartir');
+  const fecha = document.getElementById('planFecha').value;
+  if(!depId || !fecha) return;
+  if(fecha < planLimiteCliente()){ st.className = 'hd-status err'; st.textContent = 'La fecha ya pasó: el cliente no vería este plan. Cambia la fecha o no lo compartas.'; return; }
+  const p = lastPlan.p;
+  const snapshot = { v:1, avisos:lastPlan.avisos, bloques:lastPlan.bloques,
+    resumen:{ deporte:(PLAN_DEPORTES[p.deporte]||{}).n||'', duracion:p.duracion, intensidad:PLAN_INT[p.intensidad]||'', peso:p.peso } };
+  btn.disabled = true; st.className = 'hd-status'; st.textContent = 'Compartiendo…';
+  let ok = false;
+  try{
+    if(planActualId){
+      await sb(`planes_competicion?id=eq.${planActualId}`, {method:'PATCH', headers:{'Prefer':'return=minimal'}, body:JSON.stringify({visible_cliente:true, snapshot})});
+      ok = true;
+    } else {
+      const fila = { deportista_id:+depId, fecha, hora_inicio:p.hora||null, evento:document.getElementById('planEvento').value.trim()||null,
+        deporte:p.deporte, duracion_min:p.duracion, intensidad:p.intensidad, peso_kg:p.peso, parametros:{ rapida:p.rapida }, visible_cliente:true, snapshot };
+      const out = await sb('planes_competicion', {method:'POST', body:JSON.stringify(fila)});
+      if(Array.isArray(out) && out[0] && out[0].id){ planActualId = out[0].id; planGuardadoOk = true; ok = true; }
+    }
+  }catch(e){}
+  if(ok){ st.textContent = 'Compartido: el cliente lo ve en su área de clientes hasta el día siguiente a la competición.'; planActualizarBoton(); }
+  else { st.className = 'hd-status err'; st.textContent = 'No se pudo compartir. Comprueba la conexión y que se haya ejecutado supabase_plan_compartir.sql.'; btn.disabled = false; }
+}
+async function planVisible(id, depId, val){
+  try{ await sb(`planes_competicion?id=eq.${id}`, {method:'PATCH', headers:{'Prefer':'return=minimal'}, body:JSON.stringify({visible_cliente:val})}); }catch(e){}
+  loadPlanes(depId);
 }
 
 function exportPlanPDF(){
@@ -5297,6 +5334,12 @@ function exportPlanPDF(){
 
 // ── Planes guardados en la ficha del deportista ──
 let planesCache = {};
+function planEstadoCliente(r){
+  if(!r.visible_cliente) return '';
+  return r.fecha < planLimiteCliente()
+    ? '<span class="acc-pill" style="margin-top:4px;display:inline-block">Compartido · ya no lo ve el cliente</span>'
+    : '<span class="acc-pill on" style="margin-top:4px;display:inline-block">Compartido con el cliente</span>';
+}
 async function loadPlanes(depId){
   let rows = [];
   try{ const r = await sb(`planes_competicion?deportista_id=eq.${depId}&order=fecha.desc,id.desc&select=*`); if(Array.isArray(r)) rows = r; }catch(e){}
@@ -5308,8 +5351,8 @@ async function loadPlanes(depId){
   const fmt = f=>new Date(f+'T00:00:00').toLocaleDateString('es-ES',{day:'numeric',month:'short',year:'numeric'});
   el.innerHTML = `<table class="plan-lista"><tbody>${rows.map(r=>`<tr>
       <td class="n">${fmt(r.fecha)}</td>
-      <td>${sudEsc(r.evento||'Sin evento')}<span class="sud-cond">${sudEsc((PLAN_DEPORTES[r.deporte]||{}).n||'')} · ${r.duracion_min} min · ${sudEsc(PLAN_INT[r.intensidad]||'')}</span></td>
-      <td class="act"><div class="row-actions">${btnSoft('Ver / PDF',`abrirPlan(${depId},${r.id})`,'doc',true)}${btnDel('Eliminar plan',`deletePlan(${r.id},${depId})`)}</div></td></tr>`).join('')}</tbody></table>
+      <td>${sudEsc(r.evento||'Sin evento')}<span class="sud-cond">${sudEsc((PLAN_DEPORTES[r.deporte]||{}).n||'')} · ${r.duracion_min} min · ${sudEsc(PLAN_INT[r.intensidad]||'')}</span>${planEstadoCliente(r)}</td>
+      <td class="act"><div class="row-actions">${r.visible_cliente?btnSoft('Dejar de compartir',`planVisible(${r.id},${depId},false)`,'trash',true):''}${btnSoft('Ver / PDF',`abrirPlan(${depId},${r.id})`,'doc',true)}${btnDel('Eliminar plan',`deletePlan(${r.id},${depId})`)}</div></td></tr>`).join('')}</tbody></table>
     ${nuevo}`;
 }
 async function abrirPlan(depId, planId){
@@ -5327,7 +5370,7 @@ async function abrirPlan(depId, planId){
     document.getElementById('planPeso').value = r.peso_kg;
     document.getElementById('planRapida').checked = !!(r.parametros && r.parametros.rapida);
     calcPlanUI();
-    planGuardadoOk = true; planActualizarBoton();
+    planGuardadoOk = true; planActualId = r.id; planActualizarBoton();
   }
 }
 async function deletePlan(id, depId){

@@ -3052,7 +3052,9 @@ function viewInforme(){
     <div class="report-actions">
       <button class="btn camel" id="btnGenerarInforme"><span class="ic">📄</span> Generar vista previa</button>
       <button class="btn ghost" id="btnImprimir"><span class="ic">🖨️</span> Imprimir / Guardar como PDF</button>
+      <button class="btn" id="btnCompartirInforme" title="Genera el PDF y lo guarda en los archivos del deportista, visible en su área de clientes"><span class="ic">📤</span> Compartir con el cliente</button>
     </div>
+    <p class="small-note" id="compInformeMsg" style="margin-top:8px"></p>
   </div>
   <div id="reportPreviewWrap"></div>
   `;
@@ -3219,10 +3221,68 @@ function wireInforme(){
     window.addEventListener("afterprint", ()=>{ document.title = t0; }, {once:true});
     window.print();
   });
+  document.getElementById("btnCompartirInforme").addEventListener("click", compartirInforme);
   if(INFORME_PRESEL){
     valSel.value = INFORME_PRESEL; INFORME_PRESEL = null;
     document.getElementById("btnGenerarInforme").click();
   }
+}
+
+// ── Compartir el informe con el cliente ──
+// Genera un PDF real (A4, una imagen por página del informe en pantalla: la vista previa es 1:1 con el PDF), lo sube al bucket
+// privado `deportistas-docs` y lo añade a `archivos` del deportista con `visible_cliente: true`, para que lo vea en su área de clientes.
+// Compartir otra vez la misma valoración sustituye al PDF anterior. Las librerías se cargan solo al pulsar el botón.
+function cargarScript(url){
+  return new Promise((ok,ko)=>{ const s=document.createElement("script"); s.src=url; s.onload=ok; s.onerror=()=>ko(new Error("No se pudo cargar "+url)); document.head.appendChild(s); });
+}
+async function cargarLibsPdf(){
+  if(!window.html2canvas) await cargarScript("https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js");
+  if(!(window.jspdf && window.jspdf.jsPDF)) await cargarScript("https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js");
+}
+async function informeComoPdf(){
+  const paginas = [...document.querySelectorAll("#reportPreviewWrap .rep-page")];
+  if(!paginas.length) throw new Error("sin vista previa");
+  await cargarLibsPdf();
+  const pdf = new window.jspdf.jsPDF({unit:"mm", format:"a4", compress:true});
+  for(let i=0;i<paginas.length;i++){
+    // windowWidth grande: así no se aplican los estilos de pantalla estrecha y la página sale como en el PDF impreso.
+    const cv = await window.html2canvas(paginas[i], {scale:2, backgroundColor:"#ffffff", useCORS:true, logging:false, windowWidth:1200});
+    if(i>0) pdf.addPage("a4","portrait");
+    pdf.addImage(cv.toDataURL("image/jpeg",0.92), "JPEG", 0, 0, 210, Math.min(297, 210*cv.height/cv.width), undefined, "FAST");
+  }
+  return pdf.output("blob");
+}
+async function compartirInforme(){
+  const btn = document.getElementById("btnCompartirInforme"), msg = document.getElementById("compInformeMsg");
+  const c = getClient(document.getElementById("reportClientSelect").value);
+  const v = c && c.valoraciones.find(vv=>vv.id==document.getElementById("reportValSelect").value);
+  if(!v){ toast("Selecciona una valoración"); return; }
+  if(!document.getElementById("reportPreviewWrap").innerHTML.trim()){ toast("Genera primero la vista previa"); return; }
+  const ruta = p=>p.split("/").map(encodeURIComponent).join("/");
+  const txt0 = btn.innerHTML; btn.disabled = true;
+  try{
+    msg.textContent = "Generando el PDF…";
+    const blob = await informeComoPdf();
+    const path = `${c.id}/${Date.now()}_informe_antropometria_${v.fecha}.pdf`;
+    msg.textContent = "Subiendo…";
+    const up = await authFetch(`${SURL}/storage/v1/object/deportistas-docs/${ruta(path)}`, {method:"POST", headers:{"Content-Type":"application/pdf"}, body:blob});
+    if(!up.ok) throw new Error("subida "+up.status);
+    // Se lee la lista de archivos justo antes de escribir (el panel pudo cambiarla) y se sustituye el informe anterior de esta valoración.
+    const fila = await sb(`clientes_deportivos?id=eq.${c.id}&select=archivos`);
+    const previos = (fila && fila[0] && Array.isArray(fila[0].archivos)) ? fila[0].archivos : [];
+    const viejos = previos.filter(a=>a && a.tipo==="informe_antropometria" && a.valoracion_id==v.id);
+    const archivos = previos.filter(a=>!viejos.includes(a));
+    const ahora = new Date().toISOString();
+    archivos.push({nombre:`Informe antropometría ${v.fecha}.pdf`, path, fecha:ahora, visible_cliente:true, tipo:"informe_antropometria", valoracion_id:v.id});
+    await sb(`clientes_deportivos?id=eq.${c.id}`, {method:"PATCH", headers:{"Prefer":"return=minimal"}, body:JSON.stringify({archivos, ultima_actividad:ahora})});
+    viejos.forEach(a=>{ if(a.path) authFetch(`${SURL}/storage/v1/object/deportistas-docs/${ruta(a.path)}`, {method:"DELETE"}).catch(()=>{}); });
+    msg.textContent = `Informe del ${fmtDate(v.fecha)} compartido: ya aparece en los archivos de ${c.nombre} y en su área de clientes.`;
+    toast("Informe compartido con el cliente");
+  }catch(e){
+    console.warn("compartirInforme", e);
+    msg.textContent = "No se pudo compartir el informe. Comprueba la conexión y vuelve a intentarlo.";
+    toast("No se pudo compartir el informe");
+  }finally{ btn.disabled = false; btn.innerHTML = txt0; }
 }
 
 // Dibuja los gráficos canvas del informe (pliegues, tartas de composición, PHANTOM, somatocarta)

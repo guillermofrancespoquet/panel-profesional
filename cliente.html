@@ -72,6 +72,28 @@ input{font-size:16px}
 .topbar{display:none;position:sticky;top:0;z-index:50;background:var(--t900);height:58px;align-items:center;padding:0 1rem;gap:11px}
 body.in-app .topbar{display:flex}
 body.in-plan .topbar{display:none}
+.home-sep{display:flex;align-items:center;gap:10px;margin:1.5rem 0 .7rem;font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--gold-dk)}
+.home-sep::after{content:'';flex:1;height:.5px;background:var(--pill-au-bd)}
+.tile-comp{border-color:var(--pill-au-bd);background:linear-gradient(135deg,var(--sf) 0%,var(--gold-50) 100%)}
+.comp-card{background:var(--sf);border:.5px solid var(--bdm);border-radius:16px;margin-bottom:12px;overflow:hidden}
+.comp-card>summary{list-style:none;cursor:pointer;padding:1rem 1.1rem;display:flex;align-items:center;gap:12px}
+.comp-card>summary::-webkit-details-marker{display:none}
+.comp-date{flex-shrink:0;width:54px;text-align:center;background:var(--pill-au);color:var(--gold-dk);border-radius:12px;padding:6px 0;box-shadow:inset 0 0 0 .5px var(--pill-au-bd)}
+.comp-date b{display:block;font-size:20px;line-height:1.1}.comp-date span{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+.comp-t{font-size:15px;font-weight:700;letter-spacing:-.01em}.comp-s{font-size:12.5px;color:var(--g500);margin-top:2px}
+.comp-body{padding:0 1.1rem 1.1rem}
+.comp-aviso{font-size:12.5px;background:var(--gold-50);color:var(--gold-dk);border-radius:10px;padding:9px 12px;margin-bottom:10px;line-height:1.5}
+.comp-bl{border-left:2.5px solid var(--pill-g-bd);padding:2px 0 2px 13px;margin:0 0 16px}
+.comp-bl[data-t=durante]{border-color:var(--t400)}.comp-bl[data-t=despues]{border-color:var(--gold)}
+.comp-top{display:flex;gap:8px;align-items:center;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--g500)}
+.comp-hora{background:var(--pill-n);border-radius:20px;padding:1px 9px;box-shadow:inset 0 0 0 .5px var(--pill-n-bd);letter-spacing:0;text-transform:none}
+.comp-h{font-size:15.5px;font-weight:700;margin:3px 0 6px}
+.comp-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.comp-chip{font-size:11.5px;font-weight:600;padding:2px 10px;border-radius:20px;background:var(--pill-g);color:var(--t800);box-shadow:inset 0 0 0 .5px var(--pill-g-bd)}
+.comp-li{font-size:13.5px;line-height:1.55;color:var(--g700);margin-bottom:6px}
+.comp-opt{font-size:13.5px;line-height:1.5;background:var(--g100);border-radius:9px;padding:7px 11px;margin-bottom:5px}
+.comp-sh{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--t600);margin:10px 0 5px}
+.comp-note{font-size:12px;color:var(--g500);font-style:italic;line-height:1.5;margin-top:6px}
 .tile-badge{display:inline-block;margin-top:5px;font-size:11px;font-weight:700;padding:2px 10px;border-radius:20px;background:var(--pill-au);color:var(--gold-dk);box-shadow:inset 0 0 0 .5px var(--pill-au-bd)}
 .tile-badge.ok{background:var(--pill-g);color:var(--t800);box-shadow:inset 0 0 0 .5px var(--pill-g-bd)}
 .fcard{display:flex;align-items:center;gap:13px;width:100%;text-align:left;background:var(--sf);border:.5px solid var(--bdm);border-radius:14px;padding:1rem 1.1rem;margin-bottom:10px;box-shadow:0 2px 10px rgba(4,52,44,.05)}
@@ -239,6 +261,12 @@ table.hist td.n{font-weight:600;white-space:nowrap}
     <span><span class="tile-t">Mi planificación nutricional</span><br><span class="tile-d">Tu plan personalizado</span></span>
     <span class="tile-go"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></span>
   </button>
+  <div class="home-sep" id="compSep" style="display:none"><span>Próxima competición</span></div>
+  <button class="tile tile-comp" id="tileComp" style="display:none" onclick="abrirComp()">
+    <span class="tile-ic au"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M4 22V4"/><path d="M4 4h13l-2 4 2 4H4"/></svg></span>
+    <span><span class="tile-t">Mi plan de competición</span><br><span class="tile-d">Qué comer y beber antes, durante y después</span><br><span class="tile-badge" id="tileCompB"></span></span>
+    <span class="tile-go"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></span>
+  </button>
 </div></div>
 
 <div id="vdatos" class="view"><div class="wrap">
@@ -273,6 +301,12 @@ table.hist td.n{font-weight:600;white-space:nowrap}
   <div class="plan-foot" id="formFoot"></div>
 </div>
 
+<div id="vcomp" class="view"><div class="wrap">
+  <button class="back" onclick="show('vhome')"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Inicio</button>
+  <h2 class="h2">Mi plan de competición</h2>
+  <div id="compBody"></div>
+</div></div>
+
 <div id="vsin" class="view"><div class="wrap"><div class="center">
   <h2 id="sinTitle">Tu cuenta aún no está activada</h2>
   <p class="empty" id="sinMsg">Tu perfil todavía no está vinculado a esta cuenta. Escribe a tu nutricionista para que active tu acceso.</p>
@@ -290,7 +324,7 @@ const BUCKET='deportistas-docs';
 let FICHA=null, DATOS=null;
 
 // ═══ Vistas ═══
-const APP_VIEWS=['vhome','vdatos','vplan','vforms','vform','vsin'];
+const APP_VIEWS=['vhome','vdatos','vplan','vforms','vform','vcomp','vsin'];
 function show(v){
   document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));
   $(v).classList.add('active');
@@ -388,7 +422,7 @@ async function guardarPassword(){
 function logout(){
   const s=authLoad();
   if(s) fetch(SURL+'/auth/v1/logout',{method:'POST',headers:{'apikey':SKEY,'Authorization':'Bearer '+s.access_token}}).catch(()=>{});
-  authClear(); FICHA=DATOS=null;
+  authClear(); FICHA=DATOS=null; PLANES=[];
   $('lpass').value=''; $('lerr').textContent='';
   show('vlogin');
 }
@@ -407,7 +441,8 @@ async function entrar(){
   const nombre=String(FICHA.nombre||'').trim().split(/\s+/)[0]||'';
   $('hello').textContent=nombre?('Hola, '+nombre):'Hola';
   $('helloSub').textContent=[FICHA.deporte,FICHA.objetivo].filter(Boolean).join(' · ')||'Aquí tienes tu información.';
-  pintarTileForms();
+  try{ const pl=await rpc('cliente_mis_planes'); PLANES=Array.isArray(pl)?pl:[]; }catch(e){ PLANES=[]; }
+  pintarTileForms(); pintarTileComp();
   show('vhome');
 }
 function mostrarSin(t,m){ $('sinTitle').textContent=t; $('sinMsg').textContent=m; show('vsin'); }
@@ -523,9 +558,6 @@ function pintarTileForms(){
   t.style.display='flex';
   b.textContent=n?(n===1?'1 pendiente':n+' pendientes'):'Todo al día ✓';
   b.className='tile-badge'+(n?'':' ok');
-  // con formularios pendientes van los primeros; si no, al final
-  const cont=t.parentNode;
-  if(n) cont.insertBefore(t,cont.querySelector('.tile')); else cont.appendChild(t);
 }
 const CHECK_SVG='<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>';
 function abrirForms(){
@@ -559,6 +591,43 @@ async function marcarForm(k){
     alert('No se pudo guardar. Comprueba tu conexión y vuelve a intentarlo.'); return;
   }
   pintarTileForms(); cerrarForm();
+}
+
+// ═══ Plan de competición (copia ya calculada por el profesional; solo hasta el día siguiente a la competición) ═══
+let PLANES=[];
+const DOW=['dom','lun','mar','mié','jue','vie','sáb'];
+// Solo se permite <b> en los textos de opciones (vienen del panel del profesional, pero se escapa todo lo demás).
+const seguro=t=>esc(t).replace(/&lt;(\/?)b&gt;/g,'<$1b>');
+function pintarTileComp(){
+  const t=$('tileComp'), sep=$('compSep'), hay=PLANES.length>0;
+  t.style.display=hay?'flex':'none'; sep.style.display=hay?'flex':'none';
+  if(!hay) return;
+  const p=PLANES[0], d=new Date(p.fecha+'T00:00:00');
+  $('tileCompB').textContent=(p.evento?p.evento+' · ':'')+d.toLocaleDateString('es-ES',{weekday:'short',day:'numeric',month:'short'});
+}
+function bloqueComp(b){
+  const li=a=>(a||[]).map(l=>`<p class="comp-li">${esc(l)}</p>`).join('');
+  const op=a=>(a||[]).map(o=>`<p class="comp-opt">${seguro(o)}</p>`).join('');
+  const secs=(b.secciones||[]).map(x=>`<p class="comp-sh">${esc(x.h)}</p>${li(x.lineas)}${op(x.opciones)}${li(x.despues)}`).join('');
+  return `<div class="comp-bl" data-t="${esc(b.t)}">
+    <div class="comp-top"><span>${esc(b.cuando)}</span>${b.hora?`<span class="comp-hora">${esc(b.hora)}</span>`:''}</div>
+    <div class="comp-h">${esc(b.titulo)}</div>
+    <div class="comp-chips">${(b.chips||[]).map(x=>`<span class="comp-chip">${esc(x)}</span>`).join('')}</div>
+    ${li(b.lineas)}${op(b.opciones)}${li(b.despues)}${secs}${b.nota?`<p class="comp-note">${esc(b.nota)}</p>`:''}
+  </div>`;
+}
+function abrirComp(){
+  $('compBody').innerHTML=PLANES.map((p,i)=>{
+    const d=new Date(p.fecha+'T00:00:00'), sn=p.snapshot||{}, r=sn.resumen||{};
+    const sub=[r.deporte,r.duracion?r.duracion+' min':'',r.intensidad?'Intensidad '+String(r.intensidad).toLowerCase():'',p.hora?p.hora+' h':''].filter(Boolean).join(' · ');
+    return `<details class="comp-card"${i===0?' open':''}>
+      <summary><span class="comp-date"><b>${d.getDate()}</b><span>${d.toLocaleDateString('es-ES',{month:'short'}).replace('.','')}</span></span>
+        <span style="flex:1;min-width:0"><span class="comp-t">${esc(p.evento||'Competición')}</span><br><span class="comp-s">${esc(DOW[d.getDay()])} · ${esc(sub)}</span></span></summary>
+      <div class="comp-body">${(sn.avisos||[]).map(a=>`<p class="comp-aviso">${esc(a)}</p>`).join('')}${(sn.bloques||[]).map(bloqueComp).join('')}
+        <p class="comp-note">Pauta orientativa: prueba todo en entrenamientos y consulta cualquier duda con tu nutricionista.</p></div>
+    </details>`;
+  }).join('');
+  show('vcomp');
 }
 
 // ═══ Arranque: enlaces de invitación o recuperación (llegan con la sesión en la parte # de la dirección) ═══
