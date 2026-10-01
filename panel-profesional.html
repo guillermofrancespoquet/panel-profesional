@@ -1458,8 +1458,8 @@ body.dark-mode .rev-badge.urgent,body.dark-mode .pay-toggle.pending,body.dark-mo
     <textarea class="inp" id="depDesc" placeholder="Objetivo, contexto, cualquier dato relevante…" style="min-height:70px;resize:vertical"></textarea>
     <label class="mfl" style="margin-top:10px">URL del plan nutricional (GitHub)</label>
     <input type="text" class="inp" id="depPlan" placeholder="https://tu-usuario.github.io/...">
-    <label class="mfl" style="margin-top:10px">Próxima revisión</label>
-    <input type="date" class="inp" id="depRevision">
+    <label class="mfl" style="margin-top:10px">Próxima revisión (fecha y hora)</label>
+    <div style="display:flex;gap:8px"><input type="date" class="inp" id="depRevision" style="flex:1.5;min-width:0"><input type="time" class="inp" id="depRevisionHora" style="flex:1;min-width:0" aria-label="Hora de la revisión"></div>
     <p class="merr" id="mAddDepErr"></p>
     <div class="mact">
       <button class="btn-cancel" onclick="closeAddDep()">Cancelar</button>
@@ -1485,8 +1485,8 @@ body.dark-mode .rev-badge.urgent,body.dark-mode .pay-toggle.pending,body.dark-mo
     <textarea class="inp" id="editDepDesc" placeholder="Objetivo, contexto, cualquier dato relevante…" style="min-height:70px;resize:vertical"></textarea>
     <label class="mfl" style="margin-top:10px">URL del plan nutricional (GitHub)</label>
     <input type="text" class="inp" id="editDepPlan" placeholder="https://tu-usuario.github.io/...">
-    <label class="mfl" style="margin-top:10px">Próxima revisión</label>
-    <input type="date" class="inp" id="editDepRevision">
+    <label class="mfl" style="margin-top:10px">Próxima revisión (fecha y hora)</label>
+    <div style="display:flex;gap:8px"><input type="date" class="inp" id="editDepRevision" style="flex:1.5;min-width:0"><input type="time" class="inp" id="editDepRevisionHora" style="flex:1;min-width:0" aria-label="Hora de la revisión"></div>
     <p class="merr" id="mEditDepErr"></p>
     <div class="mact">
       <button class="btn-cancel" onclick="closeEditDep()">Cancelar</button>
@@ -3707,6 +3707,7 @@ function openEditDep(id) {
   document.getElementById('editDepDesc').value = d.descripcion || '';
   document.getElementById('editDepPlan').value = d.plan_url || '';
   document.getElementById('editDepRevision').value = d.proxima_revision || '';
+  document.getElementById('editDepRevisionHora').value = d.proxima_revision_hora || '';
   document.getElementById('mEditDepErr').textContent = '';
   document.getElementById('mEditDep').style.display = 'flex';
 }
@@ -3727,12 +3728,25 @@ async function saveEditDep() {
       plan_url: document.getElementById('editDepPlan').value.trim() || null,
       proxima_revision: document.getElementById('editDepRevision').value || null
     };
-    await patchDep(editingDepId, updates);
+    // La hora va en una columna aparte (supabase_revision_hora.sql): solo se envía si hay hora o si la columna ya existe, para no romper el guardado sin ese SQL.
+    const dPrev = deportistas.find(x => x.id === editingDepId);
+    const hora = updates.proxima_revision ? (document.getElementById('editDepRevisionHora').value || null) : null;
+    if (hora || (dPrev && 'proxima_revision_hora' in dPrev)) updates.proxima_revision_hora = hora;
+    // sb() no lanza con errores HTTP: un fallo de PostgREST vuelve como JSON con `code`. Si falla por la columna de la hora (SQL sin ejecutar), se reintenta sin ella.
+    let res = await patchDep(editingDepId, updates), avisoHora = '';
+    if (res && res.code && 'proxima_revision_hora' in updates && !(dPrev && 'proxima_revision_hora' in dPrev)) {
+      delete updates.proxima_revision_hora;
+      res = await patchDep(editingDepId, updates);
+      if (!(res && res.code)) avisoHora = 'Se ha guardado, pero sin la hora: falta ejecutar supabase_revision_hora.sql en Supabase.';
+    }
+    if (res && res.code) throw new Error(res.message);
     const d = deportistas.find(x => x.id === editingDepId);
     if (d) Object.assign(d, updates);
-    await syncDepCita(updates.nombre, updates.proxima_revision);
+    await syncDepCita(updates.nombre, updates.proxima_revision, hora);
+    const idGuardado = editingDepId;   // closeEditDep() lo pone a null: sin esta copia la ficha no se refrescaba tras guardar
     closeEditDep();
-    openDepDet(editingDepId);
+    openDepDet(idGuardado);
+    if (avisoHora) alert(avisoHora);
   } catch(e) {
     document.getElementById('mEditDepErr').textContent = 'Error al guardar. Inténtalo de nuevo.';
   }
@@ -3741,7 +3755,7 @@ async function saveEditDep() {
 
 
 // ═══════════════ SINCRONIZACIÓN AUTOMÁTICA: revisión deportista → agenda ═══════════════
-async function syncDepCita(nombre, fecha) {
+async function syncDepCita(nombre, fecha, hora) {
   const servicioTag = 'Revisión · Nutrición Deportiva';
   const todayISO = localISO(new Date());
   try {
@@ -3754,10 +3768,10 @@ async function syncDepCita(nombre, fecha) {
     }
     if (futuras.length) {
       // Reprogramar la próxima revisión pendiente en vez de crear otra
-      await patchCita(futuras[0].id, { fecha });
+      await patchCita(futuras[0].id, { fecha, hora: hora || null });
     } else {
       // No hay ninguna futura (o la anterior ya pasó y quedó como histórico) → crear una nueva
-      await insertCita({ cliente: nombre, servicio: servicioTag, fecha, hora: null, nota: null, pagado: false, requiere_pago: true, monto: 40 });
+      await insertCita({ cliente: nombre, servicio: servicioTag, fecha, hora: hora || null, nota: null, pagado: false, requiere_pago: true, monto: 40 });
     }
   } catch(e) { /* silencioso: no bloquear el guardado del deportista si falla la sync */ }
 }
@@ -4438,6 +4452,20 @@ function closeAddCita() {
   document.getElementById('citaRequierePago').checked = true;
   document.getElementById('mAddCitaErr').textContent = '';
 }
+// Una cita de «Revisión» creada en la agenda para un deportista (mismo nombre) pasa a ser su próxima revisión, con fecha y hora,
+// para que también la vea el cliente. No se llama a syncDepCita: la cita ya existe.
+async function syncCitaRevisionADep(cliente, servicio, fecha, hora) {
+  try {
+    if (!/revisi/i.test(servicio || '') || fecha < localISO(new Date())) return;
+    const filas = await sb('clientes_deportivos?select=*') || [];
+    const d = filas.find(x => String(x.nombre || '').trim().toLowerCase() === String(cliente).trim().toLowerCase());
+    if (!d) return;
+    const upd = { proxima_revision: fecha };
+    if (hora || 'proxima_revision_hora' in d) upd.proxima_revision_hora = hora;
+    await patchDep(d.id, upd);
+    const loc = deportistas.find(x => x.id === d.id); if (loc) Object.assign(loc, upd);
+  } catch(e) { /* silencioso: la cita ya se ha guardado */ }
+}
 async function createCita() {
   const cliente = document.getElementById('citaCliente').value.trim();
   const fecha = document.getElementById('citaFecha').value;
@@ -4452,6 +4480,7 @@ async function createCita() {
       pagado: false,
       requiere_pago: document.getElementById('citaRequierePago').checked
     });
+    await syncCitaRevisionADep(cliente, document.getElementById('citaServicio').value, fecha, document.getElementById('citaHora').value || null);
     closeAddCita();
     await loadCitas();
   } catch(e) {
@@ -4524,10 +4553,11 @@ async function createDeportista() {
       descripcion: document.getElementById('depDesc').value.trim() || null,
       plan_url: document.getElementById('depPlan').value.trim() || null,
       proxima_revision: document.getElementById('depRevision').value || null,
+      ...(document.getElementById('depRevision').value && document.getElementById('depRevisionHora').value ? { proxima_revision_hora: document.getElementById('depRevisionHora').value } : {}),
       ultima_actividad: new Date().toISOString(),
       notas: ''
     });
-    await syncDepCita(nombre, document.getElementById('depRevision').value || null);
+    await syncDepCita(nombre, document.getElementById('depRevision').value || null, document.getElementById('depRevision').value ? (document.getElementById('depRevisionHora').value || null) : null);
     closeAddDep();
     await loadDeportistas();
   } catch(e) {
@@ -4579,7 +4609,7 @@ function openDepDet(id) {
         </div>
         <div class="depd-rev-txt">
           <div class="depd-rev-label">Próxima revisión</div>
-          <div class="depd-rev-date">${d.proxima_revision ? new Date(d.proxima_revision).toLocaleDateString('es-ES',{day:'numeric',month:'long',year:'numeric'}) : 'Sin fecha establecida'}</div>
+          <div class="depd-rev-date">${d.proxima_revision ? new Date(d.proxima_revision).toLocaleDateString('es-ES',{day:'numeric',month:'long',year:'numeric'}) + (d.proxima_revision_hora ? ' · ' + sudEsc(String(d.proxima_revision_hora).slice(0,5)) + ' h' : '') : 'Sin fecha establecida'}</div>
         </div>
         ${revisionBadge(d.proxima_revision)}
       </div>
@@ -4989,10 +5019,10 @@ const PLAN_INT = {baja:'Baja',media:'Media',alta:'Alta',competicion:'Competició
 // c = gramos de hidratos por 100 g/mL (u='g'|'ml') o por unidad (u='ud'). Valores aproximados de tablas de
 // composición: ajusta según marca y cocción. r = redondeo de la cantidad; ent = unidades enteras.
 const PLAN_ALIM = {
-  arroz:{n:'arroz blanco cocido (o integral)',c:28,u:'g'}, pasta:{n:'pasta blanca cocida (o integral)',c:31,u:'g'},
-  cuscus:{n:'cuscús cocido',c:23,u:'g'}, mijo:{n:'mijo cocido',c:24,u:'g'},
-  patata:{n:'patata cocida',c:20,u:'g'}, boniato:{n:'boniato cocido',c:20,u:'g'},
-  avena:{n:'avena en porridge (hecho la noche anterior con bebida vegetal)',c:66,u:'g'}, pasas:{n:'pasas',c:79,u:'g'},
+  arroz:{n:'arroz blanco',c:28,u:'g',k:78,x:250}, pasta:{n:'pasta blanca',c:31,u:'g',k:73,x:230},
+  cuscus:{n:'cuscús',c:23,u:'g',k:73,x:250}, mijo:{n:'mijo',c:24,u:'g',k:72,x:280},
+  patata:{n:'patata',c:20,u:'g',k:17,x:100}, boniato:{n:'boniato',c:20,u:'g',k:20,x:100},
+  avena:{n:'copos de avena en seco (porridge hecho con bebida vegetal)',c:66,u:'g'}, pasas:{n:'pasas',c:79,u:'g'},
   zumo:{n:'zumo de fruta',c:10,u:'ml',r:50}, isot:{n:'bebida isotónica con hidratos (6-8 %)',c:7,u:'ml',r:50},
   pan:{s:'rebanada de pan blanco',p:'rebanadas de pan blanco',c:15,u:'ud',ent:true},
   tortita:{s:'tortita de arroz o de maíz',p:'tortitas de arroz o de maíz',c:7,u:'ud',ent:true},
@@ -5006,7 +5036,7 @@ const PLAN_GEL_S = 27, PLAN_GEL_L = 57;   // hidratos por gel de 25-30 g y de 55
 const PLAN_PROT = {
   tofu:{n:'tofu firme',p:12,u:'g'}, tempeh:{n:'tempeh',p:19,u:'g'}, lentejas:{n:'lentejas cocidas',p:9,u:'g'},
   garbanzos:{n:'garbanzos cocidos',p:9,u:'g'}, soja:{n:'bebida de soja',p:3.3,u:'mL'},
-  pollo:{n:'pechuga de pollo cocinada',p:31,u:'g'}, pescado:{n:'pescado cocinado (merluza, salmón…)',p:23,u:'g'}
+  pollo:{n:'pechuga de pollo',p:23,u:'g'}, pescado:{n:'pescado (merluza, salmón…)',p:19,u:'g'}
 };
 
 let planDeps = [], planEdad = null, planSudor = null, planDefDur = 90, lastPlan = null, planGuardadoOk = false, planActualId = null;
@@ -5026,8 +5056,19 @@ function planPorcion(k, gCho){
     const q = a.ent ? Math.max(1, Math.round(gCho/a.c)) : Math.max(0.5, Math.round(gCho/a.c*2)/2);
     return {t:`${planQty(q)} ${q===1?a.s:a.p}`, cho:q*a.c};
   }
+  if(a.k){   // alimento cocinable: la cantidad va en crudo (de ahí salen los hidratos) y entre paréntesis lo cocinado
+    const q = Math.max(5, Math.round(gCho/a.k*100/5)*5);
+    return {t:`${q} g de ${a.n} en crudo${planCocido(q,a.x)}`, cho:q*a.k/100};
+  }
   const r = a.r || 10, q = Math.max(r, Math.round(gCho/a.c*100/r)*r);
   return {t:`${q} ${a.u==='ml'?'mL':'g'} de ${a.n}`, cho:q*a.c/100};
+}
+// La cantidad principal va en CRUDO (peso antes de cocinar, de donde salen los hidratos exactos) y entre paréntesis el equivalente cocinado.
+// Solo hidratos cocinables (arroz, pasta, cuscús, mijo, patata, boniato): `k` = g de hidratos por 100 g en crudo y `x` = g ya cocinados por cada 100 g en crudo (p. ej. arroz: 100 g crudos ≈ 250 g cocidos).
+// Son valores típicos, aproximados y editables. Si el peso apenas cambia al cocinar (< 10 %), no se indica el equivalente.
+function planCocido(gCrudo, x){
+  if(!x || Math.abs(x/100-1) < 0.1) return '';
+  return ` (≈ ${Math.max(5,Math.round(gCrudo*x/100/5)*5)} g cocinado)`;
 }
 // Reparte los hidratos objetivo entre alimentos. partes: [{k, f, max}] donde f es la proporción y max (opcional)
 // el tope de hidratos de ese alimento (p. ej. 66 g para 100 g de avena); lo que sobra pasa a los demás.
@@ -5057,6 +5098,11 @@ function planProteina(k, gProt){
   const a = PLAN_PROT[k], q = Math.max(10, Math.round(gProt/a.p*10)*10);
   return `${q} ${a.u} de ${a.n}`;
 }
+// Proteína orientativa para las comidas previas (carga de hidratos y comida de las 3 h antes): 70–100 g de tofu, pollo o pescado.
+// En estas comidas se prefieren a las legumbres, cuya fibra y volumen no ayudan a llenar el glucógeno.
+function planProteinaPrevia(){
+  return 'Proteína orientativa: 70–100 g de tofu firme, de pechuga de pollo o de pescado. En estas comidas mejor que las legumbres: su fibra y su volumen no ayudan a llenar el glucógeno.';
+}
 
 function calcPlan(p){
   if(!p.peso || !p.duracion || p.peso<=0 || p.duracion<=0) return null;
@@ -5074,9 +5120,9 @@ function calcPlan(p){
       lineas:['Prioriza alimentos bajos en fibra y fáciles de digerir: pasta blanca, arroz blanco, cuscús, tubérculos (patata, boniato)… Evita alimentos nuevos, muy grasos o picantes.',
               'Haz dos comidas de carga de hidratos, una comida y una cena, y reparte el resto en el desayuno, los snacks y la fruta.'],
       secciones:[
-        {h:`Comida de carga · ${cab}`, opciones:[C(g,['arroz',.6],['boniato',.4]), C(g,['pasta',.6],['patata',.4]), C(g,['cuscus',.6],['platano',.4])]},
-        {h:`Cena de carga · ${cab}`, opciones:[C(g,['mijo',.6],['patata',.4]), C(g,['pasta',.6],['boniato',.4]), C(g,['arroz',.6],['platano',.4])]}],
-      nota:'Una dieta rica en hidratos maximiza las reservas de glucógeno (ISSN 2017). Cantidades aproximadas: con arroz o pasta integral salen algo menos hidratos.'});
+        {h:`Comida de carga · ${cab}`, opciones:[C(g,['arroz',.6],['boniato',.4]), C(g,['pasta',.6],['patata',.4]), C(g,['cuscus',.6],['platano',.4])], despues:[planProteinaPrevia()]},
+        {h:`Cena de carga · ${cab}`, opciones:[C(g,['mijo',.6],['patata',.4]), C(g,['pasta',.6],['boniato',.4]), C(g,['arroz',.6],['platano',.4])], despues:[planProteinaPrevia()]}],
+      nota:'Una dieta rica en hidratos maximiza las reservas de glucógeno (ISSN 2017). Cantidades aproximadas, en peso en crudo y, entre paréntesis, el equivalente cocinado: con arroz o pasta integral salen algo menos hidratos.'});
   }
 
   // ── 3 h antes: desayuno o comida previa
@@ -5091,8 +5137,9 @@ function calcPlan(p){
          C(gComida,['pan',.55],['mermelada',.2],['platano',.25]),
          C(gComida,['tortita',.35],['miel',.3],['zumo',.35])]
       : [C(gComida,['arroz',.7],['platano',.3]), C(gComida,['pasta',.7],['zumo',.3]), C(gComida,['cuscus',.7],['datil',.3])],
-    nota: temprano ? 'El porridge, con un máximo de 100 g de copos de avena, se deja hecho la noche anterior con bebida vegetal. Regla práctica dentro del rango de 1–4 g/kg en las horas previas.'
-                   : 'Regla práctica dentro del rango de 1–4 g/kg en las horas previas.'});
+    despues: temprano ? [] : [planProteinaPrevia()],
+    nota: temprano ? 'El porridge, con un máximo de 100 g de copos de avena en seco, se prepara con bebida vegetal y se deja hecho la noche anterior. Regla práctica dentro del rango de 1–4 g/kg en las horas previas.'
+                   : 'Regla práctica dentro del rango de 1–4 g/kg en las horas previas. Cantidades en peso en crudo y, entre paréntesis, el equivalente cocinado.'});
 
   // ── 1 h antes: snack
   const gSnack = 1*peso, gel = planGeles(gSnack);
