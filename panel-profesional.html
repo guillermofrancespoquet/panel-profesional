@@ -718,7 +718,7 @@ body.dark-mode .cmp-cell.b .cmp-track i{background:var(--t400)}
 
 
 .ref-jump{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 18px}
-.ref-body{column-width:340px;column-gap:16px}
+.ref-body{max-width:900px}   /* una sola columna (antes eran varias en ordenador) */
 .ref-section{background:var(--sf);border:.5px solid var(--bd);border-radius:14px;padding:1.1rem 1.25rem 1rem;margin:0 0 16px;break-inside:avoid;-webkit-column-break-inside:avoid;scroll-margin-top:12px}
 .ref-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 10px;padding-bottom:10px;border-bottom:.5px solid var(--bd)}
 .ref-title{font-size:13.5px;font-weight:700;color:var(--t800);margin:0;line-height:1.35}
@@ -741,7 +741,7 @@ body.dark-mode .ref-formula{background:rgba(29,158,117,.16)}
 .sup-group{margin-bottom:26px;scroll-margin-top:12px}
 .sup-gtitle{font-size:15px;font-weight:700;color:var(--g900);margin:0 0 2px;letter-spacing:-.01em}
 .sup-gdesc{font-size:12.5px;color:var(--g500);margin:0 0 12px;line-height:1.5}
-.sup-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;align-items:start}
+.sup-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:14px;align-items:start;max-width:900px}   /* una sola columna */
 .sup-card{background:var(--sf);border:.5px solid var(--bd);border-radius:14px;padding:1rem 1.15rem}
 .sup-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;padding-bottom:9px;border-bottom:.5px solid var(--bd)}
 .sup-name{font-size:14px;font-weight:700;color:var(--g900);margin:0}
@@ -1024,6 +1024,10 @@ body.dark-mode .rev-badge.urgent,body.dark-mode .pay-toggle.pending,body.dark-mo
       <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
       Referencias clínicas
     </button>
+    <button class="sb-item" id="sbSupl" onclick="navTo('suplementacion')">
+      <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20 5 5 0 0 1 0-10 5 5 0 0 0 0-10z"/></svg>
+      Suplementación
+    </button>
     <button class="sb-item sb-group-toggle" id="sbCalcToggle" onclick="toggleCalcGroup()">
       <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="8" y2="10.01"/><line x1="12" y1="10" x2="12" y2="10.01"/><line x1="16" y1="10" x2="16" y2="10.01"/><line x1="8" y1="14" x2="8" y2="14.01"/><line x1="12" y1="14" x2="12" y2="14.01"/><line x1="16" y1="14" x2="16" y2="14.01"/><line x1="8" y1="18" x2="16" y2="18"/></svg>
       Calculadora
@@ -1046,10 +1050,6 @@ body.dark-mode .rev-badge.urgent,body.dark-mode .pay-toggle.pending,body.dark-mo
     <button class="sb-item" id="sbComp" onclick="navTo('comparador')">
       <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0H5a2 2 0 0 1-2-2v-4m6 6h10a2 2 0 0 0 2-2v-4"/></svg>
       Comparador de alimentos
-    </button>
-    <button class="sb-item" id="sbSupl" onclick="navTo('suplementacion')">
-      <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20 5 5 0 0 1 0-10 5 5 0 0 0 0-10z"/></svg>
-      Suplementación
     </button>
     <button class="sb-item" id="sbMenu" onclick="navTo('menugen')">
       <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><line x1="9" y1="7" x2="15" y2="7"/><line x1="9" y1="11" x2="15" y2="11"/></svg>
@@ -3087,7 +3087,7 @@ async function loadDashboard(){
   const todayISO=fmtISO(today),tomorrowISO=fmtISO(tomorrow);
 
   // ── Sesiones hoy/mañana ──
-  const sesiones=dashCitas.filter(c=>c.fecha===todayISO||c.fecha===tomorrowISO)
+  const sesiones=dashCitas.filter(c=>(c.fecha===todayISO||c.fecha===tomorrowISO)&&!citaArchivada(c))
     .sort((a,b)=>(a.fecha+  (a.hora||'')).localeCompare(b.fecha+(b.hora||'')));
   document.getElementById('dashSesionesCount').textContent=sesiones.length;
   document.getElementById('dashSesiones').innerHTML=sesiones.length?sesiones.slice(0,5).map(c=>{
@@ -3788,6 +3788,8 @@ async function loadCitas() {
   citas = await getCitas() || [];
   renderCitas();
 }
+// Con la agenda abierta, las citas se archivan solas cuando pasan 2 horas desde su inicio.
+setInterval(() => { const v = document.getElementById('vagenda'); if (v && v.classList.contains('active') && citas.length) renderCitas(); }, 60000);
 
 const MESES_CORTO = ['ENE','FEB','MAR','ABR','MAY','JUN','JUL','AGO','SEP','OCT','NOV','DIC'];
 
@@ -3866,6 +3868,14 @@ function citaTipo(c){
   return 'otras';
 }
 
+// Una cita pasa a «Pasadas» (se archiva, sin borrarse) 2 horas después de su inicio. Sin hora, al día siguiente.
+const ARCHIVO_CITA_HORAS = 2;
+function citaArchivada(c, ahora = new Date()){
+  if (c.hora) return ahora >= new Date(new Date(c.fecha + 'T' + String(c.hora).slice(0,5) + ':00').getTime() + ARCHIVO_CITA_HORAS*3600*1000);
+  const hoy = new Date(ahora.getFullYear(), ahora.getMonth(), ahora.getDate());
+  return new Date(c.fecha + 'T00:00:00') < hoy;
+}
+
 function setAgendaFilter(tipo){
   agendaFilterTipo = tipo;
   document.querySelectorAll('#agendaChips .dep-chip').forEach(b=>b.classList.toggle('active', b.dataset.tipo===tipo));
@@ -3881,9 +3891,9 @@ function renderCitas() {
   if (agendaFilterTipo !== 'todas') filtered = filtered.filter(c => citaTipo(c) === agendaFilterTipo);
   if (agendaSearchTerm) filtered = filtered.filter(c => c.cliente.toLowerCase().includes(agendaSearchTerm));
 
-  const today = new Date(); today.setHours(0,0,0,0);
-  const proximas = filtered.filter(c => new Date(c.fecha) >= today);
-  const pasadas = filtered.filter(c => new Date(c.fecha) < today).reverse();
+  const ahora = new Date();
+  const proximas = filtered.filter(c => !citaArchivada(c, ahora));
+  const pasadas = filtered.filter(c => citaArchivada(c, ahora)).reverse();
 
   const filtroActivo = agendaFilterTipo !== 'todas' || agendaSearchTerm;
   document.getElementById('agendasub').textContent = citas.length
@@ -3906,7 +3916,7 @@ function renderCitas() {
     html += proximas.map(c => renderCitaItem(c, false)).join('');
   }
   if (pasadas.length) {
-    html += '<div class="agenda-empty-group">Pasadas</div>';
+    html += '<div class="agenda-empty-group" title="Las citas pasan aquí 2 horas después de su inicio">Pasadas</div>';
     html += pasadas.map(c => renderCitaItem(c, true)).join('');
   }
   listEl.innerHTML = html;

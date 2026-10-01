@@ -585,7 +585,7 @@ function pintarRevision(){
   const fecha=new Date(r.y,r.m-1,r.d), dias=Math.round((fecha-new Date(new Date().getFullYear(),new Date().getMonth(),new Date().getDate()))/86400000);
   $('revD').textContent=fecha.toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long'}).replace(/^./,x=>x.toUpperCase())+(r.hh!==null?' · '+p2(r.hh)+':'+p2(r.mm)+' h':'');
   $('revS').textContent=dias===0?'Es hoy':dias===1?'Es mañana':'Dentro de '+dias+' días';
-  const g=rangoRevision(r), q=new URLSearchParams({action:'TEMPLATE',text:'Revisión · NutriLogos',details:'Revisión con Guillermo Francés (NutriLogos).',dates:g.ini+'/'+g.fin});
+  const g=rangoRevision(r), q=new URLSearchParams({action:'TEMPLATE',text:'REVISIÓN NUTRICIÓN - Guille',details:'Revisión con Guillermo Francés (NutriLogos).',dates:g.ini+'/'+g.fin});
   $('revGoogle').href='https://calendar.google.com/calendar/render?'+q.toString();
   c.style.display='flex';
 }
