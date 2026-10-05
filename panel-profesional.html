@@ -277,6 +277,7 @@ body.dark-mode .login-btn:hover{background:var(--t600)}
 .file-btn.on{background:var(--pill-g);color:var(--t800)}
 body.dark-mode .file-btn.on{color:var(--t100)}
 .file-vis{color:var(--t600);font-weight:600}
+.seg-tab{margin-top:12px;width:100%}.seg-tab td{text-align:center;padding:6px 4px;font-size:12.5px}.seg-tab td.n{text-align:left;white-space:nowrap}.seg-tab thead td{font-size:10.5px;font-weight:700;color:var(--g500);text-transform:uppercase;letter-spacing:.04em}
 .acc-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:4px}
 .acc-pill{font-size:10.5px;font-weight:600;padding:3px 10px;border-radius:20px;background:var(--pill-n);color:var(--g700);box-shadow:inset 0 0 0 .5px var(--pill-n-bd)}
 .acc-pill.on{background:var(--pill-g);color:var(--t800);box-shadow:inset 0 0 0 .5px var(--pill-g-bd)}
@@ -4655,6 +4656,11 @@ function openDepDet(id) {
     </div>
 
     <div class="depd-section">
+      <p class="sec-title">Seguimiento semanal</p>
+      <div class="med-box" id="segBox"><p class="med-empty">Cargando…</p></div>
+    </div>
+
+    <div class="depd-section">
       <p class="sec-title">Mediciones · antropometría</p>
       <div class="med-box" id="medBox"><p class="med-empty">Cargando…</p></div>
     </div>
@@ -4705,6 +4711,7 @@ function openDepDet(id) {
   show('vdepdet');
   loadHistorial(d.id);
   loadAccesoCliente(d.id);
+  loadSeguimientos(d.id);
   loadMediciones(d.id);
   loadSudoracion(d.id);
   loadPlanes(d.id);
@@ -4751,6 +4758,34 @@ function btnDel(title,onclick){
   return `<button class="file-btn del" title="${title}" aria-label="${title}" onclick="${onclick}"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">${BS_ICON.trash}</svg></button>`;
 }
 
+// ── Seguimiento semanal propio: respuestas del cliente en la ficha (supabase_seguimiento.sql) ──
+const SEG_P=[{k:'adherencia',t:'Adherencia',tt:'Adherencia al plan',c:'#0F6E56'},{k:'energia',t:'Energía',tt:'Energía',c:'#B8956A'},{k:'sueno',t:'Sueño',tt:'Sueño',c:'#6F8CB8'},{k:'digestion',t:'Digestión',tt:'Digestión',c:'#9A7DB3'},{k:'animo',t:'Ánimo',tt:'Estado de ánimo',c:'#C98B6B'}];
+async function loadSeguimientos(depId){
+  const el=document.getElementById('segBox'); let r=null;
+  try{ r=await sb(`seguimientos?deportista_id=eq.${depId}&order=semana.asc&select=semana,respuestas`); }catch(e){}
+  if(!el||currentDepId!=depId) return;
+  if(!Array.isArray(r)){ el.innerHTML='<p class="med-empty">Esta función necesita el SQL <b>supabase_seguimiento.sql</b> ejecutado en Supabase.</p>'; return; }
+  const d=deportistas.find(x=>x.id==depId);
+  if(d){ d._segUltimo=r.length?r[r.length-1].semana:null; const fb=document.getElementById('frmBox'); if(fb) fb.innerHTML=frmHtml(d); }
+  if(!r.length){ el.innerHTML='<p class="med-empty">Sin seguimientos todavía. Actívalo en «Formularios del cliente» para que lo rellene cada semana desde su área.</p>'; return; }
+  const fmtS=f=>new Date(f+'T00:00:00').toLocaleDateString('es-ES',{day:'numeric',month:'short'});
+  const pts=r.map(x=>{ const q=x.respuestas||{}; return {fecha:x.semana,peso:q.peso??null,entrenos:q.entrenos??null,adherencia:q.adherencia??null,energia:q.energia??null,sueno:q.sueno??null,digestion:q.digestion??null,animo:q.animo??null}; });
+  const ult=r[r.length-1], q=ult.respuestas||{};
+  // Avisos del último envío: valoraciones bajas (1–2) y molestias
+  const av=[]; SEG_P.forEach(m=>{ if(q[m.k]!=null&&q[m.k]<=2) av.push(`<span class="acc-pill" style="background:var(--pill-au);color:var(--gold-dk)">${m.t} baja (${q[m.k]}/5)</span>`); });
+  if(q.molestias) av.push(`<span class="acc-pill" style="background:var(--pill-au);color:var(--gold-dk)">Molestias: ${sudEsc(q.molestias)}</span>`);
+  const series=[medSerie(pts,'peso','var(--t400)','Peso','kg')].concat(SEG_P.map(m=>medSerie(pts,m.k,m.c,m.tt,'1–5',0,[1,5])),[medSerie(pts,'entrenos','var(--t900)','Entrenamientos','sesiones',0)]).filter(Boolean).join('');
+  const cel=v=>v==null?'<td>—</td>':`<td${v<=2?' style="color:var(--gold-dk);font-weight:700"':''}>${v}</td>`;
+  const filas=r.slice(-8).reverse().map(x=>{ const z=x.respuestas||{};
+    return `<tr><td class="n">${fmtS(x.semana)}</td>${SEG_P.map(m=>cel(z[m.k])).join('')}<td>${z.entrenos??'—'}</td><td>${z.peso!=null?medNum(z.peso,1):'—'}</td></tr>`; }).join('');
+  const notas=r.filter(x=>x.respuestas&&(x.respuestas.molestias||x.respuestas.comentario)).slice(-6).reverse().map(x=>{ const z=x.respuestas;
+    return `<p class="med-note" style="margin:6px 0"><b>${fmtS(x.semana)}</b> · ${z.molestias?'<i>Molestias:</i> '+sudEsc(z.molestias)+(z.comentario?' · ':''):''}${z.comentario?sudEsc(z.comentario):''}</p>`; }).join('');
+  el.innerHTML=`<div class="acc-row" style="margin-bottom:8px"><span class="acc-pill on">Último: semana del ${fmtS(ult.semana)}</span><span class="acc-mail" style="font-weight:500">${r.length} seguimiento${r.length!==1?'s':''} recibido${r.length!==1?'s':''}</span>${av.join('')}</div>
+    ${series?`<div class="med-series">${series}</div>`:''}
+    <table class="plan-lista seg-tab"><thead><tr><td>Semana</td>${SEG_P.map(m=>`<td>${m.t}</td>`).join('')}<td>Entr.</td><td>Peso</td></tr></thead><tbody>${filas}</tbody></table>
+    ${notas?`<p class="sec-sub" style="margin:12px 0 2px;font-size:12px;font-weight:700;color:var(--g500)">Notas del cliente</p>${notas}`:''}`;
+}
+
 // ── Formularios del cliente (Google Forms): estado guardado en clientes_deportivos.formularios ──
 // El cliente los marca como enviados desde su área; aquí puedes marcarlos o desmarcarlos tú y activar el seguimiento semanal.
 const FRM_LISTA=[{k:'inicial',t:'Cuestionario inicial'},{k:'anamnesis',t:'Anamnesis nutricional'}];
@@ -4764,7 +4799,7 @@ function frmHtml(d){
     return fila(x.t,!!h,h?'Hecho · '+frmFecha(h):'Pendiente',
       btnSoft(h?'Volver a pendiente':'Marcar como hecho',`frmToggle(${d.id},'${x.k}')`,h?'trash':'plus',false));
   }).join('');
-  const u=seg.ultimo;
+  const u=d._segUltimo||seg.ultimo;
   const segRow=fila('Seguimiento semanal',!!seg.activo,seg.activo?'Activo'+(u?' · último '+frmFecha(u):' · sin enviar'):'No activo',
     btnSoft(seg.activo?'Desactivar':'Activar cada semana',`frmSeguimiento(${d.id})`,seg.activo?'trash':'plus',false));
   return main+segRow+'<p class="med-note">El cliente los ve en su área («Mis formularios») y marca cada uno cuando lo envía. El seguimiento solo le aparece si lo activas, y vuelve a quedar pendiente cada lunes.</p>';
@@ -4856,13 +4891,13 @@ async function quitarAccesoCliente(depId){
 }
 
 // Una mini gráfica por magnitud, cada una con su propia escala (peso y % grasa no comparten eje).
-function medSerie(pts,key,color,titulo,unit,dec=1){
+function medSerie(pts,key,color,titulo,unit,dec=1,rango){
   const sr=pts.filter(p=>p[key]!==null);
   if(sr.length<2) return '';
   const W=260,H=84,padL=22,padR=22,padT=18,padB=16;
   const x0=new Date(sr[0].fecha).getTime(), x1=new Date(sr[sr.length-1].fecha).getTime();
   const xAt=f=> x1===x0 ? W/2 : padL+(new Date(f).getTime()-x0)/(x1-x0)*(W-padL-padR);
-  const vals=sr.map(p=>p[key]), mn=Math.min(...vals), mx=Math.max(...vals), rng=(mx-mn)||1;
+  const vals=sr.map(p=>p[key]), mn=rango?rango[0]:Math.min(...vals), mx=rango?rango[1]:Math.max(...vals), rng=(mx-mn)||1;   // rango fijo para las escalas 1–5
   const yAt=v=> padT+(1-(v-mn)/rng)*(H-padT-padB);
   const path=sr.map((p,i)=>(i?'L':'M')+xAt(p.fecha).toFixed(1)+' '+yAt(p[key]).toFixed(1)).join(' ');
   const dots=sr.map(p=>`<circle cx="${xAt(p.fecha).toFixed(1)}" cy="${yAt(p[key]).toFixed(1)}" r="2.8" fill="${color}"/>`).join('');
