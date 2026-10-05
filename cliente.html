@@ -637,12 +637,12 @@ function cerrarInstTip(){ try{ localStorage.setItem('nl_cliente_inst','1'); }cat
 const FORMS=[
   {k:'inicial',t:'Cuestionario inicial',d:'Cuéntanos quién eres y qué quieres conseguir.',url:'https://docs.google.com/forms/d/e/1FAIpQLSeyPobu4XOuFfC5u0HWPyANBPfAcsMAh-RSF-tJn1YH8IsyUA/viewform'},
   {k:'anamnesis',t:'Anamnesis nutricional',d:'Tu historial de salud y tus hábitos de alimentación.',url:'https://docs.google.com/forms/d/e/1FAIpQLSeLg2sJIH7lHZLj8KprznzpV87g_WjF0ZzLv4WqzPGC_hvzrg/viewform'},
-  {k:'seguimiento',t:'Seguimiento semanal',d:'Cuéntanos cómo ha ido tu semana.',url:'https://docs.google.com/forms/d/e/1FAIpQLSdnTwOaqw2EqOCS_1uWHAM3ZV_242Ti-tyMIaLm2mQcC4n5-g/viewform',semanal:true}
+  {k:'seguimiento',t:'Seguimiento semanal',d:'Cuéntanos cómo ha ido tu semana.',semanal:true}   // cuestionario propio (abrirSeg), sin Google Forms
 ];
 // Formularios que ve este cliente y su estado. Si la función SQL aún no está (sin `forms`), no se muestra nada.
 function estadoForms(){
   const f=FICHA&&FICHA.forms; if(!f) return null;
-  return FORMS.filter(x=>!x.semanal||f.seguimiento_activo).map(x=>{
+  return FORMS.filter(x=>!x.semanal||(f.seguimiento_activo&&f.seguimiento_propio)).map(x=>{
     const fecha=x.semanal?f.seguimiento_ultimo:f[x.k+'_hecho'];
     const pend=x.semanal?!!f.seguimiento_pendiente:!f[x.k+'_hecho'];
     return {...x,fecha,pend};
@@ -672,13 +672,13 @@ function abrirForms(){
 }
 function abrirForm(k){
   const x=(estadoForms()||[]).find(y=>y.k===k); if(!x) return;
-  if(k==='seguimiento'&&FICHA.forms&&FICHA.forms.seguimiento_propio){ abrirSeg(); return; }   // cuestionario propio (supabase_seguimiento.sql)
+  if(x.semanal){ abrirSeg(); return; }
   $('formT').textContent=x.t; $('formExt').href=x.url;
   // Dentro de la app (embedded=true): así, desde la pantalla de inicio del móvil no salta al navegador.
   $('formBody').innerHTML=`<iframe class="plan-frame" src="${esc(x.url)}?embedded=true" title="${esc(x.t)}"></iframe>`;
   $('formFoot').innerHTML=x.pend
     ?`<button class="btn" id="formOk" onclick="marcarForm('${x.k}')">Ya lo he enviado ✓</button><small>Pulsa aquí cuando hayas terminado y enviado el formulario.</small>`
-    :`<small>${x.semanal?'Ya enviaste el de esta semana':'Ya lo tienes marcado como hecho'}${x.fecha?' ('+fmtF(x.fecha,true)+')':''}.</small>`;
+    :`<small>Ya lo tienes marcado como hecho${x.fecha?' ('+fmtF(x.fecha,true)+')':''}.</small>`;
   show('vform');
 }
 function cerrarForm(){ $('formBody').innerHTML=''; abrirForms(); }
