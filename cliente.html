@@ -103,6 +103,29 @@ body.in-plan .topbar{display:none}
 .rev-s{font-size:12.5px;color:var(--g500);margin-top:1px}
 .rev-add{display:inline-flex;align-items:center;gap:5px;margin-top:6px;font-size:11.5px;font-weight:600;color:var(--t600);text-decoration:none;padding:3px 10px 3px 8px;border-radius:20px;background:var(--pill-g);box-shadow:inset 0 0 0 .5px var(--pill-g-bd)}
 .rev-add:hover{color:var(--t800)}
+.seg-lead{font-size:13px;color:var(--g500);line-height:1.55;margin:-.4rem 0 1rem}
+.sq{background:var(--sf);border:.5px solid var(--bdm);border-radius:14px;padding:.9rem 1rem 1rem;margin-bottom:10px}
+.sq-t{font-size:14.5px;font-weight:700;letter-spacing:-.01em}
+.sq-d{font-size:12.5px;color:var(--g500);margin:2px 0 11px;line-height:1.45}
+.scale{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.sc{display:flex;flex-direction:column;align-items:center;gap:5px;padding:9px 2px 7px;font-size:22px;line-height:1;border-radius:12px;background:var(--pill-n);border:.5px solid var(--pill-n-bd);color:var(--g700)}
+.sc small{font-size:10px;font-weight:600;line-height:1.15;min-height:23px;display:flex;align-items:center;text-align:center;color:var(--g500)}
+.sc.on{background:var(--pill-g);border-color:var(--t400);box-shadow:inset 0 0 0 1px var(--t400)}
+.sc.on small{color:var(--t800)}
+.stepper{display:flex;align-items:center;gap:16px}
+.stepper button{width:44px;height:44px;border-radius:50%;border:.5px solid var(--pill-g-bd);background:var(--pill-g);color:var(--t800);font-size:24px;font-weight:600;line-height:1}
+.stepper b{font-size:28px;min-width:48px;text-align:center;letter-spacing:-.02em}
+.stepper span{font-size:12.5px;color:var(--g500)}
+.seg-inp{width:100%;border:.5px solid var(--bdm);border-radius:10px;padding:11px 12px;font-size:16px;font-family:var(--f);background:var(--sf);color:var(--g900);resize:vertical}
+.seg-err{font-size:12.5px;color:var(--red);min-height:18px;margin:6px 2px}
+.seg-ok{display:flex;align-items:center;gap:13px;margin-bottom:6px}
+.seg-ok .fchk{width:38px;height:38px}
+.seg-h{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--g500);margin:1.6rem 0 .7rem;display:flex;align-items:center;gap:10px}
+.seg-h::after{content:'';flex:1;height:.5px;background:var(--bdm)}
+.dlts{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:4px}
+.dlt{font-size:11.5px;font-weight:600;padding:3px 10px;border-radius:20px;background:var(--pill-n);color:var(--g700);box-shadow:inset 0 0 0 .5px var(--pill-n-bd)}
+.dlt.up{background:var(--pill-g);color:var(--t800);box-shadow:inset 0 0 0 .5px var(--pill-g-bd)}
+.dlt.dn{background:var(--pill-au);color:var(--gold-dk);box-shadow:inset 0 0 0 .5px var(--pill-au-bd)}
 .tile-badge{display:inline-block;margin-top:5px;font-size:11px;font-weight:700;padding:2px 10px;border-radius:20px;background:var(--pill-au);color:var(--gold-dk);box-shadow:inset 0 0 0 .5px var(--pill-au-bd)}
 .tile-badge.ok{background:var(--pill-g);color:var(--t800);box-shadow:inset 0 0 0 .5px var(--pill-g-bd)}
 .fcard{display:flex;align-items:center;gap:13px;width:100%;text-align:left;background:var(--sf);border:.5px solid var(--bdm);border-radius:14px;padding:1rem 1.1rem;margin-bottom:10px;box-shadow:0 2px 10px rgba(4,52,44,.05)}
@@ -330,6 +353,12 @@ table.hist td.n{font-weight:600;white-space:nowrap}
   <div id="compBody"></div>
 </div></div>
 
+<div id="vseg" class="view"><div class="wrap">
+  <button class="back" onclick="abrirForms()"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Formularios</button>
+  <h2 class="h2">Seguimiento semanal</h2>
+  <div id="segBody"></div>
+</div></div>
+
 <div id="vsin" class="view"><div class="wrap"><div class="center">
   <h2 id="sinTitle">Tu cuenta aún no está activada</h2>
   <p class="empty" id="sinMsg">Tu perfil todavía no está vinculado a esta cuenta. Escribe a tu nutricionista para que active tu acceso.</p>
@@ -347,7 +376,7 @@ const BUCKET='deportistas-docs';
 let FICHA=null, DATOS=null;
 
 // ═══ Vistas ═══
-const APP_VIEWS=['vhome','vdatos','vplan','vforms','vform','vcomp','vsin'];
+const APP_VIEWS=['vhome','vdatos','vplan','vforms','vform','vseg','vcomp','vsin'];
 function show(v){
   document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));
   $(v).classList.add('active');
@@ -474,13 +503,13 @@ function mostrarSin(t,m){ $('sinTitle').textContent=t; $('sinMsg').textContent=m
 const nf=(v,d=1)=>v==null||isNaN(v)?'—':(+v).toLocaleString('es-ES',{minimumFractionDigits:d,maximumFractionDigits:d});
 const fmtF=(f,corto)=>new Date(f+'T00:00:00').toLocaleDateString('es-ES',corto?{day:'numeric',month:'short',year:'2-digit'}:{day:'numeric',month:'long',year:'numeric'});
 function punto(v){ const r=v.resumen||{}; return {fecha:v.fecha,peso:r.peso!=null?+r.peso:null,grasa:r.pct_grasa!=null?+r.pct_grasa:null,mg:r.masa_grasa_kg!=null?+r.masa_grasa_kg:null,modelo:r.modelo||null}; }
-function serie(pts,key,color,titulo,unit,dec){
+function serie(pts,key,color,titulo,unit,dec,rango){
   const sr=pts.filter(p=>p[key]!==null);
   if(sr.length<2) return '';
   const W=260,H=84,pL=22,pR=22,pT=18,pB=16;
   const x0=new Date(sr[0].fecha).getTime(), x1=new Date(sr[sr.length-1].fecha).getTime();
   const xAt=f=>x1===x0?W/2:pL+(new Date(f).getTime()-x0)/(x1-x0)*(W-pL-pR);
-  const vals=sr.map(p=>p[key]), mn=Math.min(...vals), mx=Math.max(...vals), rng=(mx-mn)||1;
+  const vals=sr.map(p=>p[key]), mn=rango?rango[0]:Math.min(...vals), mx=rango?rango[1]:Math.max(...vals), rng=(mx-mn)||1;   // rango fijo para las escalas 1–5
   const yAt=v=>pT+(1-(v-mn)/rng)*(H-pT-pB);
   const path=sr.map((p,i)=>(i?'L':'M')+xAt(p.fecha).toFixed(1)+' '+yAt(p[key]).toFixed(1)).join(' ');
   const dots=sr.map(p=>`<circle cx="${xAt(p.fecha).toFixed(1)}" cy="${yAt(p[key]).toFixed(1)}" r="2.8" fill="${color}"/>`).join('');
@@ -643,6 +672,7 @@ function abrirForms(){
 }
 function abrirForm(k){
   const x=(estadoForms()||[]).find(y=>y.k===k); if(!x) return;
+  if(k==='seguimiento'&&FICHA.forms&&FICHA.forms.seguimiento_propio){ abrirSeg(); return; }   // cuestionario propio (supabase_seguimiento.sql)
   $('formT').textContent=x.t; $('formExt').href=x.url;
   // Dentro de la app (embedded=true): así, desde la pantalla de inicio del móvil no salta al navegador.
   $('formBody').innerHTML=`<iframe class="plan-frame" src="${esc(x.url)}?embedded=true" title="${esc(x.t)}"></iframe>`;
@@ -662,6 +692,88 @@ async function marcarForm(k){
     alert('No se pudo guardar. Comprueba tu conexión y vuelve a intentarlo.'); return;
   }
   pintarTileForms(); cerrarForm();
+}
+
+// ═══ Seguimiento semanal propio: cuestionario corto + evolución (supabase_seguimiento.sql) ═══
+const SEG_ESC=[
+  {k:'adherencia',t:'Adherencia al plan',d:'¿Cuánto has seguido el plan esta semana?',l:['Nada','Poco','Regular','Bastante','Todo'],c:'#0F6E56'},
+  {k:'energia',t:'Energía',d:'¿Cómo ha estado tu energía?',l:['Muy baja','Baja','Normal','Buena','Muy buena'],c:'#B8956A'},
+  {k:'sueno',t:'Sueño',d:'¿Has descansado bien?',l:['Fatal','Mal','Normal','Bien','Genial'],c:'#6F8CB8'},
+  {k:'digestion',t:'Digestión',d:'¿Cómo te han sentado las comidas?',l:['Fatal','Mal','Normal','Bien','Genial'],c:'#9A7DB3'},
+  {k:'animo',t:'Estado de ánimo',d:'¿Cómo te has sentido en general?',l:['Fatal','Mal','Normal','Bien','Genial'],c:'#C98B6B'}];
+const CARAS=['😣','🙁','😐','🙂','😄'];
+let SEGS=[], SEG_FORM={};
+async function abrirSeg(){
+  show('vseg'); $('segBody').innerHTML='<div class="spin" style="margin-top:6vh"></div>';
+  try{ const r=await rpc('cliente_mis_seguimientos'); SEGS=Array.isArray(r)?r:[]; }catch(e){ SEGS=[]; }
+  pintarSeg(false);
+}
+function pintarSeg(editar){
+  const pend=!!(FICHA.forms&&FICHA.forms.seguimiento_pendiente), ult=SEGS[SEGS.length-1];
+  let h='';
+  if(pend||editar){ SEG_FORM=editar&&ult?{...ult.respuestas}:{entrenos:0}; h+=formSeg(); }
+  else{
+    h+=`<div class="card seg-ok"><span class="fchk on">${CHECK_SVG}</span><span style="flex:1;min-width:0"><b>Seguimiento de esta semana enviado</b><br><span class="empty">${ult?'Semana del '+fmtF(ult.semana)+'. ':''}Gracias: tu nutricionista lo revisará.</span></span><button class="btn soft" onclick="pintarSeg(true)">Modificar</button></div>`;
+  }
+  $('segBody').innerHTML=h+evolucionSeg();
+  window.scrollTo(0,0);
+}
+function formSeg(){
+  const esc5=SEG_ESC.map(q=>`<div class="sq"><div class="sq-t">${esc(q.t)}</div><div class="sq-d">${esc(q.d)}</div>
+    <div class="scale" id="sc-${q.k}">${q.l.map((lb,i)=>`<button type="button" class="sc${SEG_FORM[q.k]===i+1?' on':''}" aria-label="${esc(q.t)}: ${i+1} de 5, ${esc(lb)}" onclick="segSet('${q.k}',${i+1})"><span>${CARAS[i]}</span><small>${esc(lb)}</small></button>`).join('')}</div></div>`).join('');
+  return `<p class="seg-lead">Menos de un minuto. Contesta con sinceridad: no hay respuestas buenas ni malas, nos sirve para ajustar tu plan.</p>${esc5}
+    <div class="sq"><div class="sq-t">Entrenamientos</div><div class="sq-d">¿Cuántas sesiones has hecho esta semana?</div>
+      <div class="stepper"><button type="button" aria-label="Menos" onclick="segEntr(-1)">−</button><b id="entrV">${SEG_FORM.entrenos??0}</b><button type="button" aria-label="Más" onclick="segEntr(1)">+</button><span>sesiones</span></div></div>
+    <div class="sq"><div class="sq-t">Peso <span class="empty" style="font-weight:500">(opcional)</span></div><div class="sq-d">Si te has pesado esta semana, en ayunas y sin ropa.</div>
+      <input class="seg-inp" id="segPeso" type="text" inputmode="decimal" autocomplete="off" placeholder="Por ejemplo, 72,4" value="${SEG_FORM.peso!=null?String(SEG_FORM.peso).replace('.',','):''}" style="max-width:180px"></div>
+    <div class="sq"><div class="sq-t">Molestias o lesiones <span class="empty" style="font-weight:500">(opcional)</span></div><div class="sq-d">Dolores, molestias digestivas, lesiones…</div>
+      <textarea class="seg-inp" id="segMol" rows="2" maxlength="600" placeholder="Si no ha habido, déjalo vacío">${esc(SEG_FORM.molestias||'')}</textarea></div>
+    <div class="sq"><div class="sq-t">Algo más que contarnos <span class="empty" style="font-weight:500">(opcional)</span></div><div class="sq-d">Dudas, cambios, lo que te ha costado o lo que te ha ido bien.</div>
+      <textarea class="seg-inp" id="segCom" rows="3" maxlength="600" placeholder="Escribe aquí">${esc(SEG_FORM.comentario||'')}</textarea></div>
+    <p class="seg-err" id="segErr" role="alert"></p>
+    <button class="btn" id="segBtn" style="width:100%" onclick="segEnviar()">Enviar seguimiento</button>`;
+}
+function segSet(k,n){ SEG_FORM[k]=n; document.querySelectorAll('#sc-'+k+' .sc').forEach((b,i)=>b.classList.toggle('on',i+1===n)); $('segErr').textContent=''; }
+function segEntr(d){ SEG_FORM.entrenos=Math.max(0,Math.min(21,(SEG_FORM.entrenos||0)+d)); $('entrV').textContent=SEG_FORM.entrenos; }
+async function segEnviar(){
+  const err=$('segErr'), falta=SEG_ESC.find(q=>!SEG_FORM[q.k]);
+  if(falta){ err.textContent='Falta valorar: '+falta.t.toLowerCase()+'.'; $('sc-'+falta.k).scrollIntoView({behavior:'smooth',block:'center'}); return; }
+  const pesoTxt=$('segPeso').value.trim().replace(',','.'), peso=pesoTxt===''?null:Number(pesoTxt);
+  if(peso!==null&&(isNaN(peso)||peso<20||peso>300)){ err.textContent='Revisa el peso: escribe solo el número, por ejemplo 72,4.'; $('segPeso').focus(); return; }
+  const o={}; SEG_ESC.forEach(q=>o[q.k]=SEG_FORM[q.k]); o.entrenos=SEG_FORM.entrenos||0;
+  if(peso!==null) o.peso=peso;
+  if($('segMol').value.trim()) o.molestias=$('segMol').value.trim();
+  if($('segCom').value.trim()) o.comentario=$('segCom').value.trim();
+  const b=$('segBtn'); b.disabled=true; b.textContent='Enviando…'; err.textContent='';
+  try{
+    await rpc('cliente_guardar_seguimiento',{p_respuestas:o});
+    const [f,r]=await Promise.all([rpc('cliente_mi_ficha'),rpc('cliente_mis_seguimientos')]);
+    if(f) FICHA=f; SEGS=Array.isArray(r)?r:[];
+  }catch(e){ b.disabled=false; b.textContent='Enviar seguimiento'; err.textContent='No se pudo enviar. Comprueba tu conexión y vuelve a intentarlo.'; return; }
+  pintarTileForms(); pintarSeg(false);
+}
+function evolucionSeg(){
+  if(!SEGS.length) return '';
+  const pts=SEGS.map(s=>{ const r=s.respuestas||{}; return {fecha:s.semana,peso:r.peso??null,entrenos:r.entrenos??null,adherencia:r.adherencia??null,energia:r.energia??null,sueno:r.sueno??null,digestion:r.digestion??null,animo:r.animo??null}; });
+  let h='<div class="seg-h">Tu evolución</div>';
+  // semanas seguidas (cada semana es un lunes: se cuentan las consecutivas hasta la última enviada)
+  let racha=1; for(let i=pts.length-1;i>0;i--){ const d=(new Date(pts[i].fecha)-new Date(pts[i-1].fecha))/86400000; if(d===7) racha++; else break; }
+  const dl=[];
+  if(racha>=2) dl.push(`<span class="dlt up">🔥 ${racha} semanas seguidas</span>`);
+  if(pts.length>=2){
+    const a=pts[pts.length-2], z=pts[pts.length-1];
+    if(a.peso!=null&&z.peso!=null){ const d=z.peso-a.peso; dl.push(`<span class="dlt">Peso ${d>0?'+':d<0?'−':''}${nf(Math.abs(d),1)} kg</span>`); }
+    SEG_ESC.forEach(q=>{ if(a[q.k]!=null&&z[q.k]!=null){ const d=z[q.k]-a[q.k]; if(d!==0) dl.push(`<span class="dlt ${d>0?'up':'dn'}">${esc(q.t)} ${d>0?'↑':'↓'}</span>`); } });
+    h+=`<p class="seg-lead" style="margin-top:0">Esta semana frente a la anterior:</p><div class="dlts">${dl.join('')||'<span class="dlt">Todo igual que la semana pasada</span>'}</div>`;
+  }else{
+    h+=`<p class="seg-lead" style="margin-top:0">${dl.join(' ')} Con dos semanas enviadas ya verás aquí tu evolución.</p>`;
+  }
+  const g=[serie(pts,'peso','#1D9E75','Peso','kg',1)];
+  SEG_ESC.forEach(q=>g.push(serie(pts,q.k,q.c,q.t,'1–5',0,[1,5])));
+  g.push(serie(pts,'entrenos','#04342C','Entrenamientos','sesiones',0));
+  const gr=g.filter(Boolean).join('');
+  if(gr) h+=`<div class="series">${gr}</div>`;
+  return h;
 }
 
 // ═══ Plan de competición (copia ya calculada por el profesional; solo hasta el día siguiente a la competición) ═══
