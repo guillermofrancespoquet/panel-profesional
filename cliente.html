@@ -28,7 +28,7 @@
 :root{
   --t900:#04342C;--t800:#085041;--t600:#0F6E56;--t400:#1D9E75;--t100:#9FE1CB;--t50:#E1F5EE;
   --gold:#B8956A;--gold-dk:#7A5A38;--gold-50:#F5EDE0;
-  --g900:#1a1a18;--g700:#444441;--g500:#5F5E5A;--g400:#888780;--g200:#D3D1C7;--g100:#F1EFE8;
+  --g900:#1a1a18;--g700:#444441;--g500:#5F5E5A;--g400:#6A6963;--g200:#D3D1C7;--g100:#F1EFE8;
   --bg:#FAFAF8;--sf:#fff;--bd:rgba(0,0,0,.09);--bdm:rgba(0,0,0,.15);--red:#C0392B;--red-bg:#FEF2F2;
   --pill-n:#E3DFD2;--pill-n-bd:rgba(70,58,30,.18);--pill-g:#C4E8D6;--pill-g-bd:rgba(15,110,86,.30);--pill-au:#EAD9BD;--pill-au-bd:rgba(122,90,56,.30);
   --f:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
@@ -158,7 +158,26 @@ body.in-plan .topbar{display:none}
 .topbar-out:hover{background:rgba(255,255,255,.18)}
 .wrap{max-width:720px;margin:0 auto;padding:1.5rem 1.1rem 3rem}
 .hello{font-size:24px;font-weight:700;letter-spacing:-.02em;margin-bottom:4px}
-.hello-sub{font-size:13.5px;color:var(--g500);margin-bottom:1.4rem}
+.hello-sub{font-size:13.5px;color:var(--g500);margin-bottom:.9rem}
+.hello-msg{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--t800);background:var(--pill-g);box-shadow:inset 0 0 0 .5px var(--pill-g-bd);border-radius:20px;padding:7px 14px;margin-bottom:1.3rem;border:none;font-family:inherit;text-align:left}
+button.hello-msg{cursor:pointer}
+.hello-msg svg{flex:0 0 auto}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+#vhome.active .hello,#vhome.active .hello-sub,#vhome.active .hello-msg{animation:rise .4s ease both}
+#vhome.active .hello-sub{animation-delay:.04s}#vhome.active .hello-msg{animation-delay:.08s}
+#vhome.active .rev-card,#vhome.active .tile,#vhome.active .home-sep{animation:rise .45s ease both}
+#vhome.active .rev-card{animation-delay:.12s}#vhome.active .tile:nth-of-type(1){animation-delay:.16s}#vhome.active .tile:nth-of-type(2){animation-delay:.22s}#vhome.active .tile:nth-of-type(3){animation-delay:.28s}#vhome.active .tile:nth-of-type(4){animation-delay:.34s}
+.vacio{display:flex;flex-direction:column;align-items:center;text-align:center;padding:1.6rem 1rem;gap:4px}
+.vacio-ic{width:52px;height:52px;border-radius:50%;background:var(--t50);color:var(--t600);display:flex;align-items:center;justify-content:center;margin-bottom:6px}
+.vacio-t{font-size:15px;font-weight:700;color:var(--g900)}
+.vacio-s{font-size:13px;color:var(--g500);max-width:320px;line-height:1.55}
+.celebra{display:flex;flex-direction:column;align-items:center;text-align:center;padding:1.5rem 1rem 1.2rem;gap:4px;margin-bottom:12px}
+.celebra-ic{width:72px;height:72px;border-radius:50%;background:var(--t400);color:#fff;display:flex;align-items:center;justify-content:center;margin-bottom:8px;animation:pop .5s cubic-bezier(.2,1.4,.4,1) both}
+.celebra-ic path{stroke-dasharray:30;stroke-dashoffset:30;animation:trazo .45s .25s ease forwards}
+.celebra-t{font-size:19px;font-weight:700;letter-spacing:-.02em}
+.celebra-s{font-size:13.5px;color:var(--g500);max-width:300px;line-height:1.55}
+@keyframes pop{from{transform:scale(.4);opacity:0}to{transform:none;opacity:1}}
+@keyframes trazo{to{stroke-dashoffset:0}}
 .tile{display:flex;align-items:center;gap:14px;width:100%;text-align:left;background:var(--sf);border:.5px solid var(--bdm);border-radius:16px;padding:1.1rem 1.15rem;margin-bottom:12px;box-shadow:0 2px 10px rgba(4,52,44,.05);transition:border-color .15s,box-shadow .15s,transform .1s;color:inherit}
 .tile:hover{border-color:var(--t400);box-shadow:0 6px 20px rgba(4,52,44,.10)}
 .tile:active{transform:translateY(1px)}
@@ -210,6 +229,16 @@ table.hist td.n{font-weight:600;white-space:nowrap}
 .toast.out{opacity:0;transform:translateY(6px)}
 @keyframes toastIn{from{opacity:0;transform:translateY(8px)}}
 @media(prefers-reduced-motion:reduce){.toast{animation:none}}
+/* ── Sistema de componentes (mismas medidas en panel, calculadora y área de clientes) ──
+   botón 40 px (44 en pantallas táctiles), campo 42 px, radios: botón/campo 10, tarjeta 16, píldora 20; foco visible y sin animaciones si se pide */
+:root{--btn:#17805F;--btn-h:#126B50;--r-btn:10px;--r-field:10px;--r-card:16px;--r-pill:20px;--h-btn:40px;--h-field:42px}
+:focus-visible{outline:2px solid #1D9E75;outline-offset:2px}
+button:focus-visible,a:focus-visible,select:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline:2px solid #1D9E75;outline-offset:2px}
+body.dark-mode :focus-visible{outline-color:#5CC8A6}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+.skip-link{position:fixed;left:12px;top:-60px;z-index:20000;background:#fff;color:#04342C;font:600 14px var(--f,system-ui);padding:10px 16px;border-radius:10px;box-shadow:0 4px 16px rgba(0,0,0,.25);text-decoration:none;transition:top .15s}
+.skip-link:focus{top:12px}
+@media(pointer:coarse){.btn{min-height:44px}}
 </style>
 </head>
 <body>
@@ -218,11 +247,11 @@ table.hist td.n{font-weight:600;white-space:nowrap}
 <div id="vload" class="view active"><div class="spin"></div></div>
 
 <!-- Acceso -->
-<div id="vlogin" class="view">
+<div id="vlogin" class="view" role="main">
   <div class="login-wrap">
     <div class="login-head">
       <div class="login-logo"><img data-logo alt="NutriLogos"></div>
-      <p class="login-brand">NutriLogos</p>
+      <p class="login-brand" role="heading" aria-level="1">NutriLogos</p>
       <p class="login-tag">Área de clientes</p>
     </div>
     <form class="login-card" onsubmit="event.preventDefault();doLogin();">
@@ -242,11 +271,11 @@ table.hist td.n{font-weight:600;white-space:nowrap}
 </div>
 
 <!-- Recuperar contraseña -->
-<div id="vforgot" class="view">
+<div id="vforgot" class="view" role="main">
   <div class="login-wrap">
     <div class="login-head">
       <div class="login-logo"><img data-logo alt="NutriLogos"></div>
-      <p class="login-brand">NutriLogos</p>
+      <p class="login-brand" role="heading" aria-level="1">NutriLogos</p>
       <p class="login-tag">Área de clientes</p>
     </div>
     <form class="login-card" onsubmit="event.preventDefault();enviarRecuperar();">
@@ -262,11 +291,11 @@ table.hist td.n{font-weight:600;white-space:nowrap}
 </div>
 
 <!-- Crear o cambiar contraseña (enlace de invitación o de recuperación) -->
-<div id="vpass" class="view">
+<div id="vpass" class="view" role="main">
   <div class="login-wrap">
     <div class="login-head">
       <div class="login-logo"><img data-logo alt="NutriLogos"></div>
-      <p class="login-brand">NutriLogos</p>
+      <p class="login-brand" role="heading" aria-level="1">NutriLogos</p>
       <p class="login-tag">Área de clientes</p>
     </div>
     <form class="login-card" onsubmit="event.preventDefault();guardarPassword();">
@@ -286,15 +315,16 @@ table.hist td.n{font-weight:600;white-space:nowrap}
 </div>
 
 <!-- Aplicación -->
-<div class="topbar">
+<div class="topbar" role="banner">
   <div class="topbar-logo"><img data-logo alt=""></div>
   <div class="topbar-brand">NutriLogos<small>Área de clientes</small></div>
   <button class="topbar-out" onclick="logout()">Salir</button>
 </div>
 
-<div id="vhome" class="view"><div class="wrap">
+<div id="vhome" class="view" role="main"><div class="wrap">
   <h1 class="hello" id="hello">Hola</h1>
   <p class="hello-sub" id="helloSub"></p>
+  <button type="button" class="hello-msg" id="helloMsg" style="display:none"></button>
   <div class="inst-tip" id="instTip" style="display:none">
     <b>Ten esta app a mano</b>
     <p id="instTxt"></p>
@@ -332,13 +362,13 @@ table.hist td.n{font-weight:600;white-space:nowrap}
   </button>
 </div></div>
 
-<div id="vdatos" class="view"><div class="wrap">
+<div id="vdatos" class="view" role="main"><div class="wrap">
   <button class="back" onclick="show('vhome')"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Inicio</button>
-  <h2 class="h2">Mis datos</h2>
+  <h1 class="h2">Mis datos</h1>
   <div id="datosBody"><div class="spin" style="margin-top:6vh"></div></div>
 </div></div>
 
-<div id="vplan" class="view">
+<div id="vplan" class="view" role="main">
   <div class="plan-bar">
     <button class="back" onclick="cerrarPlan()"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Inicio</button>
     <span class="plan-t">Mi planificación</span>
@@ -347,14 +377,14 @@ table.hist td.n{font-weight:600;white-space:nowrap}
   <div id="planBody"></div>
 </div>
 
-<div id="vforms" class="view"><div class="wrap">
+<div id="vforms" class="view" role="main"><div class="wrap">
   <button class="back" onclick="show('vhome')"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Inicio</button>
-  <h2 class="h2">Mis formularios</h2>
+  <h1 class="h2">Mis formularios</h1>
   <p class="fcard-h">Rellénalos con calma: nos ayudan a preparar tu planificación. Cuando termines cada uno, pulsa «Ya lo he enviado» para que quede marcado.</p>
   <div id="formsBody"></div>
 </div></div>
 
-<div id="vform" class="view">
+<div id="vform" class="view" role="main">
   <div class="plan-bar">
     <button class="back" onclick="cerrarForm()"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Formularios</button>
     <span class="plan-t" id="formT"></span>
@@ -364,19 +394,19 @@ table.hist td.n{font-weight:600;white-space:nowrap}
   <div class="plan-foot" id="formFoot"></div>
 </div>
 
-<div id="vcomp" class="view"><div class="wrap">
+<div id="vcomp" class="view" role="main"><div class="wrap">
   <button class="back" onclick="show('vhome')"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Inicio</button>
-  <h2 class="h2">Mi plan de competición</h2>
+  <h1 class="h2">Mi plan de competición</h1>
   <div id="compBody"></div>
 </div></div>
 
-<div id="vseg" class="view"><div class="wrap">
+<div id="vseg" class="view" role="main"><div class="wrap">
   <button class="back" onclick="abrirForms()"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Formularios</button>
-  <h2 class="h2">Seguimiento semanal</h2>
+  <h1 class="h2">Seguimiento semanal</h1>
   <div id="segBody"></div>
 </div></div>
 
-<div id="vsin" class="view"><div class="wrap"><div class="center">
+<div id="vsin" class="view" role="main"><div class="wrap"><div class="center">
   <h2 id="sinTitle">Tu cuenta aún no está activada</h2>
   <p class="empty" id="sinMsg">Tu perfil todavía no está vinculado a esta cuenta. Escribe a tu nutricionista para que active tu acceso.</p>
   <p class="empty" style="margin-top:14px"><a href="./panel-profesional.html" style="color:var(--t600)">¿Eres el profesional? Entra en el panel</a></p>
@@ -509,12 +539,28 @@ async function entrar(){
   }
   if(!FICHA){ mostrarSin('Tu cuenta aún no está activada','Tu perfil todavía no está vinculado a esta cuenta. Escribe a tu nutricionista para que active tu acceso.'); return; }
   const nombre=String(FICHA.nombre||'').trim().split(/\s+/)[0]||'';
-  $('hello').textContent=nombre?('Hola, '+nombre):'Hola';
+  const hh=new Date().getHours(), saludo=hh>=6&&hh<14?'Buenos días':hh>=14&&hh<21?'Buenas tardes':'Buenas noches';
+  $('hello').textContent=nombre?(saludo+', '+nombre):saludo;
   $('helloSub').textContent=[FICHA.deporte,FICHA.objetivo].filter(Boolean).join(' · ')||'Aquí tienes tu información.';
   try{ const pl=await rpc('cliente_mis_planes'); PLANES=Array.isArray(pl)?pl:[]; }catch(e){ PLANES=[]; }
-  pintarRevision(); pintarInstTip(); pintarTileForms(); pintarTileComp();
+  pintarRevision(); pintarInstTip(); pintarTileForms(); pintarTileComp(); pintarMensajeDia();
   show('vhome');
 }
+// Una frase corta y amable bajo el saludo, según lo que más importa hoy.
+const MSG_ICO={ok:'<polyline points="20 6 9 17 4 12"/>',form:'<path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>',cal:'<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>'};
+function pintarMensajeDia(){
+  const el=$('helloMsg'); if(!el) return;
+  const forms=(typeof estadoForms==='function'&&estadoForms())||[], pend=forms.filter(x=>x.pend).length;
+  let ico='ok', txt='Todo al día. ¡Buen trabajo!', accion=null;
+  if(pend){ ico='form'; txt=pend===1?'Tienes 1 formulario pendiente':'Tienes '+pend+' formularios pendientes'; accion=abrirForms; }
+  else if(FICHA.proxima_revision){
+    const d=Math.round((new Date(FICHA.proxima_revision+'T00:00:00')-new Date(new Date().toDateString()))/86400000);
+    if(d===0){ ico='cal'; txt='Tu revisión es hoy'; } else if(d===1){ ico='cal'; txt='Tu revisión es mañana'; } else if(d>1&&d<=7){ ico='cal'; txt='Tu próxima revisión es en '+d+' días'; }
+  }
+  el.innerHTML=`<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">${MSG_ICO[ico]}</svg><span>${txt}</span>`;
+  el.style.display='inline-flex'; el.onclick=accion; el.disabled=!accion; el.style.cursor=accion?'pointer':'default';
+}
+function vacioC(svgPath,t,s){ return `<div class="vacio"><span class="vacio-ic" aria-hidden="true"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">${svgPath}</svg></span><p class="vacio-t">${t}</p>${s?`<p class="vacio-s">${s}</p>`:''}</div>`; }
 function mostrarSin(t,m){ $('sinTitle').textContent=t; $('sinMsg').textContent=m; show('vsin'); }
 
 // ═══ Mis datos ═══
@@ -557,7 +603,7 @@ function pintarDatos(){
   const pts=DATOS.vals.map(punto).sort((a,b)=>new Date(a.fecha)-new Date(b.fecha));
   let h='';
   if(!pts.length){
-    h+='<div class="card"><p class="empty">Todavía no tienes valoraciones antropométricas registradas. Aparecerán aquí cuando tu nutricionista las añada.</p></div>';
+    h+='<div class="card">'+vacioC('<line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>','Aún no hay mediciones','Cuando tu nutricionista haga tu primera valoración, verás aquí tu peso, tu composición corporal y cómo evolucionas.')+'</div>';
   }else{
     const last=pts[pts.length-1], prev=pts.length>1?pts[pts.length-2]:null;
     const delta=(k,u,d)=>{ if(!prev||last[k]==null||prev[k]==null) return '&nbsp;'; const x=last[k]-prev[k]; return (x>0?'+':x<0?'−':'')+nf(Math.abs(x),d)+' '+u+' vs. anterior'; };
@@ -574,7 +620,7 @@ function pintarDatos(){
       +'</tbody></table></div>';
   }
   h+='<p class="sec">Bioimpedancia y documentos</p>';
-  if(!DATOS.archivos.length) h+='<div class="card"><p class="empty">Tu nutricionista aún no ha compartido ningún documento contigo.</p></div>';
+  if(!DATOS.archivos.length) h+='<div class="card">'+vacioC('<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>','Sin documentos por ahora','Tus informes y análisis aparecerán aquí cuando tu nutricionista los comparta contigo.')+'</div>';
   else h+='<div class="card">'+DATOS.archivos.map((f,i)=>`<div class="file"><span class="file-ic"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span><div class="file-info"><div class="file-n">${esc(f.nombre)}</div><div class="file-d">${f.fecha?fmtF(String(f.fecha).slice(0,10)):''}</div></div><button class="btn soft" onclick="abrirArchivo(${i})">Abrir</button></div>`).join('')+'</div>';
   $('datosBody').innerHTML=h;
 }
@@ -601,7 +647,7 @@ function abrirPlan(){
     // Dentro de la propia app: así, si la tienes en la pantalla de inicio del móvil, no salta al navegador.
     $('planBody').innerHTML=`<iframe class="plan-frame" src="${esc(url)}" title="Mi planificación nutricional"></iframe>`;
   }else{
-    $('planBody').innerHTML='<div class="plan-msg"><div class="card"><p class="empty">Todavía no tienes una planificación asignada. Tu nutricionista te avisará cuando esté lista.</p></div></div>';
+    $('planBody').innerHTML='<div class="plan-msg"><div class="card">'+vacioC('<path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>','Tu planificación está en camino','Tu nutricionista la está preparando y te avisará cuando esté lista.')+'</div></div>';
   }
 }
 function cerrarPlan(){ $('planBody').innerHTML=''; show('vhome'); }
@@ -685,7 +731,7 @@ function abrirForms(){
       <span style="flex:1;min-width:0"><span class="fcard-t">${esc(x.t)}</span><br><span class="fcard-d">${esc(x.d)}</span><br>
         <span class="fcard-s${x.pend?'':' on'}">${x.pend?(x.semanal?'Pendiente esta semana':'Pendiente'):(x.semanal?'Enviado esta semana':'Hecho')+(x.fecha?' · '+fmtF(x.fecha,true):'')}</span></span>
       <span class="tile-go"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></span>
-    </button>`).join('')||'<div class="card"><p class="empty">Ahora mismo no tienes formularios pendientes.</p></div>';
+    </button>`).join('')||'<div class="card">'+vacioC('<polyline points="20 6 9 17 4 12"/>','¡Todo al día!','No tienes formularios pendientes. Gracias por mantener tu información al día.')+'</div>';
   show('vforms');
 }
 function abrirForm(k){
@@ -726,11 +772,12 @@ async function abrirSeg(){
   try{ const r=await rpc('cliente_mis_seguimientos'); SEGS=Array.isArray(r)?r:[]; }catch(e){ SEGS=[]; }
   pintarSeg(false);
 }
-function pintarSeg(editar){
+function pintarSeg(editar,celebra){
   const pend=!!(FICHA.forms&&FICHA.forms.seguimiento_pendiente), ult=SEGS[SEGS.length-1];
   let h='';
   if(pend||editar){ SEG_FORM=editar&&ult?{...ult.respuestas}:{entrenos:0}; h+=formSeg(); }
   else{
+    if(celebra){ const nom=String(FICHA.nombre||'').trim().split(/\s+/)[0]; h+=`<div class="card celebra" role="status"><span class="celebra-ic"><svg width="34" height="34" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span><p class="celebra-t">¡Gracias${nom?', '+esc(nom):''}!</p><p class="celebra-s">Tu seguimiento está enviado. Cada semana que lo cuentas ayuda a ajustar mejor tu plan.</p></div>`; }
     h+=`<div class="card seg-ok"><span class="fchk on">${CHECK_SVG}</span><span style="flex:1;min-width:0"><b>Seguimiento de esta semana enviado</b><br><span class="empty">${ult?'Semana del '+fmtF(ult.semana)+'. ':''}Gracias: tu nutricionista lo revisará.</span></span><button class="btn soft" onclick="pintarSeg(true)">Modificar</button></div>`;
   }
   $('segBody').innerHTML=h+evolucionSeg();
@@ -768,7 +815,7 @@ async function segEnviar(){
     const [f,r]=await Promise.all([rpc('cliente_mi_ficha'),rpc('cliente_mis_seguimientos')]);
     if(f) FICHA=f; SEGS=Array.isArray(r)?r:[];
   }catch(e){ b.disabled=false; b.textContent='Enviar seguimiento'; err.textContent='No se pudo enviar. Comprueba tu conexión y vuelve a intentarlo.'; return; }
-  pintarTileForms(); pintarSeg(false);
+  pintarTileForms(); pintarMensajeDia(); pintarSeg(false,true);
 }
 function evolucionSeg(){
   if(!SEGS.length) return '';
