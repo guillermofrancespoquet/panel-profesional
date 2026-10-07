@@ -12,7 +12,17 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Panel 3M">
+<meta name="apple-mobile-web-app-title" content="Panel NutriLogos">
+<link rel="apple-touch-startup-image" href="./splash/panel-1290x2796.png" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)">
+<link rel="apple-touch-startup-image" href="./splash/panel-1179x2556.png" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)">
+<link rel="apple-touch-startup-image" href="./splash/panel-1284x2778.png" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)">
+<link rel="apple-touch-startup-image" href="./splash/panel-1170x2532.png" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)">
+<link rel="apple-touch-startup-image" href="./splash/panel-1125x2436.png" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)">
+<link rel="apple-touch-startup-image" href="./splash/panel-1242x2688.png" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)">
+<link rel="apple-touch-startup-image" href="./splash/panel-828x1792.png" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
+<link rel="apple-touch-startup-image" href="./splash/panel-750x1334.png" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
+<link rel="apple-touch-startup-image" href="./splash/panel-1206x2622.png" media="(device-width: 402px) and (device-height: 874px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)">
+<link rel="apple-touch-startup-image" href="./splash/panel-1320x2868.png" media="(device-width: 440px) and (device-height: 956px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)">
 <meta name="theme-color" content="#04342C">
 <style>
 :root{
@@ -30,7 +40,9 @@ body{font-family:var(--f);background:var(--bg);color:var(--g900);min-height:100v
 @media(max-width:860px){.antro-frame{height:calc(100vh - 56px - env(safe-area-inset-top,0px))}}
 
 /* LOADING */
-#vload{display:flex;align-items:center;justify-content:center;min-height:100vh;flex-direction:column;gap:12px}
+#vload{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:22px;position:fixed;inset:0;z-index:9000;background:#04342C}
+#vload img{width:84px;height:84px;border-radius:22%;display:block}
+#vload .spin{border-color:rgba(255,255,255,.2);border-top-color:#9FE1CB}
 .spin{width:32px;height:32px;border:2.5px solid var(--t100);border-top-color:var(--t400);border-radius:50%;animation:sp .8s linear infinite}
 @keyframes sp{to{transform:rotate(360deg)}}
 
@@ -931,6 +943,8 @@ body.dark-mode .toast.aviso{background:#4A3A28}
 @keyframes toastIn{from{opacity:0;transform:translateY(8px)}}
 #offlineBar{display:none;position:fixed;top:0;left:0;right:0;z-index:9999;background:#7A5A38;color:#fff;font-size:12.5px;font-weight:500;text-align:center;padding:calc(6px + env(safe-area-inset-top,0px)) 12px 6px}
 body.sin-conexion #offlineBar{display:block}
+body.has-sidebar #offlineBar{left:248px}
+@media(max-width:860px){body.has-sidebar #offlineBar{left:0;top:calc(56px + env(safe-area-inset-top,0px));padding:6px 12px}}
 .skel{display:block;height:14px;border-radius:7px;margin:9px 0;background:linear-gradient(90deg,var(--g100) 25%,var(--g200) 50%,var(--g100) 75%);background-size:200% 100%;animation:skel 1.3s infinite linear}
 .skel.w40{width:40%}.skel.w60{width:60%}.skel.w80{width:80%}
 @keyframes skel{to{background-position:-200% 0}}
@@ -1036,10 +1050,10 @@ body.dark-mode .tl-ico.plan{background:#33253a;color:#d3a6d0}
 </head>
 <body>
 <div id="toasts" aria-live="polite"></div>
-<div id="offlineBar" role="status">Sin conexión · los cambios no se guardarán hasta que vuelvas a conectarte</div>
+<div id="offlineBar" role="status">Sin conexión · no se pueden cargar ni guardar datos hasta que vuelvas a conectarte</div>
 <div id="ptr" aria-hidden="true"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.5 15a9 9 0 1 1-2.1-9.4L23 10"/></svg></div>
 
-<div id="vload" class="view active"><div class="spin"></div></div>
+<div id="vload" class="view active"><img src="./icon-192.png" alt="NutriLogos" width="84" height="84"><div class="spin" role="progressbar" aria-label="Cargando"></div></div>
 
 <!-- LOGIN -->
 <div id="vlogin" class="view">
@@ -1183,6 +1197,10 @@ body.dark-mode .tl-ico.plan{background:#33253a;color:#d3a6d0}
     <button class="sb-export" id="darkModeBtn" onclick="toggleDarkMode()">
       <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
       <span id="darkModeLabel">Modo oscuro</span>
+    </button>
+    <button class="sb-export" id="sbInstall" style="display:none" onclick="instalarApp();closeMobileSidebar()">
+      <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+      Instalar app
     </button>
     <button class="sb-export" onclick="exportAllData();closeMobileSidebar()">
       <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
@@ -2556,6 +2574,8 @@ function conexion(ok){
   document.body.classList.toggle('sin-conexion',!ok);
   if(ok) toast('Conexión recuperada',{ms:2500});
 }
+// Un fallo de red al cargar datos no es un error de la app: la franja ya lo explica.
+window.addEventListener('unhandledrejection',e=>{ const m=String((e.reason&&e.reason.message)||e.reason||''); if(/failed to fetch|networkerror|load failed/i.test(m)){ e.preventDefault(); conexion(false); } });
 window.addEventListener('offline',()=>conexion(false));
 window.addEventListener('online',()=>conexion(true));
 document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='hidden'){ if(_pend) _pend.ahora(); _autoDep.ahora(true); _autoM3.ahora(true); } });
@@ -6120,13 +6140,44 @@ document.addEventListener('keydown',e=>{
   if(e.key==='Escape'){closeAdd();closeUnlock();closeDel();}
 });
 
+// ═══════════════ INSTALACIÓN COMO APP, MODO SIN CONEXIÓN Y VERSIONES ═══════════════
+// sw.js guarda solo la cáscara del panel (HTML e iconos), nunca datos de clientes. Si falla el registro, la app funciona igual.
+if('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) window.addEventListener('load',()=>{ navigator.serviceWorker.register('sw.js').catch(()=>{}); });
+let _instPrompt=null;
+const esStandalone=()=>matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
+const esIOS=()=>/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+function instBoton(){ const b=document.getElementById('sbInstall'); if(b) b.style.display=(!esStandalone()&&(_instPrompt||esIOS()))?'':'none'; }
+window.addEventListener('beforeinstallprompt',e=>{ e.preventDefault(); _instPrompt=e; instBoton(); });
+window.addEventListener('appinstalled',()=>{ _instPrompt=null; instBoton(); toast('App instalada'); });
+async function instalarApp(){
+  if(_instPrompt){ _instPrompt.prompt(); try{ await _instPrompt.userChoice; }catch(e){} _instPrompt=null; instBoton(); }
+  else if(esIOS()) toast('En Safari: pulsa el botón Compartir y elige «Añadir a pantalla de inicio».',{ms:9000});
+}
+instBoton();
+// Aviso de versión nueva: compara la huella (ETag) de la página con la de cuando se abrió. Solo avisa; se actualiza al pulsar.
+let _verEtag=null, _verTs=0;
+async function comprobarVersion(){
+  _verTs=Date.now();
+  try{
+    const r=await fetch(location.pathname,{method:'HEAD',cache:'no-store'});
+    const v=r.headers.get('etag')||r.headers.get('last-modified'); if(!v) return;
+    if(_verEtag===null){ _verEtag=v; return; }
+    if(v!==_verEtag){ _verEtag=v; toast('Hay una versión nueva del panel',{ms:60000,accion:{texto:'Actualizar',fn:async()=>{ try{ await _autoDep.ahora(); await _autoM3.ahora(); }catch(e){} location.reload(); }}}); }
+  }catch(e){}
+}
+if(/^https?:$/.test(location.protocol)){
+  setTimeout(comprobarVersion,4000);
+  document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='visible' && Date.now()-_verTs>20*60000) comprobarVersion(); });
+}
+
 // ── INIT ──
-document.getElementById('vload').style.display='none';
 initDarkMode();
+conexion(navigator.onLine!==false);
 authToken().then(async t=>{
-  if(t && await comprobarProfesional()) enterApp();
-  else { if(t){ authClear(); show('vlogin'); avisoCuentaCliente(); } else show('vlogin'); }
-});
+  const quitaCarga=()=>{ document.getElementById('vload').style.display='none'; };
+  if(t && await comprobarProfesional()){ quitaCarga(); enterApp(); }
+  else { quitaCarga(); if(t){ authClear(); show('vlogin'); avisoCuentaCliente(); } else show('vlogin'); }
+}).catch(()=>{ document.getElementById('vload').style.display='none'; show('vlogin'); });
 const GUION = [
   // S1
   {

@@ -1,12 +1,19 @@
 {
-  "name": "Panel Profesional · Método 3M",
-  "short_name": "Panel 3M",
-  "description": "Panel de gestión profesional del Método 3 Meses",
+  "name": "NutriLogos · Panel Profesional",
+  "short_name": "Panel NutriLogos",
+  "description": "Panel de gestión profesional de NutriLogos",
+  "id": "./panel-profesional.html",
   "start_url": "./panel-profesional.html",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#04342C",
   "theme_color": "#04342C",
   "orientation": "portrait",
+  "lang": "es",
+  "categories": [
+    "health",
+    "business"
+  ],
   "icons": [
     {
       "src": "./icon-192.png",
