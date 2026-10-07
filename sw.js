@@ -5,9 +5,9 @@
 // - iconos y manifest: copia en caché que se refresca en segundo plano.
 // Todo lo demás (calculadora, área de clientes, Método 3M, Supabase, fuentes) pasa de largo: este archivo no lo toca.
 // Si se cambia esta lógica, subir el número de CACHE.
-const CACHE = 'nl-panel-v1';
+const CACHE = 'nl-panel-v2';
 const PAGINA = 'panel-profesional.html';
-const ESTATICOS = ['icon-192.png', 'icon-512.png', 'manifest-panel.json'];
+const ESTATICOS = ['icon-192.png', 'icon-512.png', 'icon-rounded-192.png', 'icon-rounded-512.png', 'manifest-panel.json'];
 const SIN_CONEXION = '<!doctype html><html lang="es"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Sin conexión</title>'
   + '<body style="margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#04342C;color:#fff;font-family:system-ui,sans-serif;text-align:center;padding:24px">'
   + '<div><h1 style="font-size:20px;margin:0 0 8px">Sin conexión</h1><p style="margin:0;color:#9FE1CB;font-size:15px">Conéctate a internet y vuelve a abrir el panel.</p></div></body></html>';
