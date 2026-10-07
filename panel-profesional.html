@@ -5899,8 +5899,8 @@ function bioPintar(depId, antro, bio) {
     else {
       const pts = bio.map(bioPunto), principal = !antro;
       const filas = bio.slice().reverse().map(r => { const v = r.valores || {}; return `<tr><td class="n">${new Date(String(r.fecha).slice(0, 10) + 'T00:00:00').toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' })}</td>
-        <td>${sudEsc(r.aparato || '—')}</td><td class="n">${bioN(v.peso, 1)} kg</td><td class="n">${bioN(v.pct_grasa, 1)} %</td><td class="n hide-m">${v.musculo_kg != null ? bioN(v.musculo_kg, 1) + ' kg' : (v.masa_libre_kg != null ? bioN(v.masa_libre_kg, 1) + ' kg' : '—')}</td>
-        <td class="act">${btnDel('Eliminar medición', `bioEliminar(${r.id},${depId},this)`)}</td></tr>`; }).join('');
+        <td>${sudEsc(r.aparato || '—')}${r.visible_cliente ? '<span class="sud-cond">Visible para el cliente</span>' : ''}</td><td class="n">${bioN(v.peso, 1)} kg</td><td class="n">${bioN(v.pct_grasa, 1)} %</td><td class="n hide-m">${v.musculo_kg != null ? bioN(v.musculo_kg, 1) + ' kg' : (v.masa_libre_kg != null ? bioN(v.masa_libre_kg, 1) + ' kg' : '—')}</td>
+        <td class="act"><div class="row-actions">${btnSoft(r.visible_cliente ? 'Dejar de compartir' : 'Compartir con el cliente', `bioVisible(${r.id},${depId},${!r.visible_cliente})`, r.visible_cliente ? 'trash' : 'ext', true)}${btnDel('Eliminar medición', `bioEliminar(${r.id},${depId},this)`)}</div></td></tr>`; }).join('');
       box.innerHTML = (principal ? '' : `<div class="med-head"><span class="med-date">Complemento de la antropometría</span><span class="med-ago">${bio.length} medición${bio.length !== 1 ? 'es' : ''} de báscula</span></div><div class="med-stats">${bioStats(pts, 4)}</div>${pts.length > 1 ? `<div class="med-series">${medSerie(pts, 'pct_grasa', 'var(--gold)', '% grasa (báscula)', '%')}${medSerie(pts, 'musculo_kg', '#6F8CB8', 'Músculo (báscula)', 'kg')}</div>` : ''}`) +
         `<table class="plan-lista"><thead><tr><td>Fecha</td><td>Báscula</td><td>Peso</td><td>% grasa</td><td class="hide-m">Músculo / MLG</td><td></td></tr></thead><tbody>${filas}</tbody></table>${acciones}`;
     }
@@ -6017,6 +6017,13 @@ async function bioGuardar() {
     msg.textContent = e.message === 'sin_tabla' ? 'Falta ejecutar el SQL «supabase_bioimpedancia.sql» en Supabase.' : 'No se pudo guardar. Comprueba la conexión y vuelve a intentarlo.';
     btn.disabled = false;
   }
+}
+// El cliente solo ve los valores de las mediciones que se comparten aquí (nunca el archivo ni las notas).
+async function bioVisible(id, depId, visible) {
+  let r; try { r = await sb(`bioimpedancias?id=eq.${id}`, { method: 'PATCH', headers: { 'Prefer': 'return=minimal' }, body: JSON.stringify({ visible_cliente: visible }) }); } catch (e) { r = { code: 'red' }; }
+  if (esErrorSb(r)) { toast('No se pudo cambiar. Inténtalo de nuevo.', { tipo: 'error' }); return; }
+  toast(visible ? 'Medición compartida: el cliente ve sus valores en «Mis datos»' : 'El cliente ya no ve esta medición', { ms: 4500 });
+  if (currentDepId == depId) loadMediciones(depId);
 }
 function bioEliminar(id, depId, btn) {
   const fila = btn && btn.closest('tr');

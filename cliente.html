@@ -594,15 +594,27 @@ async function abrirDatos(){
   if(DATOS){ pintarDatos(); return; }
   $('datosBody').innerHTML='<div class="spin" style="margin-top:6vh"></div>';
   try{
-    const [v,a]=await Promise.all([rpc('cliente_mis_valoraciones'),rpc('cliente_mis_archivos')]);
-    DATOS={vals:Array.isArray(v)?v:[],archivos:Array.isArray(a)?a:[]};
+    const [v,a,bi]=await Promise.all([rpc('cliente_mis_valoraciones'),rpc('cliente_mis_archivos'),rpc('cliente_mis_bioimpedancias').catch(()=>[])]);   // la báscula es opcional: sin su SQL, simplemente no sale
+    DATOS={vals:Array.isArray(v)?v:[],archivos:Array.isArray(a)?a:[],bio:Array.isArray(bi)?bi:[]};
   }catch(e){ $('datosBody').innerHTML='<p class="empty">No se pudieron cargar tus datos. Comprueba tu conexión y vuelve a entrar.</p>'; return; }
   pintarDatos();
 }
+// Báscula de bioimpedancia: solo las mediciones que el profesional ha decidido compartir.
+const BIO_T=[['peso','Peso','kg',1],['pct_grasa','% grasa','%',1],['masa_grasa_kg','Masa grasa','kg',1],['masa_libre_kg','Masa libre de grasa','kg',1],['musculo_kg','Músculo esquelético','kg',1],['agua_pct','Agua corporal','%',1]];
+function bioPunto(b){ const v=b.valores||{}; const o={fecha:String(b.fecha).slice(0,10)}; BIO_T.forEach(([k])=>{ o[k]=v[k]!=null?+v[k]:null; }); return o; }
+function bioBloque(bio,maxN){
+  const pts=bio.map(bioPunto).sort((a,b)=>new Date(a.fecha)-new Date(b.fecha)), last=pts[pts.length-1], prev=pts.length>1?pts[pts.length-2]:null;
+  const tarj=BIO_T.filter(([k])=>last[k]!=null).slice(0,maxN).map(([k,l,u,d])=>{ let dl='&nbsp;'; if(prev&&prev[k]!=null){ const x=last[k]-prev[k]; dl=(x>0?'+':x<0?'−':'')+nf(Math.abs(x),d)+' '+(u==='%'?'pts':u)+' vs. anterior'; } return `<div class="stat"><div class="stat-l">${l}</div><div class="stat-v">${nf(last[k],d)}<small>${u}</small></div><div class="stat-d">${dl}</div></div>`; }).join('');
+  const ser=pts.length>1?`<div class="series">${serie(pts,'peso','#1D9E75','Peso','kg',1)}${serie(pts,'pct_grasa','#B8956A','% grasa','%',1)}${serie(pts,'musculo_kg','#6F8CB8','Músculo esquelético','kg',1)}${serie(pts,'masa_libre_kg','#04342C','Masa libre de grasa','kg',1)}</div>`:'';
+  return {pts,last,html:`<p class="note" style="margin:-.4rem 0 .8rem">Última medición · ${fmtF(last.fecha)}</p><div class="stats">${tarj}</div>${ser}<p class="note">La báscula estima la composición corporal por la resistencia eléctrica del cuerpo y varía con la hidratación, la comida y el ejercicio previos: fíjate en la tendencia más que en un valor suelto.</p>`};
+}
 function pintarDatos(){
   const pts=DATOS.vals.map(punto).sort((a,b)=>new Date(a.fecha)-new Date(b.fecha));
+  const bio=DATOS.bio||[];
   let h='';
-  if(!pts.length){
+  if(!pts.length&&bio.length){   // sin antropometría, la báscula es la medición principal
+    h+=bioBloque(bio,6).html;
+  }else if(!pts.length){
     h+='<div class="card">'+vacioC('<line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>','Aún no hay mediciones','Cuando tu nutricionista haga tu primera valoración, verás aquí tu peso, tu composición corporal y cómo evolucionas.')+'</div>';
   }else{
     const last=pts[pts.length-1], prev=pts.length>1?pts[pts.length-2]:null;
@@ -619,7 +631,8 @@ function pintarDatos(){
       +pts.slice().reverse().map(p=>`<tr><td class="n">${fmtF(p.fecha,true)}</td><td>${p.peso!=null?nf(p.peso)+' kg':'—'}</td><td>${p.grasa!=null?nf(p.grasa)+' %':'—'}</td><td>${p.mg!=null?nf(p.mg)+' kg':'—'}</td></tr>`).join('')
       +'</tbody></table></div>';
   }
-  h+='<p class="sec">Bioimpedancia y documentos</p>';
+  if(pts.length&&bio.length) h+='<p class="sec">Báscula de bioimpedancia · complemento</p>'+bioBloque(bio,4).html;
+  h+='<p class="sec">Documentos</p>';
   if(!DATOS.archivos.length) h+='<div class="card">'+vacioC('<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>','Sin documentos por ahora','Tus informes y análisis aparecerán aquí cuando tu nutricionista los comparta contigo.')+'</div>';
   else h+='<div class="card">'+DATOS.archivos.map((f,i)=>`<div class="file"><span class="file-ic"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span><div class="file-info"><div class="file-n">${esc(f.nombre)}</div><div class="file-d">${f.fecha?fmtF(String(f.fecha).slice(0,10)):''}</div></div><button class="btn soft" onclick="abrirArchivo(${i})">Abrir</button></div>`).join('')+'</div>';
   $('datosBody').innerHTML=h;
