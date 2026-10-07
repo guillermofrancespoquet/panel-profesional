@@ -1077,6 +1077,39 @@ body.dark-mode .sup-card .sup-badge.mid,body.dark-mode .dep-chip.active{color:#D
 .sb-logout{color:#FF9C9A!important}
 .sb-logout:hover{color:#FFB4B2!important;background:rgba(255,120,120,.14)!important}
 body.dark-mode .ref-src,body.dark-mode .sup-badge,body.dark-mode .depd-avatar-fallback{color:#D9B88C}
+/* ── Bioimpedancia: pantalla de revisión ── */
+.bio-modal{background:var(--sf);border-radius:16px;width:min(1000px,100%);max-height:calc(100vh - 2rem);display:flex;flex-direction:column;overflow:hidden}
+.bio-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 12px;border-bottom:.5px solid var(--bd)}
+.bio-head .mt{margin:0}
+.bio-body{display:grid;grid-template-columns:minmax(0,300px) minmax(0,1fr);min-height:0;flex:1;overflow:hidden}
+.bio-prev{background:var(--g100);padding:12px;overflow:auto;border-right:.5px solid var(--bd);display:flex;flex-direction:column;gap:10px}
+.bio-prev:empty{display:none}
+.bio-body:has(.bio-prev:empty){grid-template-columns:minmax(0,1fr)}
+.bio-prev img{width:100%;height:auto;border-radius:8px;display:block;background:#fff}
+.bio-form{padding:16px 20px;overflow:auto;min-width:0}
+.bio-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px 12px}
+.bio-f label{display:block;font-size:11.5px;font-weight:600;color:var(--g500);margin-bottom:4px}
+.bio-u{font-weight:500;color:var(--g400)}
+.bio-f .inp{width:100%}
+.bio-f.dudoso .inp{border-color:var(--gold);background:var(--gold-50)}
+.bio-f.calc .inp{background:var(--g100)}
+.bio-h{display:block;font-size:11px;color:var(--gold-dk);min-height:14px;margin-top:3px;line-height:1.35}
+.bio-f.calc .bio-h{color:var(--g500)}
+.bio-sec{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--g500);margin:16px 0 8px}
+.bio-aviso{background:var(--gold-50);color:var(--gold-dk);border-radius:10px;padding:9px 12px;font-size:12.5px;line-height:1.45;margin-bottom:8px}
+.bio-ok{background:var(--t50);color:var(--t800);border-radius:10px;padding:9px 12px;font-size:12.5px;line-height:1.45;margin-bottom:12px}
+.bio-foot{display:flex;align-items:center;gap:12px;padding:12px 20px;border-top:.5px solid var(--bd);flex-wrap:wrap}
+.bio-foot .bio-msg{flex:1;min-width:180px;font-size:12.5px;color:var(--g500);line-height:1.4}
+.bio-foot .btn-ok,.bio-foot .btn-cancel{flex:none;min-width:130px}
+.spin-mini{display:inline-block;width:12px;height:12px;border:2px solid var(--g200);border-top-color:var(--t400);border-radius:50%;animation:ptrSpin .7s linear infinite;vertical-align:-2px}
+@media(max-width:860px){
+  .bio-modal{max-height:calc(100vh - 1rem);border-radius:14px}
+  .bio-body{grid-template-columns:minmax(0,1fr);overflow-y:auto}
+  .bio-prev{border-right:none;border-bottom:.5px solid var(--bd);max-height:240px;flex-direction:row;overflow:auto}
+  .bio-prev img{width:auto;max-height:216px}
+  .bio-form{overflow:visible}
+}
+
 </style>
 </head>
 <body>
@@ -1756,6 +1789,21 @@ body.dark-mode .ref-src,body.dark-mode .sup-badge,body.dark-mode .depd-avatar-fa
   </div>
 
 </div>
+
+<!-- MODAL: BIOIMPEDANCIA (revisar y guardar) -->
+<div class="mbg" id="mBio" style="display:none;z-index:300" role="dialog" aria-modal="true" aria-labelledby="bioTitulo">
+  <div class="bio-modal">
+    <div class="bio-head"><p class="mt" id="bioTitulo">Bioimpedancia</p><button type="button" class="inf-x" onclick="cerrarBio()" aria-label="Cerrar">&times;</button></div>
+    <div class="bio-body">
+      <div class="bio-prev" id="bioPrev"></div>
+      <div class="bio-form"><div id="bioAviso" aria-live="polite"></div><div id="bioForm"></div></div>
+    </div>
+    <div class="bio-foot"><div class="bio-msg" id="bioMsg" role="status" aria-live="polite"></div>
+      <button type="button" class="btn-cancel" onclick="cerrarBio()">Cancelar</button>
+      <button type="button" class="btn-ok" id="bioGuardar" onclick="bioGuardar()">Guardar medición</button></div>
+  </div>
+</div>
+<input type="file" id="bioFile" accept=".pdf,image/*" style="display:none" aria-hidden="true" tabindex="-1">
 
 <!-- MODAL: INFORME DE PROGRESO -->
 <div class="mbg" id="mInforme" style="display:none;z-index:300" role="dialog" aria-modal="true" aria-labelledby="infTitulo">
@@ -2905,6 +2953,7 @@ document.addEventListener('keydown', function(e){
     openGlobalSearch();
   }
   if(e.key === 'Escape'){
+    const bm = document.getElementById('mBio'); if(bm && bm.style.display === 'flex'){ cerrarBio(); return; }
     const inf = document.getElementById('mInforme'); if(inf && inf.style.display === 'flex'){ cerrarInforme(); return; }
     const modal = document.getElementById('mGlobalSearch');
     if(modal && modal.style.display === 'flex') closeGlobalSearch();
@@ -4318,12 +4367,13 @@ async function abrirInformeProgreso(depId){
   document.getElementById('mInforme').style.display = 'flex';
   document.getElementById('infComent').value = ''; document.getElementById('infMsg').textContent = '';
   document.getElementById('infPreview').innerHTML = skel(5);
-  const [meds, segs] = await Promise.all([
+  const [meds, segs, bios] = await Promise.all([
     Promise.resolve(getMediciones(depId)).then(a=>Array.isArray(a)?a:[]).catch(()=>[]),
-    Promise.resolve(sb(`seguimientos?deportista_id=eq.${depId}&order=semana.asc&select=semana,respuestas`)).then(a=>Array.isArray(a)?a:[]).catch(()=>[])
+    Promise.resolve(sb(`seguimientos?deportista_id=eq.${depId}&order=semana.asc&select=semana,respuestas`)).then(a=>Array.isArray(a)?a:[]).catch(()=>[]),
+    Promise.resolve(getBio(depId)).then(a=>Array.isArray(a)?a:[]).catch(()=>[])
   ]);
-  _inf = { d, med: meds.map(medPunto), segs };
-  if(!_inf.med.length && !_inf.segs.length){ cerrarInforme(); toast('Todavía no hay mediciones ni seguimientos para hacer el informe.', {tipo:'aviso', ms:5000}); return; }
+  _inf = { d, med: meds.map(medPunto), segs, bio: bios.map(bioPunto) };
+  if(!_inf.med.length && !_inf.segs.length && !_inf.bio.length){ cerrarInforme(); toast('Todavía no hay mediciones ni seguimientos para hacer el informe.', {tipo:'aviso', ms:5000}); return; }
   infPintar();
   setTimeout(()=>{ const t=document.getElementById('infComent'); if(t) t.focus(); }, 60);
 }
@@ -4365,29 +4415,34 @@ function infChart(pts, color, titulo, unit, dec, rango){
     <text x="${padL}" y="${H-5}" font-size="9.5" fill="#888780">${infFecha(a.fecha)}</text><text x="${W-padR}" y="${H-5}" text-anchor="end" font-size="9.5" fill="#888780">${infFecha(z.fecha)}</text></svg></div>`;
 }
 function infHtml(I, comentario){
-  const d = I.d, med = I.med, segs = I.segs;
-  // Peso: valoraciones de antropometría y pesos del seguimiento (si coinciden en fecha, manda la valoración)
+  const d = I.d, med = I.med, segs = I.segs, bio = I.bio || [];
+  // Peso: antropometría, báscula y pesos del seguimiento (si coinciden en fecha manda la antropometría, luego la báscula)
   const pesoMap = {};
   segs.forEach(x=>{ const q=x.respuestas||{}; if(q.peso!=null && !isNaN(q.peso)) pesoMap[String(x.semana).slice(0,10)] = +q.peso; });
+  bio.forEach(m=>{ if(m.peso!=null) pesoMap[m.fecha] = m.peso; });
   med.forEach(m=>{ if(m.peso!=null) pesoMap[String(m.fecha).slice(0,10)] = m.peso; });
   const pesoPts = Object.keys(pesoMap).sort().map(f=>({fecha:f, v:pesoMap[f]}));
-  const grasaPts = med.filter(m=>m.grasa!=null).map(m=>({fecha:String(m.fecha).slice(0,10), v:m.grasa}));
+  // % de grasa: la antropometría es la principal; si no hay, se usa la báscula (y se indica). Con ambas, la báscula sale como complemento.
+  const grasaAntro = med.filter(m=>m.grasa!=null).map(m=>({fecha:String(m.fecha).slice(0,10), v:m.grasa}));
+  const grasaBio = bio.filter(m=>m.pct_grasa!=null).map(m=>({fecha:m.fecha, v:m.pct_grasa}));
+  const musculoBio = bio.filter(m=>m.musculo_kg!=null).map(m=>({fecha:m.fecha, v:m.musculo_kg}));
+  const grasaPts = grasaAntro.length ? grasaAntro : grasaBio, grasaDeBascula = !grasaAntro.length && grasaBio.length;
   const delta = (pts,dec,unidad,etq) => { if(pts.length<2) return pts.length?`<div class="rp-kpi-s">${infFecha(pts[0].fecha,true)}</div>`:''; const dd = pts[pts.length-1].v-pts[0].v; return `<div class="rp-kpi-s">${medSigned(dd,dec)} ${etq||unidad} desde el ${infFecha(pts[0].fecha)}</div>`; };
   const ult = pts => pts.length ? medNum(pts[pts.length-1].v,1) : '—';
   const adh = infMedia(segs.map(x=>(x.respuestas||{}).adherencia)), ene = infMedia(segs.map(x=>(x.respuestas||{}).energia)), ent = infMedia(segs.map(x=>(x.respuestas||{}).entrenos));
-  const fechas = [...pesoPts.map(p=>p.fecha), ...grasaPts.map(p=>p.fecha), ...segs.map(x=>String(x.semana).slice(0,10))].sort();
+  const fechas = [...pesoPts.map(p=>p.fecha), ...grasaPts.map(p=>p.fecha), ...grasaBio.map(p=>p.fecha), ...segs.map(x=>String(x.semana).slice(0,10))].sort();
   const periodo = fechas.length ? (fechas[0]===fechas[fechas.length-1] ? infFecha(fechas[0],true) : infFecha(fechas[0], fechas[0].slice(0,4)!==fechas[fechas.length-1].slice(0,4))+' – '+infFecha(fechas[fechas.length-1],true)) : '';
   const kpis = `<div class="rp-kpis">
     <div class="rp-kpi"><div class="rp-kpi-l">Peso</div><div class="rp-kpi-v">${ult(pesoPts)}${pesoPts.length?' kg':''}</div>${delta(pesoPts,1,'kg')}</div>
-    <div class="rp-kpi"><div class="rp-kpi-l">% de grasa</div><div class="rp-kpi-v">${ult(grasaPts)}${grasaPts.length?' %':''}</div>${delta(grasaPts,1,'%','puntos')}</div>
+    <div class="rp-kpi"><div class="rp-kpi-l">% de grasa</div><div class="rp-kpi-v">${ult(grasaPts)}${grasaPts.length?' %':''}</div>${delta(grasaPts,1,'%','puntos')}${grasaDeBascula?'<div class="rp-kpi-s">según la báscula de bioimpedancia</div>':''}</div>
     <div class="rp-kpi"><div class="rp-kpi-l">Adherencia media</div><div class="rp-kpi-v">${adh!=null?medNum(adh,1)+' / 5':'—'}</div><div class="rp-kpi-s">Energía media ${ene!=null?medNum(ene,1)+' / 5':'—'}</div></div>
     <div class="rp-kpi"><div class="rp-kpi-l">Seguimientos</div><div class="rp-kpi-v">${segs.length}</div><div class="rp-kpi-s">${ent!=null?medNum(ent,1)+' entrenos por semana':'semanas registradas'}</div></div></div>`;
-  const grandes = [infChart(pesoPts,'#0F6E56','Peso','kg',1), infChart(grasaPts,'#B8956A','% de grasa','%',1)].filter(Boolean);
+  const grandes = [infChart(pesoPts,'#0F6E56','Peso','kg',1), infChart(grasaPts,'#B8956A','% de grasa'+(grasaDeBascula?' (báscula)':''),'%',1), grasaAntro.length?infChart(grasaBio,'#6F8CB8','% de grasa (báscula)','%',1):'', infChart(musculoBio,'#04342C','Músculo esquelético (báscula)','kg',1)].filter(Boolean);
   const serie = k => segs.map(x=>({fecha:String(x.semana).slice(0,10), v:(x.respuestas||{})[k]})).filter(p=>p.v!=null);
   const peq = SEG_P.map(m=>infChart(serie(m.k), m.c, m.tt, '1–5', 0, [1,5])).concat(infChart(serie('entrenos'),'#04342C','Entrenamientos','sesiones',0)).filter(Boolean);
   const bul = [];
   if(pesoPts.length>1) bul.push(`Peso: de ${medNum(pesoPts[0].v,1)} a ${medNum(pesoPts[pesoPts.length-1].v,1)} kg (${medSigned(pesoPts[pesoPts.length-1].v-pesoPts[0].v,1)} kg) entre el ${infFecha(pesoPts[0].fecha)} y el ${infFecha(pesoPts[pesoPts.length-1].fecha)}.`);
-  if(grasaPts.length>1) bul.push(`% de grasa: de ${medNum(grasaPts[0].v,1)} a ${medNum(grasaPts[grasaPts.length-1].v,1)} % (${medSigned(grasaPts[grasaPts.length-1].v-grasaPts[0].v,1)} puntos).`);
+  if(grasaPts.length>1) bul.push(`% de grasa${grasaDeBascula?' (báscula de bioimpedancia)':''}: de ${medNum(grasaPts[0].v,1)} a ${medNum(grasaPts[grasaPts.length-1].v,1)} % (${medSigned(grasaPts[grasaPts.length-1].v-grasaPts[0].v,1)} puntos).`);
   if(segs.length) bul.push(`Seguimiento semanal: ${segs.length} semana${segs.length!==1?'s':''} registrada${segs.length!==1?'s':''}${adh!=null?`, con una adherencia media de ${medNum(adh,1)}/5`:''}${ene!=null?` y una energía media de ${medNum(ene,1)}/5`:''}.`);
   const hoy = localISO(new Date());
   if(d.proxima_revision && String(d.proxima_revision).slice(0,10) >= hoy) bul.push(`Próxima revisión: ${new Date(String(d.proxima_revision).slice(0,10)+'T00:00:00').toLocaleDateString('es-ES',{day:'numeric',month:'long',year:'numeric'})}${d.proxima_revision_hora?' a las '+String(d.proxima_revision_hora).slice(0,5)+'h':''}.`);
@@ -5224,8 +5279,13 @@ function openDepDet(id) {
     </div>
     <div class="depd-panel${_depTab==='mediciones' ? ' on' : ''}" role="tabpanel" id="depPanel-mediciones" aria-labelledby="depTab-mediciones" data-k="mediciones" tabindex="0">
     <div class="depd-section">
-      <p class="sec-title">Mediciones · antropometría</p>
+      <p class="sec-title">Mediciones corporales</p>
       <div class="med-box" id="medBox">${skel(3)}</div>
+    </div>
+
+    <div class="depd-section">
+      <p class="sec-title">Bioimpedancia (báscula)</p>
+      <div class="med-box" id="bioBox">${skel(3)}</div>
     </div>
 
     <div class="depd-section">
@@ -5485,14 +5545,12 @@ function medSerie(pts,key,color,titulo,unit,dec=1,rango){
 }
 
 async function loadMediciones(depId){
-  const rows = await getMediciones(depId);
+  const [rows, bio] = await Promise.all([getMediciones(depId), getBio(depId)]);
   const el = document.getElementById('medBox');
   if(!el || currentDepId != depId) return;
   const pts = rows.map(medPunto).sort((a,b)=>new Date(a.fecha)-new Date(b.fecha));
-  if(!pts.length){
-    el.innerHTML = vacioHtml('chart','Sin valoraciones todavía','Las valoraciones se hacen en la calculadora de antropometría y aparecen aquí con su evolución.',{t:'Abrir la calculadora',f:`abrirAntropometria(${depId})`},true);
-    return;
-  }
+  // Con antropometría, esa es la medición principal y la báscula es un complemento; sin ella, la bioimpedancia pasa a ser la principal.
+  if(!pts.length){ bioPintar(depId, false, bio); return; }
   const last = pts[pts.length-1], prev = pts.length>1 ? pts[pts.length-2] : null;
   const dias = Math.floor((new Date()-new Date(last.fecha+'T00:00:00'))/86400000);
   const hace = dias<=0 ? 'hoy' : dias===1 ? 'hace 1 día' : dias<60 ? `hace ${dias} días` : `hace ${Math.round(dias/30.4)} meses`;
@@ -5522,6 +5580,452 @@ async function loadMediciones(depId){
     ${pts.length>1 ? `<div class="med-series">${medSerie(pts,'peso','var(--t400)','Peso','kg')}${medSerie(pts,'grasa','var(--gold)','% grasa','%')}</div>` : ''}
     ${nota ? `<p class="med-note">${nota}</p>` : ''}
     <div class="med-actions">${btnSoft('Ver en antropometría',`abrirAntropometria(${depId})`,'chart')}</div>`;
+  bioPintar(depId, true, bio);
+}
+
+
+// ═══════════════ BIOIMPEDANCIA (báscula): lectura de informes y capturas, medición principal o de apoyo ═══════════════
+// ═══ Lectura de informes de bioimpedancia (báscula Arboleaf / informes tipo Yolanda) a partir de palabras con posición ═══
+// Entrada: palabras {t,c,x0,y0,x1,y1} (de OCR o de la capa de texto de un PDF). Salida: valores, dudas y avisos. No guarda nada.
+const BIO_CAMPOS = [
+  // k, etiqueta, unidad, mínimo y máximo plausibles, decimales al mostrar
+  ['peso', 'Peso', 'kg', 25, 250, 2],
+  ['pct_grasa', '% de grasa', '%', 3, 60, 1],
+  ['masa_grasa_kg', 'Masa grasa', 'kg', 1, 120, 1],
+  ['masa_libre_kg', 'Masa libre de grasa', 'kg', 20, 160, 1],
+  ['musculo_kg', 'Músculo esquelético', 'kg', 10, 100, 1],
+  ['agua_l', 'Agua corporal', 'L', 15, 90, 1],
+  ['agua_pct', 'Agua corporal', '%', 30, 80, 1],
+  ['proteina_kg', 'Proteína', 'kg', 3, 30, 1],
+  ['masa_osea_kg', 'Masa ósea', 'kg', 1, 8, 2],
+  ['grasa_visceral', 'Grasa visceral', '', 1, 30, 0],
+  ['grasa_subcutanea_pct', 'Grasa subcutánea', '%', 2, 60, 1],
+  ['imc', 'IMC', '', 10, 60, 1],
+  ['tmb_kcal', 'Metabolismo basal (TMB)', 'kcal', 600, 4000, 0],
+  ['edad_metabolica', 'Edad metabólica', 'años', 5, 100, 0]
+];
+const BIO_LIM = Object.fromEntries(BIO_CAMPOS.map(c => [c[0], { min: c[3], max: c[4] }]));
+
+function bioNorm(s) { return String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9%()\/.,\-~]/g, ''); }
+function bioNum(t) {
+  const s = String(t).trim().replace(/^[(\[|]+|[)\]|.,:;]+$/g, '');
+  if (/\d\s*[-~–]\s*\d/.test(s)) return { rango: true };
+  const m = s.match(/^(\d{1,4}(?:[.,]\d{1,2})?)\s*(kg|kcal|%|k|l)?$/i);
+  if (!m) return null;
+  return { v: parseFloat(m[1].replace(',', '.')), txt: m[1], u: (m[2] || '').toLowerCase().replace(/^k$/, 'kg') };
+}
+function bioFechaISO(s) { const m = String(s).match(/(\d{1,2})[\/.-](\d{1,2})[\/.-](20\d{2})/); return m ? `${m[3]}-${m[2].padStart(2, '0')}-${m[1].padStart(2, '0')}` : null; }
+
+// Etiquetas: se agrupan las palabras de texto cercanas en «celdas» (una etiqueta puede ocupar varias líneas).
+function bioCeldas(W) {
+  const BASURA = /^(bmi|arboleaf|scan|join|us|to|alto|bajo|cumplida|insuficiente|normal|deficiente|sobre|desarrollado)$/i;   // iconos, logos y valoraciones que no son etiquetas
+  const T = W.filter(w => !w.num && w.c >= 35 && !BASURA.test(w.t) && !/(nan|ana|nen){3}/i.test(w.t) && w.t.length <= 16 &&
+    ((/[a-zA-ZÁÉÍÓÚáéíóúñ]/.test(w.t) && (w.t.length >= 3 || /^(de|es|la)$/i.test(w.t))) || /^\(.{1,6}\)$/.test(w.t)));
+  const p = T.map((_, i) => i), find = i => (p[i] === i ? i : (p[i] = find(p[i])));
+  for (let i = 0; i < T.length; i++) for (let j = i + 1; j < T.length; j++) {
+    const a = T[i], b = T[j], h = Math.max(a.h, b.h);
+    const dy = Math.abs(a.yc - b.yc), gap = Math.max(0, Math.max(a.x0, b.x0) - Math.min(a.x1, b.x1));
+    const uni = w => /^\(.{1,6}\)$/.test(w.t);
+    if (uni(a) && b.yc > a.yc + 0.3 * h) continue;     // una unidad «(kg)» cierra la etiqueta: lo que hay debajo es otra etiqueta
+    if (uni(b) && a.yc > b.yc + 0.3 * h) continue;
+    if (dy <= 1.65 * h && gap <= 2.6 * h) p[find(i)] = find(j);
+  }
+  const g = {};
+  T.forEach((w, i) => (g[find(i)] = g[find(i)] || []).push(w));
+  return Object.values(g).map(ws => {
+    ws.sort((a, b) => (Math.abs(a.yc - b.yc) > 0.9 * Math.min(a.h, b.h) ? a.yc - b.yc : a.x0 - b.x0));
+    const x0 = Math.min(...ws.map(w => w.x0)), x1 = Math.max(...ws.map(w => w.x1)), y0 = Math.min(...ws.map(w => w.y0)), y1 = Math.max(...ws.map(w => w.y1));
+    return { ws, x0, x1, y0, y1, yc: (y0 + y1) / 2, h: (y1 - y0), texto: bioNorm(ws.map(w => w.t).join('')), conf: Math.min(...ws.map(w => w.c)) };
+  });
+}
+
+// Coherencias entre valores: detectan lecturas erróneas y completan lo que se puede calcular.
+function bioCoherencia(out) {
+  const V = out.valores;
+  const marca = k => { if (!out.calculados.includes(k)) out.calculados.push(k); };
+  // Coherencias entre valores (detectan lecturas erróneas y permiten completar lo que falta)
+  if (V.peso && V.masa_grasa_kg) {
+    const pct = V.masa_grasa_kg / V.peso * 100;
+    if (V.pct_grasa == null) { V.pct_grasa = +pct.toFixed(1); marca('pct_grasa'); }
+    else if (Math.abs(V.pct_grasa - pct) > 1.2) { out.dudosos.pct_grasa = `no cuadra con masa grasa / peso (${pct.toFixed(1)} %)`; }
+  }
+  if (V.peso && V.pct_grasa != null && V.masa_grasa_kg == null) { V.masa_grasa_kg = +(V.peso * V.pct_grasa / 100).toFixed(1); marca('masa_grasa_kg'); }
+  if (V.peso && V.masa_libre_kg && V.masa_grasa_kg && Math.abs(V.peso - V.masa_libre_kg - V.masa_grasa_kg) > 1.5) out.dudosos.masa_libre_kg = 'peso − masa grasa no coincide con la masa libre de grasa';
+  if (V.peso && V.agua_l && V.agua_pct == null) { V.agua_pct = +(V.agua_l / V.peso * 100).toFixed(1); marca('agua_pct'); }
+  if (V.peso && V.agua_pct && V.agua_l == null) { V.agua_l = +(V.agua_pct * V.peso / 100).toFixed(1); marca('agua_l'); }
+  if (V.peso && out.altura_cm && V.imc != null) { const imc = V.peso / Math.pow(out.altura_cm / 100, 2); if (Math.abs(imc - V.imc) > 0.6) out.dudosos.imc = `no cuadra con peso y altura (${imc.toFixed(1)})`; }
+  if (V.peso && out.altura_cm && V.imc == null) { V.imc = +(V.peso / Math.pow(out.altura_cm / 100, 2)).toFixed(1); marca('imc'); }
+}
+// Error de una lectura frente a lo que implican las demás (para elegir entre dos lecturas distintas)
+function bioError(k, v, V, alt) {
+  const o = { ...V, [k]: v };
+  if (k === 'peso' && o.masa_libre_kg && o.masa_grasa_kg) return Math.abs(v - o.masa_libre_kg - o.masa_grasa_kg);
+  if (k === 'masa_grasa_kg' && o.peso && o.masa_libre_kg) return Math.abs(o.peso - o.masa_libre_kg - v);
+  if (k === 'masa_libre_kg' && o.peso && o.masa_grasa_kg) return Math.abs(o.peso - o.masa_grasa_kg - v);
+  if (k === 'pct_grasa' && o.peso && o.masa_grasa_kg) return Math.abs(v - o.masa_grasa_kg / o.peso * 100);
+  if (k === 'imc' && o.peso && alt) return Math.abs(v - o.peso / Math.pow(alt / 100, 2));
+  return null;
+}
+// Une dos lecturas del mismo archivo (imagen tal cual y imagen «limpia»): lo que coincide es fiable; lo que difiere se marca para revisar.
+function bioFusionar(a, b) {
+  if (!a) return b; if (!b) return a;
+  const out = { ...a, valores: {}, dudosos: {}, calculados: [], avisos: a.avisos.slice(), fecha: a.fecha || b.fecha, altura_cm: a.altura_cm || b.altura_cm, textoPlano: a.textoPlano + ' ' + b.textoPlano };
+  const real = (r, k) => (r.calculados.includes(k) ? undefined : r.valores[k]);
+  const ks = new Set([...Object.keys(a.valores), ...Object.keys(b.valores)]);
+  const dif = [];
+  ks.forEach(k => {
+    const va = real(a, k), vb = real(b, k);
+    if (va == null && vb == null) return;
+    if (va == null) { out.valores[k] = vb; if (b.dudosos[k]) out.dudosos[k] = b.dudosos[k]; return; }
+    if (vb == null) { out.valores[k] = va; if (a.dudosos[k]) out.dudosos[k] = a.dudosos[k]; return; }
+    if (Math.abs(va - vb) < 1e-9) { out.valores[k] = va; if (a.dudosos[k] && b.dudosos[k]) out.dudosos[k] = a.dudosos[k]; return; }
+    dif.push([k, va, vb]);
+  });
+  dif.forEach(([k, va, vb]) => {
+    const ea = bioError(k, va, out.valores, out.altura_cm), eb = bioError(k, vb, out.valores, out.altura_cm);
+    let v;
+    if (ea != null && eb != null && Math.abs(ea - eb) > 0.05) v = ea < eb ? va : vb;
+    else if (!!a.dudosos[k] !== !!b.dudosos[k]) v = a.dudosos[k] ? vb : va;
+    else v = va;
+    out.valores[k] = v; out.dudosos[k] = `las dos lecturas no coinciden (${String(va).replace('.', ',')} / ${String(vb).replace('.', ',')})`;
+  });
+  bioCoherencia(out);
+  return out;
+}
+
+function bioParse(words, W, H, opts) {
+  opts = opts || {};
+  const out = { fuente: null, fecha: null, altura_cm: null, valores: {}, dudosos: {}, calculados: [], avisos: [], nombreVisto: false, textoPlano: '' };
+  const ws = (words || []).map(w => ({ t: String(w.t).trim(), c: w.c == null ? 90 : w.c, x0: w.x0, y0: w.y0, x1: w.x1, y1: w.y1 })).filter(w => w.t);
+  ws.forEach(w => { w.h = w.y1 - w.y0; w.yc = (w.y0 + w.y1) / 2; w.xc = (w.x0 + w.x1) / 2; w.nm = bioNum(w.t); w.num = !!(w.nm && w.nm.v != null); w.rango = !!(w.nm && w.nm.rango); });
+  const todo = bioNorm(ws.map(w => w.t).join(' ').replace(/\s+/g, ''));
+  out.textoPlano = ws.map(w => w.t).join(' ');
+  out.fecha = bioFechaISO(ws.map(w => w.t).join(' '));
+  const alt = out.textoPlano.match(/altura\s*:?\s*(\d{3})\s*(?:cm|em|crn)/i) || out.textoPlano.match(/\b(1[4-9]\d|2[0-1]\d)\s*cm\b/i);
+  if (alt) out.altura_cm = +alt[1];
+  ws.sort((a, b) => a.y0 - b.y0 || a.x0 - b.x0);
+  for (let i = 0; i < ws.length; i++) for (let j = 0; j < ws.length; j++) {          // «142» + «9kcal» → «1429kcal»
+    const a = ws[i], b = ws[j]; if (!a || !b || a === b) continue;
+    if (/^\d{2,3}$/.test(a.t) && /^\d(kcal|kg|%)$/i.test(b.t) && Math.abs(((a.y0 + a.y1) - (b.y0 + b.y1)) / 2) < (a.y1 - a.y0) * 0.5 && b.x0 - a.x1 >= -4 && b.x0 - a.x1 < (a.y1 - a.y0) * 0.6) {
+      a.t = a.t + b.t; a.x1 = b.x1; a.c = Math.min(a.c, b.c); ws.splice(j, 1); break; }
+  }
+  ws.forEach(w => { w.h = w.y1 - w.y0; w.yc = (w.y0 + w.y1) / 2; w.xc = (w.x0 + w.x1) / 2; w.nm = bioNum(w.t); w.num = !!(w.nm && w.nm.v != null); w.rango = !!(w.nm && w.nm.rango); });
+  const esApp = /cumplida/.test(todo) && !/composicioncorporal/.test(todo) || /arboleaf/.test(todo) && !/composicioncorporal/.test(todo);
+  out.fuente = esApp ? 'app' : 'informe';
+
+  const nums = ws.filter(w => w.num && !w.rango);
+  const alts = nums.map(w => w.h).sort((a, b) => a - b), med = alts.length ? alts[Math.floor(alts.length * 0.8)] : 20;
+  // Las escalas de las barras (55 85 115 145 175 205%) son filas de ≥3 números del mismo tamaño: no son valores.
+  const porLinea = [];
+  nums.slice().sort((a, b) => a.yc - b.yc).forEach(w => { const l = porLinea.find(l => Math.abs(l.yc - w.yc) < 0.5 * Math.max(l.h, w.h)); if (l) { l.ws.push(w); l.yc = (l.yc * (l.ws.length - 1) + w.yc) / l.ws.length; } else porLinea.push({ yc: w.yc, h: w.h, ws: [w] }); });
+  porLinea.forEach(l => { if (l.ws.length >= 3) { const hs = l.ws.map(w => w.h); if (Math.max(...hs) - Math.min(...hs) <= 0.3 * Math.max(...hs)) l.ws.forEach(w => (w.escala = true)); } });
+  const validos = nums.filter(w => !w.escala && w.h >= 0.62 * med);
+  const celdas = bioCeldas(ws.map(w => w)).map(c => ({ ...c, h: Math.max(...c.ws.map(w => w.h)) }));
+  const cand = {};
+  const poner = (k, w, peso) => { (cand[k] = cand[k] || []).push({ v: w.nm.v, txt: w.nm.txt, u: w.nm.u, c: w.c, peso: peso || 1, w }); };
+
+  const REGLAS = esApp ? [
+    ['peso', /^peso(\(kg\))?$/], ['pct_grasa', /^grasacorporal$/], ['imc', /^imc$/], ['tmb_kcal', /^(tmb|bmr)$/],
+    ['masa_libre_kg', /^pesosingrasa$/], ['grasa_subcutanea_pct', /subcutanea/], ['agua_pct', /^aguacorporal$/], ['edad_metabolica', /^edadmetabolica$/]
+  ] : [
+    ['agua_l', /^aguacorporal(\(?[l1i]\)?)?$/], ['proteina_kg', /^proteina(\(kg\))?$/], ['masa_osea_kg', /^masaosea(\(kg\))?$/], ['masa_grasa_kg', /^masagrasacorporal(\(kg\))?$/],
+    ['peso', /^peso(\(kg\))?$/], ['musculo_kg', /^musculoes?quelet?ico(\(kg\))?$/], ['imc', /^imc(\(kg\/m.?\))?$/], ['pct_grasa', /^pbf/],
+    ['grasa_visceral', /(visc|isceral|savis|asavi)/], ['grasa_subcutanea_pct', /subcutanea/], ['tmb_kcal', /^(bmr|tmb)|tasametabolica/], ['masa_libre_kg', /^(lbm|pesosingrasa)/], ['edad_metabolica', /^edadmetabolica$/]
+  ];
+  for (const c of celdas) {
+    c.texto = c.texto.replace(/^[a-z0-9]{1,3}(?=(peso|imc|edad|aguacorporal|grasacorporal|tmb|bmr|musculo|proteina|masa|indice|lbm|pbf))/, '');
+    for (const [k, re] of REGLAS) {
+      if (!re.test(c.texto)) continue;
+      if (esApp) {   // en la captura de la app el valor está justo ENCIMA de su etiqueta
+        let mejor = null, dm = 1e9;
+        for (const w of validos) { const dy = c.y0 - w.y1; if (dy < -4 || dy > 2.4 * w.h + 30) continue; if (Math.abs(w.x0 - c.x0) > 60) continue; if (dy < dm) { dm = dy; mejor = w; } }
+        if (mejor) poner(k, mejor);
+      } else {       // en el informe, el valor está a la derecha, en la misma fila
+        const banda = c.h / 2 + (c.y1 - c.y0) / 2 + 24;
+        let mejor = null;
+        for (const w of validos) { if (w.x0 < c.x1 - 6 || Math.abs(w.yc - c.yc) > banda) continue; if (!mejor || w.x0 < mejor.x0) mejor = w; }
+        if (mejor) poner(k, mejor);
+      }
+    }
+  }
+  // Unidades que no se confunden con nada más: la única cifra en kcal es el metabolismo basal
+  if (!cand.tmb_kcal) { const k = validos.filter(w => w.nm.u === 'kcal'); if (k.length) poner('tmb_kcal', k[0], 0.6); }
+
+  // Elección y saneado de cada valor
+  const fix = (k, v) => v;
+  for (const [k, lst] of Object.entries(cand)) {
+    const lim = BIO_LIM[k];
+    let vals = lst.map(x => ({ ...x }));
+    // OCR que pierde la coma (131 → 13,1): se prueba a dividir entre 10 si así entra en rango
+    vals.forEach(x => { if (x.v > lim.max && x.v / 10 >= lim.min && x.v / 10 <= lim.max && !/[.,]/.test(x.txt)) { x.v = x.v / 10; x.reparado = true; } });
+    const buenos = vals.filter(x => x.v >= lim.min && x.v <= lim.max);
+    if (!buenos.length) { out.dudosos[k] = 'fuera de rango'; continue; }
+    const dec = !['edad_metabolica', 'tmb_kcal', 'grasa_visceral'].includes(k);
+    const cuenta = {}; buenos.forEach(x => { const key = x.v.toFixed(2); cuenta[key] = (cuenta[key] || 0) + x.peso + (dec && /[.,]/.test(x.txt) ? 0.4 : 0); });
+    const ganador = Object.entries(cuenta).sort((a, b) => b[1] - a[1])[0][0];
+    const sel = buenos.find(x => x.v.toFixed(2) === ganador);
+    out.valores[k] = sel.v;
+    if (sel.reparado) out.dudosos[k] = 'se ha reconstruido la coma';
+    else if (Object.keys(cuenta).length > 1) out.dudosos[k] = 'lecturas distintas';
+    else if (sel.c < 70) out.dudosos[k] = 'lectura poco clara';
+  }
+  bioCoherencia(out);
+  if (!out.fecha) out.avisos.push('No he encontrado la fecha del informe.');
+  if (Object.keys(out.valores).length < 3) out.avisos.push('He leído muy pocos valores: revisa el archivo o escríbelos a mano.');
+  return out;
+}
+
+// ── Lector: PDF o imagen → palabras con posición (capa de texto del PDF si existe; si no, OCR en el propio navegador) ──
+// El archivo NO sale del navegador para leerlo: solo se descargan las librerías (pdf.js y Tesseract) cuando se usa esta función.
+const BIO_CDN = {
+  tess: 'https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js',
+  worker: 'https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/worker.min.js',
+  core: 'https://cdn.jsdelivr.net/npm/tesseract.js-core@5.1.1/',
+  lang: 'https://cdn.jsdelivr.net/npm/@tesseract.js-data/spa@1.0.0/4.0.0',
+  pdf: 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js',
+  pdfWorker: 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js'
+};
+const BIO_APARATOS = ['Arboleaf (app)', 'Informe de báscula (PDF)', 'Otra báscula'];
+let _bioWorker = null, _bio = null;
+
+async function bioMotorOCR(prog) {
+  if (_bioWorker) return _bioWorker;
+  if (!window.Tesseract) { prog('Cargando el lector de texto (solo la primera vez)…'); await cargarScript(BIO_CDN.tess); }
+  prog('Preparando el lector de texto (solo la primera vez)…');
+  _bioWorker = await window.Tesseract.createWorker('spa', 1, { workerPath: BIO_CDN.worker, corePath: BIO_CDN.core, langPath: BIO_CDN.lang, gzip: true });
+  await _bioWorker.setParameters({ tessedit_pageseg_mode: '11' });
+  return _bioWorker;
+}
+// Dibuja la página (escalada si es pequeña) y, si se pide, deja solo el texto oscuro: así se quitan los bordes y barras de color.
+function bioLienzo(src, limpio) {
+  const w0 = src.naturalWidth || src.width, h0 = src.naturalHeight || src.height;
+  const esc = w0 < 1300 ? Math.min(2, 4200 / h0) : 1;
+  const c = document.createElement('canvas'); c.width = Math.round(w0 * esc); c.height = Math.round(h0 * esc);
+  const g = c.getContext('2d', { willReadFrequently: true }); g.imageSmoothingQuality = 'high'; g.drawImage(src, 0, 0, c.width, c.height);
+  if (limpio) {
+    const d = g.getImageData(0, 0, c.width, c.height), p = d.data;
+    for (let i = 0; i < p.length; i += 4) { const r = p[i], gg = p[i + 1], b = p[i + 2], mx = Math.max(r, gg, b), mn = Math.min(r, gg, b), lum = .299 * r + .587 * gg + .114 * b; const v = (mx - mn > 60 || lum > 150) ? 255 : 0; p[i] = p[i + 1] = p[i + 2] = v; }
+    g.putImageData(d, 0, 0);
+  }
+  return c;
+}
+async function bioOCR(src, limpio, prog) {
+  const w = await bioMotorOCR(prog), c = bioLienzo(src, limpio);
+  const r = await w.recognize(c);
+  return { w: c.width, h: c.height, words: (r.data.words || []).map(x => ({ t: x.text, c: x.confidence, x0: x.bbox.x0, y0: x.bbox.y0, x1: x.bbox.x1, y1: x.bbox.y1 })) };
+}
+const bioPuntos = r => Object.keys(r.valores).length - 0.3 * Object.keys(r.dudosos).length;
+// Si el PDF trae texto de verdad (no es una imagen), se usa directamente: es exacto.
+function bioPalabrasPDF(items, vp) {
+  const out = [];
+  items.forEach(it => {
+    if (!it.str || !it.str.trim()) return;
+    const tx = window.pdfjsLib.Util.transform(vp.transform, it.transform), h = Math.hypot(tx[2], tx[3]), wTot = it.width * vp.scale;
+    const trozos = it.str.split(/(\s+)/); let x = tx[4]; const n = it.str.length || 1;
+    trozos.forEach(tr => { const wd = wTot * tr.length / n; if (tr.trim()) out.push({ t: tr, c: 100, x0: x, y0: tx[5] - h, x1: x + wd, y1: tx[5] }); x += wd; });
+  });
+  return out;
+}
+async function bioLeerArchivo(file, prog) {
+  const esPDF = file.type === 'application/pdf' || /\.pdf$/i.test(file.name);
+  const paginas = [], previas = [];
+  if (esPDF) {
+    prog('Abriendo el PDF…');
+    if (!window.pdfjsLib) await cargarScript(BIO_CDN.pdf);
+    window.pdfjsLib.GlobalWorkerOptions.workerSrc = BIO_CDN.pdfWorker;
+    const pdf = await window.pdfjsLib.getDocument({ data: await file.arrayBuffer() }).promise;
+    const n = Math.min(pdf.numPages, 4);
+    for (let i = 1; i <= n; i++) {
+      const pg = await pdf.getPage(i), v1 = pg.getViewport({ scale: 1 }), vp = pg.getViewport({ scale: Math.min(4, 1900 / v1.width) });
+      const c = document.createElement('canvas'); c.width = Math.round(vp.width); c.height = Math.round(vp.height);
+      await pg.render({ canvasContext: c.getContext('2d'), viewport: vp }).promise;
+      const texto = bioPalabrasPDF((await pg.getTextContent()).items, vp);
+      paginas.push({ canvas: c, texto: texto.length >= 60 ? { w: c.width, h: c.height, words: texto } : null });
+      previas.push(c.toDataURL('image/jpeg', 0.7));
+    }
+  } else {
+    prog('Abriendo la imagen…');
+    const url = URL.createObjectURL(file);
+    const img = await new Promise((ok, ko) => { const i = new Image(); i.onload = () => ok(i); i.onerror = () => ko(new Error('imagen')); i.src = url; });
+    paginas.push({ canvas: img, texto: null }); previas.push(url);
+  }
+  // Cada página se lee dos veces (imagen tal cual e imagen «limpia», sin bordes ni barras de color) y se juntan las dos lecturas:
+  // lo que coincide es fiable y lo que difiere se marca para revisar. Una captura de la app que sale clara a la primera no necesita la segunda.
+  const A = [], B = [];
+  for (let i = 0; i < paginas.length; i++) {
+    prog(paginas.length > 1 ? `Leyendo la página ${i + 1} de ${paginas.length}…` : 'Leyendo el informe…');
+    if (paginas[i].texto) { A.push(paginas[i].texto); B.push(paginas[i].texto); continue; }
+    const a = await bioOCR(paginas[i].canvas, false, prog); A.push(a);
+    const ra = bioParse(a.words, a.w, a.h);
+    if (ra.fuente === 'app' && bioPuntos(ra) >= 7) continue;
+    prog(paginas.length > 1 ? `Afinando la lectura de la página ${i + 1}…` : 'Afinando la lectura…');
+    B.push(await bioOCR(paginas[i].canvas, true, prog));
+  }
+  const apila = P => { const words = []; let off = 0, W = 0; P.forEach(r => { r.words.forEach(w => words.push({ ...w, y0: w.y0 + off, y1: w.y1 + off })); W = Math.max(W, r.w); off += r.h + 200; }); return bioParse(words, W, off); };
+  const res = B.length ? bioFusionar(apila(A), apila(B)) : apila(A);
+  return { res, previas };
+}
+
+// ── Datos: lectura de la tabla (si no existe aún, se avisa) ──
+let _bioCache = {};
+async function getBio(depId) {
+  try { const r = await sb(`bioimpedancias?deportista_id=eq.${depId}&order=fecha.asc,id.asc&select=*`); if (Array.isArray(r)) { _bioCache[depId] = r; return r; } }
+  catch (e) {}
+  return null;   // null = la tabla no existe todavía (falta ejecutar el SQL)
+}
+const bioN = (v, dec) => v == null || isNaN(v) ? '—' : medNum(+v, dec);
+const bioPunto = r => { const v = r.valores || {}; return { fecha: String(r.fecha).slice(0, 10), peso: v.peso ?? null, pct_grasa: v.pct_grasa ?? null, masa_grasa_kg: v.masa_grasa_kg ?? null, masa_libre_kg: v.masa_libre_kg ?? null, musculo_kg: v.musculo_kg ?? null, agua_pct: v.agua_pct ?? null, tmb_kcal: v.tmb_kcal ?? null, grasa_visceral: v.grasa_visceral ?? null }; };
+const BIO_TARJETAS = [['peso', 'Peso', 'kg', 1], ['pct_grasa', '% grasa', '%', 1], ['masa_grasa_kg', 'Masa grasa', 'kg', 1], ['masa_libre_kg', 'Masa libre de grasa', 'kg', 1], ['musculo_kg', 'Músculo esquelético', 'kg', 1], ['agua_pct', 'Agua corporal', '%', 1], ['grasa_visceral', 'Grasa visceral', '', 0], ['tmb_kcal', 'Metabolismo basal', 'kcal', 0]];
+function bioStats(pts, maxN) {
+  const last = pts[pts.length - 1], prev = pts.length > 1 ? pts[pts.length - 2] : null;
+  return BIO_TARJETAS.filter(([k]) => last[k] != null).slice(0, maxN || 8).map(([k, lab, u, dec]) => {
+    let delta = prev ? (prev[k] != null ? `${medSigned(last[k] - prev[k], dec)} ${u === '%' ? 'pts' : u} vs. anterior` : '') : 'Sin medición anterior';
+    return `<div class="med-stat"><div class="med-stat-l">${lab}</div><div class="med-stat-v">${bioN(last[k], dec)}${u ? `<small>${u}</small>` : ''}</div><div class="med-delta">${delta || '&nbsp;'}</div></div>`;
+  }).join('');
+}
+function bioSeries(pts) {
+  return medSerie(pts, 'peso', 'var(--t400)', 'Peso', 'kg') + medSerie(pts, 'pct_grasa', 'var(--gold)', '% grasa', '%') +
+    medSerie(pts, 'musculo_kg', '#6F8CB8', 'Músculo esquelético', 'kg') + medSerie(pts, 'masa_libre_kg', 'var(--t900)', 'Masa libre de grasa', 'kg');
+}
+const BIO_NOTA = 'La bioimpedancia estima la composición corporal por la resistencia eléctrica del cuerpo y cambia con la hidratación, la comida y el ejercicio previos: sirve para ver la tendencia, no como valor exacto.';
+
+// Cajas de la ficha: la principal (antropometría o, si no hay, bioimpedancia) y la de bioimpedancia
+function bioPintar(depId, antro, bio) {
+  const med = document.getElementById('medBox'), box = document.getElementById('bioBox');
+  const acciones = `<div class="med-actions">${btnSoft('Subir informe o captura', `bioElegir(${depId})`, 'plus')}${btnSoft('Añadir a mano', `abrirBio(${depId})`, 'doc')}</div>`;
+  if (box) {
+    if (bio === null) box.innerHTML = '<p class="med-empty">Esta función necesita el SQL <b>supabase_bioimpedancia.sql</b> ejecutado en Supabase.</p>';
+    else if (!bio.length) box.innerHTML = vacioHtml('chart', 'Sin bioimpedancia todavía', 'Sube el informe en PDF o la captura de tu báscula y la app lee los valores. Tú los revisas antes de guardar.', { t: 'Subir informe o captura', f: `bioElegir(${depId})` }, true) + `<div class="med-actions" style="justify-content:center">${btnSoft('Añadir a mano', `abrirBio(${depId})`, 'doc')}</div>`;
+    else {
+      const pts = bio.map(bioPunto), principal = !antro;
+      const filas = bio.slice().reverse().map(r => { const v = r.valores || {}; return `<tr><td class="n">${new Date(String(r.fecha).slice(0, 10) + 'T00:00:00').toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' })}</td>
+        <td>${sudEsc(r.aparato || '—')}</td><td class="n">${bioN(v.peso, 1)} kg</td><td class="n">${bioN(v.pct_grasa, 1)} %</td><td class="n hide-m">${v.musculo_kg != null ? bioN(v.musculo_kg, 1) + ' kg' : (v.masa_libre_kg != null ? bioN(v.masa_libre_kg, 1) + ' kg' : '—')}</td>
+        <td class="act">${btnDel('Eliminar medición', `bioEliminar(${r.id},${depId},this)`)}</td></tr>`; }).join('');
+      box.innerHTML = (principal ? '' : `<div class="med-head"><span class="med-date">Complemento de la antropometría</span><span class="med-ago">${bio.length} medición${bio.length !== 1 ? 'es' : ''} de báscula</span></div><div class="med-stats">${bioStats(pts, 4)}</div>${pts.length > 1 ? `<div class="med-series">${medSerie(pts, 'pct_grasa', 'var(--gold)', '% grasa (báscula)', '%')}${medSerie(pts, 'musculo_kg', '#6F8CB8', 'Músculo (báscula)', 'kg')}</div>` : ''}`) +
+        `<table class="plan-lista"><thead><tr><td>Fecha</td><td>Báscula</td><td>Peso</td><td>% grasa</td><td class="hide-m">Músculo / MLG</td><td></td></tr></thead><tbody>${filas}</tbody></table>${acciones}`;
+    }
+  }
+  if (med && !antro) {
+    if (bio && bio.length) {
+      const pts = bio.map(bioPunto), last = pts[pts.length - 1];
+      const dias = Math.floor((new Date() - new Date(last.fecha + 'T00:00:00')) / 86400000);
+      const hace = dias <= 0 ? 'hoy' : dias === 1 ? 'hace 1 día' : dias < 60 ? `hace ${dias} días` : `hace ${Math.round(dias / 30.4)} meses`;
+      med.innerHTML = `<div class="med-head"><span class="med-date">Última medición · ${new Date(last.fecha + 'T00:00:00').toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })}</span><span class="med-ago">${hace} · báscula de bioimpedancia</span></div>
+        <div class="med-stats">${bioStats(pts, 8)}</div>${pts.length > 1 ? `<div class="med-series">${bioSeries(pts)}</div>` : ''}
+        <p class="med-note">${BIO_NOTA} Cuando haya una antropometría, pasará a ser la medición principal y esta quedará como complemento.</p>
+        <div class="med-actions">${btnSoft('Hacer antropometría', `abrirAntropometria(${depId})`, 'chart')}</div>`;
+    } else {
+      med.innerHTML = vacioHtml('chart', 'Sin mediciones todavía', 'Haz una valoración en la calculadora de antropometría o sube la bioimpedancia de la báscula (más abajo) y aparecerá aquí con su evolución.', { t: 'Abrir la calculadora', f: `abrirAntropometria(${depId})` }, true);
+    }
+  }
+}
+
+// ── Pantalla de revisión: lo leído se muestra, se corrige y solo se guarda al confirmar ──
+function bioElegir(depId) { _bio = { depId }; const i = document.getElementById('bioFile'); i.value = ''; i.onchange = () => { if (i.files[0]) abrirBio(depId, i.files[0]); }; i.click(); }
+function bioHoy() { return localISO(new Date()); }
+function abrirBio(depId, file) {
+  const d = deportistas.find(x => x.id == depId); if (!d) return;
+  _bio = { depId, nombre: d.nombre, file: file || null, previas: [], ocupado: false };
+  document.getElementById('mBio').style.display = 'flex';
+  document.getElementById('bioAviso').innerHTML = ''; document.getElementById('bioMsg').textContent = '';
+  document.getElementById('bioPrev').innerHTML = '';
+  bioPintarForm({ valores: {}, dudosos: {}, calculados: [], fecha: bioHoy(), fuente: null });
+  if (file) bioProcesar(file); else setTimeout(() => { const f = document.getElementById('bio_peso'); if (f) f.focus(); }, 60);
+}
+function cerrarBio() { document.getElementById('mBio').style.display = 'none'; _bio = null; }
+function bioPintarForm(res) {
+  const v = res.valores || {}, du = res.dudosos || {}, ca = res.calculados || [];
+  const apar = res.fuente === 'app' ? BIO_APARATOS[0] : res.fuente === 'informe' ? BIO_APARATOS[1] : (document.getElementById('bioAparato') || {}).value || BIO_APARATOS[0];
+  document.getElementById('bioForm').innerHTML = `<div class="bio-grid">
+      <div class="bio-f"><label for="bioFecha">Fecha de la medición</label><input type="date" class="inp" id="bioFecha" value="${res.fecha || bioHoy()}"></div>
+      <div class="bio-f"><label for="bioAparato">Báscula</label><select class="inp" id="bioAparato">${BIO_APARATOS.map(a => `<option${a === apar ? ' selected' : ''}>${a}</option>`).join('')}</select></div>
+    </div><p class="bio-sec">Valores</p><div class="bio-grid">${BIO_CAMPOS.map(([k, lab, u, mn, mx, dec]) => {
+      const x = v[k], dudoso = du[k], calc = ca.includes(k);
+      return `<div class="bio-f${dudoso ? ' dudoso' : ''}${calc ? ' calc' : ''}"><label for="bio_${k}">${lab}${u ? ` <span class="bio-u">(${u})</span>` : ''}</label>
+        <input type="text" inputmode="decimal" class="inp" id="bio_${k}" data-k="${k}" value="${x != null ? String(x).replace('.', ',') : ''}" autocomplete="off" aria-describedby="bioh_${k}">
+        ${dudoso ? `<small class="bio-h" id="bioh_${k}">Revisa este valor: ${sudEsc(dudoso)}.</small>` : calc ? `<small class="bio-h" id="bioh_${k}">Calculado a partir de otros valores.</small>` : `<small class="bio-h" id="bioh_${k}"></small>`}</div>`; }).join('')}</div>
+    <div class="bio-f" style="margin-top:12px"><label for="bioNotas">Notas <span class="bio-u">(opcional)</span></label><input type="text" class="inp" id="bioNotas" placeholder="Ej. en ayunas, tras el entrenamiento…" maxlength="200"></div>`;
+  if (res.altura_cm) document.getElementById('bioForm').dataset.altura = res.altura_cm; else delete document.getElementById('bioForm').dataset.altura;
+}
+async function bioProcesar(file) {
+  const msg = document.getElementById('bioMsg'), btn = document.getElementById('bioGuardar');
+  btn.disabled = true; _bio.ocupado = true;
+  const prog = t => { msg.innerHTML = `<span class="spin-mini" aria-hidden="true"></span> ${sudEsc(t)}`; };
+  try {
+    const { res, previas } = await bioLeerArchivo(file, prog);
+    if (!_bio) return;
+    _bio.res = res; _bio.previas = previas;
+    document.getElementById('bioPrev').innerHTML = previas.map((u, i) => `<img src="${u}" alt="Página ${i + 1} del archivo subido">`).join('');
+    bioPintarForm(res);
+    const av = [];
+    const tokens = String(_bio.nombre || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().split(/\s+/).filter(t => t.length >= 3);
+    const plano = bioNorm(res.textoPlano.replace(/\s+/g, ''));
+    if (tokens.length && !tokens.some(t => plano.includes(t))) av.push(`No encuentro el nombre de ${sudEsc(_bio.nombre)} en el archivo. Comprueba que es de la persona correcta.`);
+    res.avisos.forEach(a => av.push(sudEsc(a)));
+    if (res.fecha && res.fecha > bioHoy()) av.push('La fecha del archivo es futura: revísala.');
+    const nD = Object.keys(res.dudosos).length;
+    document.getElementById('bioAviso').innerHTML = av.map(a => `<div class="bio-aviso" role="alert">${a}</div>`).join('') + `<div class="bio-ok">He leído ${Object.keys(res.valores).filter(k => !res.calculados.includes(k)).length} valores${nD ? `; ${nD} marcado${nD > 1 ? 's' : ''} para revisar` : ''}. Compáralos con la imagen y corrige lo que haga falta antes de guardar.</div>`;
+    msg.textContent = '';
+  } catch (e) {
+    console.warn('bioProcesar', e);
+    msg.textContent = '';
+    document.getElementById('bioAviso').innerHTML = '<div class="bio-aviso" role="alert">No he podido leer el archivo (puede que falle la conexión para descargar el lector). Puedes rellenar los valores a mano.</div>';
+  } finally { if (_bio) { _bio.ocupado = false; } btn.disabled = false; }
+}
+function bioLeerForm() {
+  const v = {};
+  BIO_CAMPOS.forEach(([k]) => { const t = (document.getElementById('bio_' + k).value || '').trim().replace(',', '.'); if (t === '') return; const n = Number(t); v[k] = n; });
+  const alt = document.getElementById('bioForm').dataset.altura; if (alt) v.altura_cm = +alt;
+  return v;
+}
+async function bioGuardar() {
+  if (!_bio || _bio.ocupado) return;
+  const depId = _bio.depId, d = deportistas.find(x => x.id == depId), msg = document.getElementById('bioMsg'), btn = document.getElementById('bioGuardar');
+  const fecha = document.getElementById('bioFecha').value, v = bioLeerForm(), aparato = document.getElementById('bioAparato').value;
+  const malos = BIO_CAMPOS.filter(([k, , , mn, mx]) => v[k] != null && (isNaN(v[k]) || v[k] < mn || v[k] > mx)).map(c => c[1]);
+  if (!fecha) { msg.textContent = 'Indica la fecha de la medición.'; return; }
+  if (fecha > bioHoy()) { msg.textContent = 'La fecha no puede ser futura.'; return; }
+  if (!Object.keys(v).filter(k => k !== 'altura_cm').length) { msg.textContent = 'Escribe al menos un valor (por ejemplo el peso).'; return; }
+  if (malos.length) { msg.textContent = 'Revisa estos valores, parecen fuera de rango: ' + malos.join(', ') + '.'; return; }
+  btn.disabled = true; msg.textContent = 'Guardando…';
+  let path = null;
+  try {
+    if (_bio.file) {
+      const ext = (/\.(pdf|png|jpe?g|webp|heic)$/i.exec(_bio.file.name) || ['', 'bin'])[1].toLowerCase();
+      path = `${depId}/${Date.now()}_bioimpedancia_${fecha}.${ext}`;
+      const up = await authFetch(`${SURL}/storage/v1/object/${STORAGE_BUCKET}/${path.split('/').map(encodeURIComponent).join('/')}`, { method: 'POST', headers: { 'Content-Type': _bio.file.type || 'application/octet-stream' }, body: _bio.file });
+      if (!up.ok) throw new Error('subida ' + up.status);
+    }
+    const notas = (document.getElementById('bioNotas').value || '').trim() || null;
+    const r = await sb('bioimpedancias', { method: 'POST', body: JSON.stringify({ deportista_id: depId, fecha, aparato, valores: v, archivo_path: path, notas }) });
+    if (esErrorSb(r)) { if (path) authFetch(`${SURL}/storage/v1/object/${STORAGE_BUCKET}/${path.split('/').map(encodeURIComponent).join('/')}`, { method: 'DELETE' }).catch(() => {}); throw new Error(r.code === '42P01' || r.code === 'PGRST205' ? 'sin_tabla' : 'guardado'); }
+    // El archivo original también queda en «Archivos» (no visible para el cliente salvo que tú lo marques)
+    if (path) {
+      try {
+        const fila = await sb(`clientes_deportivos?id=eq.${depId}&select=archivos`);
+        const previos = (Array.isArray(fila) && fila[0] && Array.isArray(fila[0].archivos)) ? fila[0].archivos : (d.archivos || []);
+        const ahora = new Date().toISOString(), archivos = previos.concat([{ nombre: `Bioimpedancia ${fecha}${/\.pdf$/i.test(path) ? '.pdf' : /\.(png|jpe?g|webp|heic)$/i.test(path) ? path.slice(path.lastIndexOf('.')) : ''}`, path, fecha: ahora, visible_cliente: false, tipo: 'bioimpedancia' }]);
+        const rp = await patchDep(depId, { archivos, ultima_actividad: ahora });
+        if (!esErrorSb(rp)) { d.archivos = archivos; d.ultima_actividad = ahora; const fl = document.getElementById('filesList'); if (fl && currentDepId == depId) fl.innerHTML = renderFilesList(archivos, depId); const tn = document.querySelector('#depTab-archivos .tab-n'); if (tn) tn.textContent = archivos.length; }
+      } catch (e) { console.warn('bio archivos', e); }
+    }
+    toast('Bioimpedancia guardada');
+    cerrarBio();
+    if (currentDepId == depId) { loadMediciones(depId); loadHistorial(depId); }
+  } catch (e) {
+    console.warn('bioGuardar', e);
+    msg.textContent = e.message === 'sin_tabla' ? 'Falta ejecutar el SQL «supabase_bioimpedancia.sql» en Supabase.' : 'No se pudo guardar. Comprueba la conexión y vuelve a intentarlo.';
+    btn.disabled = false;
+  }
+}
+function bioEliminar(id, depId, btn) {
+  const fila = btn && btn.closest('tr');
+  deshacerBorrado({
+    texto: 'Medición eliminada (el archivo sigue en «Archivos»)',
+    ocultar: () => { if (fila) fila.style.display = 'none'; },
+    restaurar: () => { if (fila) fila.style.display = ''; },
+    ejecutar: async () => { const r = await sb(`bioimpedancias?id=eq.${id}`, { method: 'DELETE', headers: { 'Prefer': 'return=minimal' } }); if (!esErrorSb(r) && currentDepId == depId) { loadMediciones(depId); loadHistorial(depId); } return r; }
+  });
 }
 
 
@@ -6076,11 +6580,12 @@ const TL_ICO={
 // Reúne en una sola lista cronológica todo lo que ha pasado con el deportista (sesiones, mediciones, seguimientos, archivos, tests y planes).
 async function loadHistorial(depId){
   const seguro = (p)=>Promise.resolve(p).then(v=>Array.isArray(v)?v:[]).catch(()=>[]);
-  const [rows, meds, segs, sud, planes] = await Promise.all([
+  const [rows, meds, segs, sud, planes, bios] = await Promise.all([
     seguro(getHistorial(depId)), seguro(getMediciones(depId)),
     seguro(sb(`seguimientos?deportista_id=eq.${depId}&order=semana.asc&select=semana,respuestas`)),
     seguro(sb(`tests_sudoracion?deportista_id=eq.${depId}&select=id,fecha`)),
-    seguro(sb(`planes_competicion?deportista_id=eq.${depId}&select=id,fecha,evento,created_at,visible_cliente`))
+    seguro(sb(`planes_competicion?deportista_id=eq.${depId}&select=id,fecha,evento,created_at,visible_cliente`)),
+    seguro(sb(`bioimpedancias?deportista_id=eq.${depId}&select=id,fecha,aparato,valores`))
   ]);
   const el = document.getElementById('histList');
   if(!el || currentDepId != depId) return;
@@ -6089,6 +6594,7 @@ async function loadHistorial(depId){
   const ev = [];
   rows.forEach(x=>ev.push({tipo:'sesion', fecha:dia(x.fecha), t:x.nota||'Consulta registrada', id:x.id, borrable:true}));
   meds.forEach(x=>{ const m=medPunto(x), partes=[]; if(m.peso!=null) partes.push(medNum(m.peso,1)+' kg'); if(m.grasa!=null) partes.push(medNum(m.grasa,1)+' % grasa'); ev.push({tipo:'medicion', fecha:dia(x.fecha), t:'Valoración antropométrica', s:partes.join(' · ')}); });
+  bios.forEach(x=>{ const v=x.valores||{}, partes=[]; if(v.peso!=null) partes.push(medNum(+v.peso,1)+' kg'); if(v.pct_grasa!=null) partes.push(medNum(+v.pct_grasa,1)+' % grasa'); ev.push({tipo:'medicion', fecha:dia(x.fecha), t:'Bioimpedancia'+(x.aparato?' · '+x.aparato:''), s:partes.join(' · ')}); });
   segs.forEach(x=>{ const q=x.respuestas||{}, bajos=SEG_P.filter(m=>q[m.k]!=null&&q[m.k]<=2).map(m=>m.t.toLowerCase());
     ev.push({tipo:'seguimiento', fecha:dia(x.semana), t:'Seguimiento semanal recibido', s:(q.adherencia!=null?'Adherencia '+q.adherencia+'/5':'')+(bajos.length?`${q.adherencia!=null?' · ':''}<span class="aviso">${bajos.join(', ')} bajo</span>`:'')+(q.molestias?` · <span class="aviso">Molestias</span>`:''), html:true}); });
   (d.archivos||[]).forEach(a=>{ if(!a||!a.fecha) return; ev.push({tipo:'archivo', fecha:dia(a.fecha), t:(a.visible_cliente?'Compartido con el cliente: ':'Archivo: ')+(a.nombre||'sin nombre')}); });
