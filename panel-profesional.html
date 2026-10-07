@@ -249,9 +249,9 @@ body.dark-mode .btn-ok.danger,body.dark-mode .sb-badge{background:#B83232}
 .depd-actions{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .depd-actions .btn-action{padding:10px 16px}
 @media(max-width:700px){
-  .depd-actions{width:100%;margin-left:0;margin-top:4px}
-  .depd-actions .btn-action{flex:1;justify-content:center}
-  .depd-actions .btn-action.primary{flex:1 1 100%}
+  .depd-actions{width:100%;margin-left:0;margin-top:4px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .depd-actions .btn-action{justify-content:center;white-space:nowrap;padding:10px 8px}
+  .depd-actions .btn-action.primary,.depd-actions .btn-action:nth-child(2){grid-column:1/-1}
 }
 .depd-avatar{width:76px;height:76px;border-radius:50%;overflow:hidden;background:var(--gold-50);display:flex;align-items:center;justify-content:center;flex-shrink:0;border:2px solid var(--gold-50)}
 .depd-avatar img{width:100%;height:100%;object-fit:cover}
@@ -672,7 +672,9 @@ body.dark-mode .cmp-cell.b .cmp-track i{background:var(--t400)}
   .agenda-date-day{font-size:20px}
   .agenda-date-month{font-size:10.5px}
   .agenda-info{grid-column:2}
-  .agenda-actions{grid-column:2;flex-wrap:wrap;justify-content:flex-start}
+  .agenda-actions{grid-column:2;flex-wrap:nowrap;justify-content:flex-start}
+  .agenda-actions .pay-toggle{flex:1 1 auto;justify-content:center;min-height:40px;border-radius:10px;font-size:12px;padding:0 12px}
+  .agenda-actions .agenda-cal,.agenda-actions .agenda-del{width:40px;height:40px;border-radius:10px;flex-shrink:0}
   body.has-sidebar{padding-left:0;padding-top:calc(56px + env(safe-area-inset-top,0px));padding-bottom:env(safe-area-inset-bottom,0px)}
   body.has-sidebar .mobile-topbar{display:flex}
   .sidebar{width:270px;padding-top:calc(1.5rem + env(safe-area-inset-top,0px));transform:translateX(-100%);transition:transform .25s ease,box-shadow .25s ease;box-shadow:none}
@@ -848,6 +850,19 @@ body.dark-mode .frm select.inp{background-image:url("data:image/svg+xml,%3Csvg x
 .sud-table th{font-size:10.5px;font-weight:500;color:var(--g400);text-transform:uppercase;letter-spacing:.05em;text-align:left;padding:6px 8px 6px 0}
 .sud-table td{padding:8px 8px 8px 0;border-top:.5px solid var(--bd);color:var(--g700);vertical-align:top}
 .sud-table td.n{white-space:nowrap;font-weight:600;color:var(--g900)}
+.bio-lista td.act .row-actions{flex-wrap:nowrap}
+@media(max-width:700px){
+  .bio-lista,.bio-lista tbody,.bio-lista tr,.bio-lista td{display:block}
+  .bio-lista thead{display:none}
+  .bio-lista tr{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:2px 10px;padding:12px 0;border-top:.5px solid var(--bd)}
+  .bio-lista td{border-top:none;padding:0;min-width:0;width:auto}
+  .bio-lista td.bio-f1,.bio-lista td.bio-ap,.bio-lista td.act{grid-column:1/-1}
+  .bio-lista td.bio-f1{font-size:13.5px}
+  .bio-lista td.bio-ap{margin-bottom:6px}
+  .bio-lista td[data-l]::before{content:attr(data-l);display:block;font-size:10.5px;font-weight:500;color:var(--g400);text-transform:uppercase;letter-spacing:.04em}
+  .bio-lista td.act{text-align:left;margin-top:10px}
+  .bio-lista td.act .row-actions{justify-content:flex-start}
+}
 .sud-cond{display:block;font-size:11px;color:var(--g400)}
 @media(max-width:560px){.sud-table .hide-m{display:none}}
 .calc-warn{background:#FEF2F2;color:var(--red);border-radius:8px;padding:8px 12px;font-size:12px;margin-top:10px}
@@ -5898,11 +5913,11 @@ function bioPintar(depId, antro, bio) {
     else if (!bio.length) box.innerHTML = vacioHtml('chart', 'Sin bioimpedancia todavía', 'Sube el informe en PDF o la captura de tu báscula y la app lee los valores. Tú los revisas antes de guardar.', { t: 'Subir informe o captura', f: `bioElegir(${depId})` }, true) + `<div class="med-actions" style="justify-content:center">${btnSoft('Añadir a mano', `abrirBio(${depId})`, 'doc')}</div>`;
     else {
       const pts = bio.map(bioPunto), principal = !antro;
-      const filas = bio.slice().reverse().map(r => { const v = r.valores || {}; return `<tr><td class="n">${new Date(String(r.fecha).slice(0, 10) + 'T00:00:00').toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' })}</td>
-        <td>${sudEsc(r.aparato || '—')}${r.visible_cliente ? '<span class="sud-cond">Visible para el cliente</span>' : ''}</td><td class="n">${bioN(v.peso, 1)} kg</td><td class="n">${bioN(v.pct_grasa, 1)} %</td><td class="n hide-m">${v.musculo_kg != null ? bioN(v.musculo_kg, 1) + ' kg' : (v.masa_libre_kg != null ? bioN(v.masa_libre_kg, 1) + ' kg' : '—')}</td>
+      const filas = bio.slice().reverse().map(r => { const v = r.valores || {}; return `<tr><td class="n bio-f1">${new Date(String(r.fecha).slice(0, 10) + 'T00:00:00').toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' })}</td>
+        <td class="bio-ap">${sudEsc(r.aparato || '—')}${r.visible_cliente ? '<span class="sud-cond">Visible para el cliente</span>' : ''}</td><td class="n" data-l="Peso">${bioN(v.peso, 1)} kg</td><td class="n" data-l="% grasa">${bioN(v.pct_grasa, 1)} %</td><td class="n hide-m" data-l="Músculo / MLG">${v.musculo_kg != null ? bioN(v.musculo_kg, 1) + ' kg' : (v.masa_libre_kg != null ? bioN(v.masa_libre_kg, 1) + ' kg' : '—')}</td>
         <td class="act"><div class="row-actions">${btnSoft(r.visible_cliente ? 'Dejar de compartir' : 'Compartir con el cliente', `bioVisible(${r.id},${depId},${!r.visible_cliente})`, r.visible_cliente ? 'trash' : 'ext', true)}${btnDel('Eliminar medición', `bioEliminar(${r.id},${depId},this)`)}</div></td></tr>`; }).join('');
       box.innerHTML = (principal ? '' : `<div class="med-head"><span class="med-date">Complemento de la antropometría</span><span class="med-ago">${bio.length} medición${bio.length !== 1 ? 'es' : ''} de báscula</span></div><div class="med-stats">${bioStats(pts, 4)}</div>${pts.length > 1 ? `<div class="med-series">${medSerie(pts, 'pct_grasa', 'var(--gold)', '% grasa (báscula)', '%')}${medSerie(pts, 'musculo_kg', '#6F8CB8', 'Músculo (báscula)', 'kg')}</div>` : ''}`) +
-        `<table class="plan-lista"><thead><tr><td>Fecha</td><td>Báscula</td><td>Peso</td><td>% grasa</td><td class="hide-m">Músculo / MLG</td><td></td></tr></thead><tbody>${filas}</tbody></table>${acciones}`;
+        `<table class="plan-lista bio-lista"><thead><tr><td>Fecha</td><td>Báscula</td><td>Peso</td><td>% grasa</td><td class="hide-m">Músculo / MLG</td><td></td></tr></thead><tbody>${filas}</tbody></table>${acciones}`;
     }
   }
   if (med && !antro) {
