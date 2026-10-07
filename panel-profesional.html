@@ -917,9 +917,41 @@ body.dark-mode .rev-badge.soon,body.dark-mode .dash-card-count,body.dark-mode .r
 body.dark-mode .rev-badge.urgent,body.dark-mode .pay-toggle.pending,body.dark-mode .sup-badge.warn{color:#ff9b93}
 .rev-badge.none,.cbadge.off,.pay-toggle.info,.accion-badge.subtle,.sup-badge.ctx{background:var(--pill-n);color:var(--g700);box-shadow:inset 0 0 0 .5px var(--pill-n-bd)}
 .cmp-ej button{background:var(--pill-n);border-color:var(--pill-n-bd)}
+/* ── Avisos, deshacer, conexión y carga ── */
+#toasts{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);z-index:10000;display:flex;flex-direction:column;gap:8px;align-items:center;width:max-content;max-width:calc(100vw - 24px);pointer-events:none}
+.toast{pointer-events:auto;display:flex;align-items:center;gap:14px;background:var(--t900);color:#fff;font-size:13px;font-weight:500;padding:11px 16px;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.22);animation:toastIn .22s ease;font-family:var(--f);line-height:1.4;transition:opacity .2s,transform .2s}
+.toast.error{background:#8F2423}
+.toast.aviso{background:#7A5A38}
+.toast.out{opacity:0;transform:translateY(6px)}
+.toast button{background:none;border:none;color:#9FE1CB;font-weight:700;font-size:13px;cursor:pointer;font-family:var(--f);padding:4px 6px;border-radius:6px;white-space:nowrap}
+.toast button:hover{background:rgba(255,255,255,.12)}
+body.dark-mode .toast{background:#24302D;border:.5px solid var(--bdm)}
+body.dark-mode .toast.error{background:#5C2020}
+body.dark-mode .toast.aviso{background:#4A3A28}
+@keyframes toastIn{from{opacity:0;transform:translateY(8px)}}
+#offlineBar{display:none;position:fixed;top:0;left:0;right:0;z-index:9999;background:#7A5A38;color:#fff;font-size:12.5px;font-weight:500;text-align:center;padding:calc(6px + env(safe-area-inset-top,0px)) 12px 6px}
+body.sin-conexion #offlineBar{display:block}
+.skel{display:block;height:14px;border-radius:7px;margin:9px 0;background:linear-gradient(90deg,var(--g100) 25%,var(--g200) 50%,var(--g100) 75%);background-size:200% 100%;animation:skel 1.3s infinite linear}
+.skel.w40{width:40%}.skel.w60{width:60%}.skel.w80{width:80%}
+@keyframes skel{to{background-position:-200% 0}}
+@media(prefers-reduced-motion:reduce){.skel{animation:none}.toast{animation:none}}
+.save-ok.err{color:var(--red);opacity:1}
+.agenda-swipe{position:relative;margin-bottom:10px;border-radius:12px;background:var(--red-bg)}
+.agenda-swipe .agenda-item{margin-bottom:0;position:relative;touch-action:pan-y;transition:transform .2s ease}
+.agenda-swipe-bg{position:absolute;right:0;top:0;bottom:0;width:90px;display:flex;align-items:center;justify-content:center;color:var(--red)}
+#ptr{position:fixed;top:calc(64px + env(safe-area-inset-top,0px));left:50%;z-index:140;width:34px;height:34px;margin-left:-17px;border-radius:50%;background:var(--sf);border:.5px solid var(--bdm);box-shadow:0 4px 14px rgba(0,0,0,.15);display:none;align-items:center;justify-content:center;color:var(--t600);pointer-events:none}
+#ptr.on{display:flex}
+#ptr.go svg{animation:ptrSpin .7s linear infinite}
+@keyframes ptrSpin{to{transform:rotate(360deg)}}
+@media(max-width:860px){html{overscroll-behavior-y:contain}}
+.gsearch-item.acc .gsearch-avatar{background:var(--gold-50);color:var(--gold-dk)}
+
 </style>
 </head>
 <body>
+<div id="toasts" aria-live="polite"></div>
+<div id="offlineBar" role="status">Sin conexión · los cambios no se guardarán hasta que vuelvas a conectarte</div>
+<div id="ptr" aria-hidden="true"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.5 15a9 9 0 1 1-2.1-9.4L23 10"/></svg></div>
 
 <div id="vload" class="view active"><div class="spin"></div></div>
 
@@ -1594,7 +1626,7 @@ body.dark-mode .rev-badge.urgent,body.dark-mode .pay-toggle.pending,body.dark-mo
   <div class="gsearch-modal">
     <div class="gsearch-input-wrap">
       <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      <input type="text" class="gsearch-input" id="gsearchInput" placeholder="Buscar cliente, deportista o cita…" oninput="runGlobalSearch()">
+      <input type="text" class="gsearch-input" id="gsearchInput" placeholder="Buscar o escribir una acción (nueva cita, antropometría…)" oninput="runGlobalSearch()">
     </div>
     <div class="gsearch-results" id="gsearchResults"></div>
   </div>
@@ -2340,7 +2372,7 @@ function authRefresh(){
 }
 async function authToken(){ const s=authLoad(); if(!s) return null; return Date.now()<s.expires_at ? s.access_token : authRefresh(); }
 async function authFetch(url,opts={}){
-  const go=async tok=>fetch(url,{...opts,headers:{'apikey':SKEY,'Authorization':'Bearer '+(tok||SKEY),...(opts.headers||{})}});
+  const go=async tok=>{ try{ const rr=await fetch(url,{...opts,headers:{'apikey':SKEY,'Authorization':'Bearer '+(tok||SKEY),...(opts.headers||{})}}); conexion(true); return rr; }catch(e){ conexion(false); throw e; } };
   const habiaSesion=!!authLoad();
   const tok=await authToken();
   if(habiaSesion&&!tok&&!authLoad()) sesionCaducada();   // la renovación fue rechazada: la sesión ya no vale
@@ -2374,8 +2406,75 @@ async function sb(path,opts={}){
 }
 const getAll=()=>sb('clientes?select=*&order=created_at.desc');
 const insert=(d)=>sb('clientes',{method:'POST',body:JSON.stringify(d)});
-const patch=(id,d)=>sb(`clientes?id=eq.${id}`,{method:'PATCH',headers:{'Prefer':'return=minimal'},body:JSON.stringify(d)});
+const patch=(id,d,x={})=>sb(`clientes?id=eq.${id}`,{method:'PATCH',headers:{'Prefer':'return=minimal'},body:JSON.stringify(d),...x});
 const del=(id)=>sb(`clientes?id=eq.${id}`,{method:'DELETE',headers:{'Prefer':'return=minimal'}});
+
+// ═══════════════ AVISOS, DESHACER Y CONEXIÓN ═══════════════
+// toast(texto,{tipo:'error'|'aviso', ms, accion:{texto,fn}}) → {cerrar}. Sustituye a alert().
+function toast(msg,o={}){
+  const box=document.getElementById('toasts'); if(!box) return {cerrar(){}};
+  const el=document.createElement('div'); el.className='toast'+(o.tipo?' '+o.tipo:'');
+  el.setAttribute('role',o.tipo==='error'?'alert':'status');
+  const t=document.createElement('span'); t.textContent=msg; el.appendChild(t);
+  let tm=null, cerrado=false;
+  const cerrar=()=>{ if(cerrado) return; cerrado=true; clearTimeout(tm); el.classList.add('out'); setTimeout(()=>el.remove(),220); };
+  if(o.accion){ const b=document.createElement('button'); b.type='button'; b.textContent=o.accion.texto; b.onclick=()=>{ cerrar(); o.accion.fn(); }; el.appendChild(b); }
+  box.appendChild(el);
+  while(box.children.length>3) box.firstChild.remove();
+  tm=setTimeout(cerrar,o.ms||(o.tipo==='error'?5500:3500));
+  return {cerrar};
+}
+// ¿La respuesta de sb() es un error de PostgREST? (sb() no lanza con los errores HTTP, devuelve el JSON del error)
+function esErrorSb(r){ return !!(r&&typeof r==='object'&&!Array.isArray(r)&&(r.code||r.message||r.hint||r.details)); }
+// Borrado con «Deshacer»: la fila se oculta al momento y el borrado real se hace a los 6 s (o antes si se empieza otro borrado
+// o se sale de la página). Si falla, se restaura y se avisa. Solo hay un borrado pendiente a la vez.
+let _pend=null;
+function deshacerBorrado(o){
+  if(_pend) _pend.ahora();
+  o.ocultar();
+  let hecho=false, tm=null, aviso=null;
+  const ahora=async()=>{
+    if(hecho) return; hecho=true; clearTimeout(tm); if(_pend===p) _pend=null; if(aviso) aviso.cerrar();
+    let r; try{ r=await o.ejecutar(); }catch(e){ r={code:'red'}; }
+    if(esErrorSb(r)){ o.restaurar(); toast('No se pudo eliminar. Se ha restaurado.',{tipo:'error'}); }
+  };
+  const p={ahora};
+  _pend=p;
+  tm=setTimeout(ahora,6000);
+  aviso=toast(o.texto,{ms:6000,accion:{texto:'Deshacer',fn:()=>{ if(hecho) return; hecho=true; clearTimeout(tm); if(_pend===p) _pend=null; o.restaurar(); }}});
+}
+// Estado de la conexión: franja arriba mientras no hay red y aviso al recuperarla.
+let _conectado=true;
+function conexion(ok){
+  if(ok===_conectado) return; _conectado=ok;
+  document.body.classList.toggle('sin-conexion',!ok);
+  if(ok) toast('Conexión recuperada',{ms:2500});
+}
+window.addEventListener('offline',()=>conexion(false));
+window.addEventListener('online',()=>conexion(true));
+document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='hidden'){ if(_pend) _pend.ahora(); _autoDep.ahora(true); _autoM3.ahora(true); } });
+// Marcadores de carga (esqueleto)
+function skel(n=3){ return Array.from({length:n},(_,i)=>`<span class="skel ${['w80','w60','w40'][i%3]}"></span>`).join(''); }
+// Guardado automático de notas: guarda a los 1,2 s de dejar de escribir y al salir de la pantalla.
+function crearAutoNota(cfg){
+  let tm=null, pend=null;
+  const marca=(t,err)=>{ const e=document.getElementById(cfg.okId); if(!e) return; e.textContent=t; e.classList.toggle('err',!!err); e.classList.add('show'); };
+  async function ahora(oculta){
+    clearTimeout(tm); if(!pend) return;
+    const q=pend; marca('Guardando…');
+    let res; try{ res=await cfg.guardar(q.id,q.txt,oculta); }catch(e){ res={code:'red'}; }
+    if(esErrorSb(res)){ marca('No se pudo guardar',true); toast('No se pudieron guardar las notas. Inténtalo de nuevo.',{tipo:'error'}); return; }
+    if(pend===q) pend=null;
+    marca('✓ Guardado'); setTimeout(()=>{ const e=document.getElementById(cfg.okId); if(e&&!pend) e.classList.remove('show'); },2200);
+  }
+  return { ahora, cambio(id,txt){ pend={id,txt}; cfg.local(id,txt); marca('Sin guardar…'); clearTimeout(tm); tm=setTimeout(()=>ahora(),1200); } };
+}
+const _autoDep=crearAutoNota({okId:'depSaveOk',
+  local:(id,t)=>{ const d=deportistas.find(x=>x.id==id); if(d) d.notas=t; },
+  guardar:async(id,t,oculta)=>{ const now=new Date().toISOString(); const r=await patchDep(id,{notas:t,ultima_actividad:now},oculta?{keepalive:true}:{}); if(!esErrorSb(r)){ const d=deportistas.find(x=>x.id==id); if(d) d.ultima_actividad=now; } return r; }});
+const _autoM3=crearAutoNota({okId:'sok',
+  local:(id,t)=>{ const c=clients.find(x=>x.id==id); if(c) c.notas=t; },
+  guardar:(id,t,oculta)=>patch(id,{notas:t},oculta?{keepalive:true}:{})});
 
 // ── AUTH ──
 
@@ -2475,7 +2574,7 @@ async function openGlobalSearch(){
   if(window.matchMedia('(max-width:860px)').matches){ openSidebarSearch(); return; }
   document.getElementById('mGlobalSearch').style.display = 'flex';
   document.getElementById('gsearchInput').value = '';
-  document.getElementById('gsearchResults').innerHTML = '<p class="gsearch-empty">Escribe para buscar…</p>';
+  document.getElementById('gsearchResults').innerHTML = searchHtml('', true);
   setTimeout(()=>document.getElementById('gsearchInput').focus(), 50);
   const [c, d, ci] = await Promise.all([getAll(), getDeportistas(), getCitas()]);
   gsClients = c || []; gsDeps = d || []; gsCitas = ci || [];
@@ -2485,19 +2584,56 @@ function closeGlobalSearch(){
   clearSidebarSearch(false);
   if(document.getElementById('sidebar').classList.contains('mobile-open')) closeMobileSidebar();
 }
-// Devuelve el HTML de resultados para el texto buscado ('' si no hay texto). Lo usan la ventana (escritorio) y la barra lateral (móvil).
-function searchHtml(qRaw){
+// ── Acciones rápidas (Ctrl/Cmd+K): se mezclan con los resultados al escribir y se listan con la ventana vacía ──
+const _nrm = s => String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();
+const ACC_BASE = [
+  {t:'Nueva cita', k:'agenda agendar', f:()=>{ navTo('agenda'); openAddCita(); }},
+  {t:'Nuevo deportista', k:'nutricion deportiva alta', f:()=>{ navTo('deportiva'); openAddDep(); }},
+  {t:'Nuevo cliente del Método 3M', k:'metodo 3 meses alta', f:()=>{ navTo('metodo'); openAdd(); }},
+  {t:'Ir a Inicio', k:'dashboard panel', f:()=>navTo('home')},
+  {t:'Ir a Agenda', k:'citas', f:()=>navTo('agenda')},
+  {t:'Ir a Facturación', k:'pagos cobros ingresos', f:()=>navTo('facturacion')},
+  {t:'Ir a Antropometría', k:'medidas isak pliegues', f:()=>navTo('antropometria')},
+  {t:'Ir a Plan de competición', k:'carrera evento prueba', f:()=>navTo('plan')},
+  {t:'Ir a Calculadora de energía', k:'macros kcal gasto', f:()=>navTo('calc-energia')},
+  {t:'Ir a Hidratación', k:'sudoracion test sudor', f:()=>navTo('calc-hidra')},
+  {t:'Ir a Suplementación', k:'suplementos', f:()=>navTo('suplementacion')},
+  {t:'Ir a Referencias clínicas', k:'referencia valores', f:()=>navTo('referencia')},
+  {t:'Ir a Nutrición Deportiva', k:'deportistas clientes', f:()=>navTo('deportiva')},
+  {t:'Ir a Método 3M', k:'metodo 3 meses clientes', f:()=>navTo('metodo')}
+];
+let _accList = [];
+function accHtml(q, deps){
+  const nq = _nrm(q), palabras = nq.split(/\s+/).filter(Boolean);
+  const todas = ACC_BASE.slice();
+  (deps||[]).forEach(d=>{
+    todas.push({t:'Nueva cita con '+d.nombre, k:'', f:()=>{ navTo('agenda'); openAddCita(); document.getElementById('citaCliente').value = d.nombre; }});
+    todas.push({t:'Antropometría de '+d.nombre, k:'medidas valoracion', f:()=>abrirAntropometria(d.id)});
+  });
+  const lista = palabras.length ? todas.filter(a=>{ const h=_nrm(a.t+' '+a.k); return palabras.every(w=>h.includes(w)); }) : ACC_BASE.slice(0,6);
+  _accList = lista.slice(0,6);
+  if(!_accList.length) return '';
+  return '<div class="gsearch-group-label">Acciones</div>' + _accList.map((a,i)=>`<div class="gsearch-item acc" onclick="accionRapida(${i})">
+      <div class="gsearch-avatar"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
+      <div><div class="gsearch-item-name">${sudEsc(a.t)}</div></div>
+    </div>`).join('');
+}
+function accionRapida(i){ const a=_accList[i]; closeGlobalSearch(); if(a) a.f(); }
+// Devuelve el HTML de resultados para el texto buscado ('' si no hay texto; con vacioConAcciones, la ventana vacía lista acciones). Lo usan la ventana (escritorio) y la barra lateral (móvil).
+function searchHtml(qRaw, vacioConAcciones){
   const q = String(qRaw||'').trim().toLowerCase();
-  if(!q) return '';
+  if(!q) return vacioConAcciones ? accHtml('', []) : '';
   const mClients = gsClients.filter(c=>c.nombre.toLowerCase().includes(q)).slice(0,6);
   const mDeps = gsDeps.filter(d=>d.nombre.toLowerCase().includes(q)).slice(0,6);
   const mCitas = gsCitas.filter(c=>c.cliente.toLowerCase().includes(q)).slice(0,6);
 
-  if(!mClients.length && !mDeps.length && !mCitas.length){
+  const palabras = _nrm(q).split(/\s+/).filter(w=>w.length>=2);
+  const acc = accHtml(q, gsDeps.filter(d=>palabras.some(w=>_nrm(d.nombre).includes(w))).slice(0,3));
+  if(!mClients.length && !mDeps.length && !mCitas.length && !acc){
     return '<p class="gsearch-empty">Sin resultados para "'+sudEsc(q)+'".</p>';
   }
 
-  let html = '';
+  let html = acc;
   if(mClients.length){
     html += '<div class="gsearch-group-label">Método 3M</div>';
     html += mClients.map(c=>`<div class="gsearch-item" onclick="jumpToClient(${c.id})">
@@ -2528,7 +2664,7 @@ function searchHtml(qRaw){
 }
 function runGlobalSearch(){
   const el = document.getElementById('gsearchResults');
-  el.innerHTML = searchHtml(document.getElementById('gsearchInput').value) || '<p class="gsearch-empty">Escribe para buscar…</p>';
+  el.innerHTML = searchHtml(document.getElementById('gsearchInput').value, true) || '<p class="gsearch-empty">Escribe para buscar…</p>';
 }
 // ── Búsqueda dentro de la barra lateral (móvil) ──
 let _gsLoadedAt = 0;
@@ -2588,6 +2724,7 @@ document.addEventListener('click', function(e){
   if(modal && e.target === modal) closeGlobalSearch();
 });
 document.addEventListener('keydown', function(e){
+  if(e.key === 'Enter' && e.target && e.target.id === 'gsearchInput'){ const f = document.querySelector('#gsearchResults .gsearch-item'); if(f){ e.preventDefault(); f.click(); } }
   if((e.metaKey || e.ctrlKey) && e.key === 'k'){
     e.preventDefault();
     openGlobalSearch();
@@ -2675,7 +2812,7 @@ async function loadProgresion(){
   const depId = document.getElementById('progDeportista').value;
   const listEl = document.getElementById('progList');
   if(!depId){ listEl.innerHTML = ''; return; }
-  listEl.innerHTML = '<p class="dash-empty">Cargando…</p>';
+  listEl.innerHTML = skel(3);
   const rows = await getProgresion(depId) || [];
   if(!rows.length){ listEl.innerHTML = '<p class="dash-empty">Sin registros todavía para este deportista.</p>'; return; }
   listEl.innerHTML = rows.map(r=>{
@@ -2696,7 +2833,7 @@ async function addProgresion(){
   const valor = document.getElementById('progValor').value.trim();
   const fecha = document.getElementById('progFecha').value || localISO(new Date());
   const nota = document.getElementById('progNota').value.trim();
-  if(!depId || !ejercicio || !valor){ alert('Elige deportista, ejercicio y valor.'); return; }
+  if(!depId || !ejercicio || !valor){ toast('Elige deportista, ejercicio y valor.',{tipo:'aviso'}); return; }
   await insertProgresion({deportista_id: parseInt(depId), ejercicio, valor, fecha, nota: nota||null});
   document.getElementById('progEjercicio').value = '';
   document.getElementById('progValor').value = '';
@@ -3195,7 +3332,7 @@ function logout(){
   document.getElementById('sidebar').classList.remove('show');
   show('vlogin');
 }
-function show(v){document.querySelectorAll('.view').forEach(e=>e.classList.remove('active'));document.getElementById(v).classList.add('active');}
+function show(v){_autoDep.ahora();_autoM3.ahora();document.querySelectorAll('.view').forEach(e=>e.classList.remove('active'));document.getElementById(v).classList.add('active');}
 // ═══════════════ MODO OSCURO ═══════════════
 function toggleDarkMode(){
   const isDark = document.body.classList.toggle('dark-mode');
@@ -3371,7 +3508,7 @@ function openDet(id){
     <p class="sec-title">Guión de la sesión <span style="font-size:11px;color:var(--g400);font-weight:400">— pulsa cualquier semana para ver su guión</span></p>
     <div id="guionContainer">${renderGuion(c.id, c.semana||0, c.nombre)}</div>
     <p class="sec-title" style="margin-top:1.25rem">Notas del cliente</p>
-    <textarea class="notes-ta" id="nta" placeholder="Observaciones, ajustes al programa, notas personales del cliente…">${c.notas||''}</textarea>
+    <textarea class="notes-ta" id="nta" oninput="_autoM3.cambio(${id},this.value)" placeholder="Observaciones, ajustes al programa, notas personales del cliente…">${c.notas||''}</textarea>
     <div class="notes-foot">
       <button class="btn-save" onclick="saveNote(${id})">Guardar notas</button>
       <span class="save-ok" id="sok">✓ Guardado</span>
@@ -3384,12 +3521,7 @@ function copyUrl(url){
     setTimeout(()=>b.textContent='Copiar enlace',2000);
   });
 }
-async function saveNote(id){
-  const notes=document.getElementById('nta').value;
-  await patch(id,{notas:notes});
-  const c=clients.find(x=>x.id===id);if(c)c.notas=notes;
-  const ok=document.getElementById('sok');ok.classList.add('show');setTimeout(()=>ok.classList.remove('show'),2000);
-}
+function saveNote(id){ _autoM3.cambio(id,document.getElementById('nta').value); return _autoM3.ahora(); }
 
 // ── ADD CLIENT ──
 function openAdd(){document.getElementById('mAdd').style.display='flex';setTimeout(()=>document.getElementById('mNombre').focus(),100);}
@@ -3518,17 +3650,18 @@ async function handleFileUpload(depId) {
     const archivos = d.archivos || [];
     archivos.push({ nombre: file.name, path, fecha: new Date().toISOString() });
 
-    await patchDep(depId, { archivos, ultima_actividad: new Date().toISOString() });
+    const rp = await patchDep(depId, { archivos, ultima_actividad: new Date().toISOString() });
+    if (esErrorSb(rp)) { archivos.pop(); throw new Error('patch'); }
     d.archivos = archivos;
     d.ultima_actividad = new Date().toISOString();
 
     document.getElementById('filesList').innerHTML = renderFilesList(archivos, depId);
-    progEl.textContent = '✓ Archivo subido';
-    setTimeout(() => { progEl.textContent = ''; }, 2000);
+    progEl.textContent = '';
+    toast('Archivo subido');
     input.value = '';
   } catch(e) {
-    progEl.textContent = 'Error al subir. Inténtalo de nuevo.';
-    setTimeout(() => { progEl.textContent = ''; }, 3000);
+    progEl.textContent = '';
+    toast('No se pudo subir el archivo. Inténtalo de nuevo.',{tipo:'error'});
   }
 }
 
@@ -3557,7 +3690,7 @@ async function abrirArchivo(depId, index) {
     if (w) w.location.href = u; else window.location.href = u;
   } catch (e) {
     if (w) w.close();
-    alert('No se pudo abrir el archivo. Vuelve a intentarlo.');
+    toast('No se pudo abrir el archivo. Vuelve a intentarlo.',{tipo:'error'});
   }
 }
 
@@ -3568,23 +3701,28 @@ async function toggleVisibleCliente(depId, index) {
   const f = archivos[index];
   if (!f) return;
   const path = archivoPath(f);
-  if (!path) { alert('Este archivo no tiene ruta en el almacenamiento. Súbelo de nuevo para poder mostrarlo al cliente.'); return; }
+  if (!path) { toast('Este archivo no tiene ruta en el almacenamiento. Súbelo de nuevo para poder mostrarlo al cliente.',{tipo:'aviso',ms:7000}); return; }
   f.path = path; f.visible_cliente = !f.visible_cliente;
   await patchDep(depId, { archivos });
   d.archivos = archivos;
   document.getElementById('filesList').innerHTML = renderFilesList(archivos, depId);
 }
 
-async function deleteFile(depId, index) {
-  if (!confirm('¿Eliminar este archivo?')) return;
-  const d = deportistas.find(x => x.id === depId);
-  const archivos = d.archivos || [];
-  const borrado = archivos.splice(index, 1)[0];
-  await patchDep(depId, { archivos });
-  const ruta = borrado && archivoPath(borrado);
-  if (ruta) authFetch(`${SURL}/storage/v1/object/${STORAGE_BUCKET}/${ruta.split('/').map(encodeURIComponent).join('/')}`, { method: 'DELETE' }).catch(() => {});
-  d.archivos = archivos;
-  document.getElementById('filesList').innerHTML = renderFilesList(archivos, depId);
+function deleteFile(depId, index) {
+  const d = deportistas.find(x => x.id == depId); if (!d) return;
+  const borrado = (d.archivos || [])[index]; if (!borrado) return;
+  const pinta = () => { const el = document.getElementById('filesList'); if (el) el.innerHTML = renderFilesList(d.archivos || [], depId); };
+  deshacerBorrado({
+    texto: 'Archivo eliminado',
+    ocultar: () => { d.archivos = (d.archivos || []).filter((_, i) => i !== index); pinta(); },
+    restaurar: () => { const l = (d.archivos || []).slice(); l.splice(index, 0, borrado); d.archivos = l; pinta(); },
+    ejecutar: async () => {
+      const r = await patchDep(depId, { archivos: d.archivos });
+      if (esErrorSb(r)) return r;
+      const ruta = archivoPath(borrado);
+      if (ruta) authFetch(`${SURL}/storage/v1/object/${STORAGE_BUCKET}/${ruta.split('/').map(encodeURIComponent).join('/')}`, { method: 'DELETE' }).catch(() => {});
+    }
+  });
 }
 
 // ═══════════════ NUTRICIÓN DEPORTIVA ═══════════════
@@ -3617,7 +3755,7 @@ function syncAntroDark(){
 }
 const getDeportistas = () => sb('clientes_deportivos?select=*');
 const insertDep = (d) => sb('clientes_deportivos', {method:'POST', body: JSON.stringify(d)});
-const patchDep = (id, d) => sb(`clientes_deportivos?id=eq.${id}`, {method:'PATCH', headers:{'Prefer':'return=minimal'}, body: JSON.stringify(d)});
+const patchDep = (id, d, x={}) => sb(`clientes_deportivos?id=eq.${id}`, {method:'PATCH', headers:{'Prefer':'return=minimal'}, body: JSON.stringify(d), ...x});
 const deleteDep = (id) => sb(`clientes_deportivos?id=eq.${id}`, {method:'DELETE', headers:{'Prefer':'return=minimal'}});
 
 let depSearchTerm = '';
@@ -3747,7 +3885,7 @@ async function saveEditDep() {
     const idGuardado = editingDepId;   // closeEditDep() lo pone a null: sin esta copia la ficha no se refrescaba tras guardar
     closeEditDep();
     openDepDet(idGuardado);
-    if (avisoHora) alert(avisoHora);
+    if (avisoHora) toast(avisoHora,{tipo:'aviso',ms:8000});
   } catch(e) {
     document.getElementById('mEditDepErr').textContent = 'Error al guardar. Inténtalo de nuevo.';
   }
@@ -3922,6 +4060,70 @@ function renderCitas() {
   }
   listEl.innerHTML = html;
 }
+
+
+// ── Gestos en el móvil: deslizar una cita a la izquierda la elimina (con «Deshacer») y tirar hacia abajo desde arriba actualiza ──
+(function(){
+  const lista = document.getElementById('agendaList'); if(!lista) return;
+  let item=null, sx=0, sy=0, dx=0, activo=false;
+  lista.addEventListener('touchstart', e=>{
+    const w = e.target.closest('.agenda-swipe');
+    if(!w || e.target.closest('button,a')){ item=null; return; }
+    item = w; sx = e.touches[0].clientX; sy = e.touches[0].clientY; dx = 0; activo = false;
+    w.querySelector('.agenda-item').style.transition = 'none';
+  }, {passive:true});
+  lista.addEventListener('touchmove', e=>{
+    if(!item) return;
+    const mx = e.touches[0].clientX - sx, my = e.touches[0].clientY - sy;
+    if(!activo){
+      if(Math.abs(my) > 10 && Math.abs(my) > Math.abs(mx)){ item.querySelector('.agenda-item').style.transition=''; item = null; return; }
+      if(Math.abs(mx) > 10 && Math.abs(mx) > Math.abs(my)*1.5) activo = true; else return;
+    }
+    dx = Math.min(0, mx);
+    item.querySelector('.agenda-item').style.transform = `translateX(${Math.max(dx,-110)}px)`;
+  }, {passive:true});
+  const fin = ()=>{
+    if(!item) return;
+    const it = item.querySelector('.agenda-item'), id = item.dataset.id, borrar = activo && dx < -80;
+    it.style.transition = ''; it.style.transform = ''; item = null;
+    if(borrar) removeCita(id);
+  };
+  lista.addEventListener('touchend', fin); lista.addEventListener('touchcancel', ()=>{ if(item){ const it=item.querySelector('.agenda-item'); it.style.transition=''; it.style.transform=''; item=null; } });
+})();
+// Actualizar la pantalla abierta (botón de tirar hacia abajo, solo en móvil)
+async function refrescarVista(){
+  await _autoDep.ahora(); await _autoM3.ahora();
+  const v = document.querySelector('.view.active'); if(!v) return;
+  const mapa = {vhome:loadDashboard, vagenda:loadCitas, vdash:load, vdepdash:loadDeportistas, vfact:loadFacturacion,
+    vdepdet:async()=>{ await loadDeportistas(); if(currentDepId) openDepDet(currentDepId); }};
+  const f = mapa[v.id]; if(!f) return;
+  try{ await f(); toast('Actualizado',{ms:1500}); }catch(e){ toast('No se pudo actualizar',{tipo:'error'}); }
+}
+(function(){
+  const ptr = document.getElementById('ptr'); if(!ptr || !('ontouchstart' in window)) return;
+  let y0 = null, tirado = 0, ocupado = false;
+  const movil = ()=>window.matchMedia('(max-width:860px)').matches;
+  document.addEventListener('touchstart', e=>{
+    y0 = (!ocupado && movil() && window.scrollY <= 0 && !e.target.closest('textarea,input,select,iframe,.mbg,.sidebar,.agenda-swipe-bg,.agenda-item,#vantro,#vplan,#vcalc')) ? e.touches[0].clientY : null;
+    tirado = 0;
+  }, {passive:true});
+  document.addEventListener('touchmove', e=>{
+    if(y0 === null) return;
+    const d = e.touches[0].clientY - y0;
+    if(d <= 0 || window.scrollY > 0){ ptr.classList.remove('on'); tirado = 0; return; }
+    tirado = Math.min(d*0.5, 80);
+    ptr.classList.add('on'); ptr.style.transform = `translateY(${tirado-40}px) rotate(${tirado*4}deg)`; ptr.style.opacity = Math.min(1, tirado/50);
+  }, {passive:true});
+  document.addEventListener('touchend', async ()=>{
+    if(y0 === null) return; y0 = null;
+    if(tirado >= 55 && !ocupado){
+      ocupado = true; ptr.classList.add('go'); ptr.style.transform = 'translateY(0)'; ptr.style.opacity = 1;
+      await refrescarVista();
+      ocupado = false;
+    }
+    ptr.classList.remove('on','go'); ptr.style.transform = ''; tirado = 0;
+  });
+})();
 
 // ═══════════════ EXPORTAR PDF (vía impresión del navegador) ═══════════════
 // Antes de imprimir se calcula cuántas páginas A4 ocupa el informe (alto útil 269 mm) simulando cómo
@@ -4183,7 +4385,7 @@ async function abrirTestSudoracion(depId){
 }
 
 function exportCalcPDF(){
-  if(!lastCalc && !lastHidra){ alert('Introduce datos y calcula algo antes de exportar.'); return; }
+  if(!lastCalc && !lastHidra){ toast('Introduce datos y calcula algo antes de exportar.',{tipo:'aviso'}); return; }
   let html = `
     <div class="pdf-hero">
       ${pdfLogoHtml()}
@@ -4416,7 +4618,7 @@ function renderCitaItem(c, isPast) {
   const payHtml = needsPay
     ? `<button class="pay-toggle ${paid?'paid':'pending'}" onclick="toggleCitaPago(${c.id})">${paid?'✓ Pagado':'Pendiente'}</button>`
     : `<span class="pay-toggle info">Sin pago individual</span>`;
-  return `<div class="agenda-item${isPast?' past':''}">
+  return `<div class="agenda-swipe" data-id="${c.id}"><div class="agenda-swipe-bg" aria-hidden="true"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg></div><div class="agenda-item${isPast?' past':''}">
     <div class="agenda-date-box">
       <div class="agenda-date-day">${day}</div>
       <div class="agenda-date-month">${month}</div>
@@ -4434,7 +4636,7 @@ function renderCitaItem(c, isPast) {
         <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>
       </button>
     </div>
-  </div>`;
+  </div></div>`;
 }
 
 async function toggleCitaPago(id) {
@@ -4446,11 +4648,14 @@ async function toggleCitaPago(id) {
   renderCitas();
 }
 
-async function removeCita(id) {
-  if (!confirm('¿Eliminar esta cita de la agenda?')) return;
-  await deleteCita(id);
-  citas = citas.filter(x => x.id !== id);
-  renderCitas();
+function removeCita(id) {
+  const antes = citas.slice(), c = antes.find(x => x.id == id); if (!c) return;
+  deshacerBorrado({
+    texto: 'Cita de ' + c.cliente + ' eliminada',
+    ocultar: () => { citas = citas.filter(x => x.id != id); renderCitas(); },
+    restaurar: () => { citas = antes.filter(x => x.id == id || citas.some(y => y.id == x.id)); renderCitas(); },
+    ejecutar: () => deleteCita(id)
+  });
 }
 
 function openAddCita() {
@@ -4647,7 +4852,7 @@ function openDepDet(id) {
 
     <div class="depd-section">
       <p class="sec-title">Acceso del cliente</p>
-      <div class="med-box" id="accBox"><p class="med-empty">Cargando…</p></div>
+      <div class="med-box" id="accBox">${skel(3)}</div>
     </div>
 
     <div class="depd-section">
@@ -4657,22 +4862,22 @@ function openDepDet(id) {
 
     <div class="depd-section">
       <p class="sec-title">Seguimiento semanal</p>
-      <div class="med-box" id="segBox"><p class="med-empty">Cargando…</p></div>
+      <div class="med-box" id="segBox">${skel(3)}</div>
     </div>
 
     <div class="depd-section">
       <p class="sec-title">Mediciones · antropometría</p>
-      <div class="med-box" id="medBox"><p class="med-empty">Cargando…</p></div>
+      <div class="med-box" id="medBox">${skel(3)}</div>
     </div>
 
     <div class="depd-section">
       <p class="sec-title">Test de sudoración</p>
-      <div class="med-box" id="sudBox"><p class="med-empty">Cargando…</p></div>
+      <div class="med-box" id="sudBox">${skel(3)}</div>
     </div>
 
     <div class="depd-section">
       <p class="sec-title">Planes de competición</p>
-      <div class="med-box" id="planBox"><p class="med-empty">Cargando…</p></div>
+      <div class="med-box" id="planBox">${skel(3)}</div>
     </div>
 
     <div class="depd-section">
@@ -4682,7 +4887,7 @@ function openDepDet(id) {
         <input type="text" class="inp" id="histNota" placeholder="Nota breve de la sesión…">
         <button class="btn-hist-add" onclick="addHistorial(${d.id})">Añadir</button>
       </div>
-      <div id="histList">Cargando…</div>
+      <div id="histList">${skel(3)}</div>
     </div>
 
     <div class="depd-cols">
@@ -4700,7 +4905,7 @@ function openDepDet(id) {
 
     <div class="depd-section">
       <p class="sec-title">Notas privadas</p>
-      <textarea class="notes-ta" id="depNotes" placeholder="Objetivos, ajustes, observaciones de seguimiento…">${d.notas || ''}</textarea>
+      <textarea class="notes-ta" id="depNotes" oninput="_autoDep.cambio(${d.id},this.value)" placeholder="Objetivos, ajustes, observaciones de seguimiento…">${d.notas || ''}</textarea>
       <div class="notes-foot">
         <button class="btn-save" onclick="saveDepNote(${d.id})">Guardar notas</button>
         <span class="save-ok" id="depSaveOk">✓ Guardado</span>
@@ -4982,7 +5187,7 @@ async function loadSudoracion(depId){
       <td>${sudEsc(t.actividad||'—')}<span class="sud-cond">${cond(t)||'sin condiciones'}</span></td>
       <td class="n">${r.tasa_l_h!=null?medNum(+r.tasa_l_h,2)+' L/h':'—'}</td>
       <td class="n hide-m">${r.pct_peso!=null?medNum(+r.pct_peso,1)+' %':'—'}</td>
-      <td class="act">${btnDel('Eliminar test',`deleteSudoracion(${t.id},${depId})`)}</td></tr>`;
+      <td class="act">${btnDel('Eliminar test',`deleteSudoracion(${t.id},${depId},this)`)}</td></tr>`;
   }).join('');
   el.innerHTML = `
     <div class="med-head">
@@ -5000,10 +5205,14 @@ async function loadSudoracion(depId){
     ${nuevo}`;
 }
 
-async function deleteSudoracion(id, depId){
-  if(!confirm('¿Eliminar este test de sudoración?')) return;
-  await sb(`tests_sudoracion?id=eq.${id}`, {method:'DELETE', headers:{'Prefer':'return=minimal'}});
-  loadSudoracion(depId);
+function deleteSudoracion(id, depId, btn){
+  const fila = btn && btn.closest('tr');
+  deshacerBorrado({
+    texto: 'Test de sudoración eliminado',
+    ocultar: () => { if (fila) fila.style.display = 'none'; },
+    restaurar: () => { if (fila) fila.style.display = ''; },
+    ejecutar: async () => { const r = await sb(`tests_sudoracion?id=eq.${id}`, {method:'DELETE', headers:{'Prefer':'return=minimal'}}); if (!esErrorSb(r)) loadSudoracion(depId); return r; }
+  });
 }
 
 // ── Calculadora de energía asociada a un deportista ──
@@ -5395,7 +5604,7 @@ async function planVisible(id, depId, val){
 }
 
 function exportPlanPDF(){
-  if(!lastPlan){ alert('Indica el peso y la duración para generar el plan antes de exportar.'); return; }
+  if(!lastPlan){ toast('Indica el peso y la duración para generar el plan antes de exportar.',{tipo:'aviso'}); return; }
   const p = lastPlan.p, sel = document.getElementById('planDep');
   const nombre = sel.value ? sel.options[sel.selectedIndex].text : '';
   const evento = document.getElementById('planEvento').value.trim(), fecha = document.getElementById('planFecha').value;
@@ -5444,7 +5653,7 @@ async function loadPlanes(depId){
   el.innerHTML = `<table class="plan-lista"><tbody>${rows.map(r=>`<tr>
       <td class="n">${fmt(r.fecha)}</td>
       <td>${sudEsc(r.evento||'Sin evento')}<span class="sud-cond">${sudEsc((PLAN_DEPORTES[r.deporte]||{}).n||'')} · ${r.duracion_min} min · ${sudEsc(PLAN_INT[r.intensidad]||'')}</span>${planEstadoCliente(r)}</td>
-      <td class="act"><div class="row-actions">${r.visible_cliente?btnSoft('Dejar de compartir',`planVisible(${r.id},${depId},false)`,'trash',true):''}${btnSoft('Ver / PDF',`abrirPlan(${depId},${r.id})`,'doc',true)}${btnDel('Eliminar plan',`deletePlan(${r.id},${depId})`)}</div></td></tr>`).join('')}</tbody></table>
+      <td class="act"><div class="row-actions">${r.visible_cliente?btnSoft('Dejar de compartir',`planVisible(${r.id},${depId},false)`,'trash',true):''}${btnSoft('Ver / PDF',`abrirPlan(${depId},${r.id})`,'doc',true)}${btnDel('Eliminar plan',`deletePlan(${r.id},${depId},this)`)}</div></td></tr>`).join('')}</tbody></table>
     ${nuevo}`;
 }
 async function abrirPlan(depId, planId){
@@ -5465,10 +5674,14 @@ async function abrirPlan(depId, planId){
     planGuardadoOk = true; planActualId = r.id; planActualizarBoton();
   }
 }
-async function deletePlan(id, depId){
-  if(!confirm('¿Eliminar este plan de competición?')) return;
-  await sb(`planes_competicion?id=eq.${id}`, {method:'DELETE', headers:{'Prefer':'return=minimal'}});
-  loadPlanes(depId);
+function deletePlan(id, depId, btn){
+  const fila = btn && btn.closest('tr');
+  deshacerBorrado({
+    texto: 'Plan de competición eliminado',
+    ocultar: () => { if (fila) fila.style.display = 'none'; },
+    restaurar: () => { if (fila) fila.style.display = ''; },
+    ejecutar: async () => { const r = await sb(`planes_competicion?id=eq.${id}`, {method:'DELETE', headers:{'Prefer':'return=minimal'}}); if (!esErrorSb(r)) loadPlanes(depId); return r; }
+  });
 }
 
 // ═══════════════ HISTORIAL DE SESIONES + ACTIVIDAD ═══════════════
@@ -5503,24 +5716,31 @@ async function loadHistorial(depId){
     const dateStr = new Date(r.fecha+'T00:00:00').toLocaleDateString('es-ES',{day:'numeric',month:'short',year:'numeric'});
     const rightEl = r.auto
       ? `<span class="hist-tag" title="Registrada automáticamente desde la calculadora de antropometría">Auto</span>`
-      : `<button class="hist-del" onclick="deleteHistorial(${r.id},${depId})" title="Eliminar">
+      : `<button class="hist-del" onclick="deleteHistorial(${r.id},${depId},this)" title="Eliminar">
       <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>
     </button>`;
     return `<div class="hist-item"><span class="hist-date">${dateStr}</span><span class="hist-nota">${r.nota}</span>${rightEl}</div>`;
   }).join('');
 }
 
-async function deleteHistorial(rowId, depId){
-  if(!confirm('¿Eliminar este registro del historial?')) return;
-  await deleteHistorialRow(rowId);
-  const remaining = await getHistorial(depId) || [];
-  if(remaining.length){
-    const latest = remaining[0].fecha + 'T12:00:00';
-    await patchDep(depId, {ultima_actividad: latest});
-    const d = deportistas.find(x=>x.id===depId);
-    if(d) d.ultima_actividad = latest;
-  }
-  await loadHistorial(depId);
+function deleteHistorial(rowId, depId, btn){
+  const fila = btn && btn.closest('.hist-item');
+  deshacerBorrado({
+    texto: 'Registro eliminado del historial',
+    ocultar: () => { if (fila) fila.style.display = 'none'; },
+    restaurar: () => { if (fila) fila.style.display = ''; },
+    ejecutar: async () => {
+      const res = await deleteHistorialRow(rowId); if (esErrorSb(res)) return res;
+      const remaining = await getHistorial(depId) || [];
+      if (remaining.length){
+        const latest = remaining[0].fecha + 'T12:00:00';
+        await patchDep(depId, {ultima_actividad: latest});
+        const d = deportistas.find(x=>x.id===depId);
+        if (d) d.ultima_actividad = latest;
+      }
+      await loadHistorial(depId);
+    }
+  });
 }
 
 async function addHistorial(depId){
@@ -5555,16 +5775,7 @@ function copyDepUrl(url) {
   });
 }
 
-async function saveDepNote(id) {
-  const notes = document.getElementById('depNotes').value;
-  const now = new Date().toISOString();
-  await patchDep(id, {notas: notes, ultima_actividad: now});
-  const d = deportistas.find(x => x.id === id);
-  if (d) { d.notas = notes; d.ultima_actividad = now; }
-  const ok = document.getElementById('depSaveOk');
-  ok.classList.add('show');
-  setTimeout(() => ok.classList.remove('show'), 2000);
-}
+function saveDepNote(id) { _autoDep.cambio(id, document.getElementById('depNotes').value); return _autoDep.ahora(); }
 
 function openDelDep(id) {
   const d = deportistas.find(x => x.id === id);
@@ -6301,9 +6512,11 @@ function showWeekGuion(weekIdx, clientId, clientNombre) {
 }
 
 async function resetGuion(clientId, semana, nombre) {
-  if (!confirm('¿Limpiar todos los checks de esta sesión?')) return;
+  const antes = Object.assign({}, getGuionChecksFor(clientId, semana));
+  const reabrir = () => openDet(clients.findIndex(x => x.id === parseInt(clientId)));
   await saveGuionChecksFor(clientId, semana, {});
-  openDet(clients.findIndex(x => x.id === parseInt(clientId)));
+  reabrir();
+  toast('Checks de la sesión limpiados', {ms:6000, accion:{texto:'Deshacer', fn: async () => { await saveGuionChecksFor(clientId, semana, antes); reabrir(); }}});
 }
 
 </script>
