@@ -946,6 +946,92 @@ body.sin-conexion #offlineBar{display:block}
 @media(max-width:860px){html{overscroll-behavior-y:contain}}
 .gsearch-item.acc .gsearch-avatar{background:var(--gold-50);color:var(--gold-dk)}
 
+/* ── Ficha del deportista: pestañas y línea de tiempo ── */
+.depd-tabbar{position:sticky;top:0;z-index:20;background:var(--bg);padding:6px 0 10px;margin:0 0 1rem}
+.depd-tabs{display:flex;gap:4px;overflow-x:auto;padding:4px;background:var(--g100);border-radius:12px;scrollbar-width:none}
+.depd-tabs::-webkit-scrollbar{display:none}
+.depd-tab{flex:1 0 auto;display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:9px 15px;border:none;background:none;border-radius:9px;font:600 13px var(--f);color:var(--g500);cursor:pointer;white-space:nowrap;min-height:38px}
+.depd-tab:hover{color:var(--g900)}
+.depd-tab.on{background:var(--sf);color:var(--t600);box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.depd-tab:focus-visible{outline:2px solid var(--t400);outline-offset:1px}
+.tab-n{font-size:11px;font-weight:700;background:var(--g200);color:var(--g500);border-radius:20px;padding:1px 7px}
+.depd-tab.on .tab-n{background:var(--t50);color:var(--t600)}
+.depd-panel{display:none}.depd-panel.on{display:block}
+@media(max-width:860px){.depd-tabbar{top:calc(56px + env(safe-area-inset-top,0px))}}
+.tl-filtros{display:flex;gap:6px;overflow-x:auto;margin:12px 0 4px;padding-bottom:2px;scrollbar-width:none}
+.tl-filtros::-webkit-scrollbar{display:none}
+.tl-chip{flex:0 0 auto;padding:6px 13px;border-radius:20px;border:.5px solid var(--bdm);background:var(--sf);color:var(--g500);font:600 12px var(--f);cursor:pointer;min-height:32px}
+.tl-chip.on{background:var(--t600);border-color:var(--t600);color:#fff}
+.tl-chip:focus-visible{outline:2px solid var(--t400);outline-offset:1px}
+.tl-mes{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--g400);margin:18px 0 10px}
+.tl-item{display:flex;gap:12px;position:relative;padding-bottom:14px}
+.tl-item::before{content:'';position:absolute;left:14px;top:32px;bottom:2px;width:1px;background:var(--bd)}
+.tl-item:last-child::before{display:none}
+.tl-ico{width:29px;height:29px;border-radius:50%;flex:0 0 29px;display:flex;align-items:center;justify-content:center;background:var(--g100);color:var(--g500)}
+.tl-ico.sesion{background:var(--t50);color:var(--t600)}
+.tl-ico.medicion{background:var(--gold-50);color:var(--gold-dk)}
+.tl-ico.seguimiento{background:#E8EEF7;color:#44618F}
+.tl-ico.archivo{background:var(--g100);color:var(--g500)}
+.tl-ico.plan{background:#F3E8F2;color:#7A4A78}
+body.dark-mode .tl-ico.seguimiento{background:#202c3d;color:#9db6dd}
+body.dark-mode .tl-ico.plan{background:#33253a;color:#d3a6d0}
+.tl-body{flex:1;min-width:0}
+.tl-t{font-size:13.5px;font-weight:600;color:var(--g900);overflow-wrap:anywhere}
+.tl-s{font-size:12px;color:var(--g500);margin-top:1px;overflow-wrap:anywhere}
+.tl-s .aviso{color:var(--gold-dk);font-weight:600}
+.tl-f{font-size:11.5px;color:var(--g400);white-space:nowrap;padding-top:2px}
+.tl-del{background:none;border:none;color:var(--g400);cursor:pointer;padding:6px;margin:-4px -6px -4px 0;border-radius:6px;min-width:32px;min-height:32px;display:inline-flex;align-items:center;justify-content:center}
+.tl-del:hover{color:var(--red)}
+.tl-vacio{font-size:13px;color:var(--g400);padding:14px 0}
+
+/* ── Informe de progreso (PDF) ── */
+.inf-modal{background:var(--sf);border-radius:16px;width:min(1080px,100%);max-height:calc(100vh - 2rem);display:flex;flex-direction:column;overflow:hidden}
+.inf-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 12px;border-bottom:.5px solid var(--bd)}
+.inf-head .mt{margin:0}
+.inf-x{background:none;border:none;font-size:26px;line-height:1;color:var(--g500);cursor:pointer;padding:4px 10px;border-radius:8px;min-width:40px;min-height:40px}
+.inf-x:hover{background:var(--g100)}
+.inf-body{display:grid;grid-template-columns:300px minmax(0,1fr);gap:0;min-height:0;flex:1;overflow:hidden}
+.inf-side{padding:16px 20px;border-right:.5px solid var(--bd);overflow-y:auto}
+.inf-side .notes-ta{min-height:130px;margin-top:6px}
+.inf-acts{display:flex;flex-direction:column;gap:8px;margin-top:14px}
+.inf-acts .btn-ok,.inf-acts .btn-soft{flex:none;width:100%;justify-content:center}
+.inf-acts button:disabled{opacity:.6;cursor:default}
+.inf-msg{font-size:12px;color:var(--g500);margin-top:10px;min-height:16px;line-height:1.5}
+.inf-hint{font-size:12px;color:var(--g500);line-height:1.5;margin-top:6px}
+.inf-prev{background:var(--g100);padding:16px;overflow:auto;min-width:0}
+.inf-scaler{width:210mm;transform-origin:top left}
+@media(max-width:860px){
+  .inf-modal{max-height:calc(100vh - 1rem);border-radius:14px}
+  .inf-body{grid-template-columns:minmax(0,1fr);overflow-y:auto}
+  .inf-side{border-right:none;border-bottom:.5px solid var(--bd);overflow:visible}
+  .inf-prev{padding:10px;overflow:visible}
+}
+.rp-page{width:210mm;height:297mm;background:#fff;color:#1a1a18;font-family:'Inter',system-ui,sans-serif;position:relative;overflow:hidden;box-sizing:border-box;box-shadow:0 2px 14px rgba(0,0,0,.15)}
+.rp-head{background:#04342C;color:#fff;padding:11mm 14mm 8mm;display:flex;align-items:center;gap:5mm}
+.rp-logo{width:17mm;height:17mm;border-radius:22%;overflow:hidden;background:#fff;flex:0 0 17mm}
+.rp-logo img{width:100%;height:100%;display:block}
+.rp-h1{font-size:20pt;font-weight:700;letter-spacing:-.02em;line-height:1.15}
+.rp-sub{font-size:9.5pt;color:#9FE1CB;margin-top:1mm}
+.rp-per{margin-left:auto;text-align:right;font-size:8.5pt;color:#9FE1CB;line-height:1.5}
+.rp-per b{display:block;color:#fff;font-size:10pt}
+.rp-body{padding:8mm 14mm 0}
+.rp-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:3.5mm}
+.rp-kpi{border:.3mm solid #E6E2D8;border-radius:3.5mm;padding:3.5mm 4mm;background:#FAFAF8}
+.rp-kpi-l{font-size:6.5pt;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#7A5A38}
+.rp-kpi-v{font-size:14pt;font-weight:700;color:#04342C;margin-top:1mm;line-height:1.2}
+.rp-kpi-s{font-size:7.5pt;color:#5F5E5A;margin-top:.5mm}
+.rp-sec{font-size:7.5pt;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#0F6E56;margin:6.5mm 0 2.5mm}
+.rp-charts2{display:grid;grid-template-columns:1fr 1fr;gap:4mm}
+.rp-charts3{display:grid;grid-template-columns:repeat(3,1fr);gap:3.5mm}
+.rp-ch{border:.3mm solid #E6E2D8;border-radius:3.5mm;padding:2.5mm 3mm 1.5mm}
+.rp-ch-t{font-size:7.5pt;font-weight:600;color:#444441;display:flex;align-items:center;gap:1.5mm}
+.rp-ch-t i{width:2mm;height:2mm;border-radius:50%;display:inline-block}
+.rp-ch svg{width:100%;height:auto;display:block}
+.rp-bul{font-size:9pt;line-height:1.6;color:#2c2c2a;margin:0;padding-left:4.5mm}
+.rp-note{background:#F5EDE0;border-radius:3.5mm;padding:3.5mm 5mm;font-size:9pt;line-height:1.55;color:#3d3326;white-space:pre-wrap;overflow-wrap:anywhere}
+.rp-note b{display:block;font-size:7pt;letter-spacing:.08em;text-transform:uppercase;color:#7A5A38;margin-bottom:1mm}
+.rp-foot{position:absolute;left:14mm;right:14mm;bottom:8mm;display:flex;justify-content:space-between;gap:4mm;font-size:7pt;color:#888780;border-top:.3mm solid #E6E2D8;padding-top:2.5mm}
+
 </style>
 </head>
 <body>
@@ -1619,6 +1705,26 @@ body.sin-conexion #offlineBar{display:block}
     </div>
   </div>
 
+</div>
+
+<!-- MODAL: INFORME DE PROGRESO -->
+<div class="mbg" id="mInforme" style="display:none;z-index:300" role="dialog" aria-modal="true" aria-labelledby="infTitulo">
+  <div class="inf-modal">
+    <div class="inf-head"><p class="mt" id="infTitulo">Informe de progreso</p><button type="button" class="inf-x" onclick="cerrarInforme()" aria-label="Cerrar">&times;</button></div>
+    <div class="inf-body">
+      <div class="inf-side">
+        <label class="mfl" for="infComent">Comentario para el cliente <span class="hd-opt">(opcional)</span></label>
+        <textarea class="notes-ta" id="infComent" maxlength="500" oninput="infPintar()" placeholder="Ej. Muy buena evolución. Seguimos con el mismo plan hasta la próxima revisión."></textarea>
+        <p class="inf-hint">Resume peso, % de grasa y seguimiento semanal. Lo ves tal cual saldrá en el PDF.</p>
+        <div class="inf-acts">
+          <button type="button" class="btn-ok" id="infDescargar" onclick="infDescargar()">Descargar PDF</button>
+          <button type="button" class="btn-soft" id="infCompartir" onclick="infCompartir()">Compartir con el cliente</button>
+        </div>
+        <p class="inf-msg" id="infMsg" role="status" aria-live="polite"></p>
+      </div>
+      <div class="inf-prev" id="infPreview"></div>
+    </div>
+  </div>
 </div>
 
 <!-- MODAL: BÚSQUEDA GLOBAL -->
@@ -2730,6 +2836,7 @@ document.addEventListener('keydown', function(e){
     openGlobalSearch();
   }
   if(e.key === 'Escape'){
+    const inf = document.getElementById('mInforme'); if(inf && inf.style.display === 'flex'){ cerrarInforme(); return; }
     const modal = document.getElementById('mGlobalSearch');
     if(modal && modal.style.display === 'flex') closeGlobalSearch();
   }
@@ -4125,6 +4232,170 @@ async function refrescarVista(){
   });
 })();
 
+
+// ═══════════════ INFORME DE PROGRESO (PDF) ═══════════════
+// Resume peso, % de grasa (valoraciones de antropometría) y seguimiento semanal en un A4. Se puede descargar o compartir con el cliente
+// (se sube al bucket privado y se añade a `archivos` con visible_cliente:true y tipo:'informe_progreso'). Las librerías de PDF se cargan al pulsar.
+let _inf = null;
+function cargarScript(url){
+  return new Promise((ok,ko)=>{ const sc=document.createElement('script'); sc.src=url; sc.onload=ok; sc.onerror=()=>ko(new Error('No se pudo cargar '+url)); document.head.appendChild(sc); });
+}
+async function cargarLibsPdf(){
+  if(!window.html2canvas) await cargarScript('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js');
+  if(!(window.jspdf && window.jspdf.jsPDF)) await cargarScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
+}
+async function abrirInformeProgreso(depId){
+  const d = deportistas.find(x=>x.id==depId); if(!d) return;
+  document.getElementById('mInforme').style.display = 'flex';
+  document.getElementById('infComent').value = ''; document.getElementById('infMsg').textContent = '';
+  document.getElementById('infPreview').innerHTML = skel(5);
+  const [meds, segs] = await Promise.all([
+    Promise.resolve(getMediciones(depId)).then(a=>Array.isArray(a)?a:[]).catch(()=>[]),
+    Promise.resolve(sb(`seguimientos?deportista_id=eq.${depId}&order=semana.asc&select=semana,respuestas`)).then(a=>Array.isArray(a)?a:[]).catch(()=>[])
+  ]);
+  _inf = { d, med: meds.map(medPunto), segs };
+  if(!_inf.med.length && !_inf.segs.length){ cerrarInforme(); toast('Todavía no hay mediciones ni seguimientos para hacer el informe.', {tipo:'aviso', ms:5000}); return; }
+  infPintar();
+  setTimeout(()=>{ const t=document.getElementById('infComent'); if(t) t.focus(); }, 60);
+}
+function cerrarInforme(){ document.getElementById('mInforme').style.display = 'none'; _inf = null; }
+function infPintar(){
+  if(!_inf) return;
+  const cont = document.getElementById('infPreview');
+  cont.innerHTML = `<div class="inf-scaler" id="infScaler">${infHtml(_inf, document.getElementById('infComent').value.trim())}</div>`;
+  infEscala();
+}
+// La página mide 210 mm (≈794 px): se encoge para que quepa en el panel de vista previa.
+function infEscala(){
+  const cont = document.getElementById('infPreview'), sc = document.getElementById('infScaler'); if(!cont || !sc) return;
+  const util = cont.clientWidth - 32, z = Math.min(1, util/794);
+  sc.style.zoom = z > 0 ? z : 1;
+}
+window.addEventListener('resize', infEscala);
+
+const INF_MESES = ['ene','feb','mar','abr','may','jun','jul','ago','sept','oct','nov','dic'];
+const infFecha = (f, anio) => { const x = new Date(String(f).slice(0,10)+'T00:00:00'); return x.getDate()+' '+INF_MESES[x.getMonth()]+(anio?' '+x.getFullYear():''); };
+function infMedia(arr){ const v = arr.filter(n=>n!=null&&!isNaN(n)); return v.length ? v.reduce((a,b)=>a+b,0)/v.length : null; }
+// Gráfica de línea para el informe (siempre en colores claros: el PDF no cambia con el modo oscuro).
+function infChart(pts, color, titulo, unit, dec, rango){
+  const sr = pts.filter(p=>p.v!=null);
+  if(sr.length < 2) return '';
+  const W=300,H=104,padL=14,padR=20,padT=16,padB=20;
+  const t0 = new Date(sr[0].fecha+'T00:00:00').getTime(), t1 = new Date(sr[sr.length-1].fecha+'T00:00:00').getTime();
+  const xAt = f => t1===t0 ? W/2 : padL + (new Date(f+'T00:00:00').getTime()-t0)/(t1-t0)*(W-padL-padR);
+  const vals = sr.map(p=>p.v), mn = rango?rango[0]:Math.min(...vals), mx = rango?rango[1]:Math.max(...vals), rg = (mx-mn)||1;
+  const yAt = v => padT + (1-(v-mn)/rg)*(H-padT-padB);
+  const ruta = sr.map((p,i)=>(i?'L':'M')+xAt(p.fecha).toFixed(1)+' '+yAt(p.v).toFixed(1)).join(' ');
+  const area = ruta+` L${xAt(sr[sr.length-1].fecha).toFixed(1)} ${H-padB} L${xAt(sr[0].fecha).toFixed(1)} ${H-padB} Z`;
+  const puntos = sr.map(p=>`<circle cx="${xAt(p.fecha).toFixed(1)}" cy="${yAt(p.v).toFixed(1)}" r="3" fill="${color}"/>`).join('');
+  const a = sr[0], z = sr[sr.length-1];
+  const lab = (p,anc)=>`<text x="${xAt(p.fecha).toFixed(1)}" y="${(yAt(p.v)-6).toFixed(1)}" text-anchor="${anc}" font-size="11" font-weight="700" fill="#1a1a18">${medNum(p.v,dec)}</text>`;
+  return `<div class="rp-ch"><div class="rp-ch-t"><i style="background:${color}"></i>${titulo}${unit?' ('+unit+')':''}</div>
+    <svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg"><line x1="${padL}" y1="${H-padB}" x2="${W-padR}" y2="${H-padB}" stroke="#E6E2D8" stroke-width="1"/>
+    <path d="${area}" fill="${color}" opacity=".10"/><path d="${ruta}" fill="none" stroke="${color}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>${puntos}${lab(a,'start')}${lab(z,'end')}
+    <text x="${padL}" y="${H-5}" font-size="9.5" fill="#888780">${infFecha(a.fecha)}</text><text x="${W-padR}" y="${H-5}" text-anchor="end" font-size="9.5" fill="#888780">${infFecha(z.fecha)}</text></svg></div>`;
+}
+function infHtml(I, comentario){
+  const d = I.d, med = I.med, segs = I.segs;
+  // Peso: valoraciones de antropometría y pesos del seguimiento (si coinciden en fecha, manda la valoración)
+  const pesoMap = {};
+  segs.forEach(x=>{ const q=x.respuestas||{}; if(q.peso!=null && !isNaN(q.peso)) pesoMap[String(x.semana).slice(0,10)] = +q.peso; });
+  med.forEach(m=>{ if(m.peso!=null) pesoMap[String(m.fecha).slice(0,10)] = m.peso; });
+  const pesoPts = Object.keys(pesoMap).sort().map(f=>({fecha:f, v:pesoMap[f]}));
+  const grasaPts = med.filter(m=>m.grasa!=null).map(m=>({fecha:String(m.fecha).slice(0,10), v:m.grasa}));
+  const delta = (pts,dec,unidad,etq) => { if(pts.length<2) return pts.length?`<div class="rp-kpi-s">${infFecha(pts[0].fecha,true)}</div>`:''; const dd = pts[pts.length-1].v-pts[0].v; return `<div class="rp-kpi-s">${medSigned(dd,dec)} ${etq||unidad} desde el ${infFecha(pts[0].fecha)}</div>`; };
+  const ult = pts => pts.length ? medNum(pts[pts.length-1].v,1) : '—';
+  const adh = infMedia(segs.map(x=>(x.respuestas||{}).adherencia)), ene = infMedia(segs.map(x=>(x.respuestas||{}).energia)), ent = infMedia(segs.map(x=>(x.respuestas||{}).entrenos));
+  const fechas = [...pesoPts.map(p=>p.fecha), ...grasaPts.map(p=>p.fecha), ...segs.map(x=>String(x.semana).slice(0,10))].sort();
+  const periodo = fechas.length ? (fechas[0]===fechas[fechas.length-1] ? infFecha(fechas[0],true) : infFecha(fechas[0], fechas[0].slice(0,4)!==fechas[fechas.length-1].slice(0,4))+' – '+infFecha(fechas[fechas.length-1],true)) : '';
+  const kpis = `<div class="rp-kpis">
+    <div class="rp-kpi"><div class="rp-kpi-l">Peso</div><div class="rp-kpi-v">${ult(pesoPts)}${pesoPts.length?' kg':''}</div>${delta(pesoPts,1,'kg')}</div>
+    <div class="rp-kpi"><div class="rp-kpi-l">% de grasa</div><div class="rp-kpi-v">${ult(grasaPts)}${grasaPts.length?' %':''}</div>${delta(grasaPts,1,'%','puntos')}</div>
+    <div class="rp-kpi"><div class="rp-kpi-l">Adherencia media</div><div class="rp-kpi-v">${adh!=null?medNum(adh,1)+' / 5':'—'}</div><div class="rp-kpi-s">Energía media ${ene!=null?medNum(ene,1)+' / 5':'—'}</div></div>
+    <div class="rp-kpi"><div class="rp-kpi-l">Seguimientos</div><div class="rp-kpi-v">${segs.length}</div><div class="rp-kpi-s">${ent!=null?medNum(ent,1)+' entrenos por semana':'semanas registradas'}</div></div></div>`;
+  const grandes = [infChart(pesoPts,'#0F6E56','Peso','kg',1), infChart(grasaPts,'#B8956A','% de grasa','%',1)].filter(Boolean);
+  const serie = k => segs.map(x=>({fecha:String(x.semana).slice(0,10), v:(x.respuestas||{})[k]})).filter(p=>p.v!=null);
+  const peq = SEG_P.map(m=>infChart(serie(m.k), m.c, m.tt, '1–5', 0, [1,5])).concat(infChart(serie('entrenos'),'#04342C','Entrenamientos','sesiones',0)).filter(Boolean);
+  const bul = [];
+  if(pesoPts.length>1) bul.push(`Peso: de ${medNum(pesoPts[0].v,1)} a ${medNum(pesoPts[pesoPts.length-1].v,1)} kg (${medSigned(pesoPts[pesoPts.length-1].v-pesoPts[0].v,1)} kg) entre el ${infFecha(pesoPts[0].fecha)} y el ${infFecha(pesoPts[pesoPts.length-1].fecha)}.`);
+  if(grasaPts.length>1) bul.push(`% de grasa: de ${medNum(grasaPts[0].v,1)} a ${medNum(grasaPts[grasaPts.length-1].v,1)} % (${medSigned(grasaPts[grasaPts.length-1].v-grasaPts[0].v,1)} puntos).`);
+  if(segs.length) bul.push(`Seguimiento semanal: ${segs.length} semana${segs.length!==1?'s':''} registrada${segs.length!==1?'s':''}${adh!=null?`, con una adherencia media de ${medNum(adh,1)}/5`:''}${ene!=null?` y una energía media de ${medNum(ene,1)}/5`:''}.`);
+  const hoy = localISO(new Date());
+  if(d.proxima_revision && String(d.proxima_revision).slice(0,10) >= hoy) bul.push(`Próxima revisión: ${new Date(String(d.proxima_revision).slice(0,10)+'T00:00:00').toLocaleDateString('es-ES',{day:'numeric',month:'long',year:'numeric'})}${d.proxima_revision_hora?' a las '+String(d.proxima_revision_hora).slice(0,5)+'h':''}.`);
+  const logo = document.querySelector('.sb-logo img'), logoSrc = logo ? logo.getAttribute('src') : '';
+  return `<div class="rp-page">
+    <div class="rp-head">${logoSrc?`<div class="rp-logo"><img src="${logoSrc}" alt=""></div>`:''}
+      <div><div class="rp-h1">Informe de progreso</div><div class="rp-sub">${sudEsc(d.nombre)}${d.deporte?' · '+sudEsc(d.deporte):''}${d.objetivo?' · '+sudEsc(d.objetivo):''}</div></div>
+      <div class="rp-per"><b>${periodo}</b>Emitido el ${infFecha(hoy,true)}</div></div>
+    <div class="rp-body">${kpis}
+      ${grandes.length?`<div class="rp-sec">Composición corporal</div><div class="rp-charts2">${grandes.join('')}</div>`:''}
+      ${peq.length?`<div class="rp-sec">Seguimiento semanal</div><div class="rp-charts3">${peq.join('')}</div>`:''}
+      ${bul.length?`<div class="rp-sec">Resumen</div><ul class="rp-bul">${bul.map(b=>`<li>${sudEsc(b)}</li>`).join('')}</ul>`:''}
+      ${comentario?`<div class="rp-note" style="margin-top:5mm"><b>Comentario de Guillermo</b>${sudEsc(comentario)}</div>`:''}
+    </div>
+    <div class="rp-foot"><span>Guillermo Frances · Nutrición deportiva · NutriLogos</span><span>Valores orientativos; consulta cualquier duda en tu próxima revisión.</span></div>
+  </div>`;
+}
+async function infPdfBlob(){
+  await cargarLibsPdf();
+  const off = document.createElement('div');
+  off.style.cssText = 'position:fixed;left:-10000px;top:0;width:210mm';
+  off.innerHTML = infHtml(_inf, document.getElementById('infComent').value.trim());
+  document.body.appendChild(off);
+  try{
+    const pdf = new window.jspdf.jsPDF({unit:'mm', format:'a4', compress:true});
+    const paginas = [...off.querySelectorAll('.rp-page')];
+    for(let i=0;i<paginas.length;i++){
+      const cv = await window.html2canvas(paginas[i], {scale:2, backgroundColor:'#ffffff', useCORS:true, logging:false, windowWidth:1200});
+      if(i>0) pdf.addPage('a4','portrait');
+      pdf.addImage(cv.toDataURL('image/jpeg',0.92), 'JPEG', 0, 0, 210, Math.min(297, 210*cv.height/cv.width), undefined, 'FAST');
+    }
+    return pdf.output('blob');
+  } finally { off.remove(); }
+}
+async function infOcupado(on, txt){
+  ['infDescargar','infCompartir'].forEach(i=>{ const b=document.getElementById(i); if(b) b.disabled = on; });
+  document.getElementById('infMsg').textContent = txt || '';
+}
+async function infDescargar(){
+  if(!_inf) return;
+  infOcupado(true, 'Generando el PDF…');
+  try{
+    const blob = await infPdfBlob();
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+    a.download = `Informe_progreso_${String(_inf.d.nombre).replace(/[^a-zA-Z0-9]+/g,'_')}_${localISO(new Date())}.pdf`;
+    document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href), 4000);
+    infOcupado(false, 'PDF descargado.');
+  }catch(e){ console.warn('infDescargar', e); infOcupado(false, 'No se pudo generar el PDF. Comprueba la conexión y vuelve a intentarlo.'); toast('No se pudo generar el PDF', {tipo:'error'}); }
+}
+async function infCompartir(){
+  if(!_inf) return;
+  const d = _inf.d, hoy = localISO(new Date()), ruta = p=>p.split('/').map(encodeURIComponent).join('/');
+  infOcupado(true, 'Generando el PDF…');
+  try{
+    const blob = await infPdfBlob();
+    const path = `${d.id}/${Date.now()}_informe_progreso_${hoy}.pdf`;
+    infOcupado(true, 'Subiendo…');
+    const up = await authFetch(`${SURL}/storage/v1/object/${STORAGE_BUCKET}/${ruta(path)}`, {method:'POST', headers:{'Content-Type':'application/pdf'}, body:blob});
+    if(!up.ok) throw new Error('subida '+up.status);
+    // Se lee la lista de archivos justo antes de escribir y se sustituye solo el informe de progreso del mismo día.
+    const fila = await sb(`clientes_deportivos?id=eq.${d.id}&select=archivos`);
+    const previos = (Array.isArray(fila) && fila[0] && Array.isArray(fila[0].archivos)) ? fila[0].archivos : (d.archivos||[]);
+    const viejos = previos.filter(a=>a && a.tipo==='informe_progreso' && String(a.fecha).slice(0,10)===hoy);
+    const archivos = previos.filter(a=>!viejos.includes(a));
+    const ahora = new Date().toISOString();
+    archivos.push({nombre:`Informe de progreso ${hoy}.pdf`, path, fecha:ahora, visible_cliente:true, tipo:'informe_progreso'});
+    const rp = await patchDep(d.id, {archivos, ultima_actividad:ahora});
+    if(esErrorSb(rp)) throw new Error('guardado');
+    viejos.forEach(a=>{ if(a.path) authFetch(`${SURL}/storage/v1/object/${STORAGE_BUCKET}/${ruta(a.path)}`, {method:'DELETE'}).catch(()=>{}); });
+    d.archivos = archivos; d.ultima_actividad = ahora;
+    const fl = document.getElementById('filesList'); if(fl && currentDepId==d.id) fl.innerHTML = renderFilesList(archivos, d.id);
+    const tn = document.querySelector('#depTab-archivos .tab-n'); if(tn) tn.textContent = archivos.length;
+    infOcupado(false, `Informe compartido: ya aparece en los archivos de ${d.nombre} y en su área de clientes.`);
+    toast('Informe compartido con el cliente');
+  }catch(e){ console.warn('infCompartir', e); infOcupado(false, 'No se pudo compartir el informe. Comprueba la conexión y vuelve a intentarlo.'); toast('No se pudo compartir el informe', {tipo:'error'}); }
+}
+
 // ═══════════════ EXPORTAR PDF (vía impresión del navegador) ═══════════════
 // Antes de imprimir se calcula cuántas páginas A4 ocupa el informe (alto útil 269 mm) simulando cómo
 // se reparten las tarjetas entre páginas (una tarjeta no se parte), y se estira el área de impresión
@@ -4781,7 +5052,21 @@ async function createDeportista() {
   }
 }
 
+const DEP_TABS=[['resumen','Resumen'],['seguimiento','Seguimiento'],['mediciones','Mediciones'],['plan','Plan'],['archivos','Archivos'],['actividad','Actividad']];
+let _depTab='resumen', _depTabDep=null;
+function depTab(k){
+  _depTab=k;
+  document.querySelectorAll('.depd-tab').forEach(b=>{ const on=b.dataset.k===k; b.classList.toggle('on',on); b.setAttribute('aria-selected',on?'true':'false'); b.tabIndex=on?0:-1; });
+  document.querySelectorAll('.depd-panel').forEach(pn=>pn.classList.toggle('on',pn.dataset.k===k));
+  const b=document.querySelector('.depd-tab.on'); if(b&&b.scrollIntoView) b.scrollIntoView({block:'nearest',inline:'center'});
+}
+function depTabKey(e){
+  const ks=DEP_TABS.map(t=>t[0]); let i=ks.indexOf(_depTab);
+  if(e.key==='ArrowRight') i=(i+1)%ks.length; else if(e.key==='ArrowLeft') i=(i-1+ks.length)%ks.length; else if(e.key==='Home') i=0; else if(e.key==='End') i=ks.length-1; else return;
+  e.preventDefault(); depTab(ks[i]); const b=document.getElementById('depTab-'+ks[i]); if(b) b.focus();
+}
 function openDepDet(id) {
+  if(_depTabDep!=id){ _depTab='resumen'; _depTabDep=id; }
   currentDepId = id;
   const d = deportistas.find(x => x.id === id);
   if (!d) return;
@@ -4807,6 +5092,10 @@ function openDepDet(id) {
           <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
           Registrar consulta
         </button>
+        <button class="btn-action" style="background:var(--t50);color:var(--t600)" onclick="abrirInformeProgreso(${d.id})">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="15" x2="15" y2="15"/><line x1="9" y1="11" x2="12" y2="11"/></svg>
+          Informe de progreso
+        </button>
         <button class="btn-action" style="background:var(--gold-50);color:var(--gold-dk)" onclick="openEditDep(${d.id})">
           <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
           Editar
@@ -4818,6 +5107,8 @@ function openDepDet(id) {
       </div>
     </div>
 
+    <div class="depd-tabbar"><div class="depd-tabs" role="tablist" aria-label="Secciones de la ficha" onkeydown="depTabKey(event)">${DEP_TABS.map(([k,t])=>`<button type="button" role="tab" class="depd-tab${k===_depTab?' on':''}" id="depTab-${k}" data-k="${k}" aria-selected="${k===_depTab}" aria-controls="depPanel-${k}" tabindex="${k===_depTab?0:-1}" onclick="depTab('${k}')">${t}${k==='archivos'?`<span class="tab-n">${(d.archivos||[]).length}</span>`:''}</button>`).join('')}</div></div>
+    <div class="depd-panel${_depTab==='resumen' ? ' on' : ''}" role="tabpanel" id="depPanel-resumen" aria-labelledby="depTab-resumen" data-k="resumen" tabindex="0">
     <div class="depd-section">
       <div class="depd-rev-box">
         <div class="depd-rev-icon">
@@ -4838,6 +5129,43 @@ function openDepDet(id) {
     </div>
 
     <div class="depd-section">
+      <p class="sec-title">Notas privadas</p>
+      <textarea class="notes-ta" id="depNotes" oninput="_autoDep.cambio(${d.id},this.value)" placeholder="Objetivos, ajustes, observaciones de seguimiento…">${d.notas || ''}</textarea>
+      <div class="notes-foot">
+        <button class="btn-save" onclick="saveDepNote(${d.id})">Guardar notas</button>
+        <span class="save-ok" id="depSaveOk">✓ Guardado</span>
+      </div>
+    </div>
+    </div>
+    <div class="depd-panel${_depTab==='seguimiento' ? ' on' : ''}" role="tabpanel" id="depPanel-seguimiento" aria-labelledby="depTab-seguimiento" data-k="seguimiento" tabindex="0">
+    <div class="depd-section">
+      <p class="sec-title">Seguimiento semanal</p>
+      <div class="med-box" id="segBox">${skel(3)}</div>
+    </div>
+
+    <div class="depd-section">
+      <p class="sec-title">Formularios del cliente</p>
+      <div class="med-box" id="frmBox">${frmHtml(d)}</div>
+    </div>
+
+    <div class="depd-section">
+      <p class="sec-title">Acceso del cliente</p>
+      <div class="med-box" id="accBox">${skel(3)}</div>
+    </div>
+    </div>
+    <div class="depd-panel${_depTab==='mediciones' ? ' on' : ''}" role="tabpanel" id="depPanel-mediciones" aria-labelledby="depTab-mediciones" data-k="mediciones" tabindex="0">
+    <div class="depd-section">
+      <p class="sec-title">Mediciones · antropometría</p>
+      <div class="med-box" id="medBox">${skel(3)}</div>
+    </div>
+
+    <div class="depd-section">
+      <p class="sec-title">Test de sudoración</p>
+      <div class="med-box" id="sudBox">${skel(3)}</div>
+    </div>
+    </div>
+    <div class="depd-panel${_depTab==='plan' ? ' on' : ''}" role="tabpanel" id="depPanel-plan" aria-labelledby="depTab-plan" data-k="plan" tabindex="0">
+    <div class="depd-section">
       <p class="sec-title">Planificación nutricional</p>
       ${d.plan_url ? `
       <div class="plan-box">
@@ -4851,46 +5179,11 @@ function openDepDet(id) {
     </div>
 
     <div class="depd-section">
-      <p class="sec-title">Acceso del cliente</p>
-      <div class="med-box" id="accBox">${skel(3)}</div>
-    </div>
-
-    <div class="depd-section">
-      <p class="sec-title">Formularios del cliente</p>
-      <div class="med-box" id="frmBox">${frmHtml(d)}</div>
-    </div>
-
-    <div class="depd-section">
-      <p class="sec-title">Seguimiento semanal</p>
-      <div class="med-box" id="segBox">${skel(3)}</div>
-    </div>
-
-    <div class="depd-section">
-      <p class="sec-title">Mediciones · antropometría</p>
-      <div class="med-box" id="medBox">${skel(3)}</div>
-    </div>
-
-    <div class="depd-section">
-      <p class="sec-title">Test de sudoración</p>
-      <div class="med-box" id="sudBox">${skel(3)}</div>
-    </div>
-
-    <div class="depd-section">
       <p class="sec-title">Planes de competición</p>
       <div class="med-box" id="planBox">${skel(3)}</div>
     </div>
-
-    <div class="depd-section">
-      <p class="sec-title">Historial de sesiones</p>
-      <div class="hist-add">
-        <input type="date" class="inp" id="histFecha">
-        <input type="text" class="inp" id="histNota" placeholder="Nota breve de la sesión…">
-        <button class="btn-hist-add" onclick="addHistorial(${d.id})">Añadir</button>
-      </div>
-      <div id="histList">${skel(3)}</div>
     </div>
-
-    <div class="depd-cols">
+    <div class="depd-panel${_depTab==='archivos' ? ' on' : ''}" role="tabpanel" id="depPanel-archivos" aria-labelledby="depTab-archivos" data-k="archivos" tabindex="0">
     <div class="depd-section">
       <p class="sec-title">Archivos · antropometrías, bioimpedancias, informes</p>
       <div class="files-box" id="filesDropZone" onclick="document.getElementById('fileInput').click()">
@@ -4902,14 +5195,16 @@ function openDepDet(id) {
       <p class="upload-progress" id="uploadProgress"></p>
       <div id="filesList">${renderFilesList(d.archivos || [], d.id)}</div>
     </div>
-
+    </div>
+    <div class="depd-panel${_depTab==='actividad' ? ' on' : ''}" role="tabpanel" id="depPanel-actividad" aria-labelledby="depTab-actividad" data-k="actividad" tabindex="0">
     <div class="depd-section">
-      <p class="sec-title">Notas privadas</p>
-      <textarea class="notes-ta" id="depNotes" oninput="_autoDep.cambio(${d.id},this.value)" placeholder="Objetivos, ajustes, observaciones de seguimiento…">${d.notas || ''}</textarea>
-      <div class="notes-foot">
-        <button class="btn-save" onclick="saveDepNote(${d.id})">Guardar notas</button>
-        <span class="save-ok" id="depSaveOk">✓ Guardado</span>
+      <p class="sec-title">Línea de tiempo</p>
+      <div class="hist-add">
+        <input type="date" class="inp" id="histFecha">
+        <input type="text" class="inp" id="histNota" placeholder="Nota breve de la sesión…">
+        <button class="btn-hist-add" onclick="addHistorial(${d.id})">Añadir</button>
       </div>
+      <div id="histList">${skel(3)}</div>
     </div>
     </div>
   `;
@@ -5701,30 +5996,59 @@ const deleteHistorialRow = (rowId) => sb(`historial_deportista?id=eq.${rowId}`, 
 // error si no existen — un deportista sin antropometría simplemente devuelve un array vacío.
 const getAntropometriaSesiones = (depId) => sb(`antropometria_valoraciones?deportista_id=eq.${depId}&select=id,fecha`).catch(()=>[]);
 
+let _tlFiltro='todo', _tlEventos=[];
+const TL_FILTROS=[['todo','Todo'],['sesion','Sesiones'],['medicion','Mediciones'],['seguimiento','Seguimiento'],['archivo','Archivos'],['plan','Planes']];
+const TL_ICO={
+  sesion:'<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>',
+  medicion:'<line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>',
+  seguimiento:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',
+  archivo:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>',
+  plan:'<path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/>'
+};
+// Reúne en una sola lista cronológica todo lo que ha pasado con el deportista (sesiones, mediciones, seguimientos, archivos, tests y planes).
 async function loadHistorial(depId){
-  const [rows, antro] = await Promise.all([ getHistorial(depId), getAntropometriaSesiones(depId) ]);
-  // Se fusionan los registros manuales del panel con las valoraciones antropométricas (de solo
-  // lectura aquí — se gestionan desde la calculadora) en una única lista ordenada por fecha.
-  const merged = [
-    ...(rows||[]).map(r=>({fecha:r.fecha, nota:r.nota||'Consulta registrada', id:r.id, auto:false})),
-    ...(antro||[]).map(r=>({fecha:r.fecha, nota:'📏 Valoración antropométrica', id:r.id, auto:true}))
-  ].sort((a,b)=> new Date(b.fecha)-new Date(a.fecha));
+  const seguro = (p)=>Promise.resolve(p).then(v=>Array.isArray(v)?v:[]).catch(()=>[]);
+  const [rows, meds, segs, sud, planes] = await Promise.all([
+    seguro(getHistorial(depId)), seguro(getMediciones(depId)),
+    seguro(sb(`seguimientos?deportista_id=eq.${depId}&order=semana.asc&select=semana,respuestas`)),
+    seguro(sb(`tests_sudoracion?deportista_id=eq.${depId}&select=id,fecha`)),
+    seguro(sb(`planes_competicion?deportista_id=eq.${depId}&select=id,fecha,evento,created_at,visible_cliente`))
+  ]);
   const el = document.getElementById('histList');
-  if(!el) return;
-  if(!merged.length){ el.innerHTML = '<p style="font-size:12px;color:var(--g400);padding:6px 0">Sin sesiones registradas todavía.</p>'; return; }
-  el.innerHTML = merged.map(r => {
-    const dateStr = new Date(r.fecha+'T00:00:00').toLocaleDateString('es-ES',{day:'numeric',month:'short',year:'numeric'});
-    const rightEl = r.auto
-      ? `<span class="hist-tag" title="Registrada automáticamente desde la calculadora de antropometría">Auto</span>`
-      : `<button class="hist-del" onclick="deleteHistorial(${r.id},${depId},this)" title="Eliminar">
-      <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>
-    </button>`;
-    return `<div class="hist-item"><span class="hist-date">${dateStr}</span><span class="hist-nota">${r.nota}</span>${rightEl}</div>`;
-  }).join('');
+  if(!el || currentDepId != depId) return;
+  const d = deportistas.find(x=>x.id==depId) || {};
+  const dia = f => String(f||'').slice(0,10);
+  const ev = [];
+  rows.forEach(x=>ev.push({tipo:'sesion', fecha:dia(x.fecha), t:x.nota||'Consulta registrada', id:x.id, borrable:true}));
+  meds.forEach(x=>{ const m=medPunto(x), partes=[]; if(m.peso!=null) partes.push(medNum(m.peso,1)+' kg'); if(m.grasa!=null) partes.push(medNum(m.grasa,1)+' % grasa'); ev.push({tipo:'medicion', fecha:dia(x.fecha), t:'Valoración antropométrica', s:partes.join(' · ')}); });
+  segs.forEach(x=>{ const q=x.respuestas||{}, bajos=SEG_P.filter(m=>q[m.k]!=null&&q[m.k]<=2).map(m=>m.t.toLowerCase());
+    ev.push({tipo:'seguimiento', fecha:dia(x.semana), t:'Seguimiento semanal recibido', s:(q.adherencia!=null?'Adherencia '+q.adherencia+'/5':'')+(bajos.length?`${q.adherencia!=null?' · ':''}<span class="aviso">${bajos.join(', ')} bajo</span>`:'')+(q.molestias?` · <span class="aviso">Molestias</span>`:''), html:true}); });
+  (d.archivos||[]).forEach(a=>{ if(!a||!a.fecha) return; ev.push({tipo:'archivo', fecha:dia(a.fecha), t:(a.visible_cliente?'Compartido con el cliente: ':'Archivo: ')+(a.nombre||'sin nombre')}); });
+  sud.forEach(x=>ev.push({tipo:'plan', fecha:dia(x.fecha), t:'Test de sudoración'}));
+  planes.forEach(x=>ev.push({tipo:'plan', fecha:dia(x.created_at||x.fecha), t:'Plan de competición'+(x.evento?': '+x.evento:''), s:'Competición el '+new Date(x.fecha+'T00:00:00').toLocaleDateString('es-ES',{day:'numeric',month:'short',year:'numeric'})+(x.visible_cliente?' · compartido con el cliente':'')}));
+  _tlEventos = ev.filter(e=>/^\d{4}-\d{2}-\d{2}$/.test(e.fecha)).sort((a,b)=>b.fecha.localeCompare(a.fecha));
+  pintarTimeline(depId);
+}
+function tlFiltro(k,depId){ _tlFiltro=k; pintarTimeline(depId); }
+function pintarTimeline(depId){
+  const el=document.getElementById('histList'); if(!el) return;
+  const lista=_tlEventos.filter(e=>_tlFiltro==='todo'||e.tipo===_tlFiltro);
+  const chips=`<div class="tl-filtros" role="group" aria-label="Filtrar la línea de tiempo">${TL_FILTROS.map(([k,t])=>`<button type="button" class="tl-chip${k===_tlFiltro?' on':''}" aria-pressed="${k===_tlFiltro}" onclick="tlFiltro('${k}',${depId})">${t}</button>`).join('')}</div>`;
+  if(!lista.length){ el.innerHTML=chips+`<p class="tl-vacio">${_tlEventos.length?'No hay nada de este tipo todavía.':'Todavía no hay actividad. Registra una consulta, haz una valoración o activa el seguimiento semanal y aparecerá aquí.'}</p>`; return; }
+  let mes='', html='';
+  lista.forEach(e=>{
+    const f=new Date(e.fecha+'T00:00:00'), m=f.toLocaleDateString('es-ES',{month:'long',year:'numeric'});
+    if(m!==mes){ mes=m; html+=`<div class="tl-mes">${m.charAt(0).toUpperCase()+m.slice(1)}</div>`; }
+    const fecha=f.toLocaleDateString('es-ES',{day:'numeric',month:'short'});
+    html+=`<div class="tl-item hist-item"><span class="tl-ico ${e.tipo}" aria-hidden="true"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">${TL_ICO[e.tipo]}</svg></span>
+      <div class="tl-body"><div class="tl-t">${sudEsc(e.t)}</div>${e.s?`<div class="tl-s">${e.html?e.s:sudEsc(e.s)}</div>`:''}</div>
+      <span class="tl-f">${fecha}</span>${e.borrable?`<button class="tl-del" onclick="deleteHistorial(${e.id},${depId},this)" title="Eliminar" aria-label="Eliminar este registro"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg></button>`:''}</div>`;
+  });
+  el.innerHTML=chips+html;
 }
 
 function deleteHistorial(rowId, depId, btn){
-  const fila = btn && btn.closest('.hist-item');
+  const fila = btn && btn.closest('.hist-item,.tl-item');
   deshacerBorrado({
     texto: 'Registro eliminado del historial',
     ocultar: () => { if (fila) fila.style.display = 'none'; },
