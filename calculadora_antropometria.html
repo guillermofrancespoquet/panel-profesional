@@ -318,6 +318,7 @@ body.dark-mode canvas{background:#fff;border-radius:10px;}
   table:not(.rep-table){width:auto;min-width:100%;}
   table:not(.rep-table) th,table:not(.rep-table) td{white-space:nowrap;}
   table{font-size:12px;}
+  table.tbl-ref th,table.tbl-ref td{white-space:normal;vertical-align:top}
   th,td{padding:6px;}
 
   .rep-grid{grid-template-columns:1fr !important;}
@@ -3403,7 +3404,7 @@ function viewAjustes(){
       población de referencia. Un Z de 0 significa "exactamente en la media"; el signo indica la dirección
       (positivo = por encima, negativo = por debajo) y la magnitud, cuánto se aleja.
     </p>
-    <table style="margin-top:8px;">
+    <table class="tbl-ref" style="margin-top:8px;">
       <thead><tr><th>Rango de |Z|</th><th>Interpretación</th><th>% aprox. de la población en ese rango</th></tr></thead>
       <tbody>
         <tr><td>&lt; 1</td><td>Dentro de lo esperado</td><td>~68%</td></tr>
@@ -3442,10 +3443,14 @@ function viewAjustes(){
     </p>
 
     <p style="font-size:13px;font-weight:700;margin:16px 0 4px 0;">2. Σ8 — referencia descriptiva de futbolistas de élite españoles</p>
-    <table style="margin-top:6px;">
-      <thead><tr><th>Percentil</th><th>P5</th><th>P10</th><th>P20</th><th>P30</th><th>P40</th><th>P50</th><th>P60</th><th>P70</th><th>P80</th><th>P90</th></tr></thead>
+    <table class="tbl-pct" style="margin-top:6px;">
+      <thead><tr><th>Percentil</th><th>P5</th><th>P10</th><th>P20</th><th>P30</th><th>P40</th></tr></thead>
       <tbody>
-        <tr><td>Σ8 (mm)</td><td>40,7</td><td>44,1</td><td>47,7</td><td>49,2</td><td>51,6</td><td>56,2</td><td>58,0</td><td>60,1</td><td>64,9</td><td>80,3</td></tr>
+        <tr><td>Σ8 (mm)</td><td>40,7</td><td>44,1</td><td>47,7</td><td>49,2</td><td>51,6</td></tr>
+      </tbody>
+      <thead><tr><th>Percentil</th><th>P50</th><th>P60</th><th>P70</th><th>P80</th><th>P90</th></tr></thead>
+      <tbody>
+        <tr><td>Σ8 (mm)</td><td>56,2</td><td>58,0</td><td>60,1</td><td>64,9</td><td>80,3</td></tr>
       </tbody>
     </table>
     <p class="small-note" style="margin-top:8px;">
@@ -3455,7 +3460,7 @@ function viewAjustes(){
 
     <p style="font-size:13px;font-weight:700;margin:16px 0 4px 0;">3. Σ6 — referencia en futbolistas profesionales</p>
     <p class="small-note" style="margin-top:0;">Σ6 utilizado en el metaanálisis: tríceps + subescapular + supraespinal + abdominal + muslo anterior + pantorrilla.</p>
-    <table style="margin-top:6px;">
+    <table class="tbl-ref" style="margin-top:6px;">
       <thead><tr><th>Variable</th><th>Media (mm)</th><th>Uso recomendado</th></tr></thead>
       <tbody>
         <tr><td>Σ6</td><td>52,18</td><td>Referencia descriptiva; no equivale a un valor óptimo</td></tr>
@@ -3472,7 +3477,7 @@ function viewAjustes(){
     </p>
 
     <p style="font-size:13px;font-weight:700;margin:16px 0 4px 0;">5. Cómo utilizar estas referencias en una academia</p>
-    <table style="margin-top:6px;">
+    <table class="tbl-ref" style="margin-top:6px;">
       <thead><tr><th>Variable</th><th>Prioridad</th><th>Aplicación</th></tr></thead>
       <tbody>
         <tr><td>Σ8 ISAK (mm)</td><td>Principal</td><td>Seguimiento de adiposidad subcutánea y comparación con referencias de futbolistas.</td></tr>
