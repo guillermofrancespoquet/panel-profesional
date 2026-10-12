@@ -361,7 +361,7 @@ body.dark-mode .btn-soft{color:var(--t100);border-color:rgba(159,225,203,.22)}
 .rev-badge.soon{background:var(--gold-50);color:var(--gold-dk)}
 .rev-badge.ok{background:var(--t50);color:var(--t600)}
 .rev-badge.none{background:var(--g100);color:var(--g400)}
-.depd-rev-box{background:var(--sf);border:.5px solid var(--bd);border-radius:12px;padding:1rem 1.25rem;display:flex;align-items:center;gap:12px}
+.depd-rev-box{flex-wrap:wrap;background:var(--sf);border:.5px solid var(--bd);border-radius:12px;padding:1rem 1.25rem;display:flex;align-items:center;gap:12px}
 .depd-rev-icon{width:36px;height:36px;border-radius:10px;background:var(--gold-50);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--gold-dk)}
 .depd-rev-txt{flex:1}
 .depd-rev-label{font-size:11px;font-weight:500;color:var(--g400);text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px}
@@ -369,7 +369,7 @@ body.dark-mode .btn-soft{color:var(--t100);border-color:rgba(159,225,203,.22)}
 
 
 .agenda-item{background:var(--sf);border:.5px solid var(--bd);border-radius:12px;padding:1rem 1.25rem;margin-bottom:10px;display:flex;align-items:center;gap:14px}
-.agenda-item.past{opacity:.55}
+.agenda-item.past > *{opacity:.55}
 .agenda-date-box{width:52px;height:52px;border-radius:10px;background:var(--t50);display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0}
 .agenda-date-day{font-size:18px;font-weight:700;color:var(--t800);line-height:1}
 .agenda-date-month{font-size:10px;font-weight:600;color:var(--t600);text-transform:uppercase;margin-top:2px}
@@ -384,6 +384,10 @@ body.dark-mode .btn-soft{color:var(--t100);border-color:rgba(159,225,203,.22)}
 .pay-toggle.paid{background:var(--t50);color:var(--t600)}
 .pay-toggle.pending{background:#FEF2F2;color:var(--red)}
 .pay-toggle.info{background:var(--g100);color:var(--g400);cursor:default}
+.pay-toggle.upcoming{background:var(--g100);color:var(--g500)}
+/* En la agenda el botón de pago y los iconos comparten forma: cuadrado con esquinas redondeadas (igual que en móvil) */
+.agenda-actions .pay-toggle{border-radius:8px;min-height:28px;justify-content:center}
+.agenda-actions .agenda-cal,.agenda-actions .agenda-del{border-radius:8px}
 .agenda-del{background:var(--g100);border:none;border-radius:6px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--g500)}
 .agenda-cal{background:var(--t50);border:none;border-radius:6px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--t600);text-decoration:none}
 .agenda-cal:hover{background:var(--t100)}
@@ -945,7 +949,7 @@ body.dark-mode .hist-tag,body.dark-mode .dep-obj-badge,body.dark-mode .cbadge.on
 body.dark-mode .rev-badge.soon,body.dark-mode .dash-card-count,body.dark-mode .ref-src,body.dark-mode .sup-badge.mid{color:var(--gold)}
 .rev-badge.urgent,.pay-toggle.pending,.sup-badge.warn{background:var(--pill-r);color:#B3261E;box-shadow:inset 0 0 0 .5px var(--pill-r-bd)}
 body.dark-mode .rev-badge.urgent,body.dark-mode .pay-toggle.pending,body.dark-mode .sup-badge.warn{color:#ff9b93}
-.rev-badge.none,.cbadge.off,.pay-toggle.info,.accion-badge.subtle,.sup-badge.ctx{background:var(--pill-n);color:var(--g700);box-shadow:inset 0 0 0 .5px var(--pill-n-bd)}
+.rev-badge.none,.cbadge.off,.pay-toggle.info,.pay-toggle.upcoming,.accion-badge.subtle,.sup-badge.ctx{background:var(--pill-n);color:var(--g700);box-shadow:inset 0 0 0 .5px var(--pill-n-bd)}
 .cmp-ej button{background:var(--pill-n);border-color:var(--pill-n-bd)}
 .vacio{grid-column:1/-1;display:flex;flex-direction:column;align-items:center;text-align:center;padding:2.6rem 1.25rem;gap:4px}
 .vacio.sm{padding:1.4rem .75rem}
@@ -3385,12 +3389,15 @@ function renderFacturacion(){
 
   // Pendientes de cobro (todas, sin filtrar por periodo — lo pendiente es pendiente ahora)
   const pendM3M = factData.clients.filter(c => !c.pagado);
-  const pendDep = factData.citas.filter(c => !c.pagado && c.requiere_pago!==false);
+  const sinCobrar = factData.citas.filter(c => !c.pagado && c.requiere_pago!==false);
+  const pendDep = sinCobrar.filter(c => citaYaPaso(c));        // pendiente = la cita ya pasó y no se cobró
+  const proximasDep = sinCobrar.filter(c => !citaYaPaso(c));   // por cobrar: la cita aún no ha llegado
   const totalPend = pendM3M.reduce((a,c)=>a+(Number(c.monto)||350),0) + pendDep.reduce((a,c)=>a+(Number(c.monto)||40),0);
   document.getElementById('factPendCount').textContent = pendM3M.length + pendDep.length;
   let pendHtml = '';
   pendM3M.forEach(c=>{ pendHtml += `<div class="fact-row"><div class="fact-row-name">${c.nombre}<div class="fact-row-date">Método 3M · pago único</div></div><div class="fact-row-amount" style="color:var(--red)">${fmtMoney(Number(c.monto)||350)}</div></div>`; });
   pendDep.forEach(c=>{ pendHtml += `<div class="fact-row"><div class="fact-row-name">${c.cliente}<div class="fact-row-date">${c.servicio||'Revisión'} · ${new Date(c.fecha+'T00:00:00').toLocaleDateString('es-ES',{day:'numeric',month:'short'})}</div></div><div class="fact-row-amount" style="color:var(--red)">${fmtMoney(Number(c.monto)||40)}</div></div>`; });
+  proximasDep.forEach(c=>{ pendHtml += `<div class="fact-row"><div class="fact-row-name">${c.cliente}<div class="fact-row-date">${c.servicio||'Revisión'} · ${new Date(c.fecha+'T00:00:00').toLocaleDateString('es-ES',{day:'numeric',month:'short'})} · por cobrar</div></div><div class="fact-row-amount" style="color:var(--g400)">${fmtMoney(Number(c.monto)||40)}</div></div>`; });
   document.getElementById('factPendList').innerHTML = pendHtml || '<p class="dash-empty">Nada pendiente de cobro.</p>';
 
   const totalCobrado = totalM3M + totalDep;
@@ -3472,11 +3479,11 @@ async function loadDashboard(){
   }).join(''):'<p class="dash-empty">Sin sesiones para hoy o mañana.</p>';
 
   // ── Pagos pendientes/atrasados ──
-  const impagos=dashCitas.filter(c=>!c.pagado&&c.requiere_pago!==false).sort((a,b)=>a.fecha.localeCompare(b.fecha));
-  document.getElementById('dashPagosCount').textContent=impagos.length;
+  const impagos=dashCitas.filter(c=>!c.pagado&&c.requiere_pago!==false).sort((a,b)=>(citaYaPaso(b)-citaYaPaso(a))||a.fecha.localeCompare(b.fecha));   // primero las que ya pasaron
+  document.getElementById('dashPagosCount').textContent=impagos.filter(c=>citaYaPaso(c)).length;
   document.getElementById('dashPagos').innerHTML=impagos.length?impagos.slice(0,5).map(c=>{
-    const atrasado=c.fecha<todayISO;
-    return `<div class="dash-row"><div class="dash-row-dot ${atrasado?'red':'gold'}"></div><div class="dash-row-txt"><div class="dash-row-name">${c.cliente}</div><div class="dash-row-sub">${c.servicio||'Revisión'}</div></div><span class="dash-row-tag">${atrasado?'Atrasado':'Pendiente'}</span></div>`;
+    const vencido=citaYaPaso(c);
+    return `<div class="dash-row"><div class="dash-row-dot ${vencido?'red':'teal'}"></div><div class="dash-row-txt"><div class="dash-row-name">${c.cliente}</div><div class="dash-row-sub">${c.servicio||'Revisión'}</div></div><span class="dash-row-tag">${vencido?'Pendiente':'Por cobrar'}</span></div>`;
   }).join(''):'<p class="dash-empty">Sin pagos pendientes.</p>';
 
   // ── Revisiones deportistas próximas (a partir de hoy, hasta 7 días vista; las atrasadas ya no
@@ -4015,7 +4022,7 @@ function daysUntil(dateStr) {
 function revisionBadge(dateStr) {
   const days = daysUntil(dateStr);
   if (days === null) return '<span class="rev-badge none">Sin fecha</span>';
-  if (days < 0) return `<span class="rev-badge urgent">Atrasada · ${Math.abs(days)}d</span>`;
+  if (days < 0) return `<span class="rev-badge soon" title="La fecha de revisión ya pasó (hace ${Math.abs(days)} d). Pon una nueva en Editar.">Nueva fecha pendiente</span>`;
   if (days === 0) return '<span class="rev-badge urgent">Hoy</span>';
   if (days <= 7) return `<span class="rev-badge soon">En ${days}d</span>`;
   const dateFmt = new Date(dateStr).toLocaleDateString('es-ES', {day:'numeric', month:'short'});
@@ -4246,6 +4253,12 @@ function citaTipo(c){
 
 // Una cita pasa a «Pasadas» (se archiva, sin borrarse) 2 horas después de su inicio. Sin hora, al día siguiente.
 const ARCHIVO_CITA_HORAS = 2;
+// Una cita «ya pasó» cuando llega su hora de inicio (sin hora, cuando acaba su día). Hasta entonces un pago sin cobrar no está atrasado, solo «por cobrar».
+function citaYaPaso(c, ahora = new Date()){
+  if (c.hora) return ahora >= new Date(c.fecha + 'T' + String(c.hora).slice(0,5) + ':00');
+  const hoy = new Date(ahora.getFullYear(), ahora.getMonth(), ahora.getDate());
+  return new Date(c.fecha + 'T00:00:00') < hoy;
+}
 function citaArchivada(c, ahora = new Date()){
   if (c.hora) return ahora >= new Date(new Date(c.fecha + 'T' + String(c.hora).slice(0,5) + ':00').getTime() + ARCHIVO_CITA_HORAS*3600*1000);
   const hoy = new Date(ahora.getFullYear(), ahora.getMonth(), ahora.getDate());
@@ -5023,7 +5036,7 @@ function renderCitaItem(c, isPast) {
   const paid = !!c.pagado;
   const needsPay = c.requiere_pago !== false;
   const payHtml = needsPay
-    ? `<button class="pay-toggle ${paid?'paid':'pending'}" onclick="toggleCitaPago(${c.id})">${paid?'✓ Pagado':'Pendiente'}</button>`
+    ? `<button class="pay-toggle ${paid?'paid':(citaYaPaso(c)?'pending':'upcoming')}" onclick="toggleCitaPago(${c.id})">${paid?'✓ Pagado':(citaYaPaso(c)?'Pendiente':'Por cobrar')}</button>`
     : `<span class="pay-toggle info">Sin pago individual</span>`;
   return `<div class="agenda-swipe" data-id="${c.id}"><div class="agenda-swipe-bg" aria-hidden="true"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg></div><div class="agenda-item${isPast?' past':''}">
     <div class="agenda-date-box">
@@ -5255,6 +5268,7 @@ function openDepDet(id) {
           <div class="depd-rev-date">${d.proxima_revision ? new Date(d.proxima_revision).toLocaleDateString('es-ES',{day:'numeric',month:'long',year:'numeric'}) + (d.proxima_revision_hora ? ' · ' + sudEsc(String(d.proxima_revision_hora).slice(0,5)) + ' h' : '') : 'Sin fecha establecida'}</div>
         </div>
         ${revisionBadge(d.proxima_revision)}
+        ${daysUntil(d.proxima_revision) < 0 && d.proxima_revision ? `<button type="button" class="btn-soft" onclick="openEditDep(${d.id})">Poner nueva fecha</button>` : ''}
       </div>
       <p class="depd-actividad-line">${actividadTexto(d.ultima_actividad)}</p>
     </div>
@@ -6619,6 +6633,14 @@ async function loadHistorial(depId){
   (d.archivos||[]).forEach(a=>{ if(!a||!a.fecha) return; ev.push({tipo:'archivo', fecha:dia(a.fecha), t:(a.visible_cliente?'Compartido con el cliente: ':'Archivo: ')+(a.nombre||'sin nombre')}); });
   sud.forEach(x=>ev.push({tipo:'plan', fecha:dia(x.fecha), t:'Test de sudoración'}));
   planes.forEach(x=>ev.push({tipo:'plan', fecha:dia(x.created_at||x.fecha), t:'Plan de competición'+(x.evento?': '+x.evento:''), s:'Competición el '+new Date(x.fecha+'T00:00:00').toLocaleDateString('es-ES',{day:'numeric',month:'short',year:'numeric'})+(x.visible_cliente?' · compartido con el cliente':'')}));
+  // Toda valoración (antropometría o bioimpedancia) cuenta como consulta: si ese día ya hay una, se le anota qué se hizo; si no, se crea una.
+  const hechos = {};
+  ev.filter(e=>e.tipo==='medicion').forEach(e=>{ (hechos[e.fecha] = hechos[e.fecha] || new Set()).add(e.t.startsWith('Bioimpedancia') ? 'Bioimpedancia' : 'Antropometría'); });
+  Object.keys(hechos).forEach(f=>{
+    const que = [...hechos[f]].join(' + '), previa = ev.find(e=>e.tipo==='sesion' && e.fecha===f);
+    if(previa) previa.s = (previa.s ? previa.s + ' · ' : '') + que;
+    else ev.push({tipo:'sesion', fecha:f, t:'Consulta', s:que});
+  });
   _tlEventos = ev.filter(e=>/^\d{4}-\d{2}-\d{2}$/.test(e.fecha)).sort((a,b)=>b.fecha.localeCompare(a.fecha));
   pintarTimeline(depId);
 }
