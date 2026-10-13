@@ -387,10 +387,12 @@ body.dark-mode .btn-soft{color:var(--t100);border-color:rgba(159,225,203,.22)}
 .pay-toggle.upcoming{background:var(--g100);color:var(--g500)}
 /* En la agenda el botón de pago y los iconos comparten forma: cuadrado con esquinas redondeadas (igual que en móvil) */
 .agenda-actions .pay-toggle{border-radius:8px;min-height:28px;justify-content:center}
-.agenda-actions .agenda-cal,.agenda-actions .agenda-del{border-radius:8px}
+.agenda-actions .agenda-cal,.agenda-actions .agenda-del,.agenda-actions .agenda-hecha{border-radius:8px}
 .agenda-del{background:var(--g100);border:none;border-radius:6px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--g500)}
 .agenda-cal{background:var(--t50);border:none;border-radius:6px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--t600);text-decoration:none}
 .agenda-cal:hover{background:var(--t100)}
+.agenda-hecha{background:var(--t50);border:none;border-radius:8px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--t600);flex-shrink:0}
+.agenda-hecha:hover{background:var(--t100)}
 .agenda-empty-group{font-size:11px;font-weight:500;color:var(--g400);text-transform:uppercase;letter-spacing:.06em;margin:1.25rem 0 8px;padding-bottom:6px;border-bottom:.5px solid var(--bd)}
 
 
@@ -680,7 +682,7 @@ body.dark-mode .cmp-cell.b .cmp-track i{background:var(--t400)}
   .agenda-info{grid-column:2}
   .agenda-actions{grid-column:2;flex-wrap:nowrap;justify-content:flex-start}
   .agenda-actions .pay-toggle{flex:1 1 auto;justify-content:center;min-height:40px;border-radius:10px;font-size:12px;padding:0 12px}
-  .agenda-actions .agenda-cal,.agenda-actions .agenda-del{width:40px;height:40px;border-radius:10px;flex-shrink:0}
+  .agenda-actions .agenda-cal,.agenda-actions .agenda-del,.agenda-actions .agenda-hecha{width:40px;height:40px;border-radius:10px;flex-shrink:0}
   body.has-sidebar{padding-left:0;padding-top:calc(56px + env(safe-area-inset-top,0px));padding-bottom:env(safe-area-inset-bottom,0px)}
   body.has-sidebar .mobile-topbar{display:flex}
   .sidebar{width:270px;padding-top:calc(1.5rem + env(safe-area-inset-top,0px));transform:translateX(-100%);transition:transform .25s ease,box-shadow .25s ease;box-shadow:none}
@@ -1007,6 +1009,10 @@ body.has-sidebar #offlineBar{left:248px}
 .tl-filtros{display:flex;gap:6px;overflow-x:auto;margin:12px 0 4px;padding-bottom:2px;scrollbar-width:none}
 .tl-filtros::-webkit-scrollbar{display:none}
 .tl-chip{flex:0 0 auto;padding:6px 13px;border-radius:20px;border:.5px solid var(--bdm);background:var(--sf);color:var(--g500);font:600 12px var(--f);cursor:pointer;min-height:32px}
+.frases-fila{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.frase-chip{padding:6px 12px;border-radius:20px;border:.5px solid var(--bdm);background:var(--sf);color:var(--g500);font:600 12px var(--f);cursor:pointer;min-height:32px;max-width:100%;text-align:left}
+.frase-chip:last-child{color:var(--t600)}
+.frase-chip:focus-visible{outline:2px solid var(--t400);outline-offset:1px}
 .tl-chip.on{background:var(--t600);border-color:var(--t600);color:#fff}
 .tl-chip:focus-visible{outline:2px solid var(--t400);outline-offset:1px}
 .tl-mes{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--g400);margin:18px 0 10px}
@@ -1023,7 +1029,7 @@ body.dark-mode .tl-ico.seguimiento{background:#202c3d;color:#9db6dd}
 body.dark-mode .tl-ico.plan{background:#33253a;color:#d3a6d0}
 .tl-body{flex:1;min-width:0}
 .tl-t{font-size:13.5px;font-weight:600;color:var(--g900);overflow-wrap:anywhere}
-.tl-s{font-size:12px;color:var(--g500);margin-top:1px;overflow-wrap:anywhere}
+.tl-s{font-size:12px;color:var(--g500);margin-top:1px;overflow-wrap:anywhere;white-space:pre-wrap}
 .tl-s .aviso{color:var(--gold-dk);font-weight:600}
 .tl-f{font-size:11.5px;color:var(--g400);white-space:nowrap;padding-top:2px}
 .tl-del{background:none;border:none;color:var(--g400);cursor:pointer;padding:6px;margin:-4px -6px -4px 0;border-radius:6px;min-width:32px;min-height:32px;display:inline-flex;align-items:center;justify-content:center}
@@ -1849,6 +1855,25 @@ body.dark-mode .ref-src,body.dark-mode .sup-badge,body.dark-mode .depd-avatar-fa
   </div>
 </div>
 <input type="file" id="bioFile" accept=".pdf,image/*" style="display:none" aria-hidden="true" tabindex="-1">
+
+<!-- MODAL: REGISTRAR CONSULTA -->
+<div class="mbg" id="mConsulta" style="display:none;z-index:300" role="dialog" aria-modal="true" aria-labelledby="consTit" onclick="if(event.target===this)cerrarConsulta()">
+  <div class="mod" style="max-width:460px">
+    <p class="mt" id="consTit">Registrar consulta</p>
+    <p class="ms" id="consSub"></p>
+    <div id="consCampos">
+      <label class="mfl" for="consFecha">Día</label>
+      <input type="date" class="inp" id="consFecha">
+      <label class="mfl" for="consNota" style="margin-top:12px">Lo hablado y los acuerdos <span class="hd-opt">(opcional)</span></label>
+      <textarea class="notes-ta" id="consNota" maxlength="600" style="min-height:110px" placeholder="Ej. Sube hidratos antes de entrenar, revisamos el desayuno en la próxima visita."></textarea>
+    </div>
+    <label class="mfl" id="consPagoBox" style="display:none;gap:8px;align-items:center;margin-top:12px;font-weight:600"><input type="checkbox" id="consPago"> Marcar la cita como cobrada</label>
+    <div class="mbtns" style="margin-top:16px">
+      <button type="button" class="btn-cancel" onclick="cerrarConsulta()">Cancelar</button>
+      <button type="button" class="btn-ok" id="consGuardar" onclick="guardarConsulta()">Guardar</button>
+    </div>
+  </div>
+</div>
 
 <!-- MODAL: INFORME DE PROGRESO -->
 <div class="mbg" id="mInforme" style="display:none;z-index:300" role="dialog" aria-modal="true" aria-labelledby="infTitulo">
@@ -3574,13 +3599,32 @@ function lunesMadridISO(){
 async function pintarAvisosDash(deps, citasAll, todayISO){
   const card = document.getElementById('dashAvisosCard'); if(!card) return;
   const avisos = [];
-  // 1) Seguimiento activado y sin enviar esta semana (si la tabla no existe, simplemente no se avisa)
+  // 1) Seguimiento semanal: sin enviar esta semana, adherencia baja o molestias dos semanas seguidas
+  //    y clientes que antes anotaban su peso y llevan días sin hacerlo (si las tablas no existen, simplemente no se avisa)
   const conSeg = deps.filter(d => d.formularios && d.formularios.seguimiento && d.formularios.seguimiento.activo);
-  if(conSeg.length){
-    const lunes = lunesMadridISO();
-    let enviados = null;
-    try{ const r = await sb(`seguimientos?semana=gte.${lunes}&select=deportista_id`); if(Array.isArray(r)) enviados = new Set(r.map(x=>String(x.deportista_id))); }catch(e){}
-    if(enviados) conSeg.filter(d=>!enviados.has(String(d.id))).forEach(d=>avisos.push({id:d.id, n:d.nombre, sub:d.deporte||'', tag:'Seguimiento sin enviar', cls:'gold'}));
+  const lunes = lunesMadridISO(), hace = n => { const x = new Date(lunes+'T00:00:00'); x.setDate(x.getDate()-n); return localISO(x); };
+  const [segs, pesos] = await Promise.all([
+    Promise.resolve(sb(`seguimientos?semana=gte.${hace(21)}&select=deportista_id,semana,respuestas&order=semana.desc`)).then(a=>Array.isArray(a)?a:null).catch(()=>null),
+    Promise.resolve(sb(`pesos_cliente?fecha=gte.${hace(60)}&select=deportista_id,fecha&order=fecha.desc`)).then(a=>Array.isArray(a)?a:null).catch(()=>null)
+  ]);
+  const aviso = (d, tag, cls) => avisos.push({id:d.id, n:d.nombre, sub:d.deporte||'', tag, cls});
+  if(segs){
+    const por = {}; segs.forEach(x=>{ (por[String(x.deportista_id)] = por[String(x.deportista_id)] || []).push(x); });
+    conSeg.forEach(d=>{
+      const l = por[String(d.id)] || [];
+      if(!l.some(x=>String(x.semana).slice(0,10) >= lunes)) aviso(d, 'Seguimiento sin enviar', 'gold');
+      // las dos últimas semanas seguidas (con 7 días de diferencia)
+      const [a, b] = l, seguidas = a && b && Math.round((new Date(String(a.semana).slice(0,10)) - new Date(String(b.semana).slice(0,10))) / 86400000) === 7;
+      if(seguidas){
+        const qa = a.respuestas || {}, qb = b.respuestas || {};
+        if(qa.adherencia != null && qb.adherencia != null && qa.adherencia <= 2 && qb.adherencia <= 2) aviso(d, 'Adherencia baja 2 semanas seguidas', 'red');
+        if(String(qa.molestias||'').trim() && String(qb.molestias||'').trim()) aviso(d, 'Molestias 2 semanas seguidas', 'red');
+      }
+    });
+  }
+  if(pesos){
+    const ultimo = {}; pesos.forEach(x=>{ const k = String(x.deportista_id); if(!ultimo[k]) ultimo[k] = String(x.fecha).slice(0,10); });
+    deps.forEach(d=>{ const u = ultimo[String(d.id)]; if(!u) return; const dias = Math.round((new Date(todayISO+'T00:00:00') - new Date(u+'T00:00:00')) / 86400000); if(dias >= 14) aviso(d, `Sin anotar el peso hace ${dias} días`, 'gold'); });
   }
   // 2) Revisión sin cita en la agenda (fecha próxima) o con la fecha ya pasada y sin nueva
   deps.forEach(d=>{
@@ -4528,14 +4572,14 @@ function infHtml(I, comentario){
   const grasaPts = grasaAntro.length ? grasaAntro : grasaBio, grasaDeBascula = !grasaAntro.length && grasaBio.length;
   const delta = (pts,dec,unidad,etq) => { if(pts.length<2) return pts.length?`<div class="rp-kpi-s">${infFecha(pts[0].fecha,true)}</div>`:''; const dd = pts[pts.length-1].v-pts[0].v; return `<div class="rp-kpi-s">${medSigned(dd,dec)} ${etq||unidad} desde el ${infFecha(pts[0].fecha)}</div>`; };
   const ult = pts => pts.length ? medNum(pts[pts.length-1].v,1) : '—';
-  const adh = infMedia(segs.map(x=>(x.respuestas||{}).adherencia)), ene = infMedia(segs.map(x=>(x.respuestas||{}).energia)), ent = infMedia(segs.map(x=>(x.respuestas||{}).entrenos));
+  const adh = infMedia(segs.map(x=>(x.respuestas||{}).adherencia)), ene = infMedia(segs.map(x=>(x.respuestas||{}).energia)), ent = infMedia(segs.map(x=>(x.respuestas||{}).entrenos)), sue = infMedia(segs.map(x=>(x.respuestas||{}).sueno)), ani = infMedia(segs.map(x=>(x.respuestas||{}).animo));
   const fechas = [...pesoPts.map(p=>p.fecha), ...grasaPts.map(p=>p.fecha), ...grasaBio.map(p=>p.fecha), ...segs.map(x=>String(x.semana).slice(0,10))].sort();
   const periodo = fechas.length ? (fechas[0]===fechas[fechas.length-1] ? infFecha(fechas[0],true) : infFecha(fechas[0], fechas[0].slice(0,4)!==fechas[fechas.length-1].slice(0,4))+' – '+infFecha(fechas[fechas.length-1],true)) : '';
   const kpis = `<div class="rp-kpis">
     <div class="rp-kpi"><div class="rp-kpi-l">Peso</div><div class="rp-kpi-v">${ult(pesoPts)}${pesoPts.length?' kg':''}</div>${delta(pesoPts,1,'kg')}${pesoSoloCliente?'<div class="rp-kpi-s">peso anotado por el cliente</div>':''}</div>
     <div class="rp-kpi"><div class="rp-kpi-l">% de grasa</div><div class="rp-kpi-v">${ult(grasaPts)}${grasaPts.length?' %':''}</div>${delta(grasaPts,1,'%','puntos')}${grasaDeBascula?'<div class="rp-kpi-s">según la báscula de bioimpedancia</div>':''}</div>
     <div class="rp-kpi"><div class="rp-kpi-l">Adherencia media</div><div class="rp-kpi-v">${adh!=null?medNum(adh,1)+' / 5':'—'}</div><div class="rp-kpi-s">Energía media ${ene!=null?medNum(ene,1)+' / 5':'—'}</div></div>
-    <div class="rp-kpi"><div class="rp-kpi-l">Seguimientos</div><div class="rp-kpi-v">${segs.length}</div><div class="rp-kpi-s">${ent!=null?medNum(ent,1)+' entrenos por semana':'semanas registradas'}</div></div></div>`;
+    <div class="rp-kpi"><div class="rp-kpi-l">Entrenamientos</div><div class="rp-kpi-v">${ent!=null?medNum(ent,1)+' / sem.':'—'}</div><div class="rp-kpi-s">Sueño ${sue!=null?medNum(sue,1):'—'} · Ánimo ${ani!=null?medNum(ani,1):'—'} (de 5)</div></div></div>`;
   const grandes = [infChart(pesoPts,'#0F6E56','Peso'+(pesoSoloCliente?' (anotado por el cliente)':''),'kg',1), infChart(grasaPts,'#B8956A','% de grasa'+(grasaDeBascula?' (báscula)':''),'%',1), grasaAntro.length?infChart(grasaBio,'#6F8CB8','% de grasa (báscula)','%',1):'', infChart(musculoBio,'#04342C','Músculo esquelético (báscula)','kg',1)].filter(Boolean);
   const serie = k => segs.map(x=>({fecha:String(x.semana).slice(0,10), v:(x.respuestas||{})[k]})).filter(p=>p.v!=null);
   const peq = SEG_P.map(m=>infChart(serie(m.k), m.c, m.tt, '1–5', 0, [1,5])).concat(infChart(serie('entrenos'),'#04342C','Entrenamientos','sesiones',0)).filter(Boolean);
@@ -5146,6 +5190,9 @@ function googleCalLink(c){
   return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${text}&dates=${datesParam}&details=${details}${extra}`;
 }
 
+const citaPorId = id => citas.find(x => x.id == id);
+// Deportista de una cita (por nombre; el mismo vínculo que usa la revisión). `null` si es de otro servicio.
+const citaDepId = c => { const d = deportistas.find(x => x.nombre === c.cliente); return d ? d.id : 'null'; };
 function renderCitaItem(c, isPast) {
   const d = new Date(c.fecha + 'T00:00:00');
   const day = d.getDate();
@@ -5156,6 +5203,7 @@ function renderCitaItem(c, isPast) {
   const payHtml = needsPay
     ? `<button class="pay-toggle ${paid?'paid':(citaYaPaso(c)?'pending':'upcoming')}" onclick="toggleCitaPago(${c.id})">${paid?'✓ Pagado':(citaYaPaso(c)?'Pendiente':'Por cobrar')}</button>`
     : `<span class="pay-toggle info">Sin pago individual</span>`;
+  const hechaBtn = (!c.hecha && citaYaPaso(c)) ? `<button class="agenda-hecha" onclick="abrirConsulta(${citaDepId(c)},citaPorId(${c.id}))" aria-label="Marcar como hecha la cita de ${sudEsc(c.cliente)}" title="Marcar como hecha"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></button>` : '';
   return `<div class="agenda-swipe" data-id="${c.id}"><div class="agenda-swipe-bg" aria-hidden="true"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg></div><div class="agenda-item${isPast?' past':''}">
     <div class="agenda-date-box">
       <div class="agenda-date-day">${day}</div>
@@ -5163,10 +5211,10 @@ function renderCitaItem(c, isPast) {
     </div>
     <div class="agenda-info">
       <div class="agenda-cliente">${c.cliente}</div>
-      <div class="agenda-meta">${c.servicio || 'Revisión'}${horaTxt}${c.nota?' · '+c.nota:''}</div>
+      <div class="agenda-meta">${c.servicio || 'Revisión'}${horaTxt}${c.nota?' · '+c.nota:''}${c.hecha?' · Hecha':''}</div>
     </div>
     <div class="agenda-actions">
-      ${payHtml}
+      ${hechaBtn}${payHtml}
       <a class="agenda-cal" href="${googleCalLink(c)}" target="_blank" title="Añadir a Google Calendar">
         <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="12" y1="14" x2="12" y2="18"/><line x1="10" y1="16" x2="14" y2="16"/></svg>
       </a>
@@ -5413,6 +5461,8 @@ function openDepDet(id) {
         <button type="button" class="btn-soft" onclick="quitarNotaCliente(${d.id})">Quitar nota</button>
         <span class="med-note" id="depNotaCliInfo" style="margin:0">${notaClienteInfo(d)}</span>
       </div>
+      <div class="frases-fila" id="depNotaFrases" role="group" aria-label="Frases rápidas">${frasesChips()}</div>
+      <div id="depNotaFrasesEd"></div>
     </div>
     </div>
     <div class="depd-panel${_depTab==='seguimiento' ? ' on' : ''}" role="tabpanel" id="depPanel-seguimiento" aria-labelledby="depTab-seguimiento" data-k="seguimiento" tabindex="0">
@@ -6827,7 +6877,7 @@ async function loadHistorial(depId){
   const d = deportistas.find(x=>x.id==depId) || {};
   const dia = f => String(f||'').slice(0,10);
   const ev = [];
-  rows.forEach(x=>ev.push({tipo:'sesion', fecha:dia(x.fecha), t:x.nota||'Consulta registrada', id:x.id, borrable:true}));
+  rows.forEach(x=>{ const n = x.nota || 'Consulta registrada', larga = n.length > 60 || n.includes('\n'); ev.push({tipo:'sesion', fecha:dia(x.fecha), t: larga ? 'Consulta' : n, s: larga ? n : '', id:x.id, borrable:true}); });
   meds.forEach(x=>{ const m=medPunto(x), partes=[]; if(m.peso!=null) partes.push(medNum(m.peso,1)+' kg'); if(m.grasa!=null) partes.push(medNum(m.grasa,1)+' % grasa'); ev.push({tipo:'medicion', fecha:dia(x.fecha), t:'Valoración antropométrica', s:partes.join(' · ')}); });
   bios.forEach(x=>{ const v=x.valores||{}, partes=[]; if(v.peso!=null) partes.push(medNum(+v.peso,1)+' kg'); if(v.pct_grasa!=null) partes.push(medNum(+v.pct_grasa,1)+' % grasa'); ev.push({tipo:'medicion', fecha:dia(x.fecha), t:'Bioimpedancia'+(x.aparato?' · '+x.aparato:''), s:partes.join(' · ')}); });
   segs.forEach(x=>{ const q=x.respuestas||{}, bajos=SEG_P.filter(m=>q[m.k]!=null&&q[m.k]<=2).map(m=>m.t.toLowerCase());
@@ -6904,12 +6954,52 @@ async function touchActividad(depId){
   if(d) d.ultima_actividad = now;
 }
 
-async function registrarConsulta(depId){
-  const today = localISO(new Date());
-  await insertHistorial({deportista_id: depId, fecha: today, nota: 'Consulta registrada'});
-  await touchActividad(depId);
-  const d = deportistas.find(x => x.id === depId);
-  openDepDet(depId);
+// Registrar una consulta: pide opcionalmente lo hablado y los acuerdos. También se abre desde una cita pasada de la agenda («Hecha»).
+let _cons = null;
+function registrarConsulta(depId){ abrirConsulta(depId); }
+async function abrirConsulta(depId, cita){
+  if(!deportistas.length) await loadDeportistas();
+  const d = depId != null ? deportistas.find(x => x.id == depId) : null;
+  _cons = { depId: d ? d.id : null, cita: cita || null };
+  document.getElementById('consTit').textContent = cita ? 'Marcar la cita como hecha' : 'Registrar consulta';
+  document.getElementById('consSub').textContent = d ? d.nombre : (cita ? cita.cliente : '');
+  document.getElementById('consCampos').style.display = d ? '' : 'none';
+  document.getElementById('consFecha').value = cita ? String(cita.fecha).slice(0,10) : localISO(new Date());
+  document.getElementById('consNota').value = '';
+  const pagable = !!(cita && cita.requiere_pago !== false && !cita.pagado);
+  document.getElementById('consPagoBox').style.display = pagable ? 'flex' : 'none';
+  document.getElementById('consPago').checked = false;
+  document.getElementById('consGuardar').disabled = false;
+  document.getElementById('mConsulta').style.display = 'flex';
+  if(d) setTimeout(() => document.getElementById('consNota').focus(), 60);
+}
+function cerrarConsulta(){ document.getElementById('mConsulta').style.display = 'none'; _cons = null; }
+async function guardarConsulta(){
+  const C = _cons; if(!C) return;
+  const btn = document.getElementById('consGuardar'); btn.disabled = true;
+  try{
+    if(C.depId != null){
+      const fecha = document.getElementById('consFecha').value || localISO(new Date()), nota = document.getElementById('consNota').value.trim();
+      const r = await insertHistorial({deportista_id: C.depId, fecha, nota: nota || 'Consulta registrada'});
+      if(esErrorSb(r)) throw new Error('historial');
+      await touchActividad(C.depId);
+    }
+    if(C.cita){
+      const upd = { hecha: true };
+      if(document.getElementById('consPago').checked) upd.pagado = true;
+      const r2 = await patchCita(C.cita.id, upd);
+      if(esErrorSb(r2)){
+        // Sin la columna `hecha` (SQL sin ejecutar) al menos se guarda el cobro
+        if(upd.pagado) await patchCita(C.cita.id, {pagado:true});
+        toast('Consulta registrada, pero para marcar la cita como hecha falta ejecutar supabase_citas_hecha.sql en Supabase.', {tipo:'aviso', ms:7000});
+      }else toast('Cita marcada como hecha' + (C.depId != null ? ' y consulta registrada' : ''));
+      const c = citas.find(x => x.id == C.cita.id); if(c){ c.hecha = true; if(upd.pagado) c.pagado = true; }
+      if(typeof renderCitas === 'function') renderCitas();
+    }else toast('Consulta registrada');
+    const dep = C.depId;
+    cerrarConsulta();
+    if(dep != null && currentDepId == dep && document.getElementById('vdepdet').classList.contains('active')) openDepDet(dep);
+  }catch(e){ toast('No se pudo guardar. Inténtalo de nuevo.', {tipo:'error'}); btn.disabled = false; }
 }
 
 function copyDepUrl(url) {
@@ -6920,6 +7010,23 @@ function copyDepUrl(url) {
 }
 
 // Nota que el cliente ve arriba en su área (va aparte de las notas privadas, que nunca recibe)
+// Frases rápidas para la nota del cliente: editables y guardadas en este navegador (no llevan datos de nadie)
+const FRASES_DEF = ['Buen trabajo este mes. Seguimos con el mismo plan.','Sube un poco los hidratos antes de entrenar.','Recuerda rellenar el seguimiento cada semana.','Prioriza el descanso esta semana.','Nos vemos en la próxima revisión. Cualquier duda, escríbeme.'];
+function frasesNota(){ try{ const v = JSON.parse(localStorage.getItem('nl_frases_nota') || 'null'); if(Array.isArray(v) && v.length) return v.slice(0,12).map(x=>String(x).slice(0,200)).filter(Boolean); }catch(e){} return FRASES_DEF.slice(); }
+function frasesChips(){ return frasesNota().map((f,i)=>`<button type="button" class="frase-chip" onclick="insertarFrase(${i})" title="${sudEsc(f)}">${sudEsc(f.length>34?f.slice(0,32)+'…':f)}</button>`).join('') + `<button type="button" class="frase-chip" onclick="editarFrases()">Editar frases</button>`; }
+function insertarFrase(i){
+  const ta = document.getElementById('depNotaCli'); if(!ta) return; const f = frasesNota()[i]; if(!f) return;
+  ta.value = (ta.value.trim() ? ta.value.trim() + ' ' : '') + f; ta.value = ta.value.slice(0,500); ta.focus();
+}
+function editarFrases(){
+  const box = document.getElementById('depNotaFrasesEd'); if(!box) return;
+  if(box.innerHTML){ box.innerHTML = ''; return; }
+  box.innerHTML = `<p class="med-note" style="margin:8px 0 4px">Una frase por línea (máx. 12). Se guardan solo en este navegador.</p><textarea class="notes-ta" id="frasesTa" style="min-height:120px">${sudEsc(frasesNota().join('\n'))}</textarea>
+    <div class="notes-foot"><button type="button" class="btn-save" onclick="guardarFrases()">Guardar frases</button><button type="button" class="btn-soft" onclick="restaurarFrases()">Restaurar las de ejemplo</button></div>`;
+}
+function guardarFrases(){ const l = document.getElementById('frasesTa').value.split('\n').map(x=>x.trim()).filter(Boolean).slice(0,12); try{ localStorage.setItem('nl_frases_nota', JSON.stringify(l)); }catch(e){} refrescarFrases(); toast('Frases guardadas'); }
+function restaurarFrases(){ try{ localStorage.removeItem('nl_frases_nota'); }catch(e){} refrescarFrases(); toast('Frases de ejemplo restauradas'); }
+function refrescarFrases(){ const c = document.getElementById('depNotaFrases'); if(c) c.innerHTML = frasesChips(); const e = document.getElementById('depNotaFrasesEd'); if(e) e.innerHTML = ''; }
 function notaClienteInfo(d){ return d.nota_cliente && d.nota_cliente_fecha ? 'Publicada el ' + new Date(String(d.nota_cliente_fecha).slice(0,10)+'T00:00:00').toLocaleDateString('es-ES',{day:'numeric',month:'long'}) + '. El cliente la ve ahora.' : 'El cliente no ve ninguna nota ahora.'; }
 async function guardarNotaCliente(id, texto){
   const d = deportistas.find(x=>x.id==id); if(!d) return;
