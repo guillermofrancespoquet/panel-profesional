@@ -656,6 +656,8 @@ body.dark-mode .cmp-cell.b .cmp-track i{background:var(--t400)}
 .dash-card-count{font-size:11px;font-weight:700;color:var(--gold-dk);background:var(--gold-50);padding:2px 8px;border-radius:20px}
 .dash-empty{font-size:12px;color:var(--g400);padding:.5rem 0}
 .dash-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:.5px solid var(--bd)}
+.dash-row-link{cursor:pointer}
+.dash-row-link:hover .dash-row-name{text-decoration:underline}
 .dash-row:last-child{border-bottom:none}
 .dash-row-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
 .dash-row-dot.red{background:var(--red)}
@@ -1316,6 +1318,14 @@ body.dark-mode .ref-src,body.dark-mode .sup-badge,body.dark-mode .depd-avatar-fa
         <button class="btn-rem-add" onclick="addRecordatorio()">Añadir</button>
       </div>
       <div id="remList"></div>
+    </div>
+
+    <div class="dash-card" id="dashAvisosCard" style="margin-bottom:1.5rem;display:none">
+      <div class="dash-card-head">
+        <span class="dash-card-title"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>Por atender</span>
+        <span class="dash-card-count" id="dashAvisosCount">0</span>
+      </div>
+      <div id="dashAvisos"></div>
     </div>
 
     <div class="dash-grid">
@@ -3508,6 +3518,9 @@ async function loadDashboard(){
     return `<div class="dash-row"><div class="dash-row-dot red"></div><div class="dash-row-txt"><div class="dash-row-name">${d.nombre}</div><div class="dash-row-sub">${d.deporte||''}</div></div><span class="dash-row-tag">${d._idays}d</span></div>`;
   }).join(''):'<p class="dash-empty">Todos con actividad reciente.</p>';
 
+  // ── Por atender: seguimientos sin enviar esta semana y revisiones sin cita ──
+  pintarAvisosDash(dashDeps, dashCitas, todayISO);
+
   // ── Sidebar badge (avisos totales) ──
   const totalAvisos=sesiones.length+impagos.length+revs.filter(d=>d._days<=0).length;
   const badgeEl=document.getElementById('sbAgendaBadge');
@@ -3525,6 +3538,37 @@ async function loadDashboard(){
     <div class="dash-stat"><div class="dash-stat-n">${revs.length}</div><div class="dash-stat-l">Revisiones por hacer</div></div>
   `;
 }
+
+// Lunes de esta semana en hora de Madrid (así se guarda `seguimientos.semana`)
+function lunesMadridISO(){
+  const f = new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/Madrid',year:'numeric',month:'2-digit',day:'2-digit',weekday:'short'}).formatToParts(new Date());
+  const g = t => f.find(x=>x.type===t).value, dow = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].indexOf(g('weekday'));
+  const d = new Date(Date.UTC(+g('year'), +g('month')-1, +g('day')-dow));
+  return d.toISOString().slice(0,10);
+}
+async function pintarAvisosDash(deps, citasAll, todayISO){
+  const card = document.getElementById('dashAvisosCard'); if(!card) return;
+  const avisos = [];
+  // 1) Seguimiento activado y sin enviar esta semana (si la tabla no existe, simplemente no se avisa)
+  const conSeg = deps.filter(d => d.formularios && d.formularios.seguimiento && d.formularios.seguimiento.activo);
+  if(conSeg.length){
+    const lunes = lunesMadridISO();
+    let enviados = null;
+    try{ const r = await sb(`seguimientos?semana=gte.${lunes}&select=deportista_id`); if(Array.isArray(r)) enviados = new Set(r.map(x=>String(x.deportista_id))); }catch(e){}
+    if(enviados) conSeg.filter(d=>!enviados.has(String(d.id))).forEach(d=>avisos.push({id:d.id, n:d.nombre, sub:d.deporte||'', tag:'Seguimiento sin enviar', cls:'gold'}));
+  }
+  // 2) Revisión sin cita en la agenda (fecha próxima) o con la fecha ya pasada y sin nueva
+  deps.forEach(d=>{
+    const f = d.proxima_revision ? String(d.proxima_revision).slice(0,10) : '';
+    if(!f) return;
+    if(f < todayISO) avisos.push({id:d.id, n:d.nombre, sub:d.deporte||'', tag:'Poner nueva fecha de revisión', cls:'red'});
+    else if(!citasAll.some(c=>c.cliente===d.nombre && String(c.fecha).slice(0,10)===f)) avisos.push({id:d.id, n:d.nombre, sub:d.deporte||'', tag:'Revisión sin cita en la agenda', cls:'red'});
+  });
+  document.getElementById('dashAvisosCount').textContent = avisos.length;
+  card.style.display = avisos.length ? '' : 'none';
+  document.getElementById('dashAvisos').innerHTML = avisos.map(a=>`<div class="dash-row dash-row-link" role="button" tabindex="0" onclick="abrirFichaDash(${a.id})" onkeydown="if(event.key==='Enter')abrirFichaDash(${a.id})"><div class="dash-row-dot ${a.cls}"></div><div class="dash-row-txt"><div class="dash-row-name">${sudEsc(a.n)}</div><div class="dash-row-sub">${sudEsc(a.sub)}</div></div><span class="dash-row-tag">${a.tag}</span></div>`).join('');
+}
+async function abrirFichaDash(id){ if(!deportistas.length) await loadDeportistas(); openDepDet(id); }
 
 // Enlace al área de clientes (misma carpeta, sin escribir el nombre del repo a mano)
 function urlCliente(){ return window.location.origin + window.location.pathname.replace('panel-profesional.html','cliente.html'); }
@@ -5286,6 +5330,16 @@ function openDepDet(id) {
         <span class="save-ok" id="depSaveOk">✓ Guardado</span>
       </div>
     </div>
+
+    <div class="depd-section">
+      <p class="sec-title">Nota para el cliente</p>
+      <textarea class="notes-ta" id="depNotaCli" maxlength="500" placeholder="Un mensaje corto que verá arriba en su área, por ejemplo tras la revisión…" style="min-height:90px">${sudEsc(d.nota_cliente || '')}</textarea>
+      <div class="notes-foot">
+        <button class="btn-save" onclick="publicarNotaCliente(${d.id})">Publicar nota</button>
+        <button type="button" class="btn-soft" onclick="quitarNotaCliente(${d.id})">Quitar nota</button>
+        <span class="med-note" id="depNotaCliInfo" style="margin:0">${notaClienteInfo(d)}</span>
+      </div>
+    </div>
     </div>
     <div class="depd-panel${_depTab==='seguimiento' ? ' on' : ''}" role="tabpanel" id="depPanel-seguimiento" aria-labelledby="depTab-seguimiento" data-k="seguimiento" tabindex="0">
     <div class="depd-section">
@@ -6713,6 +6767,20 @@ function copyDepUrl(url) {
     btns.forEach(b => { b.textContent = '¡Copiado!'; setTimeout(() => b.textContent = 'Copiar', 2000); });
   });
 }
+
+// Nota que el cliente ve arriba en su área (va aparte de las notas privadas, que nunca recibe)
+function notaClienteInfo(d){ return d.nota_cliente && d.nota_cliente_fecha ? 'Publicada el ' + new Date(String(d.nota_cliente_fecha).slice(0,10)+'T00:00:00').toLocaleDateString('es-ES',{day:'numeric',month:'long'}) + '. El cliente la ve ahora.' : 'El cliente no ve ninguna nota ahora.'; }
+async function guardarNotaCliente(id, texto){
+  const d = deportistas.find(x=>x.id==id); if(!d) return;
+  const upd = { nota_cliente: texto || null, nota_cliente_fecha: texto ? localISO(new Date()) : null };
+  const res = await patchDep(id, upd);
+  if(esErrorSb(res)){ toast('No se pudo guardar. ¿Has ejecutado supabase_nota_cliente.sql en Supabase?', {tipo:'error', ms:6000}); return; }
+  Object.assign(d, upd);
+  const info = document.getElementById('depNotaCliInfo'); if(info) info.textContent = notaClienteInfo(d);
+  toast(texto ? 'Nota publicada: el cliente ya la ve' : 'Nota retirada');
+}
+function publicarNotaCliente(id){ const t = document.getElementById('depNotaCli').value.trim(); if(!t){ toast('Escribe la nota primero.', {tipo:'aviso'}); return; } return guardarNotaCliente(id, t); }
+function quitarNotaCliente(id){ const ta = document.getElementById('depNotaCli'); if(ta) ta.value = ''; return guardarNotaCliente(id, ''); }
 
 function saveDepNote(id) { _autoDep.cambio(id, document.getElementById('depNotes').value); return _autoDep.ahora(); }
 
