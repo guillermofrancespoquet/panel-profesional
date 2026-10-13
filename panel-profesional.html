@@ -1099,6 +1099,16 @@ body.dark-mode .sup-card .sup-badge.mid,body.dark-mode .dep-chip.active{color:#D
 .sb-logout:hover{color:#FFB4B2!important;background:rgba(255,120,120,.14)!important}
 body.dark-mode .ref-src,body.dark-mode .sup-badge,body.dark-mode .depd-avatar-fallback{color:#D9B88C}
 /* ── Bioimpedancia: pantalla de revisión ── */
+.foto-modal{background:var(--sf);border-radius:16px;width:min(760px,100%);max-height:min(88vh,calc(100dvh - 2rem));display:flex;flex-direction:column;overflow:hidden}
+.foto-body{padding:14px 18px 18px;overflow:auto}
+.foto-grande{width:100%;max-height:calc(88vh - 140px);object-fit:contain;border-radius:10px;background:var(--g100);display:block}
+.foto-par{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.foto-par img{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:10px;background:var(--g100);display:block}
+.foto-par small{display:block;font-size:11.5px;color:var(--g500);margin-top:4px}
+.fgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:8px;margin-top:12px}
+.fth{position:relative;border:0;padding:0;background:var(--g100);border-radius:10px;overflow:hidden;aspect-ratio:3/4;cursor:pointer}
+.fth img{width:100%;height:100%;object-fit:cover;display:block}
+.fth span{position:absolute;left:0;right:0;bottom:0;padding:14px 6px 5px;font-size:10.5px;font-weight:600;color:#fff;background:linear-gradient(transparent,rgba(0,0,0,.65));text-align:left}
 .bio-modal{background:var(--sf);border-radius:16px;width:min(1000px,100%);max-height:calc(100vh - 2rem);display:flex;flex-direction:column;overflow:hidden}
 .bio-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 12px;border-bottom:.5px solid var(--bd)}
 .bio-head .mt{margin:0}
@@ -1817,6 +1827,12 @@ body.dark-mode .ref-src,body.dark-mode .sup-badge,body.dark-mode .depd-avatar-fa
 </div>
 
 <!-- MODAL: BIOIMPEDANCIA (revisar y guardar) -->
+<div class="mbg" id="mFoto" style="display:none;z-index:300" role="dialog" aria-modal="true" aria-labelledby="fotoTitulo" onclick="if(event.target===this)cerrarFoto()">
+  <div class="foto-modal">
+    <div class="bio-head"><p class="mt" id="fotoTitulo">Foto</p><button type="button" class="inf-x" onclick="cerrarFoto()" aria-label="Cerrar">&times;</button></div>
+    <div class="foto-body" id="fotoBody"></div>
+  </div>
+</div>
 <div class="mbg" id="mBio" style="display:none;z-index:300" role="dialog" aria-modal="true" aria-labelledby="bioTitulo">
   <div class="bio-modal">
     <div class="bio-head"><p class="mt" id="bioTitulo">Bioimpedancia</p><button type="button" class="inf-x" onclick="cerrarBio()" aria-label="Cerrar">&times;</button></div>
@@ -2979,6 +2995,7 @@ document.addEventListener('keydown', function(e){
     openGlobalSearch();
   }
   if(e.key === 'Escape'){
+    const fm = document.getElementById('mFoto'); if(fm && fm.style.display === 'flex'){ cerrarFoto(); return; }
     const bm = document.getElementById('mBio'); if(bm && bm.style.display === 'flex'){ cerrarBio(); return; }
     const inf = document.getElementById('mInforme'); if(inf && inf.style.display === 'flex'){ cerrarInforme(); return; }
     const modal = document.getElementById('mGlobalSearch');
@@ -5348,6 +5365,11 @@ function openDepDet(id) {
     </div>
 
     <div class="depd-section">
+      <p class="sec-title">Peso y fotos del cliente</p>
+      <div class="med-box" id="regCliBox">${skel(2)}</div>
+    </div>
+
+    <div class="depd-section">
       <p class="sec-title">Formularios del cliente</p>
       <div class="med-box" id="frmBox">${frmHtml(d)}</div>
     </div>
@@ -5421,6 +5443,7 @@ function openDepDet(id) {
   loadHistorial(d.id);
   loadAccesoCliente(d.id);
   loadSeguimientos(d.id);
+  loadRegCliente(d.id);
   loadMediciones(d.id);
   loadSudoracion(d.id);
   loadPlanes(d.id);
@@ -5469,6 +5492,72 @@ function btnDel(title,onclick){
 
 // ── Seguimiento semanal propio: respuestas del cliente en la ficha (supabase_seguimiento.sql) ──
 const SEG_P=[{k:'adherencia',t:'Adherencia',tt:'Adherencia al plan',c:'#0F6E56'},{k:'energia',t:'Energía',tt:'Energía',c:'#B8956A'},{k:'sueno',t:'Sueño',tt:'Sueño',c:'#6F8CB8'},{k:'digestion',t:'Digestión',tt:'Digestión',c:'#9A7DB3'},{k:'animo',t:'Ánimo',tt:'Estado de ánimo',c:'#C98B6B'}];
+// ── Peso y fotos que sube el propio cliente (tablas pesos_cliente y fotos_cliente; fotos en el bucket privado fotos-clientes) ──
+const FOTO_BUCKET = 'fotos-clientes', FOTO_VISTAS = {frente:'Frente', lado:'Lado', espalda:'Espalda', otra:'Otra'};
+let _regFotos = [];
+const _fotoUrls = {};
+async function urlFotoCliente(path){
+  const c = _fotoUrls[path]; if(c && Date.now() - c.t < 50*60000) return c.u;
+  const r = await authFetch(`${SURL}/storage/v1/object/sign/${FOTO_BUCKET}/${String(path).split('/').map(encodeURIComponent).join('/')}`, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({expiresIn:3600})});
+  const j = await r.json(); if(!r.ok || !j.signedURL) throw new Error('firma');
+  const u = SURL + '/storage/v1' + j.signedURL; _fotoUrls[path] = {u, t:Date.now()}; return u;
+}
+function cargarFotosCli(root){ (root || document).querySelectorAll('img[data-p]').forEach(async im => { try{ im.src = await urlFotoCliente(im.dataset.p); }catch(e){} }); }
+const fotoFecha = (f,corto) => new Date(String(f).slice(0,10)+'T00:00:00').toLocaleDateString('es-ES', corto ? {day:'numeric',month:'short',year:'2-digit'} : {day:'numeric',month:'long',year:'numeric'});
+async function loadRegCliente(depId){
+  const box = document.getElementById('regCliBox'); if(!box) return;
+  const seguro = p => Promise.resolve(p).then(v => Array.isArray(v) ? v : null).catch(() => null);
+  const [pesos, fotos] = await Promise.all([
+    seguro(sb(`pesos_cliente?deportista_id=eq.${depId}&order=fecha.asc&select=id,fecha,peso`)),
+    seguro(sb(`fotos_cliente?deportista_id=eq.${depId}&order=fecha.asc,id.asc&select=id,fecha,vista,path`))
+  ]);
+  if(currentDepId != depId || !document.getElementById('regCliBox')) return;
+  if(pesos === null || fotos === null){ box.innerHTML = '<p class="med-empty">Esta función necesita el SQL <b>supabase_registro_cliente.sql</b> ejecutado en Supabase.</p>'; return; }
+  _regFotos = fotos;
+  let h = '';
+  if(pesos.length){
+    const pts = pesos.map(x => ({fecha:String(x.fecha).slice(0,10), peso:+x.peso})), last = pts[pts.length-1], first = pts[0];
+    const d = pts.length > 1 ? last.peso - first.peso : null;
+    h += `<div class="med-head"><span class="med-date">Peso que anota el cliente</span><span class="med-ago">Autodeclarado · última vez el ${fotoFecha(last.fecha)}</span></div>
+      <div class="med-stats"><div class="med-stat"><div class="med-stat-l">Último peso</div><div class="med-stat-v">${medNum(last.peso,1)}<small>kg</small></div><div class="med-delta">&nbsp;</div></div>
+      <div class="med-stat"><div class="med-stat-l">Desde el primero</div><div class="med-stat-v">${d==null?'—':medSigned(d,1)}<small>${d==null?'':'kg'}</small></div><div class="med-delta">${d==null?'&nbsp;':'el '+fotoFecha(first.fecha,true)}</div></div>
+      <div class="med-stat"><div class="med-stat-l">Registros</div><div class="med-stat-v">${pts.length}</div><div class="med-delta">&nbsp;</div></div></div>
+      ${pts.length > 1 ? `<div class="med-series">${medSerie(pts,'peso','#6F8CB8','Peso (autorregistro)','kg')}</div>` : ''}
+      <p class="med-note">Es el peso que el cliente se anota solo, sin tus condiciones de medición: úsalo para ver la tendencia. No se mezcla con la antropometría ni con la báscula.</p>`;
+  }else h += '<p class="med-empty">El cliente aún no ha anotado su peso desde su área.</p>';
+  if(fotos.length){
+    const recientes = fotos.slice().reverse().slice(0,12);
+    h += `<div class="med-head" style="margin-top:16px"><span class="med-date">Fotos de progreso</span><span class="med-ago">${fotos.length} foto${fotos.length!==1?'s':''} · solo las ves tú</span></div>
+      <div class="fgrid">${recientes.map(f => `<button type="button" class="fth" onclick="abrirFotoCli(${f.id})" aria-label="Foto ${FOTO_VISTAS[f.vista]||''} del ${fotoFecha(f.fecha)}"><img alt="" data-p="${sudEsc(f.path)}"><span>${FOTO_VISTAS[f.vista]||'Otra'} · ${fotoFecha(f.fecha,true)}</span></button>`).join('')}</div>
+      ${fotos.length > 12 ? `<p class="med-note">Se muestran las 12 más recientes de ${fotos.length}. En «Comparar» puedes elegir cualquiera.</p>` : ''}
+      ${fotos.length > 1 ? `<div class="med-actions">${btnSoft('Comparar fotos','compararFotosCli()','chart')}</div>` : ''}`;
+  }else h += '<p class="med-empty" style="margin-top:12px">El cliente aún no ha subido fotos.</p>';
+  box.innerHTML = h; cargarFotosCli(box);
+}
+function abrirFotoCli(id){
+  const f = _regFotos.find(x => x.id == id); if(!f) return;
+  document.getElementById('fotoTitulo').textContent = (FOTO_VISTAS[f.vista]||'Otra') + ' · ' + fotoFecha(f.fecha);
+  document.getElementById('fotoBody').innerHTML = `<img class="foto-grande" alt="Foto de progreso" data-p="${sudEsc(f.path)}">`;
+  document.getElementById('mFoto').style.display = 'flex'; cargarFotosCli(document.getElementById('fotoBody'));
+}
+let _cmpFotos = null;
+function compararFotosCli(){
+  if(_regFotos.length < 2) return;
+  const por = {}; _regFotos.forEach(f => (por[f.vista] = por[f.vista] || []).push(f));
+  const v = Object.keys(por).sort((a,b) => por[b].length - por[a].length)[0], l = por[v].length > 1 ? por[v] : _regFotos;
+  _cmpFotos = {a:l[0].id, b:l[l.length-1].id};
+  document.getElementById('fotoTitulo').textContent = 'Comparar fotos';
+  document.getElementById('mFoto').style.display = 'flex'; pintarCmpFotos();
+}
+function pintarCmpFotos(){
+  const opt = sel => _regFotos.map(f => `<option value="${f.id}"${f.id==sel?' selected':''}>${FOTO_VISTAS[f.vista]||'Otra'} · ${fotoFecha(f.fecha,true)}</option>`).join('');
+  const A = _regFotos.find(f => f.id == _cmpFotos.a), B = _regFotos.find(f => f.id == _cmpFotos.b);
+  document.getElementById('fotoBody').innerHTML = `<div class="foto-par" style="margin-bottom:10px"><div><label class="bio-u" for="cmpFa">Antes</label><select class="inp" id="cmpFa" onchange="_cmpFotos.a=+this.value;pintarCmpFotos()">${opt(_cmpFotos.a)}</select></div><div><label class="bio-u" for="cmpFb">Después</label><select class="inp" id="cmpFb" onchange="_cmpFotos.b=+this.value;pintarCmpFotos()">${opt(_cmpFotos.b)}</select></div></div>
+    <div class="foto-par"><div><img alt="Foto de antes" data-p="${sudEsc(A.path)}"><small>${fotoFecha(A.fecha)}</small></div><div><img alt="Foto de después" data-p="${sudEsc(B.path)}"><small>${fotoFecha(B.fecha)}</small></div></div>`;
+  cargarFotosCli(document.getElementById('fotoBody'));
+}
+function cerrarFoto(){ document.getElementById('mFoto').style.display = 'none'; document.getElementById('fotoBody').innerHTML = ''; }
+
 async function loadSeguimientos(depId){
   const el=document.getElementById('segBox'); let r=null;
   try{ r=await sb(`seguimientos?deportista_id=eq.${depId}&order=semana.asc&select=semana,respuestas`); }catch(e){}

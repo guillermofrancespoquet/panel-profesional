@@ -110,6 +110,20 @@ body.in-plan .topbar{display:none}
 .rev-card .tile-ic{width:38px;height:38px;border-radius:11px}
 .nota-card{display:flex;align-items:flex-start;gap:12px;background:var(--t50);border:.5px solid rgba(29,158,117,.28);border-radius:14px;padding:.8rem .95rem;margin-bottom:12px}
 .nota-card .tile-ic{width:38px;height:38px;border-radius:11px;flex-shrink:0}
+#vreg .reg-row{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end}
+#vreg .reg-row label{display:block;font-size:11.5px;font-weight:600;color:var(--g500);margin-bottom:4px}
+#vreg .reg-row>div{flex:1 1 130px;min-width:0}
+.fgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:12px}
+.fth{position:relative;border:0;padding:0;background:var(--g100);border-radius:10px;overflow:hidden;aspect-ratio:3/4;cursor:pointer}
+.fth img{width:100%;height:100%;object-fit:cover;display:block}
+.fth span{position:absolute;left:0;right:0;bottom:0;padding:14px 6px 5px;font-size:10.5px;font-weight:600;color:#fff;background:linear-gradient(transparent,rgba(0,0,0,.65));text-align:left}
+.cmp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:10px}
+.cmp img{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:10px;background:var(--g100);display:block}
+.cmp small{display:block;font-size:11px;color:var(--g500);margin-top:4px}
+.lb{position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:300;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1rem;gap:12px}
+.lb img{max-width:100%;max-height:calc(100dvh - 110px);border-radius:10px;object-fit:contain}
+.lb-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;max-width:520px;color:#fff;font-size:13px}
+.reg-del{background:none;border:none;color:var(--g400);font-size:18px;line-height:1;padding:4px 8px;border-radius:8px;min-width:32px;min-height:32px}
 .nota-t{font-size:14.5px;line-height:1.5;color:var(--g900);white-space:pre-wrap;overflow-wrap:anywhere;margin-top:2px}
 #notaF{font-weight:500;color:var(--g400);text-transform:none;letter-spacing:0}
 body.dark-mode .nota-card{background:rgba(29,158,117,.12)}
@@ -361,6 +375,11 @@ body.dark-mode :focus-visible{outline-color:#5CC8A6}
     <span><span class="tile-t">Mis datos</span><br><span class="tile-d">Antropometría, bioimpedancia y evolución</span></span>
     <span class="tile-go"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></span>
   </button>
+  <button class="tile" onclick="abrirReg()">
+    <span class="tile-ic au"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></span>
+    <span><span class="tile-t">Mi peso y mis fotos</span><br><span class="tile-d">Anota tu peso y compara tu progreso</span></span>
+    <span class="tile-go"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></span>
+  </button>
   <button class="tile" onclick="abrirPlan()">
     <span class="tile-ic au"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="14" y2="17"/></svg></span>
     <span><span class="tile-t">Mi planificación nutricional</span><br><span class="tile-d">Tu plan personalizado</span></span>
@@ -379,6 +398,17 @@ body.dark-mode :focus-visible{outline-color:#5CC8A6}
   <h1 class="h2">Mis datos</h1>
   <div id="datosBody"><div class="spin" style="margin-top:6vh"></div></div>
 </div></div>
+
+<div id="vreg" class="view" role="main"><div class="wrap">
+  <button class="back" onclick="show('vhome')"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Inicio</button>
+  <h1 class="h2">Mi peso y mis fotos</h1>
+  <div id="regBody"><div class="spin" style="margin-top:6vh"></div></div>
+</div></div>
+<input type="file" id="regFile" accept="image/*" style="display:none">
+<div class="lb" id="lb" style="display:none" role="dialog" aria-modal="true" aria-label="Foto" onclick="if(event.target===this)cerrarLb()">
+  <img id="lbImg" alt="">
+  <div class="lb-bar"><span id="lbTxt"></span><span><button class="btn soft" id="lbDel" onclick="regBorrarFoto()">Borrar</button> <button class="btn soft" onclick="cerrarLb()">Cerrar</button></span></div>
+</div>
 
 <div id="vplan" class="view" role="main">
   <div class="plan-bar">
@@ -436,7 +466,7 @@ const BUCKET='deportistas-docs';
 let FICHA=null, DATOS=null;
 
 // ═══ Vistas ═══
-const APP_VIEWS=['vhome','vdatos','vplan','vforms','vform','vseg','vcomp','vsin'];
+const APP_VIEWS=['vhome','vdatos','vreg','vplan','vforms','vform','vseg','vcomp','vsin'];
 function show(v){
   document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));
   $(v).classList.add('active');
@@ -534,7 +564,7 @@ async function guardarPassword(){
 function logout(){
   const s=authLoad();
   if(s) fetch(SURL+'/auth/v1/logout',{method:'POST',headers:{'apikey':SKEY,'Authorization':'Bearer '+s.access_token}}).catch(()=>{});
-  authClear(); FICHA=DATOS=null; PLANES=[];
+  authClear(); FICHA=DATOS=REG=null; PLANES=[]; REG_CMP=null; 
   $('lpass').value=''; $('lerr').textContent='';
   show('vlogin');
 }
@@ -669,6 +699,125 @@ async function abrirArchivo(i){
     if(w) w.location.href=u; else window.location.href=u;
   }catch(e){ if(w) w.close(); toast('No se pudo abrir el documento. Vuelve a intentarlo.',{tipo:'error'}); }
 }
+
+// ═══ Mi peso y mis fotos ═══
+// El peso se anota a mano (un valor por día); las fotos van a un bucket privado y solo las ven la persona y su nutricionista.
+let REG=null, REG_DEP=null, REG_CMP=null, LB_ID=null;
+const REG_URLS={}, VISTAS={frente:'Frente',lado:'Lado',espalda:'Espalda',otra:'Otra'};
+async function abrirReg(){
+  show('vreg');
+  if(REG){ pintarReg(); return; }
+  $('regBody').innerHTML='<div class="spin" style="margin-top:6vh"></div>';
+  try{
+    const [p,f]=await Promise.all([rpc('cliente_mis_pesos'),rpc('cliente_mis_fotos')]);
+    REG={pesos:Array.isArray(p)?p:[],fotos:(f&&Array.isArray(f.fotos))?f.fotos:[]}; REG_DEP=f&&f.dep;
+  }catch(e){
+    $('regBody').innerHTML='<p class="empty">'+(e.status===404?'Esta función todavía no está activada. Escribe a tu nutricionista.':'No se pudo cargar. Comprueba tu conexión y vuelve a entrar.')+'</p>'; return;
+  }
+  pintarReg();
+}
+function pintarReg(){
+  const ps=REG.pesos.map(x=>({fecha:String(x.fecha).slice(0,10),peso:+x.peso})), last=ps[ps.length-1], prev=ps.length>1?ps[ps.length-2]:null;
+  let h=`<p class="sec" style="margin-top:0">Mi peso</p><div class="card">
+    <div class="reg-row"><div><label for="regFecha">Día</label><input class="seg-inp" id="regFecha" type="date" value="${hoyISO()}" max="${hoyISO()}"></div>
+    <div><label for="regPeso">Peso (kg)</label><input class="seg-inp" id="regPeso" type="text" inputmode="decimal" autocomplete="off" placeholder="Por ejemplo, 72,4"></div>
+    <button class="btn" id="regBtn" onclick="regGuardarPeso()">Guardar</button></div>
+    <p class="note">Pésate siempre en las mismas condiciones (por ejemplo, por la mañana, en ayunas y sin ropa). Un solo peso por día: si anotas otro el mismo día, se sustituye.</p></div>`;
+  if(last){
+    const d=prev?last.peso-prev.peso:null;
+    h+=`<div class="stats" style="grid-template-columns:repeat(2,1fr);margin-top:12px"><div class="stat"><div class="stat-l">Último peso</div><div class="stat-v">${nf(last.peso)}<small>kg</small></div><div class="stat-d">${fmtF(last.fecha)}</div></div>
+      <div class="stat"><div class="stat-l">Cambio</div><div class="stat-v">${d==null?'—':(d>0?'+':d<0?'−':'')+nf(Math.abs(d))}<small>${d==null?'':'kg'}</small></div><div class="stat-d">${d==null?'&nbsp;':'vs. anterior'}</div></div></div>`;
+    if(ps.length>1) h+=`<div class="series">${serie(ps,'peso','#1D9E75','Mi peso','kg',1)}</div>`;
+    h+='<div class="card" style="margin-top:12px">'+ps.slice().reverse().slice(0,8).map(p=>{ const r=REG.pesos.find(x=>String(x.fecha).slice(0,10)===p.fecha); return `<div class="file"><span style="flex:1"><b>${nf(p.peso)} kg</b> <span class="empty">· ${fmtF(p.fecha)}</span></span><button class="reg-del" aria-label="Borrar el peso del ${fmtF(p.fecha)}" onclick="regBorrarPeso(${r.id})">×</button></div>`; }).join('')+'</div>';
+  }
+  h+=`<p class="sec">Mis fotos</p><div class="card">
+    <div class="reg-row"><div><label for="regVista">Foto de</label><select class="seg-inp" id="regVista"><option value="frente">Frente</option><option value="lado">Lado</option><option value="espalda">Espalda</option><option value="otra">Otra</option></select></div>
+    <div><label for="regFotoF">Día</label><input class="seg-inp" id="regFotoF" type="date" value="${hoyISO()}" max="${hoyISO()}"></div>
+    <button class="btn" id="fotoBtn" onclick="$('regFile').click()">Añadir foto</button></div>
+    <p class="note">Solo tú y tu nutricionista veis estas fotos. Para compararlas bien, hazlas siempre con la misma luz, a la misma distancia y con la misma postura.</p></div>`;
+  if(REG.fotos.length){
+    h+='<div class="fgrid">'+REG.fotos.slice().reverse().map(f=>`<button class="fth" onclick="abrirLb(${f.id})" aria-label="Foto ${VISTAS[f.vista]||''} del ${fmtF(String(f.fecha).slice(0,10))}"><img alt="" data-p="${esc(f.path)}"><span>${VISTAS[f.vista]||'Otra'} · ${fmtF(String(f.fecha).slice(0,10),true)}</span></button>`).join('')+'</div>';
+    if(REG.fotos.length>1) h+='<p class="sec">Comparar</p><div class="card" id="cmpBox"></div>';
+  }else h+='<div class="card" style="margin-top:12px">'+vacioC('<path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/>','Aún no hay fotos','Sube la primera y, con las siguientes, podrás compararlas lado a lado.')+'</div>';
+  $('regBody').innerHTML=h; cargarFotos(); pintarCmp();
+}
+async function regGuardarPeso(){
+  const t=$('regPeso').value.trim().replace(',','.'), peso=t===''?NaN:Number(t), f=$('regFecha').value;
+  if(isNaN(peso)||peso<20||peso>400){ toast('Revisa el peso: escribe solo el número, por ejemplo 72,4.',{tipo:'error'}); $('regPeso').focus(); return; }
+  if(!f||f>hoyISO()){ toast('Elige un día que no sea futuro.',{tipo:'error'}); return; }
+  const b=$('regBtn'); b.disabled=true;
+  try{ await rpc('cliente_guardar_peso',{p_fecha:f,p_peso:peso}); REG.pesos=await rpc('cliente_mis_pesos')||[]; toast('Peso guardado'); pintarReg(); }
+  catch(e){ toast('No se pudo guardar. Comprueba tu conexión.',{tipo:'error'}); b.disabled=false; }
+}
+async function regBorrarPeso(id){
+  try{ await rpc('cliente_borrar_peso',{p_id:id}); REG.pesos=REG.pesos.filter(x=>x.id!=id); toast('Peso borrado'); pintarReg(); }
+  catch(e){ toast('No se pudo borrar.',{tipo:'error'}); }
+}
+// URL firmada de una foto (válida 1 h) con la sesión del cliente; solo firma las de su carpeta.
+async function urlFoto(path){
+  const c=REG_URLS[path]; if(c&&Date.now()-c.t<50*60000) return c.u;
+  const r=await authFetch(`${SURL}/storage/v1/object/sign/fotos-clientes/${String(path).split('/').map(encodeURIComponent).join('/')}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({expiresIn:3600})});
+  const j=await r.json(); if(!r.ok||!j.signedURL) throw new Error('firma');
+  const u=SURL+'/storage/v1'+j.signedURL; REG_URLS[path]={u,t:Date.now()}; return u;
+}
+function cargarFotos(root){ (root||document).querySelectorAll('img[data-p]').forEach(async im=>{ try{ im.src=await urlFoto(im.dataset.p); }catch(e){} }); }
+// Comparar: dos fotos a elegir (por defecto la primera y la última de la vista con más fotos)
+function pintarCmp(){
+  const box=$('cmpBox'); if(!box) return;
+  const por={}; REG.fotos.forEach(f=>{ (por[f.vista]=por[f.vista]||[]).push(f); });
+  if(!REG_CMP||!REG.fotos.some(f=>f.id==REG_CMP.a)||!REG.fotos.some(f=>f.id==REG_CMP.b)){
+    const v=Object.keys(por).sort((x,y)=>por[y].length-por[x].length)[0], l=por[v];
+    REG_CMP=l.length>1?{a:l[0].id,b:l[l.length-1].id}:{a:REG.fotos[0].id,b:REG.fotos[REG.fotos.length-1].id};
+  }
+  const opt=sel=>REG.fotos.map(f=>`<option value="${f.id}"${f.id==sel?' selected':''}>${esc(VISTAS[f.vista]||'Otra')} · ${fmtF(String(f.fecha).slice(0,10),true)}</option>`).join('');
+  const A=REG.fotos.find(f=>f.id==REG_CMP.a), B=REG.fotos.find(f=>f.id==REG_CMP.b);
+  box.innerHTML=`<div class="reg-row"><div><label for="cmpA">Antes</label><select class="seg-inp" id="cmpA" onchange="REG_CMP.a=+this.value;pintarCmp()">${opt(REG_CMP.a)}</select></div><div><label for="cmpB">Después</label><select class="seg-inp" id="cmpB" onchange="REG_CMP.b=+this.value;pintarCmp()">${opt(REG_CMP.b)}</select></div></div>
+    <div class="cmp"><div><img alt="Foto de antes" data-p="${esc(A.path)}"><small>${fmtF(String(A.fecha).slice(0,10))}</small></div><div><img alt="Foto de después" data-p="${esc(B.path)}"><small>${fmtF(String(B.fecha).slice(0,10))}</small></div></div>`;
+  cargarFotos(box);
+}
+// Subida: se reduce la foto en el propio móvil (máx. 1280 px, JPEG) para que pese poco, y se sube al bucket privado
+async function reducirFoto(file){
+  const bmp=await (window.createImageBitmap?createImageBitmap(file,{imageOrientation:'from-image'}):new Promise((ok,ko)=>{ const i=new Image(); i.onload=()=>ok(i); i.onerror=ko; i.src=URL.createObjectURL(file); }));
+  const w=bmp.width||bmp.naturalWidth, h=bmp.height||bmp.naturalHeight, k=Math.min(1,1280/Math.max(w,h));
+  const c=document.createElement('canvas'); c.width=Math.round(w*k); c.height=Math.round(h*k); c.getContext('2d').drawImage(bmp,0,0,c.width,c.height);
+  return await new Promise((ok,ko)=>c.toBlob(b=>b?ok(b):ko(new Error('jpeg')),'image/jpeg',.82));
+}
+async function regSubirFoto(file){
+  if(!file||!/^image\//.test(file.type)){ toast('Elige una imagen.',{tipo:'error'}); return; }
+  const vista=$('regVista').value, fecha=$('regFotoF').value||hoyISO(), b=$('fotoBtn');
+  if(fecha>hoyISO()){ toast('Elige un día que no sea futuro.',{tipo:'error'}); return; }
+  b.disabled=true; b.textContent='Subiendo…';
+  let path=null;
+  try{
+    const blob=await reducirFoto(file); path=`${REG_DEP}/${Date.now()}_${vista}.jpg`;
+    const up=await authFetch(`${SURL}/storage/v1/object/fotos-clientes/${path}`,{method:'POST',headers:{'Content-Type':'image/jpeg'},body:blob});
+    if(!up.ok) throw new Error('subida');
+    const f=await rpc('cliente_registrar_foto',{p_path:path,p_fecha:fecha,p_vista:vista});
+    REG.fotos.push(f); REG.fotos.sort((x,y)=>String(x.fecha).localeCompare(String(y.fecha))||x.id-y.id);
+    toast('Foto guardada'); pintarReg();
+  }catch(e){
+    if(path) authFetch(`${SURL}/storage/v1/object/fotos-clientes/${path}`,{method:'DELETE'}).catch(()=>{});
+    toast('No se pudo subir la foto. Inténtalo de nuevo.',{tipo:'error'}); b.disabled=false; b.textContent='Añadir foto';
+  }
+}
+$('regFile').addEventListener('change',e=>{ const f=e.target.files[0]; e.target.value=''; if(f) regSubirFoto(f); });
+async function abrirLb(id){
+  const f=REG.fotos.find(x=>x.id==id); if(!f) return; LB_ID=id;
+  $('lbTxt').textContent=(VISTAS[f.vista]||'Otra')+' · '+fmtF(String(f.fecha).slice(0,10)); $('lbDel').textContent='Borrar';
+  $('lbImg').removeAttribute('src'); $('lb').style.display='flex';
+  try{ $('lbImg').src=await urlFoto(f.path); }catch(e){}
+}
+function cerrarLb(){ $('lb').style.display='none'; LB_ID=null; }
+async function regBorrarFoto(){
+  const b=$('lbDel'); if(b.textContent==='Borrar'){ b.textContent='¿Seguro?'; return; }
+  const f=REG.fotos.find(x=>x.id==LB_ID); if(!f) return;
+  try{
+    const path=await rpc('cliente_borrar_foto',{p_id:f.id});
+    if(path) authFetch(`${SURL}/storage/v1/object/fotos-clientes/${String(path).split('/').map(encodeURIComponent).join('/')}`,{method:'DELETE'}).catch(()=>{});
+    REG.fotos=REG.fotos.filter(x=>x.id!=f.id); cerrarLb(); toast('Foto borrada'); pintarReg();
+  }catch(e){ toast('No se pudo borrar.',{tipo:'error'}); }
+}
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&LB_ID) cerrarLb(); });
 
 // ═══ Mi planificación ═══
 function abrirPlan(){
