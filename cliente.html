@@ -108,6 +108,11 @@ body.in-plan .topbar{display:none}
 .inst-tip p{margin:4px 0 9px}
 .rev-card{display:flex;align-items:center;gap:12px;background:var(--sf);border:.5px solid var(--bdm);border-radius:14px;padding:.75rem .95rem;margin-bottom:12px}
 .rev-card .tile-ic{width:38px;height:38px;border-radius:11px}
+.nota-card{display:flex;align-items:flex-start;gap:12px;background:var(--t50);border:.5px solid rgba(29,158,117,.28);border-radius:14px;padding:.8rem .95rem;margin-bottom:12px}
+.nota-card .tile-ic{width:38px;height:38px;border-radius:11px;flex-shrink:0}
+.nota-t{font-size:14.5px;line-height:1.5;color:var(--g900);white-space:pre-wrap;overflow-wrap:anywhere;margin-top:2px}
+#notaF{font-weight:500;color:var(--g400);text-transform:none;letter-spacing:0}
+body.dark-mode .nota-card{background:rgba(29,158,117,.12)}
 .rev-l{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--g500)}
 .rev-d{font-size:15px;font-weight:700;letter-spacing:-.01em;margin-top:1px}
 .rev-s{font-size:12.5px;color:var(--g500);margin-top:1px}
@@ -330,6 +335,13 @@ body.dark-mode :focus-visible{outline-color:#5CC8A6}
     <p id="instTxt"></p>
     <button class="btn soft" onclick="cerrarInstTip()">Entendido</button>
   </div>
+  <div class="nota-card" id="notaCard" style="display:none">
+    <span class="tile-ic"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
+    <div style="flex:1;min-width:0">
+      <div class="rev-l">Nota de tu nutricionista<span id="notaF"></span></div>
+      <p class="nota-t" id="notaT"></p>
+    </div>
+  </div>
   <div class="rev-card" id="revCard" style="display:none">
     <span class="tile-ic au"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>
     <div style="flex:1;min-width:0">
@@ -543,8 +555,16 @@ async function entrar(){
   $('hello').textContent=nombre?(saludo+', '+nombre):saludo;
   $('helloSub').textContent=[FICHA.deporte,FICHA.objetivo].filter(Boolean).join(' · ')||'Aquí tienes tu información.';
   try{ const pl=await rpc('cliente_mis_planes'); PLANES=Array.isArray(pl)?pl:[]; }catch(e){ PLANES=[]; }
-  pintarRevision(); pintarInstTip(); pintarTileForms(); pintarTileComp(); pintarMensajeDia();
+  pintarNota(); pintarRevision(); pintarInstTip(); pintarTileForms(); pintarTileComp(); pintarMensajeDia();
   show('vhome');
+}
+// Nota que el profesional deja para el cliente (si hay); se muestra arriba, antes de la próxima revisión.
+function pintarNota(){
+  const c=$('notaCard'); if(!c) return;
+  const n=FICHA&&FICHA.nota, txt=n&&String(n.texto||'').trim();
+  c.style.display=txt?'flex':'none'; if(!txt) return;
+  $('notaT').textContent=txt;
+  $('notaF').textContent=n.fecha?' · '+fmtF(String(n.fecha).slice(0,10),true):'';
 }
 // Una frase corta y amable bajo el saludo, según lo que más importa hoy.
 const MSG_ICO={ok:'<polyline points="20 6 9 17 4 12"/>',form:'<path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>',cal:'<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>'};

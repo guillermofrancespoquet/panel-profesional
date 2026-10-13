@@ -5330,6 +5330,16 @@ function openDepDet(id) {
         <span class="save-ok" id="depSaveOk">✓ Guardado</span>
       </div>
     </div>
+
+    <div class="depd-section">
+      <p class="sec-title">Nota para el cliente</p>
+      <textarea class="notes-ta" id="depNotaCli" maxlength="500" placeholder="Un mensaje corto que verá arriba en su área, por ejemplo tras la revisión…" style="min-height:90px">${sudEsc(d.nota_cliente || '')}</textarea>
+      <div class="notes-foot">
+        <button class="btn-save" onclick="publicarNotaCliente(${d.id})">Publicar nota</button>
+        <button type="button" class="btn-soft" onclick="quitarNotaCliente(${d.id})">Quitar nota</button>
+        <span class="med-note" id="depNotaCliInfo" style="margin:0">${notaClienteInfo(d)}</span>
+      </div>
+    </div>
     </div>
     <div class="depd-panel${_depTab==='seguimiento' ? ' on' : ''}" role="tabpanel" id="depPanel-seguimiento" aria-labelledby="depTab-seguimiento" data-k="seguimiento" tabindex="0">
     <div class="depd-section">
@@ -6757,6 +6767,20 @@ function copyDepUrl(url) {
     btns.forEach(b => { b.textContent = '¡Copiado!'; setTimeout(() => b.textContent = 'Copiar', 2000); });
   });
 }
+
+// Nota que el cliente ve arriba en su área (va aparte de las notas privadas, que nunca recibe)
+function notaClienteInfo(d){ return d.nota_cliente && d.nota_cliente_fecha ? 'Publicada el ' + new Date(String(d.nota_cliente_fecha).slice(0,10)+'T00:00:00').toLocaleDateString('es-ES',{day:'numeric',month:'long'}) + '. El cliente la ve ahora.' : 'El cliente no ve ninguna nota ahora.'; }
+async function guardarNotaCliente(id, texto){
+  const d = deportistas.find(x=>x.id==id); if(!d) return;
+  const upd = { nota_cliente: texto || null, nota_cliente_fecha: texto ? localISO(new Date()) : null };
+  const res = await patchDep(id, upd);
+  if(esErrorSb(res)){ toast('No se pudo guardar. ¿Has ejecutado supabase_nota_cliente.sql en Supabase?', {tipo:'error', ms:6000}); return; }
+  Object.assign(d, upd);
+  const info = document.getElementById('depNotaCliInfo'); if(info) info.textContent = notaClienteInfo(d);
+  toast(texto ? 'Nota publicada: el cliente ya la ve' : 'Nota retirada');
+}
+function publicarNotaCliente(id){ const t = document.getElementById('depNotaCli').value.trim(); if(!t){ toast('Escribe la nota primero.', {tipo:'aviso'}); return; } return guardarNotaCliente(id, t); }
+function quitarNotaCliente(id){ const ta = document.getElementById('depNotaCli'); if(ta) ta.value = ''; return guardarNotaCliente(id, ''); }
 
 function saveDepNote(id) { _autoDep.cambio(id, document.getElementById('depNotes').value); return _autoDep.ahora(); }
 
