@@ -3572,7 +3572,7 @@ async function loadDashboard(){
   pintarAvisosDash(dashDeps, dashCitas, todayISO);
 
   // ── Sidebar badge (avisos totales) ──
-  const totalAvisos=sesiones.length+impagos.length+revs.filter(d=>d._days<=0).length;
+  const totalAvisos=revs.length;   // el número de «Agenda»: solo las revisiones próximas (de hoy a 7 días), las mismas de la tarjeta «Revisiones próximas»
   const badgeEl=document.getElementById('sbAgendaBadge');
   if(totalAvisos>0){badgeEl.textContent=totalAvisos>9?'9+':totalAvisos;badgeEl.style.display='inline-block';}
   else{badgeEl.style.display='none';}
@@ -6280,7 +6280,7 @@ async function bioGuardar() {
           avisoArchivo = `${up.status}${m ? ' ' + m : ''} · ${tam}`;
           if (up.status < 500) break;                       // 4xx: reintentar no sirve (permiso, tamaño…)
         } catch (e) { avisoArchivo = `${e.message || 'sin conexión'} · ${tam}`; }
-        if (intento < 3) { msg.textContent = `Subiendo el archivo… reintento ${intento}`; await new Promise(r => setTimeout(r, 900 * intento)); }
+        if (intento < 3) { msg.textContent = `Subiendo el archivo… reintento ${intento}`; await new Promise(r => setTimeout(r, intento === 1 ? 1500 : 4000)); }
       }
       if (avisoArchivo) { console.warn('bioGuardar subida', avisoArchivo); path = null; }
     }
