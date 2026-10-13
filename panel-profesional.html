@@ -1076,6 +1076,9 @@ body.dark-mode .tl-ico.plan{background:#33253a;color:#d3a6d0}
 .rp-bul{font-size:9pt;line-height:1.6;color:#2c2c2a;margin:0;padding-left:4.5mm}
 .rp-note{background:#F5EDE0;border-radius:3.5mm;padding:3.5mm 5mm;font-size:9pt;line-height:1.55;color:#3d3326;white-space:pre-wrap;overflow-wrap:anywhere}
 .rp-note b{display:block;font-size:7pt;letter-spacing:.08em;text-transform:uppercase;color:#7A5A38;margin-bottom:1mm}
+.rp-fotos{display:grid;grid-template-columns:1fr 1fr;gap:6mm;margin-top:6mm}
+.rp-fotos img{width:100%;height:190mm;object-fit:cover;border-radius:3mm;display:block;background:#F5EDE0}
+.rp-foto-t{font-size:8.5pt;color:#5a574f;margin-top:2mm;font-weight:600}
 .rp-foot{position:absolute;left:14mm;right:14mm;bottom:8mm;display:flex;justify-content:space-between;gap:4mm;font-size:7pt;color:#888780;border-top:.3mm solid #E6E2D8;padding-top:2.5mm}
 
 /* ── Sistema de componentes (mismas medidas en panel, calculadora y área de clientes) ──
@@ -1099,6 +1102,16 @@ body.dark-mode .sup-card .sup-badge.mid,body.dark-mode .dep-chip.active{color:#D
 .sb-logout:hover{color:#FFB4B2!important;background:rgba(255,120,120,.14)!important}
 body.dark-mode .ref-src,body.dark-mode .sup-badge,body.dark-mode .depd-avatar-fallback{color:#D9B88C}
 /* ── Bioimpedancia: pantalla de revisión ── */
+.foto-modal{background:var(--sf);border-radius:16px;width:min(760px,100%);max-height:min(88vh,calc(100dvh - 2rem));display:flex;flex-direction:column;overflow:hidden}
+.foto-body{padding:14px 18px 18px;overflow:auto}
+.foto-grande{width:100%;max-height:calc(88vh - 140px);object-fit:contain;border-radius:10px;background:var(--g100);display:block}
+.foto-par{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.foto-par img{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:10px;background:var(--g100);display:block}
+.foto-par small{display:block;font-size:11.5px;color:var(--g500);margin-top:4px}
+.fgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:8px;margin-top:12px}
+.fth{position:relative;border:0;padding:0;background:var(--g100);border-radius:10px;overflow:hidden;aspect-ratio:3/4;cursor:pointer}
+.fth img{width:100%;height:100%;object-fit:cover;display:block}
+.fth span{position:absolute;left:0;right:0;bottom:0;padding:14px 6px 5px;font-size:10.5px;font-weight:600;color:#fff;background:linear-gradient(transparent,rgba(0,0,0,.65));text-align:left}
 .bio-modal{background:var(--sf);border-radius:16px;width:min(1000px,100%);max-height:calc(100vh - 2rem);display:flex;flex-direction:column;overflow:hidden}
 .bio-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 12px;border-bottom:.5px solid var(--bd)}
 .bio-head .mt{margin:0}
@@ -1817,6 +1830,12 @@ body.dark-mode .ref-src,body.dark-mode .sup-badge,body.dark-mode .depd-avatar-fa
 </div>
 
 <!-- MODAL: BIOIMPEDANCIA (revisar y guardar) -->
+<div class="mbg" id="mFoto" style="display:none;z-index:300" role="dialog" aria-modal="true" aria-labelledby="fotoTitulo" onclick="if(event.target===this)cerrarFoto()">
+  <div class="foto-modal">
+    <div class="bio-head"><p class="mt" id="fotoTitulo">Foto</p><button type="button" class="inf-x" onclick="cerrarFoto()" aria-label="Cerrar">&times;</button></div>
+    <div class="foto-body" id="fotoBody"></div>
+  </div>
+</div>
 <div class="mbg" id="mBio" style="display:none;z-index:300" role="dialog" aria-modal="true" aria-labelledby="bioTitulo">
   <div class="bio-modal">
     <div class="bio-head"><p class="mt" id="bioTitulo">Bioimpedancia</p><button type="button" class="inf-x" onclick="cerrarBio()" aria-label="Cerrar">&times;</button></div>
@@ -1840,6 +1859,11 @@ body.dark-mode .ref-src,body.dark-mode .sup-badge,body.dark-mode .depd-avatar-fa
         <label class="mfl" for="infComent">Comentario para el cliente <span class="hd-opt">(opcional)</span></label>
         <textarea class="notes-ta" id="infComent" maxlength="500" oninput="infPintar()" placeholder="Ej. Muy buena evolución. Seguimos con el mismo plan hasta la próxima revisión."></textarea>
         <p class="inf-hint">Resume peso, % de grasa y seguimiento semanal. Lo ves tal cual saldrá en el PDF.</p>
+        <div id="infFotosBox" style="display:none;margin-top:12px">
+          <label class="mfl" style="display:flex;gap:8px;align-items:center;font-weight:600"><input type="checkbox" id="infFotosChk" onchange="infFotosToggle()"> Añadir una página con fotos (antes y ahora)</label>
+          <p class="inf-hint" style="margin-top:2px">Son las fotos que ha subido el cliente. Si compartes el informe, él las verá en su PDF.</p>
+          <div id="infFotosSel" style="margin-top:8px"></div>
+        </div>
         <div class="inf-acts">
           <button type="button" class="btn-ok" id="infDescargar" onclick="infDescargar()">Descargar PDF</button>
           <button type="button" class="btn-soft" id="infCompartir" onclick="infCompartir()">Compartir con el cliente</button>
@@ -2979,6 +3003,7 @@ document.addEventListener('keydown', function(e){
     openGlobalSearch();
   }
   if(e.key === 'Escape'){
+    const fm = document.getElementById('mFoto'); if(fm && fm.style.display === 'flex'){ cerrarFoto(); return; }
     const bm = document.getElementById('mBio'); if(bm && bm.style.display === 'flex'){ cerrarBio(); return; }
     const inf = document.getElementById('mInforme'); if(inf && inf.style.display === 'flex'){ cerrarInforme(); return; }
     const modal = document.getElementById('mGlobalSearch');
@@ -4436,13 +4461,16 @@ async function abrirInformeProgreso(depId){
   document.getElementById('mInforme').style.display = 'flex';
   document.getElementById('infComent').value = ''; document.getElementById('infMsg').textContent = '';
   document.getElementById('infPreview').innerHTML = skel(5);
-  const [meds, segs, bios] = await Promise.all([
+  const [meds, segs, bios, pesosCli, fotosCli] = await Promise.all([
     Promise.resolve(getMediciones(depId)).then(a=>Array.isArray(a)?a:[]).catch(()=>[]),
     Promise.resolve(sb(`seguimientos?deportista_id=eq.${depId}&order=semana.asc&select=semana,respuestas`)).then(a=>Array.isArray(a)?a:[]).catch(()=>[]),
-    Promise.resolve(getBio(depId)).then(a=>Array.isArray(a)?a:[]).catch(()=>[])
+    Promise.resolve(getBio(depId)).then(a=>Array.isArray(a)?a:[]).catch(()=>[]),
+    Promise.resolve(sb(`pesos_cliente?deportista_id=eq.${depId}&order=fecha.asc&select=fecha,peso`)).then(a=>Array.isArray(a)?a:[]).catch(()=>[]),
+    Promise.resolve(sb(`fotos_cliente?deportista_id=eq.${depId}&order=fecha.asc,id.asc&select=id,fecha,vista,path`)).then(a=>Array.isArray(a)?a:[]).catch(()=>[])
   ]);
-  _inf = { d, med: meds.map(medPunto), segs, bio: bios.map(bioPunto) };
-  if(!_inf.med.length && !_inf.segs.length && !_inf.bio.length){ cerrarInforme(); toast('Todavía no hay mediciones ni seguimientos para hacer el informe.', {tipo:'aviso', ms:5000}); return; }
+  _inf = { d, med: meds.map(medPunto), segs, bio: bios.map(bioPunto), pesosCli, fotos: fotosCli, fotoSel: null, fotoData: {} };
+  infFotosUI();
+  if(!_inf.med.length && !_inf.segs.length && !_inf.bio.length && !_inf.pesosCli.length){ cerrarInforme(); toast('Todavía no hay mediciones ni seguimientos para hacer el informe.', {tipo:'aviso', ms:5000}); return; }
   infPintar();
   setTimeout(()=>{ const t=document.getElementById('infComent'); if(t) t.focus(); }, 60);
 }
@@ -4488,8 +4516,10 @@ function infHtml(I, comentario){
   // Peso: antropometría, báscula y pesos del seguimiento (si coinciden en fecha manda la antropometría, luego la báscula)
   const pesoMap = {};
   segs.forEach(x=>{ const q=x.respuestas||{}; if(q.peso!=null && !isNaN(q.peso)) pesoMap[String(x.semana).slice(0,10)] = +q.peso; });
+  (I.pesosCli||[]).forEach(x=>{ pesoMap[String(x.fecha).slice(0,10)] = +x.peso; });   // lo que anota el cliente va al fondo: lo medido manda
   bio.forEach(m=>{ if(m.peso!=null) pesoMap[m.fecha] = m.peso; });
   med.forEach(m=>{ if(m.peso!=null) pesoMap[String(m.fecha).slice(0,10)] = m.peso; });
+  const pesoSoloCliente = !med.some(m=>m.peso!=null) && !bio.some(m=>m.peso!=null) && ((I.pesosCli||[]).length > 0);
   const pesoPts = Object.keys(pesoMap).sort().map(f=>({fecha:f, v:pesoMap[f]}));
   // % de grasa: la antropometría es la principal; si no hay, se usa la báscula (y se indica). Con ambas, la báscula sale como complemento.
   const grasaAntro = med.filter(m=>m.grasa!=null).map(m=>({fecha:String(m.fecha).slice(0,10), v:m.grasa}));
@@ -4502,11 +4532,11 @@ function infHtml(I, comentario){
   const fechas = [...pesoPts.map(p=>p.fecha), ...grasaPts.map(p=>p.fecha), ...grasaBio.map(p=>p.fecha), ...segs.map(x=>String(x.semana).slice(0,10))].sort();
   const periodo = fechas.length ? (fechas[0]===fechas[fechas.length-1] ? infFecha(fechas[0],true) : infFecha(fechas[0], fechas[0].slice(0,4)!==fechas[fechas.length-1].slice(0,4))+' – '+infFecha(fechas[fechas.length-1],true)) : '';
   const kpis = `<div class="rp-kpis">
-    <div class="rp-kpi"><div class="rp-kpi-l">Peso</div><div class="rp-kpi-v">${ult(pesoPts)}${pesoPts.length?' kg':''}</div>${delta(pesoPts,1,'kg')}</div>
+    <div class="rp-kpi"><div class="rp-kpi-l">Peso</div><div class="rp-kpi-v">${ult(pesoPts)}${pesoPts.length?' kg':''}</div>${delta(pesoPts,1,'kg')}${pesoSoloCliente?'<div class="rp-kpi-s">peso anotado por el cliente</div>':''}</div>
     <div class="rp-kpi"><div class="rp-kpi-l">% de grasa</div><div class="rp-kpi-v">${ult(grasaPts)}${grasaPts.length?' %':''}</div>${delta(grasaPts,1,'%','puntos')}${grasaDeBascula?'<div class="rp-kpi-s">según la báscula de bioimpedancia</div>':''}</div>
     <div class="rp-kpi"><div class="rp-kpi-l">Adherencia media</div><div class="rp-kpi-v">${adh!=null?medNum(adh,1)+' / 5':'—'}</div><div class="rp-kpi-s">Energía media ${ene!=null?medNum(ene,1)+' / 5':'—'}</div></div>
     <div class="rp-kpi"><div class="rp-kpi-l">Seguimientos</div><div class="rp-kpi-v">${segs.length}</div><div class="rp-kpi-s">${ent!=null?medNum(ent,1)+' entrenos por semana':'semanas registradas'}</div></div></div>`;
-  const grandes = [infChart(pesoPts,'#0F6E56','Peso','kg',1), infChart(grasaPts,'#B8956A','% de grasa'+(grasaDeBascula?' (báscula)':''),'%',1), grasaAntro.length?infChart(grasaBio,'#6F8CB8','% de grasa (báscula)','%',1):'', infChart(musculoBio,'#04342C','Músculo esquelético (báscula)','kg',1)].filter(Boolean);
+  const grandes = [infChart(pesoPts,'#0F6E56','Peso'+(pesoSoloCliente?' (anotado por el cliente)':''),'kg',1), infChart(grasaPts,'#B8956A','% de grasa'+(grasaDeBascula?' (báscula)':''),'%',1), grasaAntro.length?infChart(grasaBio,'#6F8CB8','% de grasa (báscula)','%',1):'', infChart(musculoBio,'#04342C','Músculo esquelético (báscula)','kg',1)].filter(Boolean);
   const serie = k => segs.map(x=>({fecha:String(x.semana).slice(0,10), v:(x.respuestas||{})[k]})).filter(p=>p.v!=null);
   const peq = SEG_P.map(m=>infChart(serie(m.k), m.c, m.tt, '1–5', 0, [1,5])).concat(infChart(serie('entrenos'),'#04342C','Entrenamientos','sesiones',0)).filter(Boolean);
   const bul = [];
@@ -4516,6 +4546,17 @@ function infHtml(I, comentario){
   const hoy = localISO(new Date());
   if(d.proxima_revision && String(d.proxima_revision).slice(0,10) >= hoy) bul.push(`Próxima revisión: ${new Date(String(d.proxima_revision).slice(0,10)+'T00:00:00').toLocaleDateString('es-ES',{day:'numeric',month:'long',year:'numeric'})}${d.proxima_revision_hora?' a las '+String(d.proxima_revision_hora).slice(0,5)+'h':''}.`);
   const logo = document.querySelector('.sb-logo img'), logoSrc = logo ? logo.getAttribute('src') : '';
+  const fa = I.fotoSel && I.fotos.find(f=>f.id==I.fotoSel.a), fb = I.fotoSel && I.fotos.find(f=>f.id==I.fotoSel.b);
+  const pagFotos = (fa && fb && I.fotoData[fa.path] && I.fotoData[fb.path]) ? `<div class="rp-page">
+    <div class="rp-head">${logoSrc?`<div class="rp-logo"><img src="${logoSrc}" alt=""></div>`:''}
+      <div><div class="rp-h1">Fotos de progreso</div><div class="rp-sub">${sudEsc(d.nombre)}${d.deporte?' · '+sudEsc(d.deporte):''}</div></div>
+      <div class="rp-per"><b>${infFecha(fa.fecha,true)} → ${infFecha(fb.fecha,true)}</b>Emitido el ${infFecha(hoy,true)}</div></div>
+    <div class="rp-body"><div class="rp-fotos">
+      <div><img src="${I.fotoData[fa.path]}" alt="Foto de antes"><div class="rp-foto-t">Antes · ${sudEsc(FOTO_VISTAS[fa.vista]||'Otra')} · ${infFecha(fa.fecha,true)}</div></div>
+      <div><img src="${I.fotoData[fb.path]}" alt="Foto de después"><div class="rp-foto-t">Después · ${sudEsc(FOTO_VISTAS[fb.vista]||'Otra')} · ${infFecha(fb.fecha,true)}</div></div>
+    </div></div>
+    <div class="rp-foot"><span>Guillermo Frances · Nutrición deportiva · NutriLogos</span><span>Fotos aportadas por el cliente.</span></div>
+  </div>` : '';
   return `<div class="rp-page">
     <div class="rp-head">${logoSrc?`<div class="rp-logo"><img src="${logoSrc}" alt=""></div>`:''}
       <div><div class="rp-h1">Informe de progreso</div><div class="rp-sub">${sudEsc(d.nombre)}${d.deporte?' · '+sudEsc(d.deporte):''}${d.objetivo?' · '+sudEsc(d.objetivo):''}</div></div>
@@ -4527,7 +4568,40 @@ function infHtml(I, comentario){
       ${comentario?`<div class="rp-note" style="margin-top:5mm"><b>Comentario de Guillermo</b>${sudEsc(comentario)}</div>`:''}
     </div>
     <div class="rp-foot"><span>Guillermo Frances · Nutrición deportiva · NutriLogos</span><span>Valores orientativos; consulta cualquier duda en tu próxima revisión.</span></div>
-  </div>`;
+  </div>${pagFotos}`;
+}
+// Fotos en el informe (opcional): una segunda página con «antes» y «después». Se pasan a data-URL para que salgan en el PDF.
+function infFotosUI(){
+  const box = document.getElementById('infFotosBox'); if(!box || !_inf) return;
+  if(_inf.fotos.length < 2){ box.style.display = 'none'; return; }
+  box.style.display = '';
+  document.getElementById('infFotosChk').checked = false; document.getElementById('infFotosSel').innerHTML = '';
+  const por = {}; _inf.fotos.forEach(f => (por[f.vista] = por[f.vista] || []).push(f));
+  const v = Object.keys(por).sort((a,b) => por[b].length - por[a].length)[0], l = por[v].length > 1 ? por[v] : _inf.fotos;
+  _inf.fotoDef = {a:l[0].id, b:l[l.length-1].id};
+}
+async function infFotosToggle(){
+  const on = document.getElementById('infFotosChk').checked, sel = document.getElementById('infFotosSel');
+  if(!on){ _inf.fotoSel = null; sel.innerHTML = ''; infPintar(); return; }
+  _inf.fotoSel = {..._inf.fotoDef}; await infFotosPintar();
+}
+async function infFotosPintar(){
+  const sel = document.getElementById('infFotosSel'), I = _inf; if(!I) return;
+  const opt = v => I.fotos.map(f => `<option value="${f.id}"${f.id==v?' selected':''}>${FOTO_VISTAS[f.vista]||'Otra'} · ${fotoFecha(f.fecha,true)}</option>`).join('');
+  sel.innerHTML = `<label class="mfl" for="infFa">Antes</label><select class="inp" id="infFa" onchange="_inf.fotoSel.a=+this.value;infFotosPintar()">${opt(I.fotoSel.a)}</select><label class="mfl" for="infFb">Después</label><select class="inp" id="infFb" onchange="_inf.fotoSel.b=+this.value;infFotosPintar()">${opt(I.fotoSel.b)}</select>`;
+  document.getElementById('infMsg').textContent = 'Cargando fotos…';
+  try{
+    for(const id of [I.fotoSel.a, I.fotoSel.b]){
+      const f = I.fotos.find(x => x.id == id); if(!f || I.fotoData[f.path]) continue;
+      const blob = await (await fetch(await urlFotoCliente(f.path))).blob();
+      I.fotoData[f.path] = await new Promise((ok,ko) => { const fr = new FileReader(); fr.onload = () => ok(fr.result); fr.onerror = ko; fr.readAsDataURL(blob); });
+    }
+    document.getElementById('infMsg').textContent = '';
+  }catch(e){
+    toast('No se pudieron cargar las fotos para el informe.', {tipo:'error'}); document.getElementById('infMsg').textContent = '';
+    I.fotoSel = null; document.getElementById('infFotosChk').checked = false; sel.innerHTML = '';
+  }
+  if(_inf === I) infPintar();
 }
 async function infPdfBlob(){
   await cargarLibsPdf();
@@ -5348,6 +5422,11 @@ function openDepDet(id) {
     </div>
 
     <div class="depd-section">
+      <p class="sec-title">Peso y fotos del cliente</p>
+      <div class="med-box" id="regCliBox">${skel(2)}</div>
+    </div>
+
+    <div class="depd-section">
       <p class="sec-title">Formularios del cliente</p>
       <div class="med-box" id="frmBox">${frmHtml(d)}</div>
     </div>
@@ -5421,6 +5500,7 @@ function openDepDet(id) {
   loadHistorial(d.id);
   loadAccesoCliente(d.id);
   loadSeguimientos(d.id);
+  loadRegCliente(d.id);
   loadMediciones(d.id);
   loadSudoracion(d.id);
   loadPlanes(d.id);
@@ -5469,6 +5549,72 @@ function btnDel(title,onclick){
 
 // ── Seguimiento semanal propio: respuestas del cliente en la ficha (supabase_seguimiento.sql) ──
 const SEG_P=[{k:'adherencia',t:'Adherencia',tt:'Adherencia al plan',c:'#0F6E56'},{k:'energia',t:'Energía',tt:'Energía',c:'#B8956A'},{k:'sueno',t:'Sueño',tt:'Sueño',c:'#6F8CB8'},{k:'digestion',t:'Digestión',tt:'Digestión',c:'#9A7DB3'},{k:'animo',t:'Ánimo',tt:'Estado de ánimo',c:'#C98B6B'}];
+// ── Peso y fotos que sube el propio cliente (tablas pesos_cliente y fotos_cliente; fotos en el bucket privado fotos-clientes) ──
+const FOTO_BUCKET = 'fotos-clientes', FOTO_VISTAS = {frente:'Frente', lado:'Lado', espalda:'Espalda', otra:'Otra'};
+let _regFotos = [];
+const _fotoUrls = {};
+async function urlFotoCliente(path){
+  const c = _fotoUrls[path]; if(c && Date.now() - c.t < 50*60000) return c.u;
+  const r = await authFetch(`${SURL}/storage/v1/object/sign/${FOTO_BUCKET}/${String(path).split('/').map(encodeURIComponent).join('/')}`, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({expiresIn:3600})});
+  const j = await r.json(); if(!r.ok || !j.signedURL) throw new Error('firma');
+  const u = SURL + '/storage/v1' + j.signedURL; _fotoUrls[path] = {u, t:Date.now()}; return u;
+}
+function cargarFotosCli(root){ (root || document).querySelectorAll('img[data-p]').forEach(async im => { try{ im.src = await urlFotoCliente(im.dataset.p); }catch(e){} }); }
+const fotoFecha = (f,corto) => new Date(String(f).slice(0,10)+'T00:00:00').toLocaleDateString('es-ES', corto ? {day:'numeric',month:'short',year:'2-digit'} : {day:'numeric',month:'long',year:'numeric'});
+async function loadRegCliente(depId){
+  const box = document.getElementById('regCliBox'); if(!box) return;
+  const seguro = p => Promise.resolve(p).then(v => Array.isArray(v) ? v : null).catch(() => null);
+  const [pesos, fotos] = await Promise.all([
+    seguro(sb(`pesos_cliente?deportista_id=eq.${depId}&order=fecha.asc&select=id,fecha,peso`)),
+    seguro(sb(`fotos_cliente?deportista_id=eq.${depId}&order=fecha.asc,id.asc&select=id,fecha,vista,path`))
+  ]);
+  if(currentDepId != depId || !document.getElementById('regCliBox')) return;
+  if(pesos === null || fotos === null){ box.innerHTML = '<p class="med-empty">Esta función necesita el SQL <b>supabase_registro_cliente.sql</b> ejecutado en Supabase.</p>'; return; }
+  _regFotos = fotos;
+  let h = '';
+  if(pesos.length){
+    const pts = pesos.map(x => ({fecha:String(x.fecha).slice(0,10), peso:+x.peso})), last = pts[pts.length-1], first = pts[0];
+    const d = pts.length > 1 ? last.peso - first.peso : null;
+    h += `<div class="med-head"><span class="med-date">Peso que anota el cliente</span><span class="med-ago">Autodeclarado · última vez el ${fotoFecha(last.fecha)}</span></div>
+      <div class="med-stats"><div class="med-stat"><div class="med-stat-l">Último peso</div><div class="med-stat-v">${medNum(last.peso,1)}<small>kg</small></div><div class="med-delta">&nbsp;</div></div>
+      <div class="med-stat"><div class="med-stat-l">Desde el primero</div><div class="med-stat-v">${d==null?'—':medSigned(d,1)}<small>${d==null?'':'kg'}</small></div><div class="med-delta">${d==null?'&nbsp;':'el '+fotoFecha(first.fecha,true)}</div></div>
+      <div class="med-stat"><div class="med-stat-l">Registros</div><div class="med-stat-v">${pts.length}</div><div class="med-delta">&nbsp;</div></div></div>
+      ${pts.length > 1 ? `<div class="med-series">${medSerie(pts,'peso','#6F8CB8','Peso (autorregistro)','kg')}</div>` : ''}
+      <p class="med-note">Es el peso que el cliente se anota solo, sin tus condiciones de medición: úsalo para ver la tendencia. No se mezcla con la antropometría ni con la báscula.</p>`;
+  }else h += '<p class="med-empty">El cliente aún no ha anotado su peso desde su área.</p>';
+  if(fotos.length){
+    const recientes = fotos.slice().reverse().slice(0,12);
+    h += `<div class="med-head" style="margin-top:16px"><span class="med-date">Fotos de progreso</span><span class="med-ago">${fotos.length} foto${fotos.length!==1?'s':''} · solo las ves tú</span></div>
+      <div class="fgrid">${recientes.map(f => `<button type="button" class="fth" onclick="abrirFotoCli(${f.id})" aria-label="Foto ${FOTO_VISTAS[f.vista]||''} del ${fotoFecha(f.fecha)}"><img alt="" data-p="${sudEsc(f.path)}"><span>${FOTO_VISTAS[f.vista]||'Otra'} · ${fotoFecha(f.fecha,true)}</span></button>`).join('')}</div>
+      ${fotos.length > 12 ? `<p class="med-note">Se muestran las 12 más recientes de ${fotos.length}. En «Comparar» puedes elegir cualquiera.</p>` : ''}
+      ${fotos.length > 1 ? `<div class="med-actions">${btnSoft('Comparar fotos','compararFotosCli()','chart')}</div>` : ''}`;
+  }else h += '<p class="med-empty" style="margin-top:12px">El cliente aún no ha subido fotos.</p>';
+  box.innerHTML = h; cargarFotosCli(box);
+}
+function abrirFotoCli(id){
+  const f = _regFotos.find(x => x.id == id); if(!f) return;
+  document.getElementById('fotoTitulo').textContent = (FOTO_VISTAS[f.vista]||'Otra') + ' · ' + fotoFecha(f.fecha);
+  document.getElementById('fotoBody').innerHTML = `<img class="foto-grande" alt="Foto de progreso" data-p="${sudEsc(f.path)}">`;
+  document.getElementById('mFoto').style.display = 'flex'; cargarFotosCli(document.getElementById('fotoBody'));
+}
+let _cmpFotos = null;
+function compararFotosCli(){
+  if(_regFotos.length < 2) return;
+  const por = {}; _regFotos.forEach(f => (por[f.vista] = por[f.vista] || []).push(f));
+  const v = Object.keys(por).sort((a,b) => por[b].length - por[a].length)[0], l = por[v].length > 1 ? por[v] : _regFotos;
+  _cmpFotos = {a:l[0].id, b:l[l.length-1].id};
+  document.getElementById('fotoTitulo').textContent = 'Comparar fotos';
+  document.getElementById('mFoto').style.display = 'flex'; pintarCmpFotos();
+}
+function pintarCmpFotos(){
+  const opt = sel => _regFotos.map(f => `<option value="${f.id}"${f.id==sel?' selected':''}>${FOTO_VISTAS[f.vista]||'Otra'} · ${fotoFecha(f.fecha,true)}</option>`).join('');
+  const A = _regFotos.find(f => f.id == _cmpFotos.a), B = _regFotos.find(f => f.id == _cmpFotos.b);
+  document.getElementById('fotoBody').innerHTML = `<div class="foto-par" style="margin-bottom:10px"><div><label class="bio-u" for="cmpFa">Antes</label><select class="inp" id="cmpFa" onchange="_cmpFotos.a=+this.value;pintarCmpFotos()">${opt(_cmpFotos.a)}</select></div><div><label class="bio-u" for="cmpFb">Después</label><select class="inp" id="cmpFb" onchange="_cmpFotos.b=+this.value;pintarCmpFotos()">${opt(_cmpFotos.b)}</select></div></div>
+    <div class="foto-par"><div><img alt="Foto de antes" data-p="${sudEsc(A.path)}"><small>${fotoFecha(A.fecha)}</small></div><div><img alt="Foto de después" data-p="${sudEsc(B.path)}"><small>${fotoFecha(B.fecha)}</small></div></div>`;
+  cargarFotosCli(document.getElementById('fotoBody'));
+}
+function cerrarFoto(){ document.getElementById('mFoto').style.display = 'none'; document.getElementById('fotoBody').innerHTML = ''; }
+
 async function loadSeguimientos(depId){
   const el=document.getElementById('segBox'); let r=null;
   try{ r=await sb(`seguimientos?deportista_id=eq.${depId}&order=semana.asc&select=semana,respuestas`); }catch(e){}
@@ -6667,12 +6813,14 @@ const TL_ICO={
 // Reúne en una sola lista cronológica todo lo que ha pasado con el deportista (sesiones, mediciones, seguimientos, archivos, tests y planes).
 async function loadHistorial(depId){
   const seguro = (p)=>Promise.resolve(p).then(v=>Array.isArray(v)?v:[]).catch(()=>[]);
-  const [rows, meds, segs, sud, planes, bios] = await Promise.all([
+  const [rows, meds, segs, sud, planes, bios, pesosCli, fotosCli] = await Promise.all([
     seguro(getHistorial(depId)), seguro(getMediciones(depId)),
     seguro(sb(`seguimientos?deportista_id=eq.${depId}&order=semana.asc&select=semana,respuestas`)),
     seguro(sb(`tests_sudoracion?deportista_id=eq.${depId}&select=id,fecha`)),
     seguro(sb(`planes_competicion?deportista_id=eq.${depId}&select=id,fecha,evento,created_at,visible_cliente`)),
-    seguro(sb(`bioimpedancias?deportista_id=eq.${depId}&select=id,fecha,aparato,valores`))
+    seguro(sb(`bioimpedancias?deportista_id=eq.${depId}&select=id,fecha,aparato,valores`)),
+    seguro(sb(`pesos_cliente?deportista_id=eq.${depId}&select=id,fecha,peso`)),
+    seguro(sb(`fotos_cliente?deportista_id=eq.${depId}&select=id,fecha,vista`))
   ]);
   const el = document.getElementById('histList');
   if(!el || currentDepId != depId) return;
@@ -6684,6 +6832,9 @@ async function loadHistorial(depId){
   bios.forEach(x=>{ const v=x.valores||{}, partes=[]; if(v.peso!=null) partes.push(medNum(+v.peso,1)+' kg'); if(v.pct_grasa!=null) partes.push(medNum(+v.pct_grasa,1)+' % grasa'); ev.push({tipo:'medicion', fecha:dia(x.fecha), t:'Bioimpedancia'+(x.aparato?' · '+x.aparato:''), s:partes.join(' · ')}); });
   segs.forEach(x=>{ const q=x.respuestas||{}, bajos=SEG_P.filter(m=>q[m.k]!=null&&q[m.k]<=2).map(m=>m.t.toLowerCase());
     ev.push({tipo:'seguimiento', fecha:dia(x.semana), t:'Seguimiento semanal recibido', s:(q.adherencia!=null?'Adherencia '+q.adherencia+'/5':'')+(bajos.length?`${q.adherencia!=null?' · ':''}<span class="aviso">${bajos.join(', ')} bajo</span>`:'')+(q.molestias?` · <span class="aviso">Molestias</span>`:''), html:true}); });
+  // Lo que anota el cliente desde su área: pesos (en «Seguimiento») y fotos (en «Archivos»)
+  pesosCli.forEach(x=>ev.push({tipo:'seguimiento', fecha:dia(x.fecha), t:'Peso anotado por el cliente', s:medNum(+x.peso,1)+' kg · autodeclarado'}));
+  fotosCli.forEach(x=>ev.push({tipo:'archivo', fecha:dia(x.fecha), t:'Foto de progreso del cliente', s:FOTO_VISTAS[x.vista]||'Otra'}));
   (d.archivos||[]).forEach(a=>{ if(!a||!a.fecha) return; ev.push({tipo:'archivo', fecha:dia(a.fecha), t:(a.visible_cliente?'Compartido con el cliente: ':'Archivo: ')+(a.nombre||'sin nombre')}); });
   sud.forEach(x=>ev.push({tipo:'plan', fecha:dia(x.fecha), t:'Test de sudoración'}));
   planes.forEach(x=>ev.push({tipo:'plan', fecha:dia(x.created_at||x.fecha), t:'Plan de competición'+(x.evento?': '+x.evento:''), s:'Competición el '+new Date(x.fecha+'T00:00:00').toLocaleDateString('es-ES',{day:'numeric',month:'short',year:'numeric'})+(x.visible_cliente?' · compartido con el cliente':'')}));
