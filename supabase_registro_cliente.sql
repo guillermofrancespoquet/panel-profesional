@@ -10,6 +10,7 @@
 --  · Las tablas son «solo profesional»; el cliente solo entra por las funciones `cliente_*` de abajo.
 --  · Bucket `fotos-clientes`: cada cliente solo puede subir, ver y borrar lo que está en su carpeta (`<id>/…`);
 --    el profesional lo ve todo. No toca las políticas del bucket `deportistas-docs`.
+--    (Si ya ejecutaste una versión anterior de este archivo, vuelve a ejecutar este: sustituye las políticas por unas que funcionan.)
 -- Los pesos son autodeclarados: en el panel salen en una serie aparte y etiquetada, nunca mezclados con la antropometría.
 -- ============================================================
 
@@ -45,21 +46,33 @@ create policy "solo profesional" on public.fotos_cliente
 insert into storage.buckets (id, name, public) values ('fotos-clientes', 'fotos-clientes', false)
   on conflict (id) do update set public = false;
 
+-- OJO: `cliente_deportista_id()` está cerrada a `authenticated` a propósito (solo la usan funciones SECURITY DEFINER),
+-- así que las políticas NO pueden llamarla directamente: lo hace esta función auxiliar, igual que `puede_ver_archivo`.
+create or replace function public.puede_usar_foto(p_name text)
+returns boolean
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select public.es_profesional()
+      or exists (select 1 where p_name like public.cliente_deportista_id()::text || '/%')
+$$;
+revoke all on function public.puede_usar_foto(text) from public, anon;
+grant execute on function public.puede_usar_foto(text) to authenticated;
+
 drop policy if exists "fotos-clientes: leer" on storage.objects;
 drop policy if exists "fotos-clientes: subir" on storage.objects;
 drop policy if exists "fotos-clientes: borrar" on storage.objects;
 create policy "fotos-clientes: leer" on storage.objects
   for select to authenticated
-  using (bucket_id = 'fotos-clientes'
-         and (public.es_profesional() or name like public.cliente_deportista_id()::text || '/%'));
+  using (bucket_id = 'fotos-clientes' and public.puede_usar_foto(name));
 create policy "fotos-clientes: subir" on storage.objects
   for insert to authenticated
-  with check (bucket_id = 'fotos-clientes'
-              and (public.es_profesional() or name like public.cliente_deportista_id()::text || '/%'));
+  with check (bucket_id = 'fotos-clientes' and public.puede_usar_foto(name));
 create policy "fotos-clientes: borrar" on storage.objects
   for delete to authenticated
-  using (bucket_id = 'fotos-clientes'
-         and (public.es_profesional() or name like public.cliente_deportista_id()::text || '/%'));
+  using (bucket_id = 'fotos-clientes' and public.puede_usar_foto(name));
 
 -- Funciones del cliente --------------------------------------------------------------------------------
 -- Guardar un peso (hoy o un día reciente; un peso por día).
