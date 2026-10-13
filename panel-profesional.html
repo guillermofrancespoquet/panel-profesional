@@ -6269,11 +6269,20 @@ async function bioGuardar() {
     if (_bio.file) {
       const ext = (/\.(pdf|png|jpe?g|webp|heic)$/i.exec(_bio.file.name) || ['', 'bin'])[1].toLowerCase();
       path = `${depId}/${Date.now()}_bioimpedancia_${fecha}.${ext}`;
-      // Si el archivo original no se puede subir, los valores se guardan igualmente (y se avisa del motivo)
-      try {
-        const up = await authFetch(`${SURL}/storage/v1/object/${STORAGE_BUCKET}/${path.split('/').map(encodeURIComponent).join('/')}`, { method: 'POST', headers: { 'Content-Type': _bio.file.type || 'application/octet-stream' }, body: _bio.file });
-        if (!up.ok) { let m = ''; try { const j = await up.json(); m = j.message || j.error || ''; } catch (e) {} throw new Error(`${up.status}${m ? ' ' + m : ''}`); }
-      } catch (e) { console.warn('bioGuardar subida', e); avisoArchivo = String(e.message || 'sin conexión'); path = null; }
+      // Si el archivo original no se puede subir, los valores se guardan igualmente (y se avisa del motivo).
+      // Los errores del servidor (5xx) o de red suelen ser momentáneos: se reintenta hasta 3 veces.
+      const kb = _bio.file.size, tam = kb >= 1048576 ? (kb / 1048576).toFixed(1).replace('.', ',') + ' MB' : Math.max(1, Math.round(kb / 1024)) + ' KB';
+      for (let intento = 1; intento <= 3; intento++) {
+        try {
+          const up = await authFetch(`${SURL}/storage/v1/object/${STORAGE_BUCKET}/${path.split('/').map(encodeURIComponent).join('/')}`, { method: 'POST', headers: { 'Content-Type': _bio.file.type || 'application/octet-stream' }, body: _bio.file });
+          if (up.ok) { avisoArchivo = ''; break; }
+          let m = ''; try { const j = await up.json(); m = j.message || j.error || ''; } catch (e) {}
+          avisoArchivo = `${up.status}${m ? ' ' + m : ''} · ${tam}`;
+          if (up.status < 500) break;                       // 4xx: reintentar no sirve (permiso, tamaño…)
+        } catch (e) { avisoArchivo = `${e.message || 'sin conexión'} · ${tam}`; }
+        if (intento < 3) { msg.textContent = `Subiendo el archivo… reintento ${intento}`; await new Promise(r => setTimeout(r, 900 * intento)); }
+      }
+      if (avisoArchivo) { console.warn('bioGuardar subida', avisoArchivo); path = null; }
     }
     const notas = (document.getElementById('bioNotas').value || '').trim() || null;
     const r = await sb('bioimpedancias', { method: 'POST', body: JSON.stringify({ deportista_id: depId, fecha, aparato, valores: v, archivo_path: path, notas }) });
