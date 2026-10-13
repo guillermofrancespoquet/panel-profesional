@@ -6264,17 +6264,20 @@ async function bioGuardar() {
   if (!Object.keys(v).filter(k => k !== 'altura_cm').length) { msg.textContent = 'Escribe al menos un valor (por ejemplo el peso).'; return; }
   if (malos.length) { msg.textContent = 'Revisa estos valores, parecen fuera de rango: ' + malos.join(', ') + '.'; return; }
   btn.disabled = true; msg.textContent = 'Guardando…';
-  let path = null;
+  let path = null, avisoArchivo = '';
   try {
     if (_bio.file) {
       const ext = (/\.(pdf|png|jpe?g|webp|heic)$/i.exec(_bio.file.name) || ['', 'bin'])[1].toLowerCase();
       path = `${depId}/${Date.now()}_bioimpedancia_${fecha}.${ext}`;
-      const up = await authFetch(`${SURL}/storage/v1/object/${STORAGE_BUCKET}/${path.split('/').map(encodeURIComponent).join('/')}`, { method: 'POST', headers: { 'Content-Type': _bio.file.type || 'application/octet-stream' }, body: _bio.file });
-      if (!up.ok) throw new Error('subida ' + up.status);
+      // Si el archivo original no se puede subir, los valores se guardan igualmente (y se avisa del motivo)
+      try {
+        const up = await authFetch(`${SURL}/storage/v1/object/${STORAGE_BUCKET}/${path.split('/').map(encodeURIComponent).join('/')}`, { method: 'POST', headers: { 'Content-Type': _bio.file.type || 'application/octet-stream' }, body: _bio.file });
+        if (!up.ok) { let m = ''; try { const j = await up.json(); m = j.message || j.error || ''; } catch (e) {} throw new Error(`${up.status}${m ? ' ' + m : ''}`); }
+      } catch (e) { console.warn('bioGuardar subida', e); avisoArchivo = String(e.message || 'sin conexión'); path = null; }
     }
     const notas = (document.getElementById('bioNotas').value || '').trim() || null;
     const r = await sb('bioimpedancias', { method: 'POST', body: JSON.stringify({ deportista_id: depId, fecha, aparato, valores: v, archivo_path: path, notas }) });
-    if (esErrorSb(r)) { if (path) authFetch(`${SURL}/storage/v1/object/${STORAGE_BUCKET}/${path.split('/').map(encodeURIComponent).join('/')}`, { method: 'DELETE' }).catch(() => {}); throw new Error(r.code === '42P01' || r.code === 'PGRST205' ? 'sin_tabla' : 'guardado'); }
+    if (esErrorSb(r)) { if (path) authFetch(`${SURL}/storage/v1/object/${STORAGE_BUCKET}/${path.split('/').map(encodeURIComponent).join('/')}`, { method: 'DELETE' }).catch(() => {}); const err = new Error(r.code === '42P01' || r.code === 'PGRST205' ? 'sin_tabla' : 'guardado'); err.detalle = [r.code, r.message].filter(Boolean).join(' · '); throw err; }
     // El archivo original también queda en «Archivos» (no visible para el cliente salvo que tú lo marques)
     if (path) {
       try {
@@ -6285,12 +6288,13 @@ async function bioGuardar() {
         if (!esErrorSb(rp)) { d.archivos = archivos; d.ultima_actividad = ahora; const fl = document.getElementById('filesList'); if (fl && currentDepId == depId) fl.innerHTML = renderFilesList(archivos, depId); const tn = document.querySelector('#depTab-archivos .tab-n'); if (tn) tn.textContent = archivos.length; }
       } catch (e) { console.warn('bio archivos', e); }
     }
-    toast('Bioimpedancia guardada');
+    if (avisoArchivo) toast('Bioimpedancia guardada, pero no se pudo subir el archivo original (' + avisoArchivo + ').', { tipo: 'aviso', ms: 9000 });
+    else toast('Bioimpedancia guardada');
     cerrarBio();
     if (currentDepId == depId) { loadMediciones(depId); loadHistorial(depId); }
   } catch (e) {
     console.warn('bioGuardar', e);
-    msg.textContent = e.message === 'sin_tabla' ? 'Falta ejecutar el SQL «supabase_bioimpedancia.sql» en Supabase.' : 'No se pudo guardar. Comprueba la conexión y vuelve a intentarlo.';
+    msg.textContent = e.message === 'sin_tabla' ? 'Falta ejecutar el SQL «supabase_bioimpedancia.sql» en Supabase.' : 'No se pudo guardar' + ((e.detalle || (e.message !== 'guardado' ? e.message : '')) ? ' (' + (e.detalle || e.message) + ')' : '') + '. Comprueba la conexión y vuelve a intentarlo.';
     btn.disabled = false;
   }
 }
