@@ -6414,6 +6414,11 @@ async function loadSudoracion(depId){
       <div class="med-stat"><div class="med-stat-l">Pérdida de peso</div><div class="med-stat-v">${ur.pct_peso!=null?medNum(+ur.pct_peso,1):'—'}<small>%</small></div><div class="med-delta">&nbsp;</div></div>
       <div class="med-stat"><div class="med-stat-l">Sodio perdido</div><div class="med-stat-v">${ur.sodio_mg_h!=null?ur.sodio_mg_h:'—'}<small>mg/h</small></div><div class="med-delta">${ult.sodio_mmol_l!=null?'medido':'estimado'}</div></div>
     </div>
+    <div class="med-stats">
+      <div class="med-stat"><div class="med-stat-l">Reposición durante</div><div class="med-stat-v">${ur.repos_ml_h!=null&&ur.repos_ml_h>0?ur.repos_ml_h:'—'}<small>${ur.repos_ml_h>0?'mL/h':''}</small></div><div class="med-delta">${ur.repos_ml_h>0?'≈ un bidón de 500 mL cada '+Math.max(10,Math.round(500/ur.repos_ml_h*60/5)*5)+' min':'no hace falta con esta duración'}</div></div>
+      <div class="med-stat"><div class="med-stat-l">Sodio por litro</div><div class="med-stat-v">${ur.sodio_mg_h!=null&&ur.tasa_l_h>0?Math.round(ur.sodio_mg_h/ur.tasa_l_h):'—'}<small>mg/L</small></div><div class="med-delta">${ur.sal_g!=null?'≈ '+medNum(+ur.sal_g,1)+' g de sal en la sesión':'&nbsp;'}</div></div>
+      <div class="med-stat"><div class="med-stat-l">Sin beber, al 2 %</div><div class="med-stat-v">${ur.min_hasta_2pct!=null?ur.min_hasta_2pct:'—'}<small>${ur.min_hasta_2pct!=null?'min':''}</small></div><div class="med-delta">${ur.post_min_l!=null&&ur.post_max_l>0?'después: '+medNum(+ur.post_min_l,1)+'–'+medNum(+ur.post_max_l,1)+' L':'&nbsp;'}</div></div>
+    </div>
     ${rows.length>1 ? `<div class="med-series">${medSerie(pts,'tasa','var(--t400)','Sudoración','L/h',2)}</div>` : ''}
     <table class="sud-table"><thead><tr><th>Fecha</th><th>Sesión</th><th>Sudor</th><th class="hide-m">Peso</th><th></th></tr></thead><tbody>${tabla}</tbody></table>
     <p class="med-note">Compara tests en condiciones parecidas: la temperatura, la humedad y la intensidad cambian mucho la sudoración.</p>
