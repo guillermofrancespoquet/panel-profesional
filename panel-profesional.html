@@ -4467,7 +4467,7 @@ async function refrescarVista(){
   let y0 = null, tirado = 0, ocupado = false;
   const movil = ()=>window.matchMedia('(max-width:860px)').matches;
   document.addEventListener('touchstart', e=>{
-    y0 = (!ocupado && movil() && window.scrollY <= 0 && !e.target.closest('textarea,input,select,iframe,.mbg,.sidebar,.agenda-swipe-bg,.agenda-item,#vantro,#vplan,#vcalc')) ? e.touches[0].clientY : null;
+    y0 = (!ocupado && movil() && window.scrollY <= 0 && e.touches[0].clientX > 28 && !e.target.closest('textarea,input,select,iframe,.mbg,.sidebar,.agenda-swipe-bg,.agenda-item,#vantro,#vplan,#vcalc')) ? e.touches[0].clientY : null;
     tirado = 0;
   }, {passive:true});
   document.addEventListener('touchmove', e=>{
@@ -4488,6 +4488,46 @@ async function refrescarVista(){
   });
 })();
 
+
+// Barra lateral con el dedo (solo móvil): deslizar hacia la derecha desde el borde izquierdo la abre, siguiendo el dedo;
+// con la barra abierta, deslizar hacia la izquierda (o tocar fuera) la cierra.
+(function(){
+  if(!('ontouchstart' in window)) return;
+  const sb = document.getElementById('sidebar'), bd = document.getElementById('sidebarBackdrop'); if(!sb || !bd) return;
+  const movil = ()=>window.matchMedia('(max-width:860px)').matches, ANCHO = ()=>sb.offsetWidth || 270, BORDE = 24;
+  const modalAbierto = ()=>[...document.querySelectorAll('.mbg')].some(m=>getComputedStyle(m).display !== 'none');
+  let modo = null, x0 = 0, y0 = 0, dx = 0, horizontal = false;
+  const reset = ()=>{ sb.style.transition = ''; sb.style.transform = ''; bd.style.transition = ''; bd.style.opacity = ''; };
+  document.addEventListener('touchstart', e=>{
+    modo = null; if(!movil() || !document.body.classList.contains('has-sidebar') || modalAbierto()) return;
+    const t = e.touches[0], abierta = sb.classList.contains('mobile-open');
+    if(!abierta && t.clientX <= BORDE) modo = 'abrir';
+    else if(abierta) modo = 'cerrar';
+    x0 = t.clientX; y0 = t.clientY; dx = 0; horizontal = false;
+  }, {passive:true});
+  document.addEventListener('touchmove', e=>{
+    if(!modo) return;
+    const t = e.touches[0], mx = t.clientX - x0, my = t.clientY - y0;
+    if(!horizontal){
+      if(Math.abs(my) > 12 && Math.abs(my) > Math.abs(mx)){ modo = null; return; }   // es un desplazamiento vertical: no es para la barra
+      if(Math.abs(mx) > 10 && Math.abs(mx) > Math.abs(my) * 1.5){
+        if((modo === 'abrir' && mx < 0) || (modo === 'cerrar' && mx > 0)){ modo = null; return; }
+        horizontal = true; sb.style.transition = 'none'; bd.style.transition = 'none'; bd.classList.add('show');
+      } else return;
+    }
+    dx = mx; const w = ANCHO();
+    const pos = modo === 'abrir' ? Math.max(0, Math.min(w, mx)) : Math.max(0, Math.min(w, w + mx));   // cuánto se ve de la barra
+    sb.style.transform = `translateX(${pos - w}px)`; bd.style.opacity = String(pos / w);
+  }, {passive:true});
+  const fin = ()=>{
+    if(!modo || !horizontal){ modo = null; return; }
+    const abrirla = modo === 'abrir' ? dx > ANCHO() * 0.3 : dx > -ANCHO() * 0.3;
+    modo = null; horizontal = false; reset();
+    if(abrirla){ sb.classList.add('mobile-open'); bd.classList.add('show'); }
+    else { closeMobileSidebar(); }
+  };
+  document.addEventListener('touchend', fin); document.addEventListener('touchcancel', fin);
+})();
 
 // ═══════════════ INFORME DE PROGRESO (PDF) ═══════════════
 // Resume peso, % de grasa (valoraciones de antropometría) y seguimiento semanal en un A4. Se puede descargar o compartir con el cliente
