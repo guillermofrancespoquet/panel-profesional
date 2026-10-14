@@ -124,6 +124,9 @@ body.in-plan .topbar{display:none}
 .lb img{max-width:100%;max-height:calc(100dvh - 110px);border-radius:10px;object-fit:contain}
 .lb-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;max-width:520px;color:#fff;font-size:13px}
 .reg-del{background:none;border:none;color:var(--g400);font-size:18px;line-height:1;padding:4px 8px;border-radius:8px;min-width:32px;min-height:32px}
+.sud-ex{padding:10px 0;border-top:.5px solid var(--bd);font-size:14px;line-height:1.5}
+.sud-ex:first-child{border-top:none;padding-top:0}
+.sud-ex-k{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--g500);margin-bottom:2px}
 .nota-t{font-size:14.5px;line-height:1.5;color:var(--g900);white-space:pre-wrap;overflow-wrap:anywhere;margin-top:2px}
 #notaF{font-weight:500;color:var(--g400);text-transform:none;letter-spacing:0}
 body.dark-mode .nota-card{background:rgba(29,158,117,.12)}
@@ -644,8 +647,8 @@ async function abrirDatos(){
   if(DATOS){ pintarDatos(); return; }
   $('datosBody').innerHTML='<div class="spin" style="margin-top:6vh"></div>';
   try{
-    const [v,a,bi]=await Promise.all([rpc('cliente_mis_valoraciones'),rpc('cliente_mis_archivos'),rpc('cliente_mis_bioimpedancias').catch(()=>[])]);   // la báscula es opcional: sin su SQL, simplemente no sale
-    DATOS={vals:Array.isArray(v)?v:[],archivos:Array.isArray(a)?a:[],bio:Array.isArray(bi)?bi:[]};
+    const [v,a,bi,su]=await Promise.all([rpc('cliente_mis_valoraciones'),rpc('cliente_mis_archivos'),rpc('cliente_mis_bioimpedancias').catch(()=>[]),rpc('cliente_mis_tests_sudoracion').catch(()=>[])]);   // báscula y test de sudoración son opcionales: sin su SQL, simplemente no salen
+    DATOS={vals:Array.isArray(v)?v:[],archivos:Array.isArray(a)?a:[],bio:Array.isArray(bi)?bi:[],sud:Array.isArray(su)?su:[]};
   }catch(e){ $('datosBody').innerHTML='<p class="empty">No se pudieron cargar tus datos. Comprueba tu conexión y vuelve a entrar.</p>'; return; }
   pintarDatos();
 }
@@ -657,6 +660,30 @@ function bioBloque(bio,maxN){
   const tarj=BIO_T.filter(([k])=>last[k]!=null).slice(0,maxN).map(([k,l,u,d])=>{ let dl='&nbsp;'; if(prev&&prev[k]!=null){ const x=last[k]-prev[k]; dl=(x>0?'+':x<0?'−':'')+nf(Math.abs(x),d)+' '+(u==='%'?'pts':u)+' vs. anterior'; } return `<div class="stat"><div class="stat-l">${l}</div><div class="stat-v">${nf(last[k],d)}<small>${u}</small></div><div class="stat-d">${dl}</div></div>`; }).join('');
   const ser=pts.length>1?`<div class="series">${serie(pts,'peso','#1D9E75','Peso','kg',1)}${serie(pts,'pct_grasa','#B8956A','% grasa','%',1)}${serie(pts,'musculo_kg','#6F8CB8','Músculo esquelético','kg',1)}${serie(pts,'masa_libre_kg','#04342C','Masa libre de grasa','kg',1)}</div>`:'';
   return {pts,last,html:`<p class="note" style="margin:-.4rem 0 .8rem">Última medición · ${fmtF(last.fecha)}</p><div class="stats">${tarj}</div>${ser}<p class="note">La báscula estima la composición corporal por la resistencia eléctrica del cuerpo y varía con la hidratación, la comida y el ejercicio previos: fíjate en la tendencia más que en un valor suelto.</p>`};
+}
+// Test de sudoración: solo los que el profesional ha compartido, explicados en lenguaje sencillo (valores orientativos de una sesión).
+const SUD_AMB={'interior':'interior','exterior-sombra':'exterior, a la sombra','exterior-sol':'exterior, al sol'};
+function sudExplica(t){
+  const r=t.resultados||{}, l=[];
+  if(r.tasa_l_h!=null) l.push(['Cuánto sudas',`Sueltas unos <b>${nf(r.tasa_l_h,1)} litros por hora</b> en esas condiciones. Es lo que tu cuerpo necesita reponer.`]);
+  if(r.pct_peso!=null){
+    const p=+r.pct_peso, v=p<1?'Es una pérdida pequeña: vas bien.':p<=2?'Es una pérdida moderada, aceptable.':'Pasa del 2 %: puede bajar el rendimiento. Conviene beber más durante la sesión.';
+    l.push(['Peso perdido',`Al terminar habías perdido el <b>${nf(p,1)} %</b> de tu peso. ${v}`]);
+  }
+  if(r.sodio_mg_h!=null) l.push(['Sal que pierdes',`Con el sudor pierdes unos <b>${nf(r.sodio_mg_h,0)} mg de sodio por hora</b>${r.sal_g!=null?` (en esta sesión, como ${nf(r.sal_g,1)} g de sal)`:''}${t.medido?'':'. Es una estimación, no una medida'}. Por eso es importante beber con sodio en esfuerzos largos.`]);
+  if(r.repos_ml_h!=null) l.push(['Qué beber durante',+r.repos_ml_h>0?`Para no pasar del 2 % de pérdida, bebe unos <b>${nf(r.repos_ml_h,0)} mL por hora</b>, en tragos pequeños y repartidos.`:'Con esta duración no hace falta beber de más: bebe cuando tengas sed.']);
+  if(r.post_min_l!=null&&+r.post_max_l>0) l.push(['Después',`Repón entre <b>${nf(r.post_min_l,1)} y ${nf(r.post_max_l,1)} litros</b> en las horas siguientes (con algo de sodio y comida).`]);
+  return l;
+}
+function sudBloque(tests){
+  const lista=tests.slice().sort((a,b)=>String(b.fecha).localeCompare(String(a.fecha))||b.id-a.id), t=lista[0];
+  const cond=x=>[x.actividad,x.temperatura_c!=null?nf(x.temperatura_c,0)+' °C':'',x.humedad_pct!=null?nf(x.humedad_pct,0)+' % de humedad':'',SUD_AMB[x.ambiente]||'',x.duracion_min?nf(x.duracion_min,0)+' min':''].filter(Boolean).map(esc).join(' · ');
+  const ex=sudExplica(t).map(([k,v])=>`<div class="sud-ex"><div class="sud-ex-k">${k}</div><div>${v}</div></div>`).join('');
+  const prev=lista.slice(1).map(x=>{ const r=x.resultados||{}; return `<div class="file"><span style="flex:1"><b>${fmtF(String(x.fecha).slice(0,10),true)}</b> <span class="empty">· ${r.tasa_l_h!=null?nf(r.tasa_l_h,1)+' L/h':'—'}${r.pct_peso!=null?' · '+nf(r.pct_peso,1)+' % de peso':''}</span></span></div>`; }).join('');
+  return `<p class="note" style="margin:-.4rem 0 .8rem">Último test · ${fmtF(String(t.fecha).slice(0,10))}${cond(t)?'<br>'+cond(t):''}</p>
+    <div class="card">${ex||'<p class="empty">Todavía no hay resultados para mostrar.</p>'}
+    <p class="note">Son valores orientativos de una sola sesión: cambian con el calor, la humedad, la intensidad y la ropa. Tu nutricionista te ayudará a aplicarlos.</p></div>`
+    +(prev?`<p class="sec">Tests anteriores</p><div class="card">${prev}</div>`:'');
 }
 function pintarDatos(){
   const pts=DATOS.vals.map(punto).sort((a,b)=>new Date(a.fecha)-new Date(b.fecha));
@@ -682,6 +709,7 @@ function pintarDatos(){
       +'</tbody></table></div>';
   }
   if(pts.length&&bio.length) h+='<p class="sec">Báscula de bioimpedancia · complemento</p>'+bioBloque(bio,4).html;
+  if((DATOS.sud||[]).length) h+='<p class="sec">Mi test de sudoración</p>'+sudBloque(DATOS.sud);
   h+='<p class="sec">Documentos</p>';
   if(!DATOS.archivos.length) h+='<div class="card">'+vacioC('<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>','Sin documentos por ahora','Tus informes y análisis aparecerán aquí cuando tu nutricionista los comparta contigo.')+'</div>';
   else h+='<div class="card">'+DATOS.archivos.map((f,i)=>`<div class="file"><span class="file-ic"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span><div class="file-info"><div class="file-n">${esc(f.nombre)}</div><div class="file-d">${f.fecha?fmtF(String(f.fecha).slice(0,10)):''}</div></div><button class="btn soft" onclick="abrirArchivo(${i})">Abrir</button></div>`).join('')+'</div>';

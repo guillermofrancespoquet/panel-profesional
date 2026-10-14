@@ -873,6 +873,18 @@ body.dark-mode .frm select.inp{background-image:url("data:image/svg+xml,%3Csvg x
 }
 .sud-cond{display:block;font-size:11px;color:var(--g400)}
 @media(max-width:560px){.sud-table .hide-m{display:none}}
+@media(max-width:700px){
+  .sud-table,.sud-table tbody,.sud-table tr,.sud-table td{display:block}
+  .sud-table thead{display:none}
+  .sud-table tr{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 10px;padding:12px 0;border-top:.5px solid var(--bd)}
+  .sud-table td{border-top:none;padding:0;min-width:0;width:auto}
+  .sud-table td:first-child{grid-column:1/-1;font-size:13.5px}
+  .sud-table td:nth-child(2){grid-column:1/-1;margin-bottom:4px}
+  .sud-table td:nth-child(3)::before{content:'Sudor ';color:var(--g400);font-weight:500}
+  .sud-table td:nth-child(4)::before{content:'Pérdida ';color:var(--g400);font-weight:500}
+  .sud-table td.act{grid-column:1/-1;text-align:left;margin-top:8px}
+  .sud-table td.act .row-actions{justify-content:flex-start;flex-wrap:nowrap}
+}
 .calc-warn{background:#FEF2F2;color:var(--red);border-radius:8px;padding:8px 12px;font-size:12px;margin-top:10px}
 .calc-results{background:var(--t900);border-radius:14px;padding:16px 18px;margin-top:14px;color:#fff}
 .calc-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.1)}
@@ -6387,10 +6399,10 @@ async function loadSudoracion(depId){
   const tabla = rows.slice().reverse().map(t=>{
     const r = res(t);
     return `<tr><td class="n">${fmt(t.fecha)}</td>
-      <td>${sudEsc(t.actividad||'—')}<span class="sud-cond">${cond(t)||'sin condiciones'}</span></td>
+      <td>${sudEsc(t.actividad||'—')}<span class="sud-cond">${cond(t)||'sin condiciones'}</span>${t.visible_cliente?'<span class="sud-cond">Visible para el cliente</span>':''}</td>
       <td class="n">${r.tasa_l_h!=null?medNum(+r.tasa_l_h,2)+' L/h':'—'}</td>
       <td class="n hide-m">${r.pct_peso!=null?medNum(+r.pct_peso,1)+' %':'—'}</td>
-      <td class="act">${btnDel('Eliminar test',`deleteSudoracion(${t.id},${depId},this)`)}</td></tr>`;
+      <td class="act"><div class="row-actions">${btnSoft(t.visible_cliente?'Dejar de compartir':'Compartir con el cliente',`sudVisible(${t.id},${depId},${!t.visible_cliente})`,t.visible_cliente?'trash':'ext',true)}${btnDel('Eliminar test',`deleteSudoracion(${t.id},${depId},this)`)}</div></td></tr>`;
   }).join('');
   el.innerHTML = `
     <div class="med-head">
@@ -6408,6 +6420,13 @@ async function loadSudoracion(depId){
     ${nuevo}`;
 }
 
+// El cliente ve un resumen explicado de cada test compartido en «Mis datos» (sin notas ni datos de la balanza)
+async function sudVisible(id, depId, visible){
+  let r; try{ r = await sb(`tests_sudoracion?id=eq.${id}`, {method:'PATCH', headers:{'Prefer':'return=minimal'}, body:JSON.stringify({visible_cliente:visible})}); }catch(e){ r = {code:'red'}; }
+  if(esErrorSb(r)){ toast(r.code === '42703' || r.code === 'PGRST204' ? 'Falta ejecutar el SQL «supabase_sudoracion_compartir.sql» en Supabase.' : 'No se pudo cambiar. Inténtalo de nuevo.', {tipo:'error', ms:6000}); return; }
+  toast(visible ? 'Test compartido: el cliente ve un resumen explicado en «Mis datos»' : 'El cliente ya no ve este test', {ms:4500});
+  if(currentDepId == depId) loadSudoracion(depId);
+}
 function deleteSudoracion(id, depId, btn){
   const fila = btn && btn.closest('tr');
   deshacerBorrado({
