@@ -693,7 +693,7 @@ function sudExplica(t){
     let b;
     if(rep>0){
       const min=Math.max(10,Math.round(500/rep*60/5)*5);
-      b=`Durante, unos <b>${nf(rep,0)} mL por hora</b> (≈ un bidón de 500 mL cada ${min} min), en tragos pequeños.`+(rep>800?' Si no lo toleras, bebe lo que puedas y añade sodio.':'');
+      b=`Durante, unos <b>${nf(rep,0)} mL por hora</b> (≈ un bidón de 500 mL cada ${min} min), en tragos pequeños.`;
     }else b='Con esta duración no hace falta forzar: bebe según tengas sed.';
     if(r.post_min_l!=null&&+r.post_max_l>0) b+=` Después, repón <b>${nf(r.post_min_l,1)}–${nf(r.post_max_l,1)} L</b>.`;
     l.push(['Qué beber',b]);
