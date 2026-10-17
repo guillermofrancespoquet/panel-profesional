@@ -2456,7 +2456,7 @@ function viewResultados(){
 
   <div class="grid cols2">
     <div class="card">
-      <h3 style="margin-top:0;">Evolución — % grasa vs. % muscular</h3>
+      <h3 style="margin-top:0;">Evolución — masa grasa vs. masa muscular (kg)</h3>
       <canvas id="evoCompChart" class="chart-wide" width="560" height="300"></canvas>
     </div>
     <div class="card">
@@ -2504,8 +2504,8 @@ function wireResultados(){
     })() : []));
   drawEvoChart("evoChart", c, v.id);
   drawEvoMetricChart("evoCompChart", c, [
-    { key:"grasa",    label:"% Masa grasa",    color:"#B8956A", get:R=>R.pctGrasaPrimaria },
-    { key:"muscular", label:"% Masa muscular", color:"#0F6E56", get:R=>R.pctMasaMuscular }
+    { key:"grasa",    label:"Masa grasa (kg)",    color:"#B8956A", get:R=>R.pesoGrasoPrimario },
+    { key:"muscular", label:"Masa muscular (kg)", color:"#0F6E56", get:R=>R.pesoMuscularLee }
   ]);
   drawEvoMetricChart("evoFoldsChart", c, [
     { key:"sum6", label:"Σ 6 pliegues", color:"#1D9E75", get:R=>R.sum6 },
