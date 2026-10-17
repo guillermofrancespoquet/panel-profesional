@@ -341,6 +341,21 @@ body.dark-mode .acc-pill.on{color:var(--t100)}
 .med-chart text{font-family:var(--f);font-size:10px;fill:var(--g500)}
 .med-chart text.v{font-weight:600;fill:var(--g900);font-size:10px;paint-order:stroke;stroke:var(--bg);stroke-width:3px;stroke-linejoin:round}
 .med-chart .dot{fill:var(--bg)}
+.rev-edit{margin-top:10px;padding:14px;border:.5px solid var(--bd);border-radius:12px;background:var(--bg)}
+.rev-edit[hidden]{display:none}
+.rev-edit-row{display:flex;gap:10px;flex-wrap:wrap}.rev-edit-row>div{flex:1;min-width:130px}
+.rev-chips{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
+.rev-edit-act{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.rev-quitar{background:none;border:0;color:var(--g500);font:inherit;font-size:12px;text-decoration:underline;cursor:pointer;padding:6px 4px;margin-left:auto}
+.est-box{background:var(--bg);border:.5px solid var(--bd);border-radius:14px;padding:14px 16px}
+.est-head{display:flex;align-items:center;gap:8px;margin-bottom:10px;font-size:13px;font-weight:700}
+.est-pill{font-size:11.5px;font-weight:600;padding:3px 10px;border-radius:20px;background:var(--pill-g);color:var(--t800);box-shadow:inset 0 0 0 .5px var(--pill-g-bd)}
+.est-pill.warn{background:var(--pill-au);color:var(--gold-dk);box-shadow:none}
+.est-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:2px 24px}
+.est-row{padding:8px 0;border-top:.5px solid var(--bd);min-width:0}
+.est-k{font-size:10.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--g500)}
+.est-v{font-size:13px;line-height:1.45;color:var(--g900);margin-top:2px}
+.est-row.warn .est-v{color:var(--gold-dk);font-weight:600}
 .med-lg{display:inline-flex;align-items:center;gap:5px;margin-left:6px;font-weight:600}
 .med-note{font-size:11px;color:var(--g400);margin-top:8px;line-height:1.5}
 .med-empty{font-size:13px;color:var(--g400);line-height:1.6}
@@ -1746,8 +1761,6 @@ body.dark-mode .ref-src,body.dark-mode .sup-badge,body.dark-mode .depd-avatar-fa
     <textarea class="inp" id="editDepDesc" placeholder="Objetivo, contexto, cualquier dato relevante…" style="min-height:70px;resize:vertical"></textarea>
     <label class="mfl" style="margin-top:10px">URL del plan nutricional (GitHub)</label>
     <input type="text" class="inp" id="editDepPlan" placeholder="https://tu-usuario.github.io/...">
-    <label class="mfl" style="margin-top:10px">Próxima revisión (fecha y hora)</label>
-    <div style="display:flex;gap:8px"><input type="date" class="inp" id="editDepRevision" style="flex:1.5;min-width:0"><input type="time" class="inp" id="editDepRevisionHora" style="flex:1;min-width:0" aria-label="Hora de la revisión"></div>
     <p class="merr" id="mEditDepErr"></p>
     <div class="mact">
       <button class="btn-cancel" onclick="closeEditDep()">Cancelar</button>
@@ -4149,7 +4162,7 @@ function daysUntil(dateStr) {
 function revisionBadge(dateStr) {
   const days = daysUntil(dateStr);
   if (days === null) return '<span class="rev-badge none">Sin fecha</span>';
-  if (days < 0) return `<span class="rev-badge soon" title="La fecha de revisión ya pasó (hace ${Math.abs(days)} d). Pon una nueva en Editar.">Nueva fecha pendiente</span>`;
+  if (days < 0) return `<span class="rev-badge soon" title="La fecha de revisión ya pasó (hace ${Math.abs(days)} d). Pon una nueva en la pestaña Resumen de su ficha.">Nueva fecha pendiente</span>`;
   if (days === 0) return '<span class="rev-badge urgent">Hoy</span>';
   if (days <= 7) return `<span class="rev-badge soon">En ${days}d</span>`;
   const dateFmt = new Date(dateStr).toLocaleDateString('es-ES', {day:'numeric', month:'short'});
@@ -4216,8 +4229,6 @@ function openEditDep(id) {
   document.getElementById('editDepFoto').value = d.foto_url || '';
   document.getElementById('editDepDesc').value = d.descripcion || '';
   document.getElementById('editDepPlan').value = d.plan_url || '';
-  document.getElementById('editDepRevision').value = d.proxima_revision || '';
-  document.getElementById('editDepRevisionHora').value = d.proxima_revision_hora || '';
   document.getElementById('mEditDepErr').textContent = '';
   document.getElementById('mEditDep').style.display = 'flex';
 }
@@ -4235,28 +4246,16 @@ async function saveEditDep() {
       objetivo: document.getElementById('editDepObjetivo').value.trim() || null,
       foto_url: document.getElementById('editDepFoto').value.trim() || null,
       descripcion: document.getElementById('editDepDesc').value.trim() || null,
-      plan_url: document.getElementById('editDepPlan').value.trim() || null,
-      proxima_revision: document.getElementById('editDepRevision').value || null
+      plan_url: document.getElementById('editDepPlan').value.trim() || null
     };
-    // La hora va en una columna aparte (supabase_revision_hora.sql): solo se envía si hay hora o si la columna ya existe, para no romper el guardado sin ese SQL.
-    const dPrev = deportistas.find(x => x.id === editingDepId);
-    const hora = updates.proxima_revision ? (document.getElementById('editDepRevisionHora').value || null) : null;
-    if (hora || (dPrev && 'proxima_revision_hora' in dPrev)) updates.proxima_revision_hora = hora;
-    // sb() no lanza con errores HTTP: un fallo de PostgREST vuelve como JSON con `code`. Si falla por la columna de la hora (SQL sin ejecutar), se reintenta sin ella.
-    let res = await patchDep(editingDepId, updates), avisoHora = '';
-    if (res && res.code && 'proxima_revision_hora' in updates && !(dPrev && 'proxima_revision_hora' in dPrev)) {
-      delete updates.proxima_revision_hora;
-      res = await patchDep(editingDepId, updates);
-      if (!(res && res.code)) avisoHora = 'Se ha guardado, pero sin la hora: falta ejecutar supabase_revision_hora.sql en Supabase.';
-    }
+    // La fecha y la hora de la revisión se cambian en la pestaña Resumen de la ficha (revGuardar), no aquí.
+    const res = await patchDep(editingDepId, updates);
     if (res && res.code) throw new Error(res.message);
     const d = deportistas.find(x => x.id === editingDepId);
     if (d) Object.assign(d, updates);
-    await syncDepCita(updates.nombre, updates.proxima_revision, hora);
     const idGuardado = editingDepId;   // closeEditDep() lo pone a null: sin esta copia la ficha no se refrescaba tras guardar
     closeEditDep();
     openDepDet(idGuardado);
-    if (avisoHora) toast(avisoHora,{tipo:'aviso',ms:8000});
   } catch(e) {
     document.getElementById('mEditDepErr').textContent = 'Error al guardar. Inténtalo de nuevo.';
   }
@@ -5489,13 +5488,31 @@ function openDepDet(id) {
           <div class="depd-rev-date">${d.proxima_revision ? new Date(d.proxima_revision).toLocaleDateString('es-ES',{day:'numeric',month:'long',year:'numeric'}) + (d.proxima_revision_hora ? ' · ' + sudEsc(String(d.proxima_revision_hora).slice(0,5)) + ' h' : '') : 'Sin fecha establecida'}</div>
         </div>
         ${revisionBadge(d.proxima_revision)}
-        ${daysUntil(d.proxima_revision) < 0 && d.proxima_revision ? `<button type="button" class="btn-soft" onclick="openEditDep(${d.id})">Poner nueva fecha</button>` : ''}
+        ${btnSoft(!d.proxima_revision || daysUntil(d.proxima_revision) < 0 ? 'Poner nueva fecha' : 'Cambiar fecha', 'revAbrir()', 'doc')}
+      </div>
+      <div class="rev-edit" id="revEdit" hidden>
+        <div class="rev-edit-row">
+          <div><label class="mfl" for="revFecha">Fecha</label><input type="date" class="inp" id="revFecha" value="${sudEsc(String(d.proxima_revision||'').slice(0,10))}"></div>
+          <div><label class="mfl" for="revHora">Hora</label><input type="time" class="inp" id="revHora" value="${sudEsc(String(d.proxima_revision_hora||'').slice(0,5))}"></div>
+        </div>
+        <div class="rev-chips" role="group" aria-label="Fecha rápida">${[2,4,6,8].map(n=>`<button type="button" class="tl-chip" onclick="revRapido(${n})">En ${n} semanas</button>`).join('')}</div>
+        <div class="rev-edit-act">
+          <button type="button" class="btn-ok" onclick="revGuardar(${d.id})">Guardar revisión</button>
+          <button type="button" class="btn-cancel" onclick="revAbrir()">Cancelar</button>
+          ${d.proxima_revision ? `<button type="button" class="rev-quitar" onclick="revGuardar(${d.id},true)">Sin próxima revisión</button>` : ''}
+        </div>
+        <p class="merr" id="revMsg" role="alert"></p>
       </div>
       <p class="depd-actividad-line">${actividadTexto(d.ultima_actividad)}</p>
     </div>
 
     <div class="depd-section">
-      <p class="sec-title">Descripción</p>
+      <p class="sec-title">Estado del cliente</p>
+      <div class="est-box" id="estBox"><div class="spin" style="margin:14px auto"></div></div>
+    </div>
+
+    <div class="depd-section">
+      <p class="sec-title">Contexto</p>
       <div class="depd-desc-box">${d.descripcion || 'Sin descripción todavía. Añádela editando este deportista.'}</div>
     </div>
 
@@ -5607,6 +5624,7 @@ function openDepDet(id) {
   loadSeguimientos(d.id);
   loadRegCliente(d.id);
   loadMediciones(d.id);
+  loadEstado(d.id);
   loadSudoracion(d.id);
   loadPlanes(d.id);
 }
@@ -5912,6 +5930,114 @@ function medSerie(pts,key,color,titulo,unit,dec=1,rango){
   const sr=pts.filter(p=>p[key]!==null&&p[key]!==undefined).map(p=>({fecha:p.fecha,v:p[key]}));
   if(sr.length<2) return '';
   return medSvg([{sr,color,name:titulo}],titulo,unit,dec,rango);
+}
+
+// ── Fecha de la próxima revisión, desde la pestaña Resumen ──
+function revAbrir(){
+  const f = document.getElementById('revEdit'); if(!f) return;
+  f.hidden = !f.hidden;
+  if(!f.hidden){ const i = document.getElementById('revFecha'); if(i) i.focus(); }
+}
+function revRapido(semanas){
+  const x = new Date(); x.setDate(x.getDate() + semanas*7);
+  const i = document.getElementById('revFecha'); if(i) i.value = localISO(x);
+}
+async function revGuardar(depId, quitar){
+  const d = deportistas.find(x => x.id == depId), msg = document.getElementById('revMsg'); if(!d || !msg) return;
+  const fecha = quitar ? null : document.getElementById('revFecha').value;
+  const hora = fecha ? (document.getElementById('revHora').value || null) : null;
+  if(!quitar && !fecha){ msg.textContent = 'Elige una fecha.'; return; }
+  msg.textContent = '';
+  const upd = { proxima_revision: fecha };
+  // La hora va en una columna aparte (supabase_revision_hora.sql): solo se envía si hay hora o si la columna ya existe.
+  if(hora || 'proxima_revision_hora' in d) upd.proxima_revision_hora = hora;
+  let aviso = '';
+  try{
+    let res = await patchDep(depId, upd);
+    if(res && res.code && 'proxima_revision_hora' in upd && !('proxima_revision_hora' in d)){
+      delete upd.proxima_revision_hora;
+      res = await patchDep(depId, upd);
+      if(!(res && res.code)) aviso = 'Guardada, pero sin la hora: falta ejecutar supabase_revision_hora.sql en Supabase.';
+    }
+    if(res && res.code) throw new Error(res.message);
+  }catch(e){ msg.textContent = 'No se pudo guardar. Inténtalo de nuevo.'; return; }
+  Object.assign(d, upd);
+  await syncDepCita(d.nombre, fecha, hora);   // mueve (o crea) la cita de revisión de la agenda
+  openDepDet(depId);
+  toast(aviso || (fecha ? 'Próxima revisión guardada' : 'Revisión quitada'), aviso ? {tipo:'aviso', ms:8000} : undefined);
+}
+
+// ── Estado del cliente: resumen calculado con lo que ya hay (mediciones, seguimiento, peso, consultas, revisión y formularios) ──
+async function loadEstado(depId){
+  const seguro = p => Promise.resolve(p).then(v => Array.isArray(v) ? v : []).catch(() => []);
+  const [meds, bios, segs, pesos, hist] = await Promise.all([
+    seguro(getMediciones(depId)), seguro(getBio(depId)),
+    seguro(sb(`seguimientos?deportista_id=eq.${depId}&order=semana.desc&limit=6&select=semana,respuestas`)),
+    seguro(sb(`pesos_cliente?deportista_id=eq.${depId}&order=fecha.desc&limit=1&select=fecha,peso`)),
+    seguro(sb(`historial_deportista?deportista_id=eq.${depId}&order=fecha.desc&limit=1&select=fecha`))
+  ]);
+  const el = document.getElementById('estBox'), d = deportistas.find(x => x.id == depId);
+  if(!el || !d || currentDepId != depId) return;
+  const hoy = localISO(new Date()), dia = f => String(f || '').slice(0, 10);
+  const dias = f => Math.round((new Date(hoy + 'T00:00:00') - new Date(dia(f) + 'T00:00:00')) / 86400000);
+  const hace = n => n <= 0 ? 'hoy' : n === 1 ? 'hace 1 día' : n < 60 ? `hace ${n} días` : `hace ${Math.round(n / 30.4)} meses`;
+  const fmt = f => new Date(dia(f) + 'T00:00:00').toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
+  const filas = [];
+  const add = (k, t, warn) => filas.push({ k, t, warn: !!warn });
+
+  // Mediciones (antropometría; si no hay, la báscula)
+  const pts = meds.map(medPunto).sort((a, b) => a.fecha.localeCompare(b.fecha));
+  const bpts = bios.map(bioPunto).sort((a, b) => a.fecha.localeCompare(b.fecha));
+  const fuente = pts.length ? pts : bpts, bascula = !pts.length && bpts.length;
+  if(fuente.length){
+    const u = fuente[fuente.length - 1], p = fuente.length > 1 ? fuente[fuente.length - 2] : null, g = bascula ? u.pct_grasa : u.grasa, gp = p ? (bascula ? p.pct_grasa : p.grasa) : null;
+    const partes = [];
+    if(u.peso != null) partes.push(medNum(u.peso, 1) + ' kg');
+    if(g != null) partes.push(medNum(g, 1) + ' % grasa' + (gp != null ? ` (${medSigned(g - gp, 1)} pts)` : ''));
+    const n = dias(u.fecha), vieja = n > 90;
+    add('Última medición', `${fmt(u.fecha)}${partes.length ? ': ' + partes.join(' · ') : ''}${bascula ? ' (báscula)' : ''} · ${hace(n)}${vieja ? ' — conviene volver a medir' : ''}`, vieja);
+  } else add('Mediciones', 'Todavía no hay ninguna.', false);
+
+  // Seguimiento semanal
+  const fm = (d.formularios && typeof d.formularios === 'object') ? d.formularios : {};
+  const segAct = !!(fm.seguimiento && fm.seguimiento.activo);
+  if(segs.length || segAct){
+    const lunes = lunesMadridISO(), reciente = segs.filter(x => dia(x.semana) >= localISO(new Date(Date.now() - 28 * 86400000)));
+    const med = k => infMedia(reciente.map(x => (x.respuestas || {})[k]));
+    const t = [];
+    if(med('adherencia') != null) t.push(`adherencia ${medNum(med('adherencia'), 1)}/5`);
+    if(med('energia') != null) t.push(`energía ${medNum(med('energia'), 1)}/5`);
+    if(med('entrenos') != null) t.push(`${medNum(med('entrenos'), 1)} entrenos/sem.`);
+    const ult = segs[0] && segs[0].respuestas || {}, bajos = SEG_P.filter(m => ult[m.k] != null && ult[m.k] <= 2).map(m => m.t.toLowerCase());
+    const sinEnviar = segAct && !segs.some(x => dia(x.semana) >= lunes);
+    let txt = t.length ? 'Últimas 4 semanas: ' + t.join(' · ') : 'Aún sin respuestas.';
+    if(bajos.length) txt += ` Último envío con ${bajos.join(' y ')} bajo${bajos.length > 1 ? 's' : ''}.`;
+    if(ult.molestias) txt += ` Molestias: ${ult.molestias}.`;
+    if(sinEnviar) txt += ' Esta semana aún no lo ha enviado.';
+    add('Seguimiento', txt, bajos.length || ult.molestias || sinEnviar);
+  } else add('Seguimiento', 'Sin activar.', false);
+
+  // Peso que anota el cliente
+  if(pesos.length){
+    const n = dias(pesos[0].fecha);
+    add('Peso del cliente', `${medNum(+pesos[0].peso, 1)} kg · ${hace(n)} (autodeclarado)`, n >= 14);
+  }
+
+  // Última consulta (valoraciones incluidas) y próxima revisión
+  const ultima = [hist[0] && dia(hist[0].fecha), pts.length && dia(pts[pts.length - 1].fecha), bpts.length && dia(bpts[bpts.length - 1].fecha)].filter(Boolean).sort().pop();
+  add('Última consulta', ultima ? `${fmt(ultima)} · ${hace(dias(ultima))}` : 'Aún no hay ninguna registrada.', false);
+  const dr = daysUntil(d.proxima_revision);
+  if(dr === null) add('Próxima revisión', 'Sin programar.', true);
+  else if(dr < 0) add('Próxima revisión', 'La fecha ya pasó: pon una nueva.', true);
+  else add('Próxima revisión', dr === 0 ? 'Hoy.' : dr === 1 ? 'Mañana.' : `En ${dr} días (${fmt(d.proxima_revision)}).`, false);
+
+  // Formularios iniciales
+  const pend = [['inicial', 'Cuestionario inicial'], ['anamnesis', 'Anamnesis']].filter(([k]) => !(fm[k] && fm[k].hecho)).map(x => x[1]);
+  if(pend.length) add('Formularios', 'Pendientes: ' + pend.join(' y ') + '.', true);
+
+  const avisos = filas.filter(f => f.warn).length;
+  el.innerHTML = `<div class="est-head"><span class="est-pill${avisos ? ' warn' : ''}">${avisos ? (avisos === 1 ? '1 cosa que mirar' : avisos + ' cosas que mirar') : 'Todo en orden'}</span></div>
+    <div class="est-grid">${filas.map(f => `<div class="est-row${f.warn ? ' warn' : ''}"><div class="est-k">${f.k}</div><div class="est-v">${sudEsc(f.t)}</div></div>`).join('')}</div>`;
 }
 
 async function loadMediciones(depId){
