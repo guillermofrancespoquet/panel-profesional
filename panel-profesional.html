@@ -339,7 +339,7 @@ body.dark-mode .acc-pill.on{color:var(--t100)}
 .med-serie-t i{display:inline-block;width:9px;height:9px;border-radius:50%}
 .med-chart{width:100%;height:auto;display:block;overflow:visible}
 .med-chart text{font-family:var(--f);font-size:10px;fill:var(--g500)}
-.med-chart text.v{font-weight:600;fill:var(--g900);font-size:9.5px}
+.med-chart text.v{font-weight:600;fill:var(--g900);font-size:10px;paint-order:stroke;stroke:var(--bg);stroke-width:3px;stroke-linejoin:round}
 .med-chart .dot{fill:var(--bg)}
 .med-lg{display:inline-flex;align-items:center;gap:5px;margin-left:6px;font-weight:600}
 .med-note{font-size:11px;color:var(--g400);margin-top:8px;line-height:1.5}
@@ -5894,9 +5894,8 @@ function medSvg(series,titulo,unit,dec,rango){
       if(ult) cuerpo+=`<circle cx="${P[i][0].toFixed(1)}" cy="${P[i][1].toFixed(1)}" r="7" fill="${se.color}" opacity=".16"/><circle cx="${P[i][0].toFixed(1)}" cy="${P[i][1].toFixed(1)}" r="3.6" fill="${se.color}" stroke="var(--bg)" stroke-width="1.4">${tip}</circle>`;
       else if(se.sr.length<=14) cuerpo+=`<circle class="dot" cx="${P[i][0].toFixed(1)}" cy="${P[i][1].toFixed(1)}" r="2.6" stroke="${se.color}" stroke-width="1.6">${tip}</circle>`;
     });
-    const lab=(p,q,ult)=>{ const txt=medNum(p.v,dec), w=txt.length*5.8+10, y=Math.max(q[1]-9,11);
-      return `<rect x="${(q[0]-w/2).toFixed(1)}" y="${(y-9).toFixed(1)}" width="${w.toFixed(1)}" height="13" rx="6.5" fill="var(--bg)" stroke="${se.color}" stroke-width="${ult?1:.6}" opacity="${ult?1:.9}"/><text class="v" x="${q[0].toFixed(1)}" y="${(y).toFixed(1)}" text-anchor="middle">${txt}</text>`; };
-    cuerpo+=lab(z,pz,true)+(multi?'':lab(a,P[0],false));
+    const lab=(p,q)=>`<text class="v" x="${q[0].toFixed(1)}" y="${Math.max(q[1]-9,10).toFixed(1)}" text-anchor="middle">${medNum(p.v,dec)}</text>`;
+    cuerpo+=lab(z,pz)+(multi?'':lab(a,P[0]));
   });
   const leyenda=multi ? series.map(se=>`<span class="med-lg"><i style="background:${se.color}"></i>${se.name}</span>`).join('') : `<i style="background:${series[0].color}"></i>${titulo} (${unit})`;
   const resumen=series.map(se=>`${se.name||titulo}: de ${medNum(se.sr[0].v,dec)} a ${medNum(se.sr[se.sr.length-1].v,dec)} ${unit}`).join('; ');
@@ -5912,12 +5911,6 @@ function medSerie(pts,key,color,titulo,unit,dec=1,rango){
   const sr=pts.filter(p=>p[key]!==null&&p[key]!==undefined).map(p=>({fecha:p.fecha,v:p[key]}));
   if(sr.length<2) return '';
   return medSvg([{sr,color,name:titulo}],titulo,unit,dec,rango);
-}
-// Varias líneas con la misma escala (p. ej. Σ6 y Σ8 pliegues).
-function medSerieMulti(pts,defs,titulo,unit,dec=1){
-  const series=defs.map(d=>({sr:pts.filter(p=>p[d.key]!=null).map(p=>({fecha:p.fecha,v:p[d.key]})),color:d.color,name:d.name})).filter(x=>x.sr.length>=1);
-  if(!series.length||Math.max(...series.map(x=>x.sr.length))<2) return '';
-  return medSvg(series.filter(x=>x.sr.length>=2),titulo,unit,dec);
 }
 
 async function loadMediciones(depId){
@@ -5957,7 +5950,7 @@ async function loadMediciones(depId){
       ${stat('Σ 6 pliegues',last.sum6,'mm','sum6',1)}
       ${stat('Σ 8 pliegues',last.sum8,'mm','sum8',1)}
     </div>
-    ${pts.length>1 ? `<div class="med-series">${medSerie(pts,'peso','var(--t400)','Peso','kg')}${medSerie(pts,'grasa','var(--gold)','% grasa','%')}${medSerie(pts,'musculo','#6F8CB8','Masa muscular','kg')}${medSerieMulti(pts,[{key:'sum8',color:'var(--gold)',name:'Σ 8'},{key:'sum6',color:'var(--t400)',name:'Σ 6'}],'Suma de pliegues','mm')}</div>` : ''}
+    ${pts.length>1 ? `<div class="med-series">${medSerie(pts,'peso','var(--t400)','Peso','kg')}${medSerie(pts,'grasa','var(--gold)','% grasa','%')}${medSerie(pts,'musculo','#6F8CB8','Masa muscular','kg')}</div>` : ''}
     ${nota ? `<p class="med-note">${nota}</p>` : ''}
     <div class="med-actions">${btnSoft('Ver en antropometría',`abrirAntropometria(${depId})`,'chart')}</div>`;
   bioPintar(depId, true, bio);
@@ -6254,11 +6247,12 @@ async function getBio(depId) {
   return null;   // null = la tabla no existe todavía (falta ejecutar el SQL)
 }
 const bioN = (v, dec) => v == null || isNaN(v) ? '—' : medNum(+v, dec);
-const bioPunto = r => { const v = r.valores || {}; return { fecha: String(r.fecha).slice(0, 10), peso: v.peso ?? null, pct_grasa: v.pct_grasa ?? null, masa_grasa_kg: v.masa_grasa_kg ?? null, masa_libre_kg: v.masa_libre_kg ?? null, musculo_kg: v.musculo_kg ?? null, agua_pct: v.agua_pct ?? null, tmb_kcal: v.tmb_kcal ?? null, grasa_visceral: v.grasa_visceral ?? null }; };
+const bioPunto = r => { const v = r.valores || {}; return { fecha: String(r.fecha).slice(0, 10), peso: v.peso ?? null, pct_grasa: v.pct_grasa ?? null, masa_grasa_kg: v.masa_grasa_kg ?? null, masa_libre_kg: v.masa_libre_kg ?? null, musculo_kg: v.musculo_kg ?? null, pct_musculo: (v.musculo_kg != null && v.peso) ? v.musculo_kg / v.peso * 100 : null, agua_pct: v.agua_pct ?? null, tmb_kcal: v.tmb_kcal ?? null, grasa_visceral: v.grasa_visceral ?? null }; };
 const BIO_TARJETAS = [['peso', 'Peso', 'kg', 1], ['pct_grasa', '% grasa', '%', 1], ['masa_grasa_kg', 'Masa grasa', 'kg', 1], ['musculo_kg', 'Músculo esquelético', 'kg', 1], ['agua_pct', 'Agua corporal', '%', 1], ['grasa_visceral', 'Grasa visceral', '', 0], ['tmb_kcal', 'Metabolismo basal', 'kcal', 0]];
-function bioStats(pts, maxN) {
+const BIO_COMPL = [['peso', 'Peso', 'kg', 1], ['pct_grasa', '% grasa', '%', 1], ['pct_musculo', '% músculo', '%', 1]];
+function bioStats(pts, maxN, lista) {
   const last = pts[pts.length - 1], prev = pts.length > 1 ? pts[pts.length - 2] : null;
-  return BIO_TARJETAS.filter(([k]) => last[k] != null).slice(0, maxN || 8).map(([k, lab, u, dec]) => {
+  return (lista || BIO_TARJETAS).filter(([k]) => last[k] != null).slice(0, maxN || 8).map(([k, lab, u, dec]) => {
     let delta = prev ? (prev[k] != null ? `${medSigned(last[k] - prev[k], dec)} ${u === '%' ? 'pts' : u} vs. anterior` : '') : 'Sin medición anterior';
     return `<div class="med-stat"><div class="med-stat-l">${lab}</div><div class="med-stat-v">${bioN(last[k], dec)}${u ? `<small>${u}</small>` : ''}</div><div class="med-delta">${delta || '&nbsp;'}</div></div>`;
   }).join('');
@@ -6280,7 +6274,7 @@ function bioPintar(depId, antro, bio) {
       const filas = bio.slice().reverse().map(r => { const v = r.valores || {}; return `<tr><td class="n bio-f1">${new Date(String(r.fecha).slice(0, 10) + 'T00:00:00').toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' })}</td>
         <td class="bio-ap">${sudEsc(r.aparato || '—')}${r.visible_cliente ? '<span class="sud-cond">Visible para el cliente</span>' : ''}</td><td class="n" data-l="Peso">${bioN(v.peso, 1)} kg</td><td class="n" data-l="% grasa">${bioN(v.pct_grasa, 1)} %</td><td class="n hide-m" data-l="Músculo">${v.musculo_kg != null ? bioN(v.musculo_kg, 1) + ' kg' : '—'}</td>
         <td class="act"><div class="row-actions">${btnSoft(r.visible_cliente ? 'Dejar de compartir' : 'Compartir con el cliente', `bioVisible(${r.id},${depId},${!r.visible_cliente})`, r.visible_cliente ? 'trash' : 'ext', true)}${btnDel('Eliminar medición', `bioEliminar(${r.id},${depId},this)`)}</div></td></tr>`; }).join('');
-      box.innerHTML = (principal ? '' : `<div class="med-head"><span class="med-date">Complemento de la antropometría</span><span class="med-ago">${bio.length} medición${bio.length !== 1 ? 'es' : ''} de báscula</span></div><div class="med-stats">${bioStats(pts, 4)}</div>${pts.length > 1 ? `<div class="med-series">${medSerie(pts, 'pct_grasa', 'var(--gold)', '% grasa (báscula)', '%')}</div>` : ''}`) +
+      box.innerHTML = (principal ? '' : `<div class="med-head"><span class="med-date">Complemento de la antropometría</span><span class="med-ago">${bio.length} medición${bio.length !== 1 ? 'es' : ''} de báscula</span></div><div class="med-stats">${bioStats(pts, 4, BIO_COMPL)}</div>${pts.length > 1 ? `<div class="med-series">${medSerie(pts, 'pct_grasa', 'var(--gold)', '% grasa (báscula)', '%')}</div>` : ''}`) +
         `<table class="plan-lista bio-lista"><thead><tr><td>Fecha</td><td>Báscula</td><td>Peso</td><td>% grasa</td><td class="hide-m">Músculo</td><td></td></tr></thead><tbody>${filas}</tbody></table>${acciones}`;
     }
   }

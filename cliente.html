@@ -224,7 +224,7 @@ button.hello-msg{cursor:pointer}
 .serie-t i{display:inline-block;width:9px;height:9px;border-radius:50%}
 .chart{width:100%;height:auto;display:block;overflow:visible}
 .chart text{font-family:var(--f);font-size:10px;fill:var(--g500)}
-.chart text.v{font-weight:600;fill:var(--g900);font-size:9.5px}
+.chart text.v{font-weight:600;fill:var(--g900);font-size:10px;paint-order:stroke;stroke:var(--sf);stroke-width:3px;stroke-linejoin:round}
 .chart .dot{fill:var(--sf)}
 .note{font-size:11.5px;color:var(--g500);margin-top:10px;line-height:1.55}
 table.hist{width:100%;border-collapse:collapse;font-size:13px}
@@ -653,14 +653,13 @@ function serie(pts,key,color,titulo,unit,dec,rango){
   const puntos=sr.map((p,i)=>{ const tip=`<title>${fmtF(p.fecha,true)}: ${nf(p[key],dec)} ${esc(unit)}</title>`;
     if(i===sr.length-1) return `<circle cx="${P[i][0].toFixed(1)}" cy="${P[i][1].toFixed(1)}" r="7" fill="${color}" opacity=".16"/><circle cx="${P[i][0].toFixed(1)}" cy="${P[i][1].toFixed(1)}" r="3.6" fill="${color}" stroke="var(--sf)" stroke-width="1.4">${tip}</circle>`;
     return sr.length<=14?`<circle class="dot" cx="${P[i][0].toFixed(1)}" cy="${P[i][1].toFixed(1)}" r="2.6" stroke="${color}" stroke-width="1.6">${tip}</circle>`:''; }).join('');
-  const lab=(p,q,ult)=>{ const t=nf(p[key],dec), w=t.length*5.8+10, y=Math.max(q[1]-9,11);
-    return `<rect x="${(q[0]-w/2).toFixed(1)}" y="${(y-9).toFixed(1)}" width="${w.toFixed(1)}" height="13" rx="6.5" fill="var(--sf)" stroke="${color}" stroke-width="${ult?1:.6}"/><text class="v" x="${q[0].toFixed(1)}" y="${y.toFixed(1)}" text-anchor="middle">${t}</text>`; };
+  const lab=(p,q)=>`<text class="v" x="${q[0].toFixed(1)}" y="${Math.max(q[1]-9,10).toFixed(1)}" text-anchor="middle">${nf(p[key],dec)}</text>`;
   return `<div class="serie"><div class="serie-t"><i style="background:${color}"></i>${esc(titulo)} (${esc(unit)})</div>
     <svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Evolución de ${esc(titulo)}: de ${nf(a[key],dec)} a ${nf(z[key],dec)} ${esc(unit)}">
       <defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:${color}" stop-opacity=".24"/><stop offset="1" style="stop-color:${color}" stop-opacity="0"/></linearGradient></defs>${guias}
       <line x1="${pL}" x2="${W-pR}" y1="${yb}" y2="${yb}" stroke="var(--bdm)" stroke-width=".9"/>
       <path d="${ruta} L${pz[0].toFixed(1)} ${yb} L${P[0][0].toFixed(1)} ${yb} Z" fill="url(#${id})" stroke="none"/>
-      <path d="${ruta}" fill="none" stroke="${color}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>${puntos}${lab(a,P[0],false)}${lab(z,pz,true)}
+      <path d="${ruta}" fill="none" stroke="${color}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>${puntos}${lab(a,P[0])}${lab(z,pz)}
       <text x="${pL}" y="${H-4}" text-anchor="start">${fmtF(a.fecha,true)}</text>
       <text x="${W-pR}" y="${H-4}" text-anchor="end">${fmtF(z.fecha,true)}</text>
     </svg></div>`;
@@ -681,7 +680,7 @@ function bioPunto(b){ const v=b.valores||{}; const o={fecha:String(b.fecha).slic
 function bioBloque(bio,maxN){
   const pts=bio.map(bioPunto).sort((a,b)=>new Date(a.fecha)-new Date(b.fecha)), last=pts[pts.length-1], prev=pts.length>1?pts[pts.length-2]:null;
   const tarj=BIO_T.filter(([k])=>last[k]!=null).slice(0,maxN).map(([k,l,u,d])=>{ let dl='&nbsp;'; if(prev&&prev[k]!=null){ const x=last[k]-prev[k]; dl=(x>0?'+':x<0?'−':'')+nf(Math.abs(x),d)+' '+(u==='%'?'pts':u)+' vs. anterior'; } return `<div class="stat"><div class="stat-l">${l}</div><div class="stat-v">${nf(last[k],d)}<small>${u}</small></div><div class="stat-d">${dl}</div></div>`; }).join('');
-  const ser=pts.length>1?`<div class="series">${serie(pts,'peso','#1D9E75','Peso','kg',1)}${serie(pts,'pct_grasa','#B8956A','% grasa','%',1)}${serie(pts,'musculo_kg','#6F8CB8','Músculo esquelético','kg',1)}${serie(pts,'masa_libre_kg','#04342C','Masa libre de grasa','kg',1)}</div>`:'';
+  const ser=pts.length>1?`<div class="series">${serie(pts,'peso','#1D9E75','Peso','kg',1)}${serie(pts,'pct_grasa','#B8956A','% grasa','%',1)}${serie(pts,'masa_libre_kg','#04342C','Masa libre de grasa','kg',1)}</div>`:'';
   return {pts,last,html:`<p class="note" style="margin:-.4rem 0 .8rem">Última medición · ${fmtF(last.fecha)}</p><div class="stats">${tarj}</div>${ser}<p class="note">La báscula estima la composición corporal por la resistencia eléctrica del cuerpo y varía con la hidratación, la comida y el ejercicio previos: fíjate en la tendencia más que en un valor suelto.</p>`};
 }
 // Test de sudoración: solo los que el profesional ha compartido, explicados en lenguaje sencillo (valores orientativos de una sesión).
