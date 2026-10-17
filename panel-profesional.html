@@ -2217,17 +2217,17 @@ body.dark-mode .ref-src,body.dark-mode .sup-badge,body.dark-mode .depd-avatar-fa
         <p class="ref-note">Úsala en Calculadora → Hidratación para introducir los datos y obtener el resultado automáticamente.</p>
       </div>
       <div class="ref-section" id="refSodio">
-        <div class="ref-head"><p class="ref-title">Sodio en el sudor</p><span class="ref-src">Rangos habituales</span></div>
+        <div class="ref-head"><p class="ref-title">Sodio en el sudor</p><span class="ref-src">Baker 2016</span></div>
         <table class="ref-table">
-          <tr><td>Sudorador bajo</td><td>~20 – 30 mmol/L</td></tr>
-          <tr><td>Sudorador medio</td><td>~40 – 60 mmol/L</td></tr>
-          <tr><td>Sudorador salado</td><td>~70 – 90+ mmol/L</td></tr>
+          <tr><td>Sudorador bajo</td><td>~18 – 28 mmol/L</td></tr>
+          <tr><td>Sudorador medio</td><td>~30 – 45 mmol/L (media de cuerpo entero ≈ 36)</td></tr>
+          <tr><td>Sudorador salado</td><td>~50 – 70 mmol/L</td></tr>
           </table>
       </div>
       <div class="ref-section" id="refRepos">
         <div class="ref-head"><p class="ref-title">Reposición de líquidos</p><span class="ref-src">ACSM</span></div>
         <table class="ref-table stack">
-          <tr><td>Durante el ejercicio</td><td>≈ igual a la tasa de sudoración, sin superarla (riesgo de hiponatremia)</td></tr>
+          <tr><td>Durante el ejercicio</td><td>Lo justo para no perder más del 2 % del peso; nunca más que la tasa de sudoración (beber de más aumenta el riesgo de hiponatremia)</td></tr>
           <tr><td>Post-ejercicio</td><td>1.25 – 1.5 L por cada kg de peso perdido</td></tr>
           </table>
       </div>
@@ -2613,9 +2613,9 @@ body.dark-mode .ref-src,body.dark-mode .sup-badge,body.dark-mode .depd-avatar-fa
           <div>
             <label class="mfl" for="hidraTipoSudor">Estimado, si no hay medición</label>
             <select class="inp" id="hidraTipoSudor" onchange="calcHidra()">
-              <option value="bajo">Bajo (~20-30 mmol/L)</option>
-              <option value="medio" selected>Medio (~40-60 mmol/L)</option>
-              <option value="salado">Salado (~70-90+ mmol/L)</option>
+              <option value="bajo">Bajo (~20 mmol/L)</option>
+              <option value="medio" selected>Medio (~35 mmol/L)</option>
+              <option value="salado">Salado (~55 mmol/L)</option>
             </select>
           </div>
         </div>
@@ -4876,7 +4876,8 @@ function setCalcTab(tab){
 // ═══════════════ TEST DE SUDORACIÓN ═══════════════
 // Método por cambio de peso (ACSM, Sawka et al. 2007; Baker 2017). Se guarda por deportista en
 // tests_sudoracion para ver la evolución. Los umbrales (2 % del peso) son de adultos.
-const HIDRA_NA = { bajo:25, medio:50, salado:80 }; // mmol/L, estimación por categoría
+// Estimación por categoría (mmol/L): la media de cuerpo entero en atletas es ≈ 36 (rango 18–71; Baker 2016)
+const HIDRA_NA = { bajo:20, medio:35, salado:55 };
 let hidraDeps = [], hidraEdad = null, hidraGuardadoOk = false;
 
 function hidraVal(id){ const v = parseFloat(document.getElementById(id).value); return isNaN(v) ? null : v; }
