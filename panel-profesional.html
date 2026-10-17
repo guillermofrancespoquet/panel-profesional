@@ -341,12 +341,24 @@ body.dark-mode .acc-pill.on{color:var(--t100)}
 .med-chart text{font-family:var(--f);font-size:10px;fill:var(--g500)}
 .med-chart text.v{font-weight:600;fill:var(--g900);font-size:10px;paint-order:stroke;stroke:var(--bg);stroke-width:3px;stroke-linejoin:round}
 .med-chart .dot{fill:var(--bg)}
-.rev-edit{margin-top:10px;padding:14px;border:.5px solid var(--bd);border-radius:12px;background:var(--bg)}
+.depd-rev-txt{min-width:0;flex:1 1 170px}
+.depd-rev-side{display:flex;align-items:center;gap:8px;margin-left:auto}
+.depd-rev-side .rev-badge{margin-top:0;white-space:nowrap}
+.rev-btn{display:inline-flex;align-items:center;gap:5px;height:28px;padding:0 11px;border-radius:14px;border:.5px solid var(--bd);background:transparent;color:var(--t600);font:inherit;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap}
+.rev-btn:hover{background:var(--t50)}
+.rev-edit{flex-basis:100%;margin-top:2px;padding-top:12px;border-top:.5px solid var(--bd);display:flex;flex-wrap:wrap;align-items:center;gap:6px}
 .rev-edit[hidden]{display:none}
-.rev-edit-row{display:flex;gap:10px;flex-wrap:wrap}.rev-edit-row>div{flex:1;min-width:130px}
-.rev-chips{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
-.rev-edit-act{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.rev-quitar{background:none;border:0;color:var(--g500);font:inherit;font-size:12px;text-decoration:underline;cursor:pointer;padding:6px 4px;margin-left:auto}
+.rev-in{height:32px;padding:0 9px;border:.5px solid var(--bd);border-radius:8px;background:var(--sf);color:var(--g900);font:inherit;font-size:13px;min-width:0}
+.rev-in[type=date]{width:136px}.rev-in[type=time]{width:92px}
+.rev-ok{height:32px;padding:0 14px;border:0;border-radius:8px;background:var(--btn);color:#fff;font:inherit;font-size:12.5px;font-weight:600;cursor:pointer}
+.rev-quick{flex-basis:100%;display:flex;flex-wrap:wrap;gap:5px}
+.rev-quick button{height:24px;padding:0 9px;border:0;border-radius:12px;background:var(--pill-n);color:var(--g700);font:inherit;font-size:11.5px;font-weight:600;cursor:pointer}
+.rev-quick button:hover{background:var(--t50);color:var(--t800)}
+.rev-quick .q{background:none;color:var(--g500);text-decoration:underline;font-weight:500}
+.rev-msg{flex-basis:100%;margin:0;font-size:12px;color:var(--red)}
+.rev-msg:empty{display:none}
+@media(max-width:860px){.rev-in{font-size:16px;height:36px;padding:0 6px}.rev-in[type=date]{width:auto;flex:1 1 0;min-width:0}.rev-in[type=time]{width:92px;flex:0 0 auto}.rev-ok{height:36px;padding:0 12px}}
+@media(max-width:560px){.depd-rev-side{flex-basis:100%;margin-left:48px}}
 .est-box{background:var(--bg);border:.5px solid var(--bd);border-radius:14px;padding:14px 16px}
 .est-head{display:flex;align-items:center;gap:8px;margin-bottom:10px;font-size:13px;font-weight:700}
 .est-pill{font-size:11.5px;font-weight:600;padding:3px 10px;border-radius:20px;background:var(--pill-g);color:var(--t800);box-shadow:inset 0 0 0 .5px var(--pill-g-bd)}
@@ -5487,21 +5499,14 @@ function openDepDet(id) {
           <div class="depd-rev-label">Próxima revisión</div>
           <div class="depd-rev-date">${d.proxima_revision ? new Date(d.proxima_revision).toLocaleDateString('es-ES',{day:'numeric',month:'long',year:'numeric'}) + (d.proxima_revision_hora ? ' · ' + sudEsc(String(d.proxima_revision_hora).slice(0,5)) + ' h' : '') : 'Sin fecha establecida'}</div>
         </div>
-        ${revisionBadge(d.proxima_revision)}
-        ${btnSoft(!d.proxima_revision || daysUntil(d.proxima_revision) < 0 ? 'Poner nueva fecha' : 'Cambiar fecha', 'revAbrir()', 'doc')}
-      </div>
-      <div class="rev-edit" id="revEdit" hidden>
-        <div class="rev-edit-row">
-          <div><label class="mfl" for="revFecha">Fecha</label><input type="date" class="inp" id="revFecha" value="${sudEsc(String(d.proxima_revision||'').slice(0,10))}"></div>
-          <div><label class="mfl" for="revHora">Hora</label><input type="time" class="inp" id="revHora" value="${sudEsc(String(d.proxima_revision_hora||'').slice(0,5))}"></div>
+        <div class="depd-rev-side">${revisionBadge(d.proxima_revision)}<button type="button" class="rev-btn" onclick="revAbrir()" aria-expanded="false" aria-controls="revEdit"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>${!d.proxima_revision || daysUntil(d.proxima_revision) < 0 ? 'Nueva fecha' : 'Cambiar'}</button></div>
+        <div class="rev-edit" id="revEdit" hidden>
+        <input type="date" class="rev-in" id="revFecha" aria-label="Fecha de la revisión" value="${sudEsc(String(d.proxima_revision||'').slice(0,10))}">
+        <input type="time" class="rev-in" id="revHora" aria-label="Hora de la revisión" value="${sudEsc(String(d.proxima_revision_hora||'').slice(0,5))}">
+        <button type="button" class="rev-ok" onclick="revGuardar(${d.id})">Guardar</button>
+        <div class="rev-quick" role="group" aria-label="Fecha rápida">${[2,4,6,8].map(n=>`<button type="button" onclick="revRapido(${n})">+${n} sem.</button>`).join('')}${d.proxima_revision ? '<button type="button" class="q" onclick="revGuardar('+d.id+',true)">Quitar fecha</button>' : ''}<button type="button" class="q" onclick="revAbrir()">Cancelar</button></div>
+        <p class="rev-msg" id="revMsg" role="alert"></p>
         </div>
-        <div class="rev-chips" role="group" aria-label="Fecha rápida">${[2,4,6,8].map(n=>`<button type="button" class="tl-chip" onclick="revRapido(${n})">En ${n} semanas</button>`).join('')}</div>
-        <div class="rev-edit-act">
-          <button type="button" class="btn-ok" onclick="revGuardar(${d.id})">Guardar revisión</button>
-          <button type="button" class="btn-cancel" onclick="revAbrir()">Cancelar</button>
-          ${d.proxima_revision ? `<button type="button" class="rev-quitar" onclick="revGuardar(${d.id},true)">Sin próxima revisión</button>` : ''}
-        </div>
-        <p class="merr" id="revMsg" role="alert"></p>
       </div>
       <p class="depd-actividad-line">${actividadTexto(d.ultima_actividad)}</p>
     </div>
@@ -5936,6 +5941,7 @@ function medSerie(pts,key,color,titulo,unit,dec=1,rango){
 function revAbrir(){
   const f = document.getElementById('revEdit'); if(!f) return;
   f.hidden = !f.hidden;
+  const btn = document.querySelector('.rev-btn'); if(btn) btn.setAttribute('aria-expanded', String(!f.hidden));
   if(!f.hidden){ const i = document.getElementById('revFecha'); if(i) i.focus(); }
 }
 function revRapido(semanas){
