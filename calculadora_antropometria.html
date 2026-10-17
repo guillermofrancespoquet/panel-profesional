@@ -1181,7 +1181,11 @@ function resumenValoracion(client, valoracion){
     peso,
     pct_grasa: ok ? r2(R.pctGrasaPrimaria) : null,
     masa_grasa_kg: ok && !isNaN(R.pesoGrasoPrimario) ? r2(R.pesoGrasoPrimario) : null,
-    modelo: ok ? R.grasaModeloPrimario : null
+    modelo: ok ? R.grasaModeloPrimario : null,
+    // Sumatorios de pliegues y masa muscular (Lee 2000) para la ficha del panel
+    sum6: R && Number.isFinite(R.sum6) ? r2(R.sum6) : null,
+    sum8: R && Number.isFinite(R.sum8) ? r2(R.sum8) : null,
+    masa_muscular_kg: R && Number.isFinite(R.pesoMuscularLee) ? r2(R.pesoMuscularLee) : null
   };
 }
 // Recalcula el resumen de todas las valoraciones y guarda solo las que cambian (valoraciones antiguas

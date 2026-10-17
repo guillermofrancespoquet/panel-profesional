@@ -224,7 +224,8 @@ button.hello-msg{cursor:pointer}
 .serie-t i{display:inline-block;width:9px;height:9px;border-radius:50%}
 .chart{width:100%;height:auto;display:block;overflow:visible}
 .chart text{font-family:var(--f);font-size:10px;fill:var(--g500)}
-.chart text.v{font-weight:600;fill:var(--g900)}
+.chart text.v{font-weight:600;fill:var(--g900);font-size:10px;paint-order:stroke;stroke:var(--sf);stroke-width:3px;stroke-linejoin:round}
+.chart .dot{fill:var(--sf)}
 .note{font-size:11.5px;color:var(--g500);margin-top:10px;line-height:1.55}
 table.hist{width:100%;border-collapse:collapse;font-size:13px}
 table.hist th{font-size:10.5px;font-weight:500;color:var(--g400);text-transform:uppercase;letter-spacing:.05em;text-align:left;padding:4px 8px 8px 0}
@@ -620,26 +621,47 @@ function mostrarSin(t,m){ $('sinTitle').textContent=t; $('sinMsg').textContent=m
 const nf=(v,d=1)=>v==null||isNaN(v)?'—':(+v).toLocaleString('es-ES',{minimumFractionDigits:d,maximumFractionDigits:d});
 const fmtF=(f,corto)=>new Date(f+'T00:00:00').toLocaleDateString('es-ES',corto?{day:'numeric',month:'short',year:'2-digit'}:{day:'numeric',month:'long',year:'numeric'});
 function punto(v){ const r=v.resumen||{}; return {fecha:v.fecha,peso:r.peso!=null?+r.peso:null,grasa:r.pct_grasa!=null?+r.pct_grasa:null,mg:r.masa_grasa_kg!=null?+r.masa_grasa_kg:null,modelo:r.modelo||null}; }
+// Gráficas: curva suave (sin pasarse de los puntos), degradado suave bajo la línea, puntos huecos con el último destacado y valores en los extremos.
+let _gid=0;
+function trazo(P){
+  const n=P.length, f=v=>v.toFixed(1);
+  if(n<3) return P.map((q,i)=>(i?'L':'M')+f(q[0])+' '+f(q[1])).join(' ');
+  const dx=[],m=[],t=[];
+  for(let i=0;i<n-1;i++){ dx[i]=P[i+1][0]-P[i][0]; m[i]=(P[i+1][1]-P[i][1])/(dx[i]||1); }
+  t[0]=m[0]; t[n-1]=m[n-2];
+  for(let i=1;i<n-1;i++) t[i]=m[i-1]*m[i]<=0?0:(m[i-1]+m[i])/2;
+  for(let i=0;i<n-1;i++){
+    if(m[i]===0){ t[i]=t[i+1]=0; continue; }
+    const a=t[i]/m[i], b=t[i+1]/m[i], q=a*a+b*b;
+    if(q>9){ const k=3/Math.sqrt(q); t[i]=k*a*m[i]; t[i+1]=k*b*m[i]; }
+  }
+  let d='M'+f(P[0][0])+' '+f(P[0][1]);
+  for(let i=0;i<n-1;i++){ const h=dx[i]/3; d+=` C${f(P[i][0]+h)} ${f(P[i][1]+t[i]*h)} ${f(P[i+1][0]-h)} ${f(P[i+1][1]-t[i+1]*h)} ${f(P[i+1][0])} ${f(P[i+1][1])}`; }
+  return d;
+}
 function serie(pts,key,color,titulo,unit,dec,rango){
-  const sr=pts.filter(p=>p[key]!==null);
+  const sr=pts.filter(p=>p[key]!==null&&p[key]!==undefined);
   if(sr.length<2) return '';
-  const W=260,H=84,pL=22,pR=22,pT=18,pB=16;
+  const W=280,H=104,pL=26,pR=30,pT=22,pB=20, id='sg'+(++_gid);
   const x0=new Date(sr[0].fecha).getTime(), x1=new Date(sr[sr.length-1].fecha).getTime();
   const xAt=f=>x1===x0?W/2:pL+(new Date(f).getTime()-x0)/(x1-x0)*(W-pL-pR);
-  const vals=sr.map(p=>p[key]), mn=rango?rango[0]:Math.min(...vals), mx=rango?rango[1]:Math.max(...vals), rng=(mx-mn)||1;   // rango fijo para las escalas 1–5
-  const yAt=v=>pT+(1-(v-mn)/rng)*(H-pT-pB);
-  const path=sr.map((p,i)=>(i?'L':'M')+xAt(p.fecha).toFixed(1)+' '+yAt(p[key]).toFixed(1)).join(' ');
-  const dots=sr.map(p=>`<circle cx="${xAt(p.fecha).toFixed(1)}" cy="${yAt(p[key]).toFixed(1)}" r="2.8" fill="${color}"/>`).join('');
-  const a=sr[0], z=sr[sr.length-1];
+  const vals=sr.map(p=>p[key]); let mn=rango?rango[0]:Math.min(...vals), mx=rango?rango[1]:Math.max(...vals);   // rango fijo para las escalas 1–5
+  if(!rango){ const r=(mx-mn)||Math.max(Math.abs(mx)*.04,1); mn-=r*.14; mx+=r*.14; }
+  const rng=(mx-mn)||1, yAt=v=>pT+(1-(v-mn)/rng)*(H-pT-pB), yb=H-pB;
+  const P=sr.map(p=>[xAt(p.fecha),yAt(p[key])]), ruta=trazo(P), a=sr[0], z=sr[sr.length-1], pz=P[P.length-1];
+  const guias=[0,.5].map(k=>{ const y=(pT+(yb-pT)*k).toFixed(1); return `<line x1="${pL}" x2="${W-pR}" y1="${y}" y2="${y}" stroke="var(--bd)" stroke-width=".6" stroke-dasharray="2 3"/>`; }).join('');
+  const puntos=sr.map((p,i)=>{ const tip=`<title>${fmtF(p.fecha,true)}: ${nf(p[key],dec)} ${esc(unit)}</title>`;
+    if(i===sr.length-1) return `<circle cx="${P[i][0].toFixed(1)}" cy="${P[i][1].toFixed(1)}" r="7" fill="${color}" opacity=".16"/><circle cx="${P[i][0].toFixed(1)}" cy="${P[i][1].toFixed(1)}" r="3.6" fill="${color}" stroke="var(--sf)" stroke-width="1.4">${tip}</circle>`;
+    return sr.length<=14?`<circle class="dot" cx="${P[i][0].toFixed(1)}" cy="${P[i][1].toFixed(1)}" r="2.6" stroke="${color}" stroke-width="1.6">${tip}</circle>`:''; }).join('');
+  const lab=(p,q)=>`<text class="v" x="${q[0].toFixed(1)}" y="${Math.max(q[1]-9,10).toFixed(1)}" text-anchor="middle">${nf(p[key],dec)}</text>`;
   return `<div class="serie"><div class="serie-t"><i style="background:${color}"></i>${esc(titulo)} (${esc(unit)})</div>
     <svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Evolución de ${esc(titulo)}: de ${nf(a[key],dec)} a ${nf(z[key],dec)} ${esc(unit)}">
-      <line x1="${pL}" x2="${W-pR}" y1="${H-pB}" y2="${H-pB}" stroke="rgba(0,0,0,.09)" stroke-width=".8"/>
-      <path d="${path} L${xAt(z.fecha).toFixed(1)} ${H-pB} L${xAt(a.fecha).toFixed(1)} ${H-pB} Z" fill="${color}" opacity=".10" stroke="none"/>
-      <path d="${path}" fill="none" stroke="${color}" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>${dots}
-      <text class="v" x="${xAt(a.fecha).toFixed(1)}" y="${(yAt(a[key])-7).toFixed(1)}" text-anchor="middle">${nf(a[key],dec)}</text>
-      <text class="v" x="${xAt(z.fecha).toFixed(1)}" y="${(yAt(z[key])-7).toFixed(1)}" text-anchor="middle">${nf(z[key],dec)}</text>
-      <text x="${pL}" y="${H-3}" text-anchor="start">${fmtF(a.fecha,true)}</text>
-      <text x="${W-pR}" y="${H-3}" text-anchor="end">${fmtF(z.fecha,true)}</text>
+      <defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:${color}" stop-opacity=".24"/><stop offset="1" style="stop-color:${color}" stop-opacity="0"/></linearGradient></defs>${guias}
+      <line x1="${pL}" x2="${W-pR}" y1="${yb}" y2="${yb}" stroke="var(--bdm)" stroke-width=".9"/>
+      <path d="${ruta} L${pz[0].toFixed(1)} ${yb} L${P[0][0].toFixed(1)} ${yb} Z" fill="url(#${id})" stroke="none"/>
+      <path d="${ruta}" fill="none" stroke="${color}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>${puntos}${lab(a,P[0])}${lab(z,pz)}
+      <text x="${pL}" y="${H-4}" text-anchor="start">${fmtF(a.fecha,true)}</text>
+      <text x="${W-pR}" y="${H-4}" text-anchor="end">${fmtF(z.fecha,true)}</text>
     </svg></div>`;
 }
 async function abrirDatos(){
@@ -658,7 +680,7 @@ function bioPunto(b){ const v=b.valores||{}; const o={fecha:String(b.fecha).slic
 function bioBloque(bio,maxN){
   const pts=bio.map(bioPunto).sort((a,b)=>new Date(a.fecha)-new Date(b.fecha)), last=pts[pts.length-1], prev=pts.length>1?pts[pts.length-2]:null;
   const tarj=BIO_T.filter(([k])=>last[k]!=null).slice(0,maxN).map(([k,l,u,d])=>{ let dl='&nbsp;'; if(prev&&prev[k]!=null){ const x=last[k]-prev[k]; dl=(x>0?'+':x<0?'−':'')+nf(Math.abs(x),d)+' '+(u==='%'?'pts':u)+' vs. anterior'; } return `<div class="stat"><div class="stat-l">${l}</div><div class="stat-v">${nf(last[k],d)}<small>${u}</small></div><div class="stat-d">${dl}</div></div>`; }).join('');
-  const ser=pts.length>1?`<div class="series">${serie(pts,'peso','#1D9E75','Peso','kg',1)}${serie(pts,'pct_grasa','#B8956A','% grasa','%',1)}${serie(pts,'musculo_kg','#6F8CB8','Músculo esquelético','kg',1)}${serie(pts,'masa_libre_kg','#04342C','Masa libre de grasa','kg',1)}</div>`:'';
+  const ser=pts.length>1?`<div class="series">${serie(pts,'peso','#1D9E75','Peso','kg',1)}${serie(pts,'pct_grasa','#B8956A','% grasa','%',1)}${serie(pts,'masa_libre_kg','#04342C','Masa libre de grasa','kg',1)}</div>`:'';
   return {pts,last,html:`<p class="note" style="margin:-.4rem 0 .8rem">Última medición · ${fmtF(last.fecha)}</p><div class="stats">${tarj}</div>${ser}<p class="note">La báscula estima la composición corporal por la resistencia eléctrica del cuerpo y varía con la hidratación, la comida y el ejercicio previos: fíjate en la tendencia más que en un valor suelto.</p>`};
 }
 // Test de sudoración: solo los que el profesional ha compartido, explicados en lenguaje sencillo (valores orientativos de una sesión).
@@ -710,7 +732,6 @@ function pintarDatos(){
       +pts.slice().reverse().map(p=>`<tr><td class="n">${fmtF(p.fecha,true)}</td><td>${p.peso!=null?nf(p.peso)+' kg':'—'}</td><td>${p.grasa!=null?nf(p.grasa)+' %':'—'}</td><td>${p.mg!=null?nf(p.mg)+' kg':'—'}</td></tr>`).join('')
       +'</tbody></table></div>';
   }
-  if(pts.length&&bio.length) h+='<p class="sec">Báscula de bioimpedancia · complemento</p>'+bioBloque(bio,4).html;
   if((DATOS.sud||[]).length) h+='<p class="sec">Mi test de sudoración</p>'+sudBloque(DATOS.sud);
   h+='<p class="sec">Documentos</p>';
   if(!DATOS.archivos.length) h+='<div class="card">'+vacioC('<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>','Sin documentos por ahora','Tus informes y análisis aparecerán aquí cuando tu nutricionista los comparta contigo.')+'</div>';
