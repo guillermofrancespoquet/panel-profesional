@@ -80,6 +80,7 @@ Apps web de gestión para Guillermo Frances (nutrición deportiva, Valencia). To
 3. Tras editar JS, comprobar sintaxis: extraer el bloque `<script>` principal a un archivo temporal y `node --check`. Para el panel el script principal empieza en `const SURL=`; en la calculadora es el último `<script>` del archivo.
 4. Si es un cambio visual, abrirlo con Playwright (Chromium ya instalado) a 1400 px y a 390 px, con las llamadas a Supabase simuladas, y mirar capturas antes de dar el cambio por bueno.
 5. Commits pequeños y en español, un tema por commit, mensaje que explique el porqué. Push a la rama principal solo cuando el usuario lo pida o lo apruebe.
+6. **Flujo de PR y fusión (acordado con el usuario):** al terminar una tanda se abre siempre la PR sin preguntar y el usuario la fusiona. **Solo si dice expresamente «aprobado, hazlo y fusiona»** (o equivalente) se hace todo seguido: implementar, pasar las pruebas, revisar capturas (móvil y ordenador, claro y oscuro), abrir la PR, comprobar que no hay conflictos y fusionar con `merge_pull_request`. Aun así, **no se fusiona sola** una PR que necesite SQL (hay que esperar a que el usuario confirme que lo ha ejecutado), que toque seguridad o permisos de Storage, o cuyas capturas o pruebas no cuadren: en esos casos se para y se cuenta. Tras fusionar se avisa con el enlace, se actualiza Notion y, si algo falla en producción, se abre otra PR que lo revierte.
 
 ## Decisiones ya tomadas (no reabrir sin que el usuario lo pida)
 
