@@ -110,17 +110,35 @@ body.in-plan .topbar{display:none}
 .rev-card .tile-ic{width:38px;height:38px;border-radius:11px}
 .nota-card{display:flex;align-items:flex-start;gap:12px;background:var(--t50);border:.5px solid rgba(29,158,117,.28);border-radius:14px;padding:.8rem .95rem;margin-bottom:12px}
 .nota-card .tile-ic{width:38px;height:38px;border-radius:11px;flex-shrink:0}
-#vreg .reg-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 10px;align-items:end}
-#vreg .reg-row label{display:block;font-size:11.5px;font-weight:600;color:var(--g500);margin-bottom:5px}
-#vreg .reg-row>div{min-width:0}
-#vreg .reg-row .btn{grid-column:1/-1;width:100%}
-#vreg .seg-inp{display:block;box-sizing:border-box;width:100%;max-width:100%;min-width:0;height:46px;padding:0 12px;text-align:left;-webkit-appearance:none;appearance:none}
-#vreg select.seg-inp{padding-right:30px;background:var(--sf) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236A6963' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") no-repeat right 12px center}
+#vreg .reg-row,#vdia .reg-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 10px;align-items:end}
+#vreg .reg-row label,#vdia .reg-row label{display:block;font-size:11.5px;font-weight:600;color:var(--g500);margin-bottom:5px}
+#vreg .reg-row>div,#vdia .reg-row>div{min-width:0}
+#vreg .reg-row .btn,#vdia .reg-row .btn{grid-column:1/-1;width:100%}
+#vreg .seg-inp,#vdia .seg-inp{display:block;box-sizing:border-box;width:100%;max-width:100%;min-width:0;height:46px;padding:0 12px;text-align:left;-webkit-appearance:none;appearance:none}
+#vreg select.seg-inp,#vdia select.seg-inp{padding-right:30px;background:var(--sf) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236A6963' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") no-repeat right 12px center}
 #vreg .card .note{margin:12px 2px 0}
+.dia-add{padding:14px 16px}
+.dia-l{font-size:12px;font-weight:600;color:var(--g500);margin:0 0 6px}
+.dia-ch{display:flex;flex-wrap:wrap;gap:6px}
+.dia-c{border:.5px solid var(--bdm);background:var(--sf);color:var(--g700);border-radius:20px;padding:8px 13px;font:inherit;font-size:13px;font-weight:600;cursor:pointer}
+.dia-c.on{background:var(--t900);color:#fff;border-color:var(--t900)}
+.dia-foto{width:100%;height:46px;justify-content:center}
+.dia-prev{position:relative;margin-top:12px;border-radius:12px;overflow:hidden;background:var(--g100)}
+.dia-prev img{display:block;width:100%;max-height:260px;object-fit:cover}
+.dia-prev .reg-del{position:absolute;top:6px;right:6px;background:rgba(0,0,0,.55);color:#fff;border-radius:50%;width:30px;height:30px;padding:0;display:flex;align-items:center;justify-content:center}
+.dia-it{display:flex;gap:12px;padding:12px 14px;margin-bottom:8px;align-items:flex-start}
+.dia-th{flex:0 0 76px;width:76px;height:76px;border:0;padding:0;border-radius:12px;overflow:hidden;background:var(--g100);cursor:pointer}
+.dia-th img{width:100%;height:100%;object-fit:cover;display:block}
+.dia-tx{flex:1;min-width:0}
+.dia-mo{font-size:14px;font-weight:700;color:var(--g900)}
+.dia-no{margin:3px 0 0;font-size:13.5px;line-height:1.45;color:var(--g700);word-wrap:break-word}
+.dia-co{margin-top:8px;padding:8px 11px;border-radius:10px;background:var(--pill-g);color:var(--t800);font-size:13px;line-height:1.45}
+.dia-co b{display:block;font-size:11px;letter-spacing:.03em;text-transform:uppercase;margin-bottom:2px}
+.dia-co.nuevo{box-shadow:inset 0 0 0 1.5px var(--t400)}
+.dia-bo{background:none;border:0;padding:6px 0 0;color:var(--g500);font:inherit;font-size:12px;text-decoration:underline;cursor:pointer}
 .supl-card{margin-bottom:10px;padding:14px 16px}
 .supl-n{font-size:15px;font-weight:700;color:var(--g900)}
 .supl-d{font-size:15px;font-weight:600;color:var(--t600);margin-top:2px}
-body.dark-mode .supl-d{color:var(--t100)}
 .supl-m{font-size:13px;color:var(--g500);margin-top:3px}
 .fgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:12px}
 .fth{position:relative;border:0;padding:0;background:var(--g100);border-radius:10px;overflow:hidden;aspect-ratio:3/4;cursor:pointer}
@@ -393,6 +411,11 @@ body.dark-mode :focus-visible{outline-color:#5CC8A6}
     <span><span class="tile-t">Mi peso y mis fotos</span><br><span class="tile-d">Anota tu peso y compara tu progreso</span></span>
     <span class="tile-go"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></span>
   </button>
+  <button class="tile" id="tileDia" style="display:none" onclick="abrirDia()">
+    <span class="tile-ic"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg></span>
+    <span><span class="tile-t">Mi diario de comidas</span><br><span class="tile-d">Una foto o una nota de lo que comes</span><br><span class="tile-badge" id="tileDiaB" style="display:none"></span></span>
+    <span class="tile-go"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></span>
+  </button>
   <button class="tile" onclick="abrirPlan()">
     <span class="tile-ic au"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="14" y2="17"/></svg></span>
     <span><span class="tile-t">Mi planificación nutricional</span><br><span class="tile-d">Tu plan personalizado</span></span>
@@ -410,6 +433,13 @@ body.dark-mode :focus-visible{outline-color:#5CC8A6}
     <span class="tile-go"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></span>
   </button>
 </div></div>
+
+<div id="vdia" class="view" role="main"><div class="wrap">
+  <button class="back" onclick="show('vhome')"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Inicio</button>
+  <h1 class="h2">Mi diario de comidas</h1>
+  <div id="diaBody"></div>
+</div></div>
+<input type="file" id="diaFile" accept="image/*" style="display:none">
 
 <div id="vsupl" class="view" role="main"><div class="wrap">
   <button class="back" onclick="show('vhome')"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Inicio</button>
@@ -588,7 +618,7 @@ async function guardarPassword(){
 function logout(){
   const s=authLoad();
   if(s) fetch(SURL+'/auth/v1/logout',{method:'POST',headers:{'apikey':SKEY,'Authorization':'Bearer '+s.access_token}}).catch(()=>{});
-  authClear(); FICHA=DATOS=REG=null; PLANES=[]; SUPL=[]; REG_CMP=null; 
+  authClear(); FICHA=DATOS=REG=null; PLANES=[]; SUPL=[]; DIA=null; DIA_FILE=null; REG_CMP=null; 
   $('lpass').value=''; $('lerr').textContent='';
   show('vlogin');
 }
@@ -609,8 +639,9 @@ async function entrar(){
   $('hello').textContent=nombre?(saludo+', '+nombre):saludo;
   $('helloSub').textContent=[FICHA.deporte,FICHA.objetivo].filter(Boolean).join(' · ')||'Aquí tienes tu información.';
   try{ const pl=await rpc('cliente_mis_planes'); PLANES=Array.isArray(pl)?pl:[]; }catch(e){ PLANES=[]; }
+  try{ const dd=await rpc('cliente_mis_comidas'); DIA=dd&&Array.isArray(dd.comidas)?dd:null; }catch(e){ DIA=null; }   // opcional: sin su SQL no sale la tarjeta
   try{ const su=await rpc('cliente_mi_suplementacion'); SUPL=Array.isArray(su)?su:[]; }catch(e){ SUPL=[]; }   // opcional: sin su SQL, o sin nada asignado, no sale la opción
-  pintarNota(); pintarRevision(); pintarInstTip(); pintarTileForms(); pintarTileComp(); pintarTileSupl(); pintarMensajeDia();
+  pintarNota(); pintarRevision(); pintarInstTip(); pintarTileForms(); pintarTileComp(); pintarTileSupl(); pintarTileDia(); pintarMensajeDia();
   show('vhome');
 }
 // Nota que el profesional deja para el cliente (si hay); se muestra arriba, antes de la próxima revisión.
@@ -874,7 +905,7 @@ async function regSubirFoto(file){
 }
 $('regFile').addEventListener('change',e=>{ const f=e.target.files[0]; e.target.value=''; if(f) regSubirFoto(f); });
 async function abrirLb(id){
-  const f=REG.fotos.find(x=>x.id==id); if(!f) return; LB_ID=id;
+  const f=REG.fotos.find(x=>x.id==id); if(!f) return; LB_ID=id; $('lbDel').style.display='';
   $('lbTxt').textContent=(VISTAS[f.vista]||'Otra')+' · '+fmtF(String(f.fecha).slice(0,10)); $('lbDel').textContent='Borrar';
   $('lbImg').removeAttribute('src'); $('lb').style.display='flex';
   try{ $('lbImg').src=await urlFoto(f.path); }catch(e){}
@@ -890,6 +921,80 @@ async function regBorrarFoto(){
   }catch(e){ toast('No se pudo borrar.',{tipo:'error'}); }
 }
 document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&LB_ID) cerrarLb(); });
+
+// ═══ Mi diario de comidas ═══
+// Una foto y/o una nota por comida (últimos 14 días). Las fotos van al mismo bucket privado (carpeta `<id>/comidas/`) y solo las ven el cliente y su nutricionista, que puede comentarlas.
+let DIA=null, DIA_FILE=null, DIA_MOM=null;
+const DIA_M={desayuno:'Desayuno',media_manana:'Media mañana',comida:'Comida',merienda:'Merienda',cena:'Cena',otro:'Otra'};
+function momentoAhora(){ const h=new Date().getHours(); return h>=6&&h<10?'desayuno':h>=10&&h<12?'media_manana':h>=12&&h<17?'comida':h>=17&&h<20?'merienda':h>=20?'cena':'otro'; }
+const nuevos=()=>DIA?DIA.comidas.filter(c=>c.comentario&&c.comentario_leido===false).length:0;
+function pintarTileDia(){
+  const t=$('tileDia'); if(!t) return; t.style.display=DIA?'flex':'none';
+  const n=nuevos(), b=$('tileDiaB'); b.style.display=n?'inline-block':'none'; b.textContent=n===1?'1 comentario nuevo':n+' comentarios nuevos';
+}
+function fechaDia(f){ const h=hoyISO(), a=new Date(); a.setDate(a.getDate()-1); const ay=a.getFullYear()+'-'+p2(a.getMonth()+1)+'-'+p2(a.getDate());
+  return f===h?'Hoy':f===ay?'Ayer':new Date(f+'T00:00:00').toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long'}); }
+function diaFechas(){ const o=[]; for(let i=0;i<3;i++){ const d=new Date(); d.setDate(d.getDate()-i); o.push([d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate()),i===0?'Hoy':i===1?'Ayer':'Anteayer']); } return o; }
+async function abrirDia(){
+  show('vdia'); DIA_MOM=DIA_MOM||momentoAhora(); pintarDia();
+  if(nuevos()){ try{ await rpc('cliente_marcar_comentarios_leidos'); }catch(e){} setTimeout(()=>{ DIA.comidas.forEach(c=>{ c.comentario_leido=true; }); pintarTileDia(); },2500); }   // se marcan al cabo de un momento para que se vea el «Nuevo»
+}
+function pintarDia(){
+  const body=$('diaBody'); if(!body) return;
+  const dias=diaFechas();
+  const nota=($('diaNota')||{}).value||'', fecha=($('diaFecha')||{}).value||dias[0][0];
+  let h=`<div class="card dia-add"><p class="dia-l">¿Qué comida es?</p>
+    <div class="dia-ch" role="radiogroup" aria-label="Momento">${Object.keys(DIA_M).map(k=>`<button type="button" class="dia-c${k===DIA_MOM?' on':''}" role="radio" aria-checked="${k===DIA_MOM}" onclick="DIA_MOM='${k}';pintarDia()">${DIA_M[k]}</button>`).join('')}</div>
+    <div class="reg-row" style="margin-top:12px"><div><label for="diaFecha">Día</label><select class="seg-inp" id="diaFecha">${dias.map(([v,t])=>`<option value="${v}"${v===fecha?' selected':''}>${t}</option>`).join('')}</select></div>
+      <div><label>Foto</label><button type="button" class="btn soft dia-foto" onclick="$('diaFile').click()">${DIA_FILE?'Cambiar foto':'Hacer o elegir foto'}</button></div></div>
+    ${DIA_FILE?`<div class="dia-prev"><img alt="Foto de la comida" src="${DIA_FILE.url}"><button type="button" class="reg-del" aria-label="Quitar la foto" onclick="diaQuitarFoto()">×</button></div>`:''}
+    <label for="diaNota" class="dia-l" style="margin-top:12px">Nota <span class="empty">(opcional si hay foto)</span></label>
+    <textarea class="seg-inp" id="diaNota" maxlength="300" rows="2" style="height:auto;padding:10px 12px" placeholder="Qué has comido, cuánta hambre tenías…">${esc(nota)}</textarea>
+    <button class="btn" id="diaBtn" style="width:100%;margin-top:12px" onclick="diaGuardar()">Guardar comida</button></div>`;
+  const por={}; DIA.comidas.forEach(c=>{ const f=String(c.fecha).slice(0,10); (por[f]=por[f]||[]).push(c); });
+  const dd=Object.keys(por).sort().reverse();
+  if(!dd.length) h+=vacioC('<path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/>','Todavía no has anotado nada','Haz una foto de tu próxima comida o escribe una nota: tu nutricionista podrá verla y comentártela.');
+  dd.forEach(f=>{ h+=`<p class="sec">${esc(fechaDia(f))}</p>`+por[f].slice().sort((a,b)=>a.id-b.id).map(c=>`<div class="card dia-it">
+      ${c.foto_path?`<button type="button" class="dia-th" onclick="diaFoto('${esc(c.foto_path)}','${esc(DIA_M[c.momento]||'')}')" aria-label="Ver la foto"><img alt="" data-p="${esc(c.foto_path)}"></button>`:''}
+      <div class="dia-tx"><div class="dia-mo">${esc(DIA_M[c.momento]||'Otra')}</div>${c.nota?`<p class="dia-no">${esc(c.nota)}</p>`:''}
+        ${c.comentario?`<div class="dia-co${c.comentario_leido===false?' nuevo':''}"><b>Tu nutricionista${c.comentario_leido===false?' · Nuevo':''}</b>${esc(c.comentario)}</div>`:''}
+        <button type="button" class="dia-bo" onclick="diaBorrar(${c.id},this)">Borrar</button></div></div>`).join(''); });
+  body.innerHTML=h; cargarFotos(body);
+}
+function diaQuitarFoto(){ if(DIA_FILE) URL.revokeObjectURL(DIA_FILE.url); DIA_FILE=null; pintarDia(); }
+$('diaFile').addEventListener('change',e=>{ const f=e.target.files[0]; e.target.value=''; if(!f) return;
+  if(!/^image\//.test(f.type)){ toast('Elige una imagen.',{tipo:'error'}); return; }
+  if(DIA_FILE) URL.revokeObjectURL(DIA_FILE.url); DIA_FILE={file:f,url:URL.createObjectURL(f)}; pintarDia(); });
+function diaFoto(path,txt){
+  $('lbTxt').textContent=txt; $('lbDel').style.display='none'; $('lbImg').removeAttribute('src'); $('lb').style.display='flex'; LB_ID=null;
+  urlFoto(path).then(u=>{ $('lbImg').src=u; }).catch(()=>{});
+}
+async function diaGuardar(){
+  const nota=($('diaNota').value||'').trim(), fecha=$('diaFecha').value, b=$('diaBtn');
+  if(!DIA_FILE&&!nota){ toast('Añade una foto o escribe una nota.',{tipo:'error'}); return; }
+  b.disabled=true; b.textContent='Guardando…'; let path=null;
+  try{
+    if(DIA_FILE){
+      const blob=await reducirFoto(DIA_FILE.file); path=`${DIA.dep}/comidas/${Date.now()}.jpg`;
+      const up=await authFetch(`${SURL}/storage/v1/object/fotos-clientes/${path}`,{method:'POST',headers:{'Content-Type':'image/jpeg'},body:blob});
+      if(!up.ok) throw new Error('subida');
+    }
+    const c=await rpc('cliente_registrar_comida',{p_fecha:fecha,p_momento:DIA_MOM||'otro',p_nota:nota||null,p_path:path});
+    DIA.comidas.unshift(c); if(DIA_FILE) URL.revokeObjectURL(DIA_FILE.url); DIA_FILE=null;
+    $('diaNota').value=''; toast('Comida guardada'); DIA_MOM=momentoAhora(); pintarDia();
+  }catch(e){
+    if(path) authFetch(`${SURL}/storage/v1/object/fotos-clientes/${path}`,{method:'DELETE'}).catch(()=>{});
+    toast('No se pudo guardar. Inténtalo de nuevo.',{tipo:'error'}); b.disabled=false; b.textContent='Guardar comida';
+  }
+}
+async function diaBorrar(id,btn){
+  if(btn.textContent==='Borrar'){ btn.textContent='¿Seguro?'; setTimeout(()=>{ if(btn.isConnected&&btn.textContent==='¿Seguro?') btn.textContent='Borrar'; },3000); return; }
+  try{
+    const path=await rpc('cliente_borrar_comida',{p_id:id});
+    if(path) authFetch(`${SURL}/storage/v1/object/fotos-clientes/${String(path).split('/').map(encodeURIComponent).join('/')}`,{method:'DELETE'}).catch(()=>{});
+    DIA.comidas=DIA.comidas.filter(x=>x.id!=id); toast('Comida borrada'); pintarDia();
+  }catch(e){ toast('No se pudo borrar.',{tipo:'error'}); }
+}
 
 // ═══ Mi planificación ═══
 function abrirPlan(){
