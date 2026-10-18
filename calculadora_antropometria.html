@@ -266,9 +266,9 @@ body.dark-mode canvas{background:#fff;border-radius:10px;}
 
 /* ============================================================
    RESPONSIVE (móvil / pantallas estrechas)
-   Aislado en @media screen y (max-width:760px): no altera el diseño de escritorio.
+   Aislado en @media screen y (max-width:900px): no altera el diseño de escritorio.
    ============================================================ */
-@media screen and (max-width:760px){
+@media screen and (max-width:900px){
   .app{flex-direction:column;}
   /* Barra superior compacta y fija: marca + menú en una sola fila deslizable */
   .sidebar{
@@ -386,7 +386,7 @@ html.embed .navbtn.active{background:var(--sf);color:var(--t600);font-weight:600
 html.embed .navbtn.active::before{display:none;}
 html.embed .newtab{display:inline-flex;font-size:12px;text-decoration:none;color:var(--g400);margin-left:6px;}
 html.embed .main{padding:1.25rem 2rem 2rem;}
-@media screen and (max-width:760px){
+@media screen and (max-width:900px){
   html.embed .sidebar{margin:12px 14px 0;max-width:calc(100% - 28px);flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;}
   html.embed .sidebar::-webkit-scrollbar{display:none;}
   html.embed .navbtn{flex:0 0 auto;padding:8px 12px;}
@@ -1293,7 +1293,7 @@ function viewClientes(){
       <td><span class="chev" aria-hidden="true">${abierto?"▾":"▸"}</span><strong>${esc(c.nombre)} ${esc(c.apellidos||"")}</strong></td>
       <td>${esc(c.deporte||"—")}</td>
       <td>${c.sexo?esc(c.sexo):"—"}</td>
-      <td>${nVal} <span class="small-note">valoración${nVal===1?"":"es"}</span></td>
+      <td>${nVal} <span class="small-note">${nVal===1?"valoración":"valoraciones"}</span></td>
       <td>${last?fmtDate(last.fecha):"—"}</td>
       <td class="no-print"><div class="btn-group"><button class="btn camel sm" data-newval="${c.id}" title="Empezar una valoración nueva de este cliente"><span class="ic">${ic("plus")}</span> Valoración</button> <button class="btn ghost sm" data-open="${c.id}" aria-expanded="${abierto}"><span class="ic">${abierto?"▴":ic("doc")}</span> ${abierto?"Cerrar":"Abrir"}</button> <button class="btn danger sm" data-del="${c.id}" title="Quitar el perfil antropométrico"><span class="ic">${ic("trash")}</span></button></div></td>
     </tr>${abierto ? `<tr class="detailrow"><td colspan="6">${viewClienteDetalle(c)}</td></tr>` : ""}`;

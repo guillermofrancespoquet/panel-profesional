@@ -360,7 +360,7 @@ body.dark-mode .acc-pill.on{color:var(--t100)}
 .rev-msg{flex-basis:100%;margin:0;font-size:12px;color:var(--red)}
 .rev-msg:empty{display:none}
 @media(max-width:860px){.rev-in{font-size:16px;height:36px;padding:0 6px}.rev-in[type=date]{width:auto;flex:1 1 0;min-width:0}.rev-in[type=time]{width:92px;flex:0 0 auto}.rev-ok{height:36px;padding:0 12px}}
-@media(max-width:560px){.depd-rev-side{flex-basis:100%;margin-left:48px}}
+@media(max-width:560px){.depd-rev-side{flex-basis:100%;margin-left:48px;flex-wrap:wrap}}
 .est-box{background:var(--bg);border:.5px solid var(--bd);border-radius:14px;padding:14px 16px}
 .est-head{display:flex;align-items:center;gap:8px;margin-bottom:10px;font-size:13px;font-weight:700}
 .est-pill{font-size:11.5px;font-weight:600;padding:3px 10px;border-radius:20px;background:var(--pill-g);color:var(--t800);box-shadow:inset 0 0 0 .5px var(--pill-g-bd)}
@@ -993,7 +993,7 @@ body.dark-mode .dep-chip.active{color:var(--gold)}
 .hist-tag,.dep-obj-badge,.cbadge.on,.rev-badge.ok,.sup-badge.strong,.pay-toggle.paid{background:var(--pill-g);color:var(--t800);box-shadow:inset 0 0 0 .5px var(--pill-g-bd)}
 body.dark-mode .hist-tag,body.dark-mode .dep-obj-badge,body.dark-mode .cbadge.on,body.dark-mode .rev-badge.ok,body.dark-mode .sup-badge.strong,body.dark-mode .pay-toggle.paid{color:var(--t100)}
 .rev-badge.soon,.dash-card-count,.ref-src,.sup-badge.mid{background:var(--pill-au);color:var(--gold-dk);box-shadow:inset 0 0 0 .5px var(--pill-au-bd)}
-body.dark-mode .rev-badge.soon,body.dark-mode .dash-card-count,body.dark-mode .ref-src,body.dark-mode .sup-badge.mid{color:var(--gold)}
+body.dark-mode .rev-badge.soon,body.dark-mode .dash-card-count,body.dark-mode .ref-src,body.dark-mode .sup-badge.mid{color:var(--gold-dk)}
 .rev-badge.urgent,.pay-toggle.pending,.sup-badge.warn{background:var(--pill-r);color:#B3261E;box-shadow:inset 0 0 0 .5px var(--pill-r-bd)}
 body.dark-mode .rev-badge.urgent,body.dark-mode .pay-toggle.pending,body.dark-mode .sup-badge.warn{color:#ff9b93}
 .rev-badge.none,.cbadge.off,.pay-toggle.info,.pay-toggle.upcoming,.accion-badge.subtle,.sup-badge.ctx{background:var(--pill-n);color:var(--g700);box-shadow:inset 0 0 0 .5px var(--pill-n-bd)}
@@ -6410,7 +6410,7 @@ function bioPintar(depId, antro, bio) {
       const filas = bio.slice().reverse().map(r => { const v = r.valores || {}; return `<tr><td class="n bio-f1">${new Date(String(r.fecha).slice(0, 10) + 'T00:00:00').toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' })}</td>
         <td class="bio-ap">${sudEsc(r.aparato || '—')}${r.visible_cliente ? '<span class="sud-cond">Visible para el cliente</span>' : ''}</td><td class="n" data-l="Peso">${bioN(v.peso, 1)} kg</td><td class="n" data-l="% grasa">${bioN(v.pct_grasa, 1)} %</td><td class="n hide-m" data-l="Músculo">${v.musculo_kg != null ? bioN(v.musculo_kg, 1) + ' kg' : '—'}</td>
         <td class="act"><div class="row-actions">${btnSoft(r.visible_cliente ? 'Dejar de compartir' : 'Compartir con el cliente', `bioVisible(${r.id},${depId},${!r.visible_cliente})`, r.visible_cliente ? 'trash' : 'ext', true)}${btnDel('Eliminar medición', `bioEliminar(${r.id},${depId},this)`)}</div></td></tr>`; }).join('');
-      box.innerHTML = (principal ? '' : `<div class="med-head"><span class="med-date">Complemento de la antropometría</span><span class="med-ago">${bio.length} medición${bio.length !== 1 ? 'es' : ''} de báscula</span></div><div class="med-stats">${bioStats(pts, 4, BIO_COMPL)}</div>${pts.length > 1 ? `<div class="med-series">${medSerie(pts, 'pct_grasa', 'var(--gold)', '% grasa (báscula)', '%')}</div>` : ''}`) +
+      box.innerHTML = (principal ? '' : `<div class="med-head"><span class="med-date">Complemento de la antropometría</span><span class="med-ago">${bio.length} ${bio.length !== 1 ? 'mediciones' : 'medición'} de báscula</span></div><div class="med-stats">${bioStats(pts, 4, BIO_COMPL)}</div>${pts.length > 1 ? `<div class="med-series">${medSerie(pts, 'pct_grasa', 'var(--gold)', '% grasa (báscula)', '%')}</div>` : ''}`) +
         `<table class="plan-lista bio-lista"><thead><tr><td>Fecha</td><td>Báscula</td><td>Peso</td><td>% grasa</td><td class="hide-m">Músculo</td><td></td></tr></thead><tbody>${filas}</tbody></table>${acciones}`;
     }
   }

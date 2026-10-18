@@ -71,7 +71,7 @@ Apps web de gestión para Guillermo Frances (nutrición deportiva, Valencia). To
 - **Accesibilidad**: foco visible global (`:focus-visible`), `prefers-reduced-motion` respetado, `role="main"` en cada vista, `role="navigation"` en los menús, un `h1` por pantalla (`role="heading" aria-level="1"` en los títulos del panel), botones de solo icono con `aria-label`, enlace «Saltar al contenido» en el panel. Se audita con axe-core (reglas WCAG 2.1 AA): no debe haber fallos graves ni críticos, ni en claro ni en oscuro.
 - Modo oscuro: clase `dark-mode` en `body`, clave de localStorage `nutrilogos_dark` (compartida entre las dos apps). En la calculadora el informe A4 se mantiene siempre claro.
 - El informe de la calculadora está maquetado para A4 real (`@page{size:A4;margin:0}`, `.rep-page` 210×297 mm con el mismo padding en pantalla e impresión): la vista previa debe ser 1:1 con el PDF.
-- Móvil: el panel usa barra superior + menú lateral deslizante (≤860 px); la calculadora usa barra superior fija con menú horizontal (≤760 px). Hay que revisar ambos tamaños tras cualquier cambio visual.
+- Móvil: el panel usa barra superior + menú lateral deslizante (≤860 px); la calculadora usa barra superior fija con menú horizontal (≤900 px; con 761–860 px, tablet en vertical, la barra lateral dejaba la tabla de clientes cortada). Hay que revisar ambos tamaños tras cualquier cambio visual.
 
 ## Cómo trabajar aquí
 
