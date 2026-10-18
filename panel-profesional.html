@@ -290,7 +290,9 @@ body.dark-mode .btn-ok.danger,body.dark-mode .sb-badge{background:#B83232}
 .file-btn.on{background:var(--pill-g);color:var(--t800)}
 body.dark-mode .file-btn.on{color:var(--t100)}
 .file-vis{color:var(--t600);font-weight:600}
+.seg-scroll{overflow-x:auto;max-width:100%;-webkit-overflow-scrolling:touch}
 .seg-tab{margin-top:12px;width:100%}.seg-tab td{text-align:center;padding:6px 4px;font-size:12.5px}.seg-tab td.n{text-align:left;white-space:nowrap}.seg-tab thead td{font-size:10.5px;font-weight:700;color:var(--g500);text-transform:uppercase;letter-spacing:.04em}
+@media(max-width:560px){.seg-tab td{padding:6px 1px;font-size:12px}.seg-tab thead td{font-size:9px;letter-spacing:0}.seg-tab td.n{padding-right:6px}}
 .acc-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:4px}
 .acc-pill{font-size:10.5px;font-weight:600;padding:3px 10px;border-radius:20px;background:var(--pill-n);color:var(--g700);box-shadow:inset 0 0 0 .5px var(--pill-n-bd)}
 .acc-pill.on{background:var(--pill-g);color:var(--t800);box-shadow:inset 0 0 0 .5px var(--pill-g-bd)}
@@ -5744,6 +5746,7 @@ function pintarCmpFotos(){
 }
 function cerrarFoto(){ document.getElementById('mFoto').style.display = 'none'; document.getElementById('fotoBody').innerHTML = ''; }
 
+const SEG_CORTO = {adherencia:'Adh.', energia:'Ene.', sueno:'Sue.', digestion:'Dig.', animo:'Áni.'};   // cabeceras cortas para que la tabla quepa en el móvil
 async function loadSeguimientos(depId){
   const el=document.getElementById('segBox'); let r=null;
   try{ r=await sb(`seguimientos?deportista_id=eq.${depId}&order=semana.asc&select=semana,respuestas`); }catch(e){}
@@ -5766,7 +5769,7 @@ async function loadSeguimientos(depId){
     return `<p class="med-note" style="margin:6px 0"><b>${fmtS(x.semana)}</b> · ${z.molestias?'<i>Molestias:</i> '+sudEsc(z.molestias)+(z.comentario?' · ':''):''}${z.comentario?sudEsc(z.comentario):''}</p>`; }).join('');
   el.innerHTML=`<div class="acc-row" style="margin-bottom:8px"><span class="acc-pill on">Último: semana del ${fmtS(ult.semana)}</span><span class="acc-mail" style="font-weight:500">${r.length} seguimiento${r.length!==1?'s':''} recibido${r.length!==1?'s':''}</span>${av.join('')}</div>
     ${series?`<div class="med-series">${series}</div>`:''}
-    <table class="plan-lista seg-tab"><thead><tr><td>Semana</td>${SEG_P.map(m=>`<td>${m.t}</td>`).join('')}<td>Entr.</td><td>Peso</td></tr></thead><tbody>${filas}</tbody></table>
+    <div class="seg-scroll"><table class="plan-lista seg-tab"><thead><tr><td>Semana</td>${SEG_P.map(m=>`<td title="${m.t}">${SEG_CORTO[m.k]||m.t}</td>`).join('')}<td title="Entrenamientos">Entr.</td><td>Peso</td></tr></thead><tbody>${filas}</tbody></table></div>
     ${notas?`<p class="sec-sub" style="margin:12px 0 2px;font-size:12px;font-weight:700;color:var(--g500)">Notas del cliente</p>${notas}`:''}`;
 }
 
