@@ -110,9 +110,13 @@ body.in-plan .topbar{display:none}
 .rev-card .tile-ic{width:38px;height:38px;border-radius:11px}
 .nota-card{display:flex;align-items:flex-start;gap:12px;background:var(--t50);border:.5px solid rgba(29,158,117,.28);border-radius:14px;padding:.8rem .95rem;margin-bottom:12px}
 .nota-card .tile-ic{width:38px;height:38px;border-radius:11px;flex-shrink:0}
-#vreg .reg-row{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end}
-#vreg .reg-row label{display:block;font-size:11.5px;font-weight:600;color:var(--g500);margin-bottom:4px}
-#vreg .reg-row>div{flex:1 1 130px;min-width:0}
+#vreg .reg-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 10px;align-items:end}
+#vreg .reg-row label{display:block;font-size:11.5px;font-weight:600;color:var(--g500);margin-bottom:5px}
+#vreg .reg-row>div{min-width:0}
+#vreg .reg-row .btn{grid-column:1/-1;width:100%}
+#vreg .seg-inp{display:block;box-sizing:border-box;width:100%;max-width:100%;min-width:0;height:46px;padding:0 12px;text-align:left;-webkit-appearance:none;appearance:none}
+#vreg select.seg-inp{padding-right:30px;background:var(--sf) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236A6963' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") no-repeat right 12px center}
+#vreg .card .note{margin:12px 2px 0}
 .fgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:12px}
 .fth{position:relative;border:0;padding:0;background:var(--g100);border-radius:10px;overflow:hidden;aspect-ratio:3/4;cursor:pointer}
 .fth img{width:100%;height:100%;object-fit:cover;display:block}
