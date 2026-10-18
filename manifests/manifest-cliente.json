@@ -3,8 +3,8 @@
   "short_name": "NutriLogos",
   "description": "Tus datos y tu planificación nutricional",
   "id": "./cliente.html",
-  "start_url": "./cliente.html",
-  "scope": "./",
+  "start_url": "../cliente.html",
+  "scope": "../",
   "display": "standalone",
   "background_color": "#F4F2ED",
   "theme_color": "#04342C",
@@ -16,25 +16,25 @@
   ],
   "icons": [
     {
-      "src": "./icon-rounded-192.png",
+      "src": "../icon-rounded-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "./icon-rounded-512.png",
+      "src": "../icon-rounded-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "./icon-192.png",
+      "src": "../icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "maskable"
     },
     {
-      "src": "./icon-512.png",
+      "src": "../icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
