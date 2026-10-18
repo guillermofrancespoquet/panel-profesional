@@ -396,14 +396,19 @@ body.dark-mode :focus-visible{outline-color:#5CC8A6}
       <a class="rev-add" id="revGoogle" href="#" target="_blank" rel="noopener noreferrer"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Añadir a Google Calendar</a>
     </div>
   </div>
-  <button class="tile" id="tileForms" style="display:none" onclick="abrirForms()">
-    <span class="tile-ic au"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span>
-    <span><span class="tile-t">Mis formularios</span><br><span class="tile-d" id="tileFormsD">Cuestionarios de tu nutricionista</span><br><span class="tile-badge" id="tileFormsB"></span></span>
-    <span class="tile-go"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></span>
-  </button>
   <button class="tile" onclick="abrirDatos()">
     <span class="tile-ic"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>
     <span><span class="tile-t">Mis datos</span><br><span class="tile-d">Antropometría, bioimpedancia y evolución</span></span>
+    <span class="tile-go"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></span>
+  </button>
+  <button class="tile" onclick="abrirPlan()">
+    <span class="tile-ic au"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="14" y2="17"/></svg></span>
+    <span><span class="tile-t">Mi planificación nutricional</span><br><span class="tile-d">Tu plan personalizado</span></span>
+    <span class="tile-go"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></span>
+  </button>
+  <button class="tile" id="tileSupl" style="display:none" onclick="abrirSupl()">
+    <span class="tile-ic"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M10.5 20.5 3.5 13.5a4.95 4.95 0 0 1 7-7l7 7a4.95 4.95 0 0 1-7 7z"/><line x1="8.5" y1="8.5" x2="15.5" y2="15.5"/></svg></span>
+    <span><span class="tile-t">Mi suplementación</span><br><span class="tile-d" id="tileSuplD">Qué tomar y cuándo</span></span>
     <span class="tile-go"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></span>
   </button>
   <button class="tile" onclick="abrirReg()">
@@ -416,14 +421,9 @@ body.dark-mode :focus-visible{outline-color:#5CC8A6}
     <span><span class="tile-t">Mi diario de comidas</span><br><span class="tile-d">Una foto o una nota de lo que comes</span><br><span class="tile-badge" id="tileDiaB" style="display:none"></span></span>
     <span class="tile-go"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></span>
   </button>
-  <button class="tile" onclick="abrirPlan()">
-    <span class="tile-ic au"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="14" y2="17"/></svg></span>
-    <span><span class="tile-t">Mi planificación nutricional</span><br><span class="tile-d">Tu plan personalizado</span></span>
-    <span class="tile-go"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></span>
-  </button>
-  <button class="tile" id="tileSupl" style="display:none" onclick="abrirSupl()">
-    <span class="tile-ic"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M10.5 20.5 3.5 13.5a4.95 4.95 0 0 1 7-7l7 7a4.95 4.95 0 0 1-7 7z"/><line x1="8.5" y1="8.5" x2="15.5" y2="15.5"/></svg></span>
-    <span><span class="tile-t">Mi suplementación</span><br><span class="tile-d" id="tileSuplD">Qué tomar y cuándo</span></span>
+  <button class="tile" id="tileForms" style="display:none" onclick="abrirForms()">
+    <span class="tile-ic au"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span>
+    <span><span class="tile-t">Mis formularios</span><br><span class="tile-d" id="tileFormsD">Cuestionarios de tu nutricionista</span><br><span class="tile-badge" id="tileFormsB"></span></span>
     <span class="tile-go"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></span>
   </button>
   <div class="home-sep" id="compSep" style="display:none"><span>Próxima competición</span></div>
@@ -1078,7 +1078,7 @@ function pintarTileForms(){
   t.style.display='flex';
   b.textContent=n?(n===1?'1 pendiente':n+' pendientes'):'Todo al día ✓';
   b.className='tile-badge'+(n?'':' ok');
-  // Con formularios pendientes van los primeros; cuando está todo hecho bajan justo después de la planificación (el plan de competición sigue al final).
+  // Con formularios pendientes van los primeros; cuando está todo hecho bajan al final de las tarjetas (el plan de competición sigue en su apartado aparte).
   const cont=t.parentNode;
   if(n) cont.insertBefore(t,cont.querySelector('.tile')); else cont.insertBefore(t,$('compSep'));
 }
@@ -1214,7 +1214,7 @@ function abrirSupl(){
       <div class="supl-d">${esc(x.dosis)}</div>
       ${x.momento?`<div class="supl-m">${esc(x.momento)}</div>`:''}
       ${x.nota?`<p class="note" style="margin:8px 0 0">${esc(x.nota)}</p>`:''}
-    </div>`).join('')+`<p class="note" style="margin:14px 2px 0">Pruébalo siempre en entrenamiento, nunca por primera vez en competición. Si compites federado, consulta antes con tu nutricionista.</p>`;
+    </div>`).join('')+`<p class="note" style="margin:14px 2px 0">Pruébalo siempre en entrenamiento, nunca por primera vez en competición.</p>`;
   show('vsupl');
 }
 const DOW=['dom','lun','mar','mié','jue','vie','sáb'];
