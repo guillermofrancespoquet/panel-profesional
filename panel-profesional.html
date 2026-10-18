@@ -348,6 +348,24 @@ body.dark-mode .acc-pill.on{color:var(--t100)}
 .depd-rev-side .rev-badge{margin-top:0;white-space:nowrap}
 .rev-btn{display:inline-flex;align-items:center;gap:5px;height:28px;padding:0 11px;border-radius:14px;border:.5px solid var(--bd);background:transparent;color:var(--t600);font:inherit;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap}
 .rev-btn:hover{background:var(--t50)}
+.sup-calc{margin-top:12px;padding:12px 14px;border:.5px solid var(--bd);border-radius:12px;background:var(--bg)}
+.sup-calc-h{margin:0 0 4px;font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--gold-dk)}
+.sup-calc-t{margin:0 0 4px;font-size:12.5px;line-height:1.5;color:var(--g700)}
+.sup-calc-n{margin:0;font-size:12.5px;color:var(--g500)}
+.sup-calc-r{margin:2px 0 0;font-size:11.5px;color:var(--g500);line-height:1.45}
+.sup-av{margin:6px 0 0;padding:6px 10px;border-radius:8px;background:var(--pill-au);color:var(--gold-dk);font-size:12px;line-height:1.45}
+.sup-av.rojo{background:var(--pill-r);color:var(--red);font-weight:600}
+body:not(.dark-mode) .sup-av.rojo{color:#8F2323}
+.sup-lista{display:flex;flex-direction:column;gap:8px}
+.sup-item{border:.5px solid var(--bd);border-radius:12px;padding:11px 14px;background:var(--sf)}
+.sup-item.pausa{opacity:.62}
+.sup-item-top{display:flex;gap:10px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap}
+.sup-item .row-actions{flex-wrap:wrap;max-width:100%}
+@media(max-width:560px){.sup-item .row-actions{flex-basis:100%;justify-content:flex-start}}
+.sup-item-n{font-size:14px;font-weight:700;color:var(--g900)}
+.sup-item-d{font-size:13px;color:var(--g700);margin:1px 0 4px}
+.sup-det{margin-top:10px;padding-top:10px;border-top:.5px solid var(--bd)}
+.sup-det[hidden]{display:none}
 .rev-edit{flex-basis:100%;margin-top:2px;padding-top:12px;border-top:.5px solid var(--bd);display:flex;flex-wrap:wrap;align-items:center;gap:6px}
 .rev-edit[hidden]{display:none}
 .rev-in{height:32px;padding:0 9px;border:.5px solid var(--bd);border-radius:8px;background:var(--sf);color:var(--g900);font:inherit;font-size:13px;min-width:0}
@@ -1897,9 +1915,39 @@ body.dark-mode .ref-src,body.dark-mode .sup-badge,body.dark-mode .depd-avatar-fa
 </div>
 <input type="file" id="bioFile" accept=".pdf,image/*" style="display:none" aria-hidden="true" tabindex="-1">
 
+<!-- MODAL: SUPLEMENTO DEL CLIENTE -->
+<div class="mbg" id="mSupl" style="display:none;z-index:300" role="dialog" aria-modal="true" aria-labelledby="supTit" onclick="if(event.target===this)supCerrar()">
+  <div class="mc" style="max-width:520px;max-height:calc(100dvh - 2rem);overflow-y:auto">
+    <p class="mt" id="supTit">Añadir suplemento</p>
+    <p class="ms" id="supSub"></p>
+    <label class="mfl" for="supSel">Suplemento</label>
+    <select class="inp" id="supSel" onchange="_sup&&(_sup.dosisTocada=false,_sup.momentoTocado=false);supRecalcular()"></select>
+    <div id="supNombreBox" style="display:none"><label class="mfl" for="supNombre" style="margin-top:10px">Nombre</label><input type="text" class="inp" id="supNombre" maxlength="80" placeholder="Ej. Colágeno"></div>
+    <div id="supPautaBox" style="display:none"><label class="mfl" for="supPauta" style="margin-top:10px">Pauta</label><select class="inp" id="supPauta" onchange="_sup&&(_sup.dosisTocada=false,_sup.momentoTocado=false);supRecalcular()"></select></div>
+    <label class="mfl" for="supPeso" style="margin-top:10px">Peso del cliente (kg)</label>
+    <input type="text" inputmode="decimal" class="inp" id="supPeso" style="max-width:140px" oninput="supRecalcular()">
+    <p class="sup-calc-r" id="supPesoSrc" style="margin:4px 0 0"></p>
+    <div class="sup-calc" id="supCalc"></div>
+    <label class="mfl" for="supDosis" style="margin-top:12px">Dosis que verá el cliente</label>
+    <input type="text" class="inp" id="supDosis" maxlength="120" oninput="supTocar('dosis')">
+    <label class="mfl" for="supMomento" style="margin-top:10px">Cuándo tomarlo <span class="hd-opt">(opcional)</span></label>
+    <input type="text" class="inp" id="supMomento" maxlength="160" oninput="supTocar('momento')">
+    <label class="mfl" for="supNotaCli" style="margin-top:10px">Nota para el cliente <span class="hd-opt">(opcional)</span></label>
+    <input type="text" class="inp" id="supNotaCli" maxlength="240" placeholder="Ej. Pruébala primero en un entrenamiento suave.">
+    <label class="mfl" for="supNotaPriv" style="margin-top:10px">Nota privada <span class="hd-opt">(solo tú)</span></label>
+    <input type="text" class="inp" id="supNotaPriv" maxlength="600">
+    <label class="mfl" style="gap:8px;align-items:center;margin-top:12px;font-weight:600;display:flex"><input type="checkbox" id="supVisible" checked> Visible para el cliente</label>
+    <p class="merr" id="supMsg" role="alert"></p>
+    <div class="mbtns" style="margin-top:14px">
+      <button type="button" class="btn-cancel" onclick="supCerrar()">Cancelar</button>
+      <button type="button" class="btn-ok" id="supGuardar" onclick="supGuardar()">Guardar</button>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL: REGISTRAR CONSULTA -->
 <div class="mbg" id="mConsulta" style="display:none;z-index:300" role="dialog" aria-modal="true" aria-labelledby="consTit" onclick="if(event.target===this)cerrarConsulta()">
-  <div class="mod" style="max-width:460px">
+  <div class="mc" style="max-width:460px;max-height:calc(100dvh - 2rem);overflow-y:auto">
     <p class="mt" id="consTit">Registrar consulta</p>
     <p class="ms" id="consSub"></p>
     <div id="consCampos">
@@ -5596,6 +5644,11 @@ function openDepDet(id) {
     </div>
 
     <div class="depd-section">
+      <p class="sec-title">Suplementación</p>
+      <div class="med-box" id="suplBox">${skel(2)}</div>
+    </div>
+
+    <div class="depd-section">
       <p class="sec-title">Planes de competición</p>
       <div class="med-box" id="planBox">${skel(3)}</div>
     </div>
@@ -5634,6 +5687,7 @@ function openDepDet(id) {
   loadEstado(d.id);
   loadSudoracion(d.id);
   loadPlanes(d.id);
+  loadSuplementacion(d.id);
 }
 
 
@@ -7089,6 +7143,180 @@ function deletePlan(id, depId, btn){
     ocultar: () => { if (fila) fila.style.display = 'none'; },
     restaurar: () => { if (fila) fila.style.display = ''; },
     ejecutar: async () => { const r = await sb(`planes_competicion?id=eq.${id}`, {method:'DELETE', headers:{'Prefer':'return=minimal'}}); if (!esErrorSb(r)) loadPlanes(depId); return r; }
+  });
+}
+
+// ═══════════════ SUPLEMENTACIÓN PERSONALIZADA (ficha → Plan) ═══════════════
+// El profesional elige un suplemento y la app calcula la dosis con el peso y la edad del cliente. El cálculo, las referencias y los avisos son
+// SOLO para el profesional (se guardan en `calculo`); el cliente recibe dosis, cuándo y una nota corta (cliente_mi_suplementacion()).
+// Los valores salen de la sección «Suplementación» de las herramientas (ISSN, COI 2018, EFSA, IOM): si cambian allí, cambiarlos aquí.
+const SUP_EV = { solida:['Evidencia sólida','strong'], moderada:['Evidencia moderada o mixta','mid'], contexto:['Uso clínico o de contexto','ctx'] };
+const supMg = (mg) => mg >= 1000 ? medNum(mg/1000, mg%1000 ? 1 : 0) + ' g' : Math.round(mg) + ' mg';
+const SUP_CAT = [
+  { k:'creatina', n:'Creatina monohidrato', ev:'solida', pautas:[['mant','Mantenimiento'],['carga','Carga y mantenimiento']],
+    calc:(p,o) => { if(o === 'carga'){ const g = Math.round(0.3*p.peso); return { dosis:`${g} g al día repartidos en 4 tomas durante 5-7 días; después, 3-5 g al día`, momento:'Cualquier hora; el efecto es acumulativo', explica:`Carga: 0,3 g/kg × ${medNum(p.peso,1)} kg ≈ ${g} g/día durante 5-7 días (≈ 20 g/día en 70 kg) y después mantenimiento de 3-5 g/día.`, refs:'ISSN 2017 (Kreider)', avisos:[] }; }
+      return { dosis:'5 g al día', momento:'Cualquier hora; el efecto es acumulativo', explica:'Mantenimiento: 3-5 g/día (no depende del peso). Segura y bien tolerada en sanos, incluso hasta 30 g/día durante 5 años.', refs:'ISSN 2017 (Kreider)', avisos:[] }; } },
+  { k:'cafeina', n:'Cafeína', ev:'solida',
+    calc:(p) => { const mn = 3*p.peso, mx = 6*p.peso, sug = Math.min(mn, 200), av = [];
+      if(mx > 200) av.push('La parte alta del rango (' + Math.round(mx) + ' mg) supera el tope de EFSA para una toma (200 mg): empieza por la dosis baja.');
+      return { dosis:Math.round(sug/5)*5 + ' mg', momento:'30-60 min antes del ejercicio', explica:`3-6 mg/kg × ${medNum(p.peso,1)} kg = ${Math.round(mn)}-${Math.round(mx)} mg. EFSA (2015): ≤ 200 mg en una toma y ≤ 400 mg/día en adultos sanos no gestantes. Se propone ${Math.round(sug/5)*5} mg.`, refs:'ISSN; EFSA 2015', avisos:av.concat(['Embarazo y lactancia: evitar cafeína elevada.']) }; } },
+  { k:'betalanina', n:'Beta-alanina', ev:'solida',
+    calc:() => ({ dosis:'3,2 g al día repartidos en varias tomas', momento:'Todos los días; el efecto llega a las 2-4 semanas', explica:'3,2-6,4 g/día repartidos en tomas (no depende del peso). Requiere 2-4 semanas de uso continuado. Útil en esfuerzos de 1-4 min.', refs:'ISSN', avisos:[] }) },
+  { k:'nitratos', n:'Nitratos (zumo de remolacha)', ev:'solida',
+    calc:() => ({ dosis:'300-500 mL de zumo de remolacha (300-600 mg de nitrato)', momento:'2-3 h antes del ejercicio', explica:'300-600 mg de nitrato (≈ 300-500 mL de zumo de remolacha). Mejora la eficiencia de oxígeno en resistencia.', refs:'ISSN; COI 2018', avisos:[] }) },
+  { k:'bicarbonato', n:'Bicarbonato de sodio', ev:'solida',
+    calc:(p) => { const mn = 0.2*p.peso, mx = 0.3*p.peso; return { dosis:medNum(Math.round(mn*2)/2,1) + ' g (0,2 g/kg)', momento:'60-90 min antes del ejercicio', explica:`0,2-0,3 g/kg × ${medNum(p.peso,1)} kg = ${medNum(mn,1)}-${medNum(mx,1)} g. Se propone la dosis baja.`, refs:'ISSN; COI 2018', avisos:['Puede causar molestias gastrointestinales: probarlo antes en entrenamiento.'] }; } },
+  { k:'citrulina', n:'Citrulina malato', ev:'moderada',
+    calc:() => ({ dosis:'6-8 g', momento:'', explica:'6-8 g. Posible mejora frente a la fatiga; evidencia menos consistente que creatina o cafeína.', refs:'ISSN', avisos:[] }) },
+  { k:'hmb', n:'HMB', ev:'moderada',
+    calc:(p) => { const g = 0.038*p.peso; return { dosis:medNum(g,1) + ' g al día', momento:'Todos los días; resultados con más de 6 semanas de uso', explica:`38 mg/kg/día × ${medNum(p.peso,1)} kg = ${medNum(g,1)} g/día (≈ 3 g/día). En entrenados los resultados son mixtos y mejoran con > 6 semanas de uso. Segura hasta al menos 1 año.`, refs:'ISSN 2024', avisos:[] }; } },
+  { k:'proteina', n:'Proteína en polvo', ev:'contexto', sinDosis:true,
+    calc:() => ({ dosis:'', momento:'', explica:'No es un ergogénico: sirve para completar la ingesta proteica diaria cuando no se alcanza con alimentos. La dosis es lo que falte para su objetivo.', refs:'Herramientas → Suplementación', avisos:[] }) },
+  { k:'vitd', n:'Vitamina D', ev:'contexto', analitica:true,
+    calc:() => ({ dosis:'600-2000 UI al día', momento:'', explica:'600-2000 UI/día habitual. IOM: RDA 600 UI y máximo tolerable 4000 UI (EFSA: 100 µg = 4000 UI).', refs:'IOM; EFSA', avisos:['Ajústala siempre según los niveles séricos (analítica), no de forma genérica.'] }) },
+  { k:'omega3', n:'Omega-3 (EPA y DHA)', ev:'contexto',
+    calc:() => ({ dosis:'1-2 g al día de EPA+DHA', momento:'', explica:'1-2 g/día combinados. EFSA: 250 mg/día de EPA+DHA como ingesta adecuada; hasta 5 g/día combinados en suplemento no plantea problemas de seguridad (EFSA 2012).', refs:'EFSA', avisos:[] }) },
+  { k:'b12', n:'Vitamina B12', ev:'contexto', sinDosis:true,
+    calc:() => ({ dosis:'', momento:'', explica:'Suplementación rutinaria recomendada en dietas veganas o vegetarianas estrictas. La dosis depende de la formulación del producto.', refs:'Herramientas → Suplementación', avisos:[] }) },
+  { k:'hierro', n:'Hierro', ev:'contexto', analitica:true, sinDosis:true,
+    calc:() => ({ dosis:'', momento:'', explica:'Solo ante déficit confirmado por analítica. Ferritina < 15 µg/L (OMS); en deporte se usan cortes más altos como criterio clínico (ver Referencias clínicas → Hierro y anemia).', refs:'OMS', avisos:['Nunca de forma preventiva sin datos de analítica.'] }) },
+  { k:'magnesio', n:'Magnesio', ev:'contexto',
+    calc:() => ({ dosis:'200-400 mg al día', momento:'', explica:'200-400 mg. Para calambres o sueño; evidencia mixta.', refs:'Herramientas → Suplementación', avisos:[] }) },
+  { k:'calcio', n:'Calcio', ev:'contexto', sinDosis:true,
+    calc:() => ({ dosis:'', momento:'', explica:'Solo si la dieta no llega; primero alimentos. IOM: RDA 1000 mg/día (19-50 años) y máximo tolerable 2500 mg.', refs:'IOM', avisos:[] }) },
+  { k:'otro', n:'Otro (personalizado)', ev:'contexto', sinDosis:true, libre:true,
+    calc:() => ({ dosis:'', momento:'', explica:'Suplemento fuera del catálogo: escribe tú la dosis y el motivo.', refs:'', avisos:[] }) }
+];
+let _sup = null, suplCache = {};
+const supCat = k => SUP_CAT.find(x => x.k === k) || SUP_CAT[SUP_CAT.length - 1];
+
+// Peso y edad del cliente para el cálculo: peso de la última antropometría, báscula o el que anota el propio cliente; edad por la fecha de nacimiento del perfil.
+async function supContexto(depId){
+  const seguro = p => Promise.resolve(p).then(v => Array.isArray(v) ? v : []).catch(() => []);
+  const [meds, bios, pesos, perfil] = await Promise.all([
+    seguro(getMediciones(depId)), seguro(getBio(depId)),
+    seguro(sb(`pesos_cliente?deportista_id=eq.${depId}&order=fecha.desc&limit=1&select=fecha,peso`)),
+    seguro(sb(`antropometria_perfil?deportista_id=eq.${depId}&select=fecha_nacimiento`))
+  ]);
+  const cand = [];
+  meds.map(medPunto).filter(m => m.peso != null).forEach(m => cand.push({ f:String(m.fecha).slice(0,10), p:m.peso, o:'antropometría' }));
+  bios.map(bioPunto).filter(m => m.peso != null).forEach(m => cand.push({ f:m.fecha, p:m.peso, o:'báscula' }));
+  pesos.forEach(m => cand.push({ f:String(m.fecha).slice(0,10), p:+m.peso, o:'peso anotado por el cliente' }));
+  cand.sort((a,b) => b.f.localeCompare(a.f));
+  const fn = perfil[0] && perfil[0].fecha_nacimiento;
+  return { peso: cand[0] ? cand[0].p : null, fuente: cand[0] ? `${cand[0].o}, ${infFecha(cand[0].f, true)}` : '', edad: fn ? (Date.now() - new Date(fn).getTime()) / (365.25*86400000) : null };
+}
+function supAvisos(edad){
+  const rojo = [], av = [];
+  if(edad == null) av.push('Sin fecha de nacimiento en su perfil de antropometría: no se puede comprobar si es menor de edad.');
+  else if(edad < 12) rojo.push('Menor de 12 años: los suplementos no se recomiendan (ISSN 2023).');
+  else if(edad < 18) av.push('Menor de 18 años: precaución, sobre todo con cafeína y bebidas energéticas; confirma que procede (ISSN 2023).');
+  av.push('Que lo pruebe en entrenamiento, nunca por primera vez en competición. En deportistas federados, comprobar el producto antes (antidopaje, COI 2018).');
+  return { rojo, av };
+}
+
+async function supAbrir(depId, id){
+  const d = deportistas.find(x => x.id == depId); if(!d) return;
+  const r = id ? suplCache[id] : null;
+  _sup = { depId, editId: id || null, peso: null, edad: null, dosisTocada: !!r, momentoTocado: !!r };
+  const sel = document.getElementById('supSel');
+  const grupos = ['solida','moderada','contexto'].map(g => `<optgroup label="${SUP_EV[g][0]}">${SUP_CAT.filter(x => x.ev === g).map(x => `<option value="${x.k}">${sudEsc(x.n)}</option>`).join('')}</optgroup>`).join('');
+  sel.innerHTML = grupos; sel.value = r ? r.clave : 'creatina'; sel.disabled = !!r;
+  document.getElementById('supTit').textContent = r ? 'Editar suplemento' : 'Añadir suplemento';
+  document.getElementById('supSub').textContent = d.nombre;
+  document.getElementById('supMsg').textContent = '';
+  document.getElementById('supDosis').value = r ? r.dosis : ''; document.getElementById('supMomento').value = r ? (r.momento || '') : '';
+  document.getElementById('supNotaCli').value = r ? (r.nota_cliente || '') : ''; document.getElementById('supNotaPriv').value = r ? (r.nota_privada || '') : '';
+  document.getElementById('supVisible').checked = r ? !!r.visible_cliente : true;
+  document.getElementById('supNombreBox').style.display = 'none';
+  document.getElementById('mSupl').style.display = 'flex';
+  const ctx = await supContexto(depId);
+  if(!_sup || _sup.depId != depId) return;
+  _sup.edad = ctx.edad; _sup.fuente = ctx.fuente;
+  const calcPrev = r && r.calculo && r.calculo.peso;
+  document.getElementById('supPeso').value = (calcPrev || ctx.peso) ? medNum(+(calcPrev || ctx.peso), 1).replace(',', '.') : '';
+  document.getElementById('supPesoSrc').textContent = ctx.peso ? 'Último peso: ' + ctx.fuente + '.' : 'No hay ningún peso registrado: escríbelo para calcular.';
+  supRecalcular(true);
+}
+function supCerrar(){ document.getElementById('mSupl').style.display = 'none'; _sup = null; }
+function supTocar(c){ if(_sup){ if(c === 'dosis') _sup.dosisTocada = true; else _sup.momentoTocado = true; } }
+function supRecalcular(inicial){
+  if(!_sup) return;
+  const k = document.getElementById('supSel').value, it = supCat(k), peso = parseFloat(String(document.getElementById('supPeso').value).replace(',', '.'));
+  const pautaBox = document.getElementById('supPautaBox'), pautaSel = document.getElementById('supPauta');
+  if(it.pautas){
+    if(pautaBox.dataset.k !== k){ pautaSel.innerHTML = it.pautas.map(([v,t]) => `<option value="${v}">${t}</option>`).join(''); pautaBox.dataset.k = k; }
+    pautaBox.style.display = '';
+  } else { pautaBox.style.display = 'none'; pautaBox.dataset.k = ''; }
+  document.getElementById('supNombreBox').style.display = it.libre ? '' : 'none';
+  const caja = document.getElementById('supCalc');
+  const necesitaPeso = !it.sinDosis && /\bp\.peso\b/.test(String(it.calc)) && !(k === 'creatina' && pautaSel.value !== 'carga');
+  if(necesitaPeso && !(peso > 0)){ caja.innerHTML = '<p class="sup-calc-n">Escribe el peso del cliente para calcular la dosis.</p>'; return; }
+  const c = it.calc({ peso: peso > 0 ? peso : 70, edad: _sup.edad }, it.pautas ? pautaSel.value : null);
+  const gen = supAvisos(_sup.edad), todos = gen.rojo.concat(c.avisos || [], gen.av);
+  _sup.calc = { peso: necesitaPeso ? peso : null, edad: _sup.edad != null ? Math.round(_sup.edad * 10) / 10 : null, pauta: it.pautas ? pautaSel.value : null, explica: c.explica, refs: c.refs, avisos: todos };
+  caja.innerHTML = `<p class="sup-calc-h">Solo para ti</p><p class="sup-calc-t">${sudEsc(c.explica)}</p>${c.refs ? `<p class="sup-calc-r">Fuente: ${sudEsc(c.refs)}</p>` : ''}
+    ${gen.rojo.map(a => `<p class="sup-av rojo">${sudEsc(a)}</p>`).join('')}${(c.avisos || []).concat(gen.av).map(a => `<p class="sup-av">${sudEsc(a)}</p>`).join('')}`;
+  if(!_sup.dosisTocada) document.getElementById('supDosis').value = c.dosis;
+  if(!_sup.momentoTocado) document.getElementById('supMomento').value = c.momento;
+}
+async function supGuardar(){
+  const S = _sup; if(!S) return;
+  const k = document.getElementById('supSel').value, it = supCat(k), msg = document.getElementById('supMsg');
+  const nombre = it.libre ? document.getElementById('supNombre').value.trim() : it.n, dosis = document.getElementById('supDosis').value.trim();
+  if(!nombre){ msg.textContent = 'Escribe el nombre del suplemento.'; return; }
+  if(!dosis){ msg.textContent = 'Escribe la dosis que verá el cliente.'; return; }
+  const v = id => document.getElementById(id).value.trim() || null;
+  const fila = { clave:k, nombre, dosis, momento:v('supMomento'), nota_cliente:v('supNotaCli'), nota_privada:v('supNotaPriv'), calculo:S.calc || null, visible_cliente:document.getElementById('supVisible').checked, actualizado:new Date().toISOString() };
+  const btn = document.getElementById('supGuardar'); btn.disabled = true; msg.textContent = '';
+  try{
+    const r = S.editId ? await sb(`suplementos_cliente?id=eq.${S.editId}`, { method:'PATCH', headers:{ 'Prefer':'return=minimal' }, body:JSON.stringify(fila) })
+                       : await sb('suplementos_cliente', { method:'POST', body:JSON.stringify({ ...fila, deportista_id:S.depId }) });
+    if(esErrorSb(r)) throw new Error(r.message || r.code);
+    const dep = S.depId; supCerrar(); loadSuplementacion(dep);
+    toast(S.editId ? 'Suplemento actualizado' : 'Suplemento añadido');
+  }catch(e){ msg.textContent = /42P01|PGRST205|does not exist|schema cache/i.test(String(e.message)) ? 'Falta ejecutar supabase_suplementacion.sql en Supabase.' : 'No se pudo guardar. Inténtalo de nuevo.'; }
+  btn.disabled = false;
+}
+async function loadSuplementacion(depId){
+  let rows = null;
+  try{ const r = await sb(`suplementos_cliente?deportista_id=eq.${depId}&order=creado.asc,id.asc&select=*`); if(Array.isArray(r)) rows = r; }catch(e){}
+  const el = document.getElementById('suplBox');
+  if(!el || currentDepId != depId) return;
+  if(rows === null){ el.innerHTML = '<p class="med-empty">Esta función necesita el SQL <b>supabase_suplementacion.sql</b> ejecutado en Supabase.</p>'; return; }
+  suplCache = {}; rows.forEach(r => suplCache[r.id] = r);
+  const nuevo = `<div class="med-actions">${btnSoft('Añadir suplemento', `supAbrir(${depId})`, 'plus')}</div>`;
+  if(!rows.length){ el.innerHTML = `<p class="med-empty">Sin suplementos asignados. Al cliente no le sale nada de suplementación hasta que añadas alguno.</p>${nuevo}`; return; }
+  el.innerHTML = `<div class="sup-lista">${rows.map(r => {
+    const est = !r.activo ? '<span class="sud-cond">Pausado</span>' : r.visible_cliente ? '<span class="sud-cond">Visible para el cliente</span>' : '<span class="sud-cond">Oculto para el cliente</span>';
+    return `<div class="sup-item${r.activo ? '' : ' pausa'}" id="supIt${r.id}">
+      <div class="sup-item-top"><div><div class="sup-item-n">${sudEsc(r.nombre)}</div><div class="sup-item-d">${sudEsc(r.dosis)}${r.momento ? ' · ' + sudEsc(r.momento) : ''}</div>${est}</div>
+        <div class="row-actions">${btnSoft('Cálculo', `supVer(${r.id})`, 'doc', true)}${btnSoft('Editar', `supAbrir(${depId},${r.id})`, 'doc', true)}${btnSoft(r.activo ? 'Pausar' : 'Reanudar', `supPausar(${r.id},${depId},${!r.activo})`, 'doc', true)}${btnDel('Eliminar suplemento', `supEliminar(${r.id},${depId},this)`)}</div></div>
+      <div class="sup-det" id="supDet${r.id}" hidden>${supDetalle(r)}</div>
+    </div>`; }).join('')}</div>${nuevo}`;
+}
+function supDetalle(r){
+  const c = r.calculo || {}, partes = [];
+  if(c.explica) partes.push(`<p class="sup-calc-t">${sudEsc(c.explica)}</p>`);
+  if(c.refs) partes.push(`<p class="sup-calc-r">Fuente: ${sudEsc(c.refs)}</p>`);
+  (c.avisos || []).forEach(a => partes.push(`<p class="sup-av">${sudEsc(a)}</p>`));
+  if(r.nota_cliente) partes.push(`<p class="sup-calc-r">Nota para el cliente: ${sudEsc(r.nota_cliente)}</p>`);
+  if(r.nota_privada) partes.push(`<p class="sup-calc-r">Nota privada: ${sudEsc(r.nota_privada)}</p>`);
+  return partes.join('') || '<p class="sup-calc-r">Sin cálculo guardado.</p>';
+}
+function supVer(id){ const e = document.getElementById('supDet' + id); if(e) e.hidden = !e.hidden; }
+async function supPausar(id, depId, activo){
+  const r = await sb(`suplementos_cliente?id=eq.${id}`, { method:'PATCH', headers:{ 'Prefer':'return=minimal' }, body:JSON.stringify({ activo, actualizado:new Date().toISOString() }) });
+  if(esErrorSb(r)){ toast('No se pudo cambiar. Inténtalo de nuevo.', { tipo:'error' }); return; }
+  loadSuplementacion(depId); toast(activo ? 'Suplemento reanudado: el cliente lo vuelve a ver' : 'Suplemento pausado: el cliente deja de verlo');
+}
+function supEliminar(id, depId, btn){
+  const fila = btn && btn.closest('.sup-item');
+  deshacerBorrado({
+    texto: 'Suplemento eliminado',
+    ocultar: () => { if(fila) fila.style.display = 'none'; },
+    restaurar: () => { if(fila) fila.style.display = ''; },
+    ejecutar: async () => { const r = await sb(`suplementos_cliente?id=eq.${id}`, { method:'DELETE', headers:{ 'Prefer':'return=minimal' } }); if(!esErrorSb(r)) loadSuplementacion(depId); return r; }
   });
 }
 

@@ -117,6 +117,11 @@ body.in-plan .topbar{display:none}
 #vreg .seg-inp{display:block;box-sizing:border-box;width:100%;max-width:100%;min-width:0;height:46px;padding:0 12px;text-align:left;-webkit-appearance:none;appearance:none}
 #vreg select.seg-inp{padding-right:30px;background:var(--sf) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236A6963' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") no-repeat right 12px center}
 #vreg .card .note{margin:12px 2px 0}
+.supl-card{margin-bottom:10px;padding:14px 16px}
+.supl-n{font-size:15px;font-weight:700;color:var(--g900)}
+.supl-d{font-size:15px;font-weight:600;color:var(--t600);margin-top:2px}
+body.dark-mode .supl-d{color:var(--t100)}
+.supl-m{font-size:13px;color:var(--g500);margin-top:3px}
 .fgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:12px}
 .fth{position:relative;border:0;padding:0;background:var(--g100);border-radius:10px;overflow:hidden;aspect-ratio:3/4;cursor:pointer}
 .fth img{width:100%;height:100%;object-fit:cover;display:block}
@@ -393,12 +398,23 @@ body.dark-mode :focus-visible{outline-color:#5CC8A6}
     <span><span class="tile-t">Mi planificación nutricional</span><br><span class="tile-d">Tu plan personalizado</span></span>
     <span class="tile-go"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></span>
   </button>
+  <button class="tile" id="tileSupl" style="display:none" onclick="abrirSupl()">
+    <span class="tile-ic"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M10.5 20.5 3.5 13.5a4.95 4.95 0 0 1 7-7l7 7a4.95 4.95 0 0 1-7 7z"/><line x1="8.5" y1="8.5" x2="15.5" y2="15.5"/></svg></span>
+    <span><span class="tile-t">Mi suplementación</span><br><span class="tile-d" id="tileSuplD">Qué tomar y cuándo</span></span>
+    <span class="tile-go"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></span>
+  </button>
   <div class="home-sep" id="compSep" style="display:none"><span>Próxima competición</span></div>
   <button class="tile tile-comp" id="tileComp" style="display:none" onclick="abrirComp()">
     <span class="tile-ic au"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M4 22V4"/><path d="M4 4h13l-2 4 2 4H4"/></svg></span>
     <span><span class="tile-t">Mi plan de competición</span><br><span class="tile-d">Qué comer y beber antes, durante y después</span><br><span class="tile-badge" id="tileCompB"></span></span>
     <span class="tile-go"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></span>
   </button>
+</div></div>
+
+<div id="vsupl" class="view" role="main"><div class="wrap">
+  <button class="back" onclick="show('vhome')"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Inicio</button>
+  <h1 class="h2">Mi suplementación</h1>
+  <div id="suplBody"></div>
 </div></div>
 
 <div id="vdatos" class="view" role="main"><div class="wrap">
@@ -572,7 +588,7 @@ async function guardarPassword(){
 function logout(){
   const s=authLoad();
   if(s) fetch(SURL+'/auth/v1/logout',{method:'POST',headers:{'apikey':SKEY,'Authorization':'Bearer '+s.access_token}}).catch(()=>{});
-  authClear(); FICHA=DATOS=REG=null; PLANES=[]; REG_CMP=null; 
+  authClear(); FICHA=DATOS=REG=null; PLANES=[]; SUPL=[]; REG_CMP=null; 
   $('lpass').value=''; $('lerr').textContent='';
   show('vlogin');
 }
@@ -593,7 +609,8 @@ async function entrar(){
   $('hello').textContent=nombre?(saludo+', '+nombre):saludo;
   $('helloSub').textContent=[FICHA.deporte,FICHA.objetivo].filter(Boolean).join(' · ')||'Aquí tienes tu información.';
   try{ const pl=await rpc('cliente_mis_planes'); PLANES=Array.isArray(pl)?pl:[]; }catch(e){ PLANES=[]; }
-  pintarNota(); pintarRevision(); pintarInstTip(); pintarTileForms(); pintarTileComp(); pintarMensajeDia();
+  try{ const su=await rpc('cliente_mi_suplementacion'); SUPL=Array.isArray(su)?su:[]; }catch(e){ SUPL=[]; }   // opcional: sin su SQL, o sin nada asignado, no sale la opción
+  pintarNota(); pintarRevision(); pintarInstTip(); pintarTileForms(); pintarTileComp(); pintarTileSupl(); pintarMensajeDia();
   show('vhome');
 }
 // Nota que el profesional deja para el cliente (si hay); se muestra arriba, antes de la próxima revisión.
@@ -1079,7 +1096,22 @@ function evolucionSeg(){
 }
 
 // ═══ Plan de competición (copia ya calculada por el profesional; solo hasta el día siguiente a la competición) ═══
-let PLANES=[];
+let PLANES=[], SUPL=[];
+// Suplementación: solo aparece si el profesional ha asignado algo; el cliente ve la dosis, cuándo y una nota corta (nunca el cálculo ni las referencias).
+function pintarTileSupl(){
+  const t=$('tileSupl'); if(!t) return; const n=SUPL.length;
+  t.style.display=n?'flex':'none';
+  if(n) $('tileSuplD').textContent=n===1?'1 suplemento: qué tomar y cuándo':n+' suplementos: qué tomar y cuándo';
+}
+function abrirSupl(){
+  $('suplBody').innerHTML=SUPL.map(x=>`<div class="card supl-card">
+      <div class="supl-n">${esc(x.nombre)}</div>
+      <div class="supl-d">${esc(x.dosis)}</div>
+      ${x.momento?`<div class="supl-m">${esc(x.momento)}</div>`:''}
+      ${x.nota?`<p class="note" style="margin:8px 0 0">${esc(x.nota)}</p>`:''}
+    </div>`).join('')+`<p class="note" style="margin:14px 2px 0">Pruébalo siempre en entrenamiento, nunca por primera vez en competición. Si compites federado, consulta antes con tu nutricionista.</p>`;
+  show('vsupl');
+}
 const DOW=['dom','lun','mar','mié','jue','vie','sáb'];
 // Solo se permite <b> en los textos de opciones (vienen del panel del profesional, pero se escapa todo lo demás).
 const seguro=t=>esc(t).replace(/&lt;(\/?)b&gt;/g,'<$1b>');
