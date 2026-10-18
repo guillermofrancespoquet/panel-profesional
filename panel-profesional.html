@@ -348,6 +348,23 @@ body.dark-mode .acc-pill.on{color:var(--t100)}
 .depd-rev-side .rev-badge{margin-top:0;white-space:nowrap}
 .rev-btn{display:inline-flex;align-items:center;gap:5px;height:28px;padding:0 11px;border-radius:14px;border:.5px solid var(--bd);background:transparent;color:var(--t600);font:inherit;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap}
 .rev-btn:hover{background:var(--t50)}
+.dia-dia{margin:14px 0 6px;font-size:12px;font-weight:700;color:var(--t800);text-transform:capitalize}
+.dia-fila{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-top:.5px solid var(--bd)}
+.dia-th{flex:0 0 64px;width:64px;height:64px;aspect-ratio:auto;border-radius:10px}
+.dia-tx{flex:1;min-width:0}
+.dia-mo{font-size:13.5px;font-weight:700;color:var(--g900)}
+.dia-no{margin:2px 0 0;font-size:13px;line-height:1.45;color:var(--g700);word-wrap:break-word}
+.dia-sinnota{color:var(--g500);font-style:italic}
+.dia-com{margin-top:7px;padding:7px 10px;border-radius:9px;background:var(--pill-g);color:var(--t800);font-size:12.5px;line-height:1.45}
+.dia-com b{display:block;font-size:10.5px;letter-spacing:.04em;text-transform:uppercase;margin-bottom:1px}
+body.dark-mode .dia-com{color:var(--t100)}
+.dia-com-a{display:flex;gap:12px;margin-top:4px}
+.dia-com-a button{background:none;border:0;padding:0;font:inherit;font-size:11.5px;color:inherit;text-decoration:underline;cursor:pointer;opacity:.8}
+.dia-form{display:flex;gap:6px;margin-top:7px}
+.dia-form[hidden]{display:none}
+.dia-form .inp{flex:1;min-width:0;height:34px;font-size:13px}
+.dia-form .btn-ok{height:34px;padding:0 13px;font-size:12.5px;width:auto;flex:0 0 auto}
+@media(max-width:860px){.dia-form{flex-wrap:wrap}.dia-form .inp{font-size:16px;height:38px;flex:1 1 100%}.dia-form .btn-ok{height:38px;margin-left:auto}}
 .sup-calc{margin-top:12px;padding:12px 14px;border:.5px solid var(--bd);border-radius:12px;background:var(--bg)}
 .sup-calc-h{margin:0 0 4px;font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--gold-dk)}
 .sup-calc-t{margin:0 0 4px;font-size:12.5px;line-height:1.5;color:var(--g700)}
@@ -3692,9 +3709,10 @@ async function pintarAvisosDash(deps, citasAll, todayISO){
   //    y clientes que antes anotaban su peso y llevan días sin hacerlo (si las tablas no existen, simplemente no se avisa)
   const conSeg = deps.filter(d => d.formularios && d.formularios.seguimiento && d.formularios.seguimiento.activo);
   const lunes = lunesMadridISO(), hace = n => { const x = new Date(lunes+'T00:00:00'); x.setDate(x.getDate()-n); return localISO(x); };
-  const [segs, pesos] = await Promise.all([
+  const [segs, pesos, comidas] = await Promise.all([
     Promise.resolve(sb(`seguimientos?semana=gte.${hace(21)}&select=deportista_id,semana,respuestas&order=semana.desc`)).then(a=>Array.isArray(a)?a:null).catch(()=>null),
-    Promise.resolve(sb(`pesos_cliente?fecha=gte.${hace(60)}&select=deportista_id,fecha&order=fecha.desc`)).then(a=>Array.isArray(a)?a:null).catch(()=>null)
+    Promise.resolve(sb(`pesos_cliente?fecha=gte.${hace(60)}&select=deportista_id,fecha&order=fecha.desc`)).then(a=>Array.isArray(a)?a:null).catch(()=>null),
+    Promise.resolve(sb(`comidas_cliente?fecha=gte.${localISO(new Date(Date.now() - 7*86400000))}&comentario=is.null&select=deportista_id`)).then(a=>Array.isArray(a)?a:null).catch(()=>null)
   ]);
   const aviso = (d, tag, cls) => avisos.push({id:d.id, n:d.nombre, sub:d.deporte||'', tag, cls});
   if(segs){
@@ -3714,6 +3732,10 @@ async function pintarAvisosDash(deps, citasAll, todayISO){
   if(pesos){
     const ultimo = {}; pesos.forEach(x=>{ const k = String(x.deportista_id); if(!ultimo[k]) ultimo[k] = String(x.fecha).slice(0,10); });
     deps.forEach(d=>{ const u = ultimo[String(d.id)]; if(!u) return; const dias = Math.round((new Date(todayISO+'T00:00:00') - new Date(u+'T00:00:00')) / 86400000); if(dias >= 14) aviso(d, `Sin anotar el peso hace ${dias} días`, 'gold'); });
+  }
+  if(comidas){   // comidas del diario de los últimos 7 días que aún no has comentado
+    const n = {}; comidas.forEach(x => { const k = String(x.deportista_id); n[k] = (n[k] || 0) + 1; });
+    deps.forEach(d => { const c = n[String(d.id)]; if(c) aviso(d, `${c} comida${c!==1?'s':''} del diario sin comentar`, 'gold'); });
   }
   // 2) Revisión sin cita en la agenda (fecha próxima) o con la fecha ya pasada y sin nueva
   deps.forEach(d=>{
@@ -5604,6 +5626,11 @@ function openDepDet(id) {
     </div>
 
     <div class="depd-section">
+      <p class="sec-title">Diario de comidas</p>
+      <div class="med-box" id="diaBox">${skel(2)}</div>
+    </div>
+
+    <div class="depd-section">
       <p class="sec-title">Formularios del cliente</p>
       <div class="med-box" id="frmBox">${frmHtml(d)}</div>
     </div>
@@ -5683,6 +5710,7 @@ function openDepDet(id) {
   loadAccesoCliente(d.id);
   loadSeguimientos(d.id);
   loadRegCliente(d.id);
+  loadDiario(d.id);
   loadMediciones(d.id);
   loadEstado(d.id);
   loadSudoracion(d.id);
@@ -5775,6 +5803,47 @@ async function loadRegCliente(depId){
       ${fotos.length > 1 ? `<div class="med-actions">${btnSoft('Comparar fotos','compararFotosCli()','chart')}</div>` : ''}`;
   }else h += '<p class="med-empty" style="margin-top:12px">El cliente aún no ha subido fotos.</p>';
   box.innerHTML = h; cargarFotosCli(box);
+}
+// ── Diario de comidas del cliente (tabla comidas_cliente; fotos en fotos-clientes/<id>/comidas/) ──
+const DIA_MOMENTOS = {desayuno:'Desayuno', media_manana:'Media mañana', comida:'Comida', merienda:'Merienda', cena:'Cena', otro:'Otra'};
+const diaDia = (f, hoy) => { const a = new Date(hoy + 'T00:00:00'); a.setDate(a.getDate()-1); return f === hoy ? 'Hoy' : f === localISO(a) ? 'Ayer' : new Date(f + 'T00:00:00').toLocaleDateString('es-ES', {weekday:'long', day:'numeric', month:'long'}); };
+let _diaRows = {};
+async function loadDiario(depId){
+  const box = document.getElementById('diaBox'); if(!box) return;
+  let rows = null;
+  try{ const r = await sb(`comidas_cliente?deportista_id=eq.${depId}&fecha=gte.${localISO(new Date(Date.now() - 14*86400000))}&order=fecha.desc,id.desc&select=*`); if(Array.isArray(r)) rows = r; }catch(e){}
+  if(currentDepId != depId || !document.getElementById('diaBox')) return;
+  if(rows === null){ box.innerHTML = '<p class="med-empty">Esta función necesita el SQL <b>supabase_diario_comidas.sql</b> ejecutado en Supabase.</p>'; return; }
+  if(!rows.length){ box.innerHTML = '<p class="med-empty">El cliente aún no ha anotado comidas desde su área (últimos 14 días).</p>'; return; }
+  _diaRows = {}; rows.forEach(r => _diaRows[r.id] = r);
+  const sin = rows.filter(r => !r.comentario).length, hoy = localISO(new Date()), por = {};
+  rows.forEach(r => (por[String(r.fecha).slice(0,10)] = por[String(r.fecha).slice(0,10)] || []).push(r));
+  box.innerHTML = `<div class="med-head"><span class="med-date">Últimos 14 días</span><span class="med-ago">${rows.length} comida${rows.length!==1?'s':''} · ${sin ? sin + ' sin comentar' : 'todas comentadas'} · solo las ves tú</span></div>` +
+    Object.keys(por).sort().reverse().map(f => `<p class="dia-dia">${sudEsc(diaDia(f, hoy))}</p>` + por[f].slice().sort((a,b) => a.id - b.id).map(r => diaFila(r, depId)).join('')).join('');
+  cargarFotosCli(box);
+}
+function diaFila(r, depId){
+  const com = r.comentario
+    ? `<div class="dia-com"><b>Tu comentario</b>${sudEsc(r.comentario)}<span class="dia-com-a"><button type="button" onclick="diaEditar(${r.id})">Editar</button><button type="button" onclick="diaComentar(${r.id},${depId},true)">Quitar</button></span></div>`
+    : '';
+  const form = `<div class="dia-form" id="diaF${r.id}"${r.comentario ? ' hidden' : ''}><input type="text" class="inp" id="diaC${r.id}" maxlength="300" value="${sudEsc(r.comentario || '')}" placeholder="Un comentario corto para el cliente…" aria-label="Comentario" onkeydown="if(event.key==='Enter')diaComentar(${r.id},${depId})"><button type="button" class="btn-ok" onclick="diaComentar(${r.id},${depId})">${r.comentario ? 'Guardar' : 'Comentar'}</button></div>`;
+  return `<div class="dia-fila">${r.foto_path ? `<button type="button" class="fth dia-th" onclick="abrirFotoComida(${r.id})" aria-label="Ver la foto"><img alt="" data-p="${sudEsc(r.foto_path)}"></button>` : ''}
+    <div class="dia-tx"><div class="dia-mo">${sudEsc(DIA_MOMENTOS[r.momento] || 'Otra')}</div>${r.nota ? `<p class="dia-no">${sudEsc(r.nota)}</p>` : '<p class="dia-no dia-sinnota">Solo foto</p>'}${com}${form}</div></div>`;
+}
+function diaEditar(id){ const f = document.getElementById('diaF' + id); if(f){ f.hidden = false; const i = document.getElementById('diaC' + id); if(i) i.focus(); } }
+async function diaComentar(id, depId, quitar){
+  const txt = quitar ? '' : (document.getElementById('diaC' + id).value || '').trim();
+  if(!quitar && !txt){ toast('Escribe un comentario.', {tipo:'error'}); return; }
+  const r = await sb(`comidas_cliente?id=eq.${id}`, {method:'PATCH', headers:{'Prefer':'return=minimal'}, body:JSON.stringify({comentario: txt || null})});
+  if(esErrorSb(r)){ toast('No se pudo guardar el comentario.', {tipo:'error'}); return; }
+  toast(quitar ? 'Comentario quitado' : 'Comentario enviado: el cliente lo verá en su diario');
+  loadDiario(depId);
+}
+function abrirFotoComida(id){
+  const r = _diaRows[id]; if(!r) return;
+  document.getElementById('fotoTitulo').textContent = (DIA_MOMENTOS[r.momento] || 'Comida') + ' · ' + fotoFecha(r.fecha);
+  document.getElementById('fotoBody').innerHTML = `<img class="foto-grande" alt="Foto de la comida" data-p="${sudEsc(r.foto_path)}">`;
+  document.getElementById('mFoto').style.display = 'flex'; cargarFotosCli(document.getElementById('fotoBody'));
 }
 function abrirFotoCli(id){
   const f = _regFotos.find(x => x.id == id); if(!f) return;
@@ -6033,11 +6102,12 @@ async function revGuardar(depId, quitar){
 // ── Estado del cliente: resumen calculado con lo que ya hay (mediciones, seguimiento, peso, consultas, revisión y formularios) ──
 async function loadEstado(depId){
   const seguro = p => Promise.resolve(p).then(v => Array.isArray(v) ? v : []).catch(() => []);
-  const [meds, bios, segs, pesos, hist] = await Promise.all([
+  const [meds, bios, segs, pesos, hist, comidas] = await Promise.all([
     seguro(getMediciones(depId)), seguro(getBio(depId)),
     seguro(sb(`seguimientos?deportista_id=eq.${depId}&order=semana.desc&limit=6&select=semana,respuestas`)),
     seguro(sb(`pesos_cliente?deportista_id=eq.${depId}&order=fecha.desc&limit=1&select=fecha,peso`)),
-    seguro(sb(`historial_deportista?deportista_id=eq.${depId}&order=fecha.desc&limit=1&select=fecha`))
+    seguro(sb(`historial_deportista?deportista_id=eq.${depId}&order=fecha.desc&limit=1&select=fecha`)),
+    seguro(sb(`comidas_cliente?deportista_id=eq.${depId}&fecha=gte.${localISO(new Date(Date.now() - 7*86400000))}&select=id,comentario`))
   ]);
   const el = document.getElementById('estBox'), d = deportistas.find(x => x.id == depId);
   if(!el || !d || currentDepId != depId) return;
@@ -6085,6 +6155,10 @@ async function loadEstado(depId){
     const n = dias(pesos[0].fecha);
     add('Peso del cliente', `${medNum(+pesos[0].peso, 1)} kg · ${hace(n)} (autodeclarado)`, n >= 14);
   }
+
+  // Diario de comidas (últimos 7 días)
+  if(comidas.length){ const sinCom = comidas.filter(x => !x.comentario).length;
+    add('Diario de comidas', `Últimos 7 días: ${comidas.length} comida${comidas.length!==1?'s':''} anotada${comidas.length!==1?'s':''}${sinCom ? `, ${sinCom} sin comentar` : ', todas comentadas'}.`, sinCom > 0); }
 
   // Última consulta (valoraciones incluidas) y próxima revisión
   const ultima = [hist[0] && dia(hist[0].fecha), pts.length && dia(pts[pts.length - 1].fecha), bpts.length && dia(bpts[bpts.length - 1].fecha)].filter(Boolean).sort().pop();
@@ -7349,14 +7423,15 @@ const TL_ICO={
 // Reúne en una sola lista cronológica todo lo que ha pasado con el deportista (sesiones, mediciones, seguimientos, archivos, tests y planes).
 async function loadHistorial(depId){
   const seguro = (p)=>Promise.resolve(p).then(v=>Array.isArray(v)?v:[]).catch(()=>[]);
-  const [rows, meds, segs, sud, planes, bios, pesosCli, fotosCli] = await Promise.all([
+  const [rows, meds, segs, sud, planes, bios, pesosCli, fotosCli, comidasCli] = await Promise.all([
     seguro(getHistorial(depId)), seguro(getMediciones(depId)),
     seguro(sb(`seguimientos?deportista_id=eq.${depId}&order=semana.asc&select=semana,respuestas`)),
     seguro(sb(`tests_sudoracion?deportista_id=eq.${depId}&select=id,fecha`)),
     seguro(sb(`planes_competicion?deportista_id=eq.${depId}&select=id,fecha,evento,created_at,visible_cliente`)),
     seguro(sb(`bioimpedancias?deportista_id=eq.${depId}&select=id,fecha,aparato,valores`)),
     seguro(sb(`pesos_cliente?deportista_id=eq.${depId}&select=id,fecha,peso`)),
-    seguro(sb(`fotos_cliente?deportista_id=eq.${depId}&select=id,fecha,vista`))
+    seguro(sb(`fotos_cliente?deportista_id=eq.${depId}&select=id,fecha,vista`)),
+    seguro(sb(`comidas_cliente?deportista_id=eq.${depId}&select=id,fecha,momento,nota`))
   ]);
   const el = document.getElementById('histList');
   if(!el || currentDepId != depId) return;
@@ -7371,6 +7446,7 @@ async function loadHistorial(depId){
   // Lo que anota el cliente desde su área: pesos (en «Seguimiento») y fotos (en «Archivos»)
   pesosCli.forEach(x=>ev.push({tipo:'seguimiento', fecha:dia(x.fecha), t:'Peso anotado por el cliente', s:medNum(+x.peso,1)+' kg · autodeclarado'}));
   fotosCli.forEach(x=>ev.push({tipo:'archivo', fecha:dia(x.fecha), t:'Foto de progreso del cliente', s:FOTO_VISTAS[x.vista]||'Otra'}));
+  comidasCli.forEach(x=>ev.push({tipo:'seguimiento', fecha:dia(x.fecha), t:'Comida anotada por el cliente', s:(DIA_MOMENTOS[x.momento]||'Otra') + (x.nota ? ' · ' + sudEsc(String(x.nota).slice(0,80)) : '')}));
   (d.archivos||[]).forEach(a=>{ if(!a||!a.fecha) return; ev.push({tipo:'archivo', fecha:dia(a.fecha), t:(a.visible_cliente?'Compartido con el cliente: ':'Archivo: ')+(a.nombre||'sin nombre')}); });
   sud.forEach(x=>ev.push({tipo:'plan', fecha:dia(x.fecha), t:'Test de sudoración'}));
   planes.forEach(x=>ev.push({tipo:'plan', fecha:dia(x.created_at||x.fecha), t:'Plan de competición'+(x.evento?': '+x.evento:''), s:'Competición el '+new Date(x.fecha+'T00:00:00').toLocaleDateString('es-ES',{day:'numeric',month:'short',year:'numeric'})+(x.visible_cliente?' · compartido con el cliente':'')}));
