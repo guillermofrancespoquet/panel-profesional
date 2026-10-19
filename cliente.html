@@ -266,6 +266,9 @@ table.hist td.n{font-weight:600;white-space:nowrap}
 .file-d{font-size:11.5px;color:var(--g400)}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;background:var(--t900);color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:600;padding:12px 18px;text-decoration:none}
 .btn:hover{background:var(--t800)}
+.push-line{font-size:12.5px;color:var(--g400);text-align:center;margin:14px 0 0;line-height:1.5}
+.push-line button{background:none;border:0;padding:6px 4px;font:inherit;font-weight:600;color:var(--t600);text-decoration:underline;cursor:pointer;min-height:32px}
+.inst-tip .btn{margin-right:6px}
 .btn.soft{background:var(--pill-g);color:var(--t800);box-shadow:inset 0 0 0 .5px var(--pill-g-bd);font-size:12.5px;padding:8px 13px;border-radius:9px}
 .empty{font-size:13.5px;color:var(--g500);line-height:1.6}
 .center{text-align:center;padding:3rem 1rem}
@@ -493,6 +496,12 @@ body>*:not(#mnPrint){display:none !important}
     <p id="instTxt"></p>
     <button class="btn soft" onclick="cerrarInstTip()">Entendido</button>
   </div>
+  <div class="inst-tip" id="pushTip" style="display:none">
+    <b>¿Te avisamos el lunes?</b>
+    <p>Cada lunes a las 9:00 te llegará un aviso al móvil si aún no has enviado tu seguimiento semanal. Solo ese aviso, nada más.</p>
+    <button class="btn" id="pushOn" onclick="pushActivar()">Activar aviso</button>
+    <button class="btn soft" onclick="pushAhoraNo()">Ahora no</button>
+  </div>
   <div class="nota-card" id="notaCard" style="display:none">
     <span class="tile-ic"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
     <div style="flex:1;min-width:0">
@@ -597,6 +606,7 @@ body>*:not(#mnPrint){display:none !important}
   <h1 class="h2">Formularios</h1>
   <p class="fcard-h">Rellénalos con calma: nos ayudan a preparar tu planificación. Cuando termines cada uno, pulsa «Ya lo he enviado» para que quede marcado.</p>
   <div id="formsBody"></div>
+  <p class="push-line" id="pushLine" style="display:none"></p>
 </div></div>
 
 <div id="vform" class="view" role="main">
@@ -761,8 +771,9 @@ async function entrar(){
   try{ const dd=await rpc('cliente_mis_comidas'); DIA=dd&&Array.isArray(dd.comidas)?dd:null; }catch(e){ DIA=null; }   // opcional: sin su SQL no sale la tarjeta
   try{ const mm=await rpc('cliente_mi_menu'); MENU_DATA=mm&&mm.menu&&Array.isArray(mm.menu.semanas)&&mm.menu.semanas.length?mm:null; }catch(e){ MENU_DATA=null; }   // opcional: sin su SQL, o sin menú publicado, no sale la tarjeta
   try{ const su=await rpc('cliente_mi_suplementacion'); SUPL=Array.isArray(su)?su:[]; }catch(e){ SUPL=[]; }   // opcional: sin su SQL, o sin nada asignado, no sale la opción
-  pintarNota(); pintarRevision(); pintarInstTip(); pintarTileForms(); pintarTileComp(); pintarTileSupl(); pintarTileDia(); pintarMensajeDia();
+  pintarNota(); pintarRevision(); pintarInstTip(); pintarTileForms(); pintarTileComp(); pintarTileSupl(); pintarTileDia(); pintarMensajeDia(); pintarPush();
   show('vhome');
+  abrirDesdeAviso();
 }
 // Nota que el profesional deja para el cliente (si hay); se muestra arriba, antes de la próxima revisión.
 function pintarNota(){
@@ -1176,6 +1187,64 @@ function pintarInstTip(){
   t.style.display='block';
 }
 function cerrarInstTip(){ try{ localStorage.setItem('nl_cliente_inst','1'); }catch(e){} $('instTip').style.display='none'; }
+
+// ═══ Aviso del lunes en el móvil (notificación push; supabase_notificaciones.sql + Edge Function avisos-seguimiento) ═══
+// Clave pública VAPID (no es secreta). Mientras esté vacía, la función no se ofrece.
+const VAPID_PUBLICA='';
+function pushSoportado(){ return !!VAPID_PUBLICA&&'serviceWorker' in navigator&&'PushManager' in window&&'Notification' in window; }
+function pushClave(){ const b=VAPID_PUBLICA.replace(/-/g,'+').replace(/_/g,'/'), t=atob(b+'='.repeat((4-b.length%4)%4)); return Uint8Array.from(t,c=>c.charCodeAt(0)); }
+async function pushSub(){
+  try{ const reg=await navigator.serviceWorker.getRegistration('cliente.html'); return reg&&reg.pushManager?await reg.pushManager.getSubscription():null; }catch(e){ return null; }
+}
+// Solo se ofrece a quien tiene el seguimiento semanal activado. Si ya lo tiene activado, se confirma en «Formularios».
+async function pintarPush(){
+  const tip=$('pushTip'), ln=$('pushLine'); if(!tip||!ln) return;
+  tip.style.display='none'; ln.style.display='none';
+  const f=FICHA&&FICHA.forms;
+  if(!pushSoportado()||!f||!f.seguimiento_activo||!f.seguimiento_propio) return;
+  const sub=Notification.permission==='granted'?await pushSub():null;
+  if(sub){
+    ln.innerHTML='Aviso del lunes activado en este dispositivo · <button type="button" onclick="pushDesactivar()">Desactivar</button>'; ln.style.display='block';
+    rpc('cliente_guardar_push',{p_endpoint:sub.endpoint}).catch(()=>{});   // por si el dispositivo se guardó con otra cuenta
+    return;
+  }
+  if(Notification.permission==='denied') return;   // bloqueado en el navegador: no insistir
+  let no=false; try{ no=localStorage.getItem('nl_cliente_push_no')==='1'; }catch(e){}
+  if(no){ ln.innerHTML='<button type="button" onclick="pushActivar()">Avisarme los lunes si me falta el seguimiento</button>'; ln.style.display='block'; return; }
+  tip.style.display='block';
+}
+function pushAhoraNo(){ try{ localStorage.setItem('nl_cliente_push_no','1'); }catch(e){} pintarPush(); }
+async function pushActivar(){
+  const b=$('pushOn'); if(b){ b.disabled=true; b.textContent='Activando…'; }
+  try{
+    const perm=await Notification.requestPermission();   // se pide al tocar el botón (iOS lo exige)
+    if(perm!=='granted'){ toast('No has dado permiso para los avisos. Puedes activarlo en los ajustes del navegador.',{tipo:'error'}); return; }
+    await navigator.serviceWorker.register('sw-cliente.js',{scope:'cliente.html'});
+    const reg=await navigator.serviceWorker.ready.then(()=>navigator.serviceWorker.getRegistration('cliente.html'));
+    let sub=await reg.pushManager.getSubscription();
+    if(!sub) sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:pushClave()});
+    await rpc('cliente_guardar_push',{p_endpoint:sub.endpoint});
+    try{ localStorage.removeItem('nl_cliente_push_no'); }catch(e){}
+    toast('Listo: el lunes te avisaremos si falta el seguimiento.');
+  }catch(e){
+    toast(e&&e.status===404?'Los avisos todavía no están activados en tu cuenta.':'No se pudo activar el aviso. Inténtalo de nuevo.',{tipo:'error'});
+  }finally{ if(b){ b.disabled=false; b.textContent='Activar aviso'; } pintarPush(); }
+}
+async function pushDesactivar(){
+  try{
+    const sub=await pushSub();
+    if(sub){ const ep=sub.endpoint; await sub.unsubscribe(); await rpc('cliente_borrar_push',{p_endpoint:ep}).catch(()=>{}); }
+    try{ localStorage.setItem('nl_cliente_push_no','1'); }catch(e){}
+    toast('Aviso desactivado.');
+  }catch(e){ toast('No se pudo desactivar. Inténtalo de nuevo.',{tipo:'error'}); }
+  pintarPush();
+}
+// Al tocar el aviso se abre la app directamente en el seguimiento (si sigue pendiente).
+function abrirDesdeAviso(){
+  let ab=false; try{ const u=new URL(location.href); ab=u.searchParams.get('abrir')==='seguimiento'; if(ab){ u.searchParams.delete('abrir'); history.replaceState(null,'',u.pathname+u.search+u.hash); } }catch(e){}
+  if(ab&&FICHA&&FICHA.forms&&FICHA.forms.seguimiento_activo&&FICHA.forms.seguimiento_propio&&FICHA.forms.seguimiento_pendiente) abrirSeg();
+}
+if('serviceWorker' in navigator) navigator.serviceWorker.addEventListener('message',e=>{ if(e.data&&e.data.abrir==='seguimiento'&&FICHA){ history.replaceState(null,'',location.pathname+'?abrir=seguimiento'); abrirDesdeAviso(); } });
 
 // ═══ Formularios (Google Forms): los enlaces son de Guillermo; el «hecho» lo marca el cliente con un botón ═══
 const FORMS=[
