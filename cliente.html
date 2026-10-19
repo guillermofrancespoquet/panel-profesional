@@ -519,11 +519,6 @@ body>*:not(#mnPrint){display:none !important}
     <span><span class="tile-t">Mi planificación nutricional</span><br><span class="tile-d">Tu plan personalizado</span></span>
     <span class="tile-go"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></span>
   </button>
-  <button class="tile" id="tileMenu" style="display:none" onclick="abrirMenu()">
-    <span class="tile-ic au"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3zm0 0v7"/></svg></span>
-    <span><span class="tile-t">Mi menú semanal</span><br><span class="tile-d">Qué comer cada día y tu lista de la compra</span></span>
-    <span class="tile-go"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></span>
-  </button>
   <button class="tile" id="tileSupl" style="display:none" onclick="abrirSupl()">
     <span class="tile-ic"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M10.5 20.5 3.5 13.5a4.95 4.95 0 0 1 7-7l7 7a4.95 4.95 0 0 1-7 7z"/><line x1="8.5" y1="8.5" x2="15.5" y2="15.5"/></svg></span>
     <span><span class="tile-t">Mi suplementación</span><br><span class="tile-d" id="tileSuplD">Qué tomar y cuándo</span></span>
@@ -561,7 +556,7 @@ body>*:not(#mnPrint){display:none !important}
 
 <div id="vmenu" class="view" role="main"><div class="wrap">
   <button class="back" onclick="show('vhome')"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Inicio</button>
-  <h1 class="h2">Mi menú semanal</h1>
+  <h1 class="h2">Mi planificación nutricional</h1>
   <div id="menuBody"></div>
 </div></div>
 
@@ -766,7 +761,7 @@ async function entrar(){
   try{ const dd=await rpc('cliente_mis_comidas'); DIA=dd&&Array.isArray(dd.comidas)?dd:null; }catch(e){ DIA=null; }   // opcional: sin su SQL no sale la tarjeta
   try{ const mm=await rpc('cliente_mi_menu'); MENU_DATA=mm&&mm.menu&&Array.isArray(mm.menu.semanas)&&mm.menu.semanas.length?mm:null; }catch(e){ MENU_DATA=null; }   // opcional: sin su SQL, o sin menú publicado, no sale la tarjeta
   try{ const su=await rpc('cliente_mi_suplementacion'); SUPL=Array.isArray(su)?su:[]; }catch(e){ SUPL=[]; }   // opcional: sin su SQL, o sin nada asignado, no sale la opción
-  pintarNota(); pintarRevision(); pintarInstTip(); pintarTileForms(); pintarTileComp(); pintarTileMenu(); pintarTileSupl(); pintarTileDia(); pintarMensajeDia();
+  pintarNota(); pintarRevision(); pintarInstTip(); pintarTileForms(); pintarTileComp(); pintarTileSupl(); pintarTileDia(); pintarMensajeDia();
   show('vhome');
 }
 // Nota que el profesional deja para el cliente (si hay); se muestra arriba, antes de la próxima revisión.
@@ -1123,6 +1118,7 @@ async function diaBorrar(id,btn){
 
 // ═══ Mi planificación ═══
 function abrirPlan(){
+  if(MENU_DATA){ abrirMenu(); return; }   // con plan publicado en la app nueva, «Mi planificación nutricional» es ese plan; si no, el enlace de siempre
   show('vplan');
   const url=FICHA&&FICHA.plan_url, ok=!!(url&&/^https?:\/\//i.test(url));
   $('planExt').style.visibility=ok?'visible':'hidden';
@@ -1436,7 +1432,6 @@ function mnvCompra(s) {
   const g = mnCompraAgrupa(filas), hechas = filas.filter(f => marcas[f.k]).length;
   return `<p class="mnv-sub">Lo que necesitas para esta semana · ${hechas} de ${filas.length} marcados${(MNV.f || 1) !== 1 ? ' · la lista es para las cantidades de tu plan (sin tu ajuste)' : ''}</p>` + g.map(x => `<div class="card mnv-cp"><p class="mnv-sh" style="margin-top:0">${esc(x.c)}</p>${x.f.map(f => `<label class="mnv-cpf${marcas[f.k] ? ' ok' : ''}"><input type="checkbox"${marcas[f.k] ? ' checked' : ''} onchange="mnvCompraMarca('${esc(f.k)}',this.checked)"><span class="mnv-cpn">${esc(f.n)}</span><span class="mnv-cpq">${f.libre ? 'al gusto' : esc(f.txt)}${f.fmt ? `<small>${esc(f.fmt)}</small>` : ''}</span></label>`).join('')}</div>`).join('');
 }
-function pintarTileMenu(){ const t=$('tileMenu'); if(t) t.style.display=MENU_DATA?'flex':'none'; }
 function abrirMenu(){
   const d=MENU_DATA; if(!d) return; const m=d.menu;
   MENU={menu:m,semana_actual:d.semana_actual&&m.semanas.some(s=>s.id===d.semana_actual)?d.semana_actual:m.semanas[0].id};
