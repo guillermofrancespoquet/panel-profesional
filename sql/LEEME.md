@@ -17,6 +17,7 @@ Todos se ejecutan a mano en Supabase → SQL Editor → New query → Run. Son s
    - `supabase_diario_comidas.sql` (necesita `supabase_registro_cliente.sql`)
    - `supabase_suplementacion.sql`
    - `supabase_citas_hecha.sql`
+   - `supabase_menu_semanal.sql` (menú semanal: catálogo de alimentos, menús, publicar)
 7. `supabase_seguridad_2_cerrar.sql`, **el último**, solo cuando se cumplan las condiciones de su cabecera.
 
 ## Ojo
