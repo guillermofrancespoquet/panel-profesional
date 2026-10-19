@@ -511,17 +511,17 @@ body>*:not(#mnPrint){display:none !important}
   </div>
   <button class="tile" onclick="abrirDatos()">
     <span class="tile-ic"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>
-    <span><span class="tile-t">Mis datos</span><br><span class="tile-d">Antropometría, bioimpedancia y evolución</span></span>
+    <span><span class="tile-t">Composición corporal</span><br><span class="tile-d">Antropometría, bioimpedancia y evolución</span></span>
     <span class="tile-go"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></span>
   </button>
   <button class="tile" onclick="abrirPlan()">
     <span class="tile-ic au"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="14" y2="17"/></svg></span>
-    <span><span class="tile-t">Mi planificación nutricional</span><br><span class="tile-d">Tu plan personalizado</span></span>
+    <span><span class="tile-t">Planificación nutricional</span><br><span class="tile-d">Tu plan personalizado</span></span>
     <span class="tile-go"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></span>
   </button>
   <button class="tile" id="tileSupl" style="display:none" onclick="abrirSupl()">
     <span class="tile-ic"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M10.5 20.5 3.5 13.5a4.95 4.95 0 0 1 7-7l7 7a4.95 4.95 0 0 1-7 7z"/><line x1="8.5" y1="8.5" x2="15.5" y2="15.5"/></svg></span>
-    <span><span class="tile-t">Mi suplementación</span><br><span class="tile-d" id="tileSuplD">Qué tomar y cuándo</span></span>
+    <span><span class="tile-t">Suplementación</span><br><span class="tile-d" id="tileSuplD">Qué tomar y cuándo</span></span>
     <span class="tile-go"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></span>
   </button>
   <button class="tile" onclick="abrirReg()">
@@ -536,7 +536,7 @@ body>*:not(#mnPrint){display:none !important}
   </button>
   <button class="tile" id="tileForms" style="display:none" onclick="abrirForms()">
     <span class="tile-ic au"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span>
-    <span><span class="tile-t">Mis formularios</span><br><span class="tile-d" id="tileFormsD">Cuestionarios de tu nutricionista</span><br><span class="tile-badge" id="tileFormsB"></span></span>
+    <span><span class="tile-t">Formularios</span><br><span class="tile-d" id="tileFormsD">Cuestionarios de tu nutricionista</span><br><span class="tile-badge" id="tileFormsB"></span></span>
     <span class="tile-go"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></span>
   </button>
   <div class="home-sep" id="compSep" style="display:none"><span>Próxima competición</span></div>
@@ -556,19 +556,19 @@ body>*:not(#mnPrint){display:none !important}
 
 <div id="vmenu" class="view" role="main"><div class="wrap">
   <button class="back" onclick="show('vhome')"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Inicio</button>
-  <h1 class="h2">Mi planificación nutricional</h1>
+  <h1 class="h2">Planificación nutricional</h1>
   <div id="menuBody"></div>
 </div></div>
 
 <div id="vsupl" class="view" role="main"><div class="wrap">
   <button class="back" onclick="show('vhome')"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Inicio</button>
-  <h1 class="h2">Mi suplementación</h1>
+  <h1 class="h2">Suplementación</h1>
   <div id="suplBody"></div>
 </div></div>
 
 <div id="vdatos" class="view" role="main"><div class="wrap">
   <button class="back" onclick="show('vhome')"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Inicio</button>
-  <h1 class="h2">Mis datos</h1>
+  <h1 class="h2">Composición corporal</h1>
   <div id="datosBody"><div class="spin" style="margin-top:6vh"></div></div>
 </div></div>
 
@@ -586,7 +586,7 @@ body>*:not(#mnPrint){display:none !important}
 <div id="vplan" class="view" role="main">
   <div class="plan-bar">
     <button class="back" onclick="cerrarPlan()"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Inicio</button>
-    <span class="plan-t">Mi planificación</span>
+    <span class="plan-t">Planificación nutricional</span>
     <a class="plan-ext" id="planExt" href="#" target="_blank" rel="noopener noreferrer">Abrir aparte</a>
   </div>
   <div id="planBody"></div>
@@ -594,7 +594,7 @@ body>*:not(#mnPrint){display:none !important}
 
 <div id="vforms" class="view" role="main"><div class="wrap">
   <button class="back" onclick="show('vhome')"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Inicio</button>
-  <h1 class="h2">Mis formularios</h1>
+  <h1 class="h2">Formularios</h1>
   <p class="fcard-h">Rellénalos con calma: nos ayudan a preparar tu planificación. Cuando termines cada uno, pulsa «Ya lo he enviado» para que quede marcado.</p>
   <div id="formsBody"></div>
 </div></div>
@@ -789,7 +789,7 @@ function pintarMensajeDia(){
 function vacioC(svgPath,t,s){ return `<div class="vacio"><span class="vacio-ic" aria-hidden="true"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">${svgPath}</svg></span><p class="vacio-t">${t}</p>${s?`<p class="vacio-s">${s}</p>`:''}</div>`; }
 function mostrarSin(t,m){ $('sinTitle').textContent=t; $('sinMsg').textContent=m; show('vsin'); }
 
-// ═══ Mis datos ═══
+// ═══ Composición corporal (Mis datos) ═══
 const nf=(v,d=1)=>v==null||isNaN(v)?'—':(+v).toLocaleString('es-ES',{minimumFractionDigits:d,maximumFractionDigits:d});
 const fmtF=(f,corto)=>new Date(f+'T00:00:00').toLocaleDateString('es-ES',corto?{day:'numeric',month:'short',year:'2-digit'}:{day:'numeric',month:'long',year:'numeric'});
 function punto(v){ const r=v.resumen||{}; return {fecha:v.fecha,peso:r.peso!=null?+r.peso:null,grasa:r.pct_grasa!=null?+r.pct_grasa:null,mg:r.masa_grasa_kg!=null?+r.masa_grasa_kg:null,modelo:r.modelo||null}; }
@@ -1116,16 +1116,16 @@ async function diaBorrar(id,btn){
   }catch(e){ toast('No se pudo borrar.',{tipo:'error'}); }
 }
 
-// ═══ Mi planificación ═══
+// ═══ Planificación nutricional ═══
 function abrirPlan(){
-  if(MENU_DATA){ abrirMenu(); return; }   // con plan publicado en la app nueva, «Mi planificación nutricional» es ese plan; si no, el enlace de siempre
+  if(MENU_DATA){ abrirMenu(); return; }   // con plan publicado en la app nueva, «Planificación nutricional» es ese plan; si no, el enlace de siempre
   show('vplan');
   const url=FICHA&&FICHA.plan_url, ok=!!(url&&/^https?:\/\//i.test(url));
   $('planExt').style.visibility=ok?'visible':'hidden';
   if(ok){
     $('planExt').href=url;
     // Dentro de la propia app: así, si la tienes en la pantalla de inicio del móvil, no salta al navegador.
-    $('planBody').innerHTML=`<iframe class="plan-frame" src="${esc(url)}" title="Mi planificación nutricional"></iframe>`;
+    $('planBody').innerHTML=`<iframe class="plan-frame" src="${esc(url)}" title="Planificación nutricional"></iframe>`;
   }else{
     $('planBody').innerHTML='<div class="plan-msg"><div class="card">'+vacioC('<path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>','Tu planificación está en camino','Tu nutricionista la está preparando y te avisará cuando esté lista.')+'</div></div>';
   }
