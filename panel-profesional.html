@@ -2440,6 +2440,14 @@ body.dark-mode .ref-src,body.dark-mode .sup-badge,body.dark-mode .depd-avatar-fa
           <div class="sup-row"><span>Seguridad</span><p>Segura hasta al menos 1 año</p></div>
         </div>
         <div class="sup-card">
+          <div class="sup-top"><p class="sup-name">Cúrcuma / curcumina</p><span class="sup-badge mid">Mixta</span></div>
+          <div class="sup-row"><span>Dosis</span><p>Sin dosis estándar: depende de la formulación (estándar, con piperina, nano, fitosomas). Artrosis de rodilla: de 180 mg/día (muy biodisponible) a ≥ 1000 mg/día durante 4-12 semanas, sin diferencia entre dosis altas y bajas</p></div>
+          <div class="sup-row"><span>Efecto</span><p>Reducciones pequeñas de PCR (−0,58 mg/L), TNF-α e IL-6 y alivio moderado del dolor en artrosis de rodilla frente a placebo. En deporte, certeza baja o muy baja (CK, dolor muscular); sin datos en lesión de LCA en humanos</p></div>
+          <div class="sup-row"><span>Seguridad</span><p>Hepatotoxicidad rara pero documentada (típica tras 1-4 meses; se resuelve al suspender), incluso por debajo de la IDA de EFSA (3 mg/kg/día ≈ 180 mg/día para 60 kg; 1 g/día ≈ 5,6 veces la IDA). Más riesgo con alta biodisponibilidad, dosis altas o piperina</p></div>
+          <div class="sup-row"><span>Uso</span><p>Más defendible: sintomático en artrosis de rodilla, a corto plazo y con formulación estandarizada. En sanos sin dolor, balance riesgo-beneficio no claramente favorable. Cautela con hepatopatía, polimedicación o daño hepático previo; en el postoperatorio de LCA no hay base clínica para recomendarla</p></div>
+          <div class="sup-row"><span>Fuentes</span><p>Dehzad 2023, Bideshki 2024, Hsiao 2021, Nakagawa 2014, Lloret-Gil 2026 · EFSA, BfR 2021, COT (Reino Unido), USP 2026</p></div>
+        </div>
+        <div class="sup-card">
           <div class="sup-top"><p class="sup-name">Proteína en polvo</p><span class="sup-badge ctx">Herramienta</span></div>
           <div class="sup-row"><span>Uso</span><p>No es un ergogénico: es una forma práctica de completar la ingesta proteica diaria cuando no se alcanza con alimentos (whey o vegetal).</p></div>
         </div>
@@ -7293,6 +7301,14 @@ const SUP_CAT = [
     calc:() => ({ dosis:'6-8 g', momento:'', explica:'6-8 g. Posible mejora frente a la fatiga; evidencia menos consistente que creatina o cafeína.', refs:'ISSN', avisos:[] }) },
   { k:'hmb', n:'HMB', ev:'moderada',
     calc:(p) => { const g = 0.038*p.peso; return { dosis:medNum(g,1) + ' g al día', momento:'Todos los días; resultados con más de 6 semanas de uso', explica:`38 mg/kg/día × ${medNum(p.peso,1)} kg = ${medNum(g,1)} g/día (≈ 3 g/día). En entrenados los resultados son mixtos y mejoran con > 6 semanas de uso. Segura hasta al menos 1 año.`, refs:'ISSN 2024', avisos:[] }; } },
+  { k:'curcumina', n:'Cúrcuma / curcumina', ev:'moderada',
+    calc:(p) => { const ida = 3*p.peso; return { dosis:'', momento:'',
+      explica:`Sin dosis estándar: depende de la formulación (estándar, con piperina, nanocurcumina o fitosomas no son equivalentes), así que escribe la dosis según el producto. Referencia de seguridad: la IDA de EFSA para curcumina como aditivo es 3 mg/kg/día → 3 × ${medNum(p.peso,1)} kg ≈ ${Math.round(ida)} mg/día; los suplementos pueden superarla (BfR) y hay casos raros de daño hepático incluso por debajo. En artrosis de rodilla los estudios usaron desde 180 mg/día (formulación muy biodisponible) hasta ≥ 1000 mg/día durante 4-12 semanas, sin diferencia entre dosis altas y bajas: no hay motivo para subir la dosis.`,
+      refs:'EFSA (IDA 3 mg/kg/día), BfR 2021, COT, USP 2026; Dehzad 2023, Bideshki 2024, Hsiao 2021, Nakagawa 2014, Lloret-Gil 2026',
+      avisos:['Uso más defendible: alivio sintomático en artrosis de rodilla, a corto plazo y con formulación estandarizada. En personas sanas sin dolor articular el beneficio esperable es pequeño (marcadores sustitutos) y el balance riesgo-beneficio no es claramente favorable.',
+        'Seguridad hepática: casos raros pero documentados de daño hepático (típico tras 1-4 meses de uso, se resuelve al suspender; algún fallo hepático agudo), sobre todo con formulaciones de alta biodisponibilidad, dosis altas o piperina. Cautela con hepatopatía previa, polimedicación o antecedente de daño hepático por fármacos; valora un control de transaminasas (sugerencia propia, no de una guía).',
+        'Deporte: certeza baja o muy baja para la recuperación; con dosis alta un estudio (n=34) halló peor recuperación de la resistencia muscular a las 24 h (hipótesis). No hay ensayos en deportistas entrenados sobre la adaptación al entrenamiento.',
+        'Postoperatorio de LCA: no hay evidencia en humanos ni base clínica para recomendarla.'] }; } },
   { k:'proteina', n:'Proteína en polvo', ev:'contexto', sinDosis:true,
     calc:() => ({ dosis:'', momento:'', explica:'No es un ergogénico: sirve para completar la ingesta proteica diaria cuando no se alcanza con alimentos. La dosis es lo que falte para su objetivo.', refs:'Herramientas → Suplementación', avisos:[] }) },
   { k:'vitd', n:'Vitamina D', ev:'contexto', analitica:true,
