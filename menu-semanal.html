@@ -294,6 +294,30 @@ body.dark-mode :focus-visible{outline-color:#5CC8A6}
 .mn-auto-t td{vertical-align:top}
 .mn-auto-t td:first-child{padding-top:14px}
 .mn-fuente{font-size:11.5px;color:var(--g400)}
+.mn-tot{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:baseline;font-size:12.5px;color:var(--g500);margin-top:10px;padding-top:10px;border-top:.5px dashed var(--bd)}
+.mn-tot:empty{display:none}
+.mn-tot-v b{font-size:14px;color:var(--g900)}
+.mn-tot-n{flex-basis:100%;font-size:11.5px;color:var(--gold-dk)}
+.mn-dtot{background:var(--sf);border:.5px solid var(--bd);border-radius:16px;padding:18px 20px;box-shadow:var(--mn-sh);margin-bottom:16px}
+.mn-dtot-h{display:flex;justify-content:space-between;gap:10px;align-items:baseline;margin-bottom:14px;flex-wrap:wrap}
+.mn-dt-g{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.mn-dt-h{display:flex;justify-content:space-between;align-items:baseline;font-size:12.5px;color:var(--g500);margin-bottom:6px}
+.mn-dt-h b{font-size:15px;color:var(--g900)}
+.mn-dt-b{height:8px;border-radius:6px;background:var(--g100);overflow:hidden}
+.mn-dt-b i{display:block;height:100%;border-radius:6px;background:var(--g200)}
+.mn-dt-b i.ok{background:var(--t400)}.mn-dt-b i.warn{background:var(--gold)}.mn-dt-b i.bad{background:#C0504D}
+.mn-dt-f{font-size:11.5px;color:var(--g400);margin-top:5px}
+.mn-dt-n{font-size:12.5px;color:var(--g500);margin:14px 0 0;line-height:1.55}
+.mn-dt-n.warn{color:var(--gold-dk)}
+.mn-estado.bad i{background:#C0504D}
+.mn-ob-l{display:flex;flex-direction:column;gap:6px;margin-bottom:6px}
+.mn-ob-l div{display:flex;justify-content:space-between;font-size:13.5px}
+.mn-ob-l span{color:var(--g500)}
+.mn-ob-r{font-size:12.5px;color:var(--g500)}
+.mn-det{margin-top:18px;border-top:.5px solid var(--bd);padding-top:12px}
+.mn-det summary{cursor:pointer;font-weight:600;font-size:13.5px;color:var(--t600)}
+.mn-fuente{display:block;margin-top:4px}
+
 .oi-f{display:flex;gap:10px;align-items:flex-start;margin-bottom:10px}
 .oi-c{flex:0 0 104px;width:104px}
 .oi-t{flex:1;min-height:64px}
@@ -340,6 +364,7 @@ body.dark-mode :focus-visible{outline-color:#5CC8A6}
   .mn-cols{grid-template-columns:1fr;gap:12px}
   .mn-meal-ex{grid-template-columns:1fr}
   .mn-g2,.mn-g3{grid-template-columns:1fr}
+  .mn-dt-g{grid-template-columns:repeat(2,minmax(0,1fr))}
   .mn-g4{grid-template-columns:repeat(2,minmax(0,1fr))}
   .mn-nutri{grid-template-columns:repeat(3,1fr)}
   .oi-c{flex-basis:88px;width:88px}
@@ -373,6 +398,9 @@ body.dark-mode :focus-visible{outline-color:#5CC8A6}
 </div>
 <div class="mbg" id="mMnAuto" style="display:none;z-index:320" role="dialog" aria-modal="true" aria-labelledby="mnAutoTit" onclick="if(event.target===this)mnAutoCerrar()">
   <div class="mc" style="max-width:940px;max-height:calc(100dvh - 2rem);overflow-y:auto" id="mnAutoCuerpo"></div>
+</div>
+<div class="mbg" id="mMnObj" style="display:none;z-index:315" role="dialog" aria-modal="true" aria-labelledby="mnObjTit" onclick="if(event.target===this)mnObjCerrar()">
+  <div class="mc" style="max-width:720px;max-height:calc(100dvh - 2rem);overflow-y:auto" id="mnObjCuerpo"></div>
 </div>
 <input type="file" id="mnFoto" accept="image/*" style="display:none" aria-hidden="true" tabindex="-1" onchange="mnFotoSubida(this)">
 
@@ -680,7 +708,7 @@ async function mnAbrir(depId) {
   }
   let cat = []; try { const r = await sb('alimentos?select=*&order=nombre.asc&limit=2000'); if (Array.isArray(r)) cat = r; } catch (e) {}
   const hoy = (new Date().getDay() + 6) % 7;
-  MN = { depId, nombre: d.nombre || '', row, c: row.contenido || {}, cat, sem: null, dia: hoy, tab: 'menu', dirty: false, rec: null };
+  MN = { depId, nombre: d.nombre || '', row, c: row.contenido || {}, cat, sem: null, dia: hoy, tab: 'menu', dirty: false, rec: null, perfil: await mnCargarPerfil(depId) };
   mnAsegurar(); mnRelinkTodo(); _mnFila = row;
   show('vmenuc'); mnPintar(); window.scrollTo(0, 0);
 }
@@ -704,16 +732,16 @@ function mnAplicarIng(entId, txt) {
   const e = mnEnt(entId); if (!e) return;
   e.ing = mnParseTexto(txt, e.ing); e.ing.forEach(i => { if (!i.a) i.a = mnLink(i.n); });
   const ch = document.getElementById('mnCh_' + entId); if (ch) ch.innerHTML = mnIngChips(e.ing, entId);
-  mnCambio();
+  mnCambio(); mnRefrescarTotales();
 }
 function mnIngInput(entId, txt) { clearTimeout(_mnIT[entId]); _mnIT[entId] = setTimeout(() => { delete _mnIT[entId]; mnAplicarIng(entId, txt); }, 350); }
 function mnSyncTextos() { Object.keys(_mnIT).forEach(k => { clearTimeout(_mnIT[k]); delete _mnIT[k]; const t = document.getElementById('mnIng_' + k); if (t) mnAplicarIng(k, t.value); }); }
 
 
 function mnBuscaComida(id) { for (const s of MN.c.semanas) for (const d of s.dias) { const i = d.comidas.findIndex(m => m.id === id); if (i >= 0) return { d, i, m: d.comidas[i] }; } return null; }
-function mnSetM(id, k, v, repintar) { const r = mnBuscaComida(id); if (!r) return; r.m[k] = v; mnCambio(); if (repintar) mnPintar(); }
+function mnSetM(id, k, v, repintar) { const r = mnBuscaComida(id); if (!r) return; r.m[k] = v; mnCambio(); if (repintar) mnPintar(); else mnRefrescarTotales(); }
 function mnSetS(id, k, v) { const r = mnBuscaComida(id); if (!r) return; mnSrc(r.m)[k] = v; mnCambio(); }
-function mnCtxSet(k, v) { mnDia().ctx[k] = v; mnCambio(); }
+function mnCtxSet(k, v) { mnDia().ctx[k] = v; mnCambio(); if (k === 'tipo') mnPintar(); else mnRefrescarTotales(); }
 function mnElegirSemana(id) { MN.sem = id; mnPintar(); }
 function mnElegirDia(i) { MN.dia = i; mnPintar(); }
 function mnNuevaSemana() { const s = mnSemanaNueva('Semana ' + (MN.c.semanas.length + 1)); MN.c.semanas.push(s); MN.sem = s.id; mnCambio(); mnPintar(); }
@@ -980,11 +1008,12 @@ function mnPintar() {
 function mnMenuHtml() {
   const c = MN.c, s = mnSem(), d = mnDia(), toca = MN.row.semana_actual || c.semanas[0].id, ctx = d.ctx || {};
   const navSem = c.semanas.map(x => `<button type="button" class="mn-nav-i${x.id === s.id ? ' on' : ''}" onclick="mnElegirSemana('${x.id}')"><span>${sudEsc(x.nombre)}</span>${c.semanas.length > 1 && x.id === toca ? '<span class="mn-tag">Esta semana</span>' : ''}</button>`).join('');
-  const navDias = s.dias.map((x, i) => `<button type="button" class="mn-nav-i${i === MN.dia ? ' on' : ''}" onclick="mnElegirDia(${i})"><span>${sudEsc(x.n)}${x.ctx && x.ctx.texto ? `<small>${sudEsc(x.ctx.texto)}</small>` : ''}</span>${x.comidas.length ? `<span class="mn-n" aria-label="${x.comidas.length} comidas">${x.comidas.length}</span>` : ''}</button>`).join('');
+  const navDias = s.dias.map((x, i) => `<button type="button" class="mn-nav-i${i === MN.dia ? ' on' : ''}" onclick="mnElegirDia(${i})"><span>${sudEsc(x.n)}${mnDiaPie(x) ? `<small>${sudEsc(mnDiaPie(x))}</small>` : ''}</span>${x.comidas.length ? `<span class="mn-n" aria-label="${x.comidas.length} comidas">${x.comidas.length}</span>` : ''}</button>`).join('');
   const comidas = d.comidas.length ? d.comidas.map((m, i) => mnComidaHtml(m, i, d.comidas.length)).join('') : `<div class="mn-vacio"><b>Este día no tiene comidas todavía</b><span class="mn-ayuda">Añade las que necesite este cliente: pueden ser 3, 4, 5 o las que haga falta.</span></div>`;
   return `<div class="mn-grid">
     <aside class="mn-side">
       <section class="mn-card"><p class="mn-k">Plan</p><label class="mn-l" for="mnTitulo">Título</label><input class="inp" id="mnTitulo" maxlength="120" value="${sudEsc(c.titulo || '')}" oninput="MN.c.titulo=this.value;mnCambio()"></section>
+      <section class="mn-card"><p class="mn-k">Objetivos nutricionales</p>${mnObjResumenHtml()}</section>
       <section class="mn-card"><div class="mn-k-row"><p class="mn-k">Semanas</p>${mnBtn('', 'mnNuevaSemana()', { icon: 'plus', sm: true, ghost: true, title: 'Añadir semana' })}</div>
         <div class="mn-nav" role="group" aria-label="Semanas">${navSem}</div>
         <div class="mn-wk">
@@ -1002,6 +1031,7 @@ function mnMenuHtml() {
         <div class="mn-f" style="margin-top:12px"><label class="mn-l" for="mnCtxA">Aviso para el cliente <span class="hd-opt">(opcional)</span></label><input class="inp" id="mnCtxA" maxlength="300" value="${sudEsc(ctx.aviso || '')}" placeholder="Ej. La comida de las 14:00 es la carga previa al entreno" oninput="mnCtxSet('aviso',this.value)"></div>
       </section>
       <div style="height:16px"></div>
+      <div id="mnDiaTot">${mnTotDiaHtml(d)}</div>
       <div id="mnComidas">${comidas}</div>
       <div class="mn-add">${mnBtn('Añadir comida', 'mnNuevaComida()', { icon: 'plus', pri: true })}${c.platos.length ? `<select class="inp" aria-label="Usar una comida guardada" onchange="mnUsarPlato(this.value);this.value=''"><option value="">Usar una comida guardada…</option>${c.platos.map(p => `<option value="${p.id}">${sudEsc(p.nombre || 'Sin nombre')}</option>`).join('')}</select>` : ''}${mnBtn('Copiar este día a…', 'mnCopiarAbrir()', { icon: 'copy' })}${d.comidas.length ? mnBtn('Vaciar día', 'mnVaciarDia()', { icon: 'trash', ghost: true, dan: true }) : ''}</div>
     </div></div>`;
@@ -1020,7 +1050,7 @@ function mnComidaHtml(m, i, n) {
       ${m.plato ? `<p class="mn-plato" style="margin:0 0 14px">Comida guardada: se usa en ${usos} ${usos === 1 ? 'sitio' : 'sitios'}; si la editas aquí cambia en todos.</p>` : ''}
       <div class="mn-cols">
         <div class="mn-f"><label class="mn-l" for="mnIng_${id}">Ingredientes <span class="hd-opt">· uno por línea</span></label><textarea class="inp notes-ta mn-ta" id="mnIng_${id}" rows="4" placeholder="${sudEsc('80 g avena\n1 plátano\n200 ml bebida de soja\nTomate, pepino')}" oninput="mnIngInput('${id}',this.value)">${sudEsc(mnTextoIng(s.ing))}</textarea></div>
-        <div class="mn-f"><span class="mn-l">Así lo entiende la app</span><div class="mn-ings" id="mnCh_${id}">${mnIngChips(s.ing, id)}</div></div>
+        <div class="mn-f"><span class="mn-l">Así lo entiende la app</span><div class="mn-ings" id="mnCh_${id}">${mnIngChips(s.ing, id)}</div><div class="mn-tot" data-m="${id}">${mnTotComidaHtml(m)}</div></div>
       </div>
       <div class="mn-meal-ex"><div class="mn-f"><label class="mn-l" for="mnNo_${id}">Adaptación <span class="hd-opt">(el porqué; lo ve el cliente)</span></label><input class="inp" id="mnNo_${id}" maxlength="400" value="${sudEsc(s.nota || '')}" oninput="mnSetS('${id}','nota',this.value)"></div>${recs}</div>
     </div>
@@ -1343,6 +1373,159 @@ async function mnLeerPdfReceta(file) {
     }
   } catch (e) {}
   return r;
+}
+
+// ── Totales nutricionales en vivo (kcal, proteína, hidratos, grasa) ──
+// Se calculan con la nutrición por 100 g del catálogo y las cantidades de cada ingrediente. Son estimaciones: lo que no se puede
+// calcular (sin cantidad, sin gramos o sin nutrición en el catálogo) queda fuera y se avisa.
+const MN_MEDIDAS_TIPO = [ // gramos de una unidad o medida casera según el tipo de alimento (aproximadas)
+  [/huevo/, { ud: 60 }], [/platano/, { ud: 120 }], [/manzana/, { ud: 180 }], [/naranja/, { ud: 150 }], [/mandarina/, { ud: 80 }], [/\bpera\b/, { ud: 170 }], [/kiwi/, { ud: 75 }], [/melocoton/, { ud: 150 }],
+  [/aguacate/, { ud: 150 }], [/tomate/, { ud: 120 }], [/pepino/, { ud: 200 }], [/zanahoria/, { ud: 80 }], [/cebolla/, { ud: 100 }], [/pimiento/, { ud: 150 }], [/calabacin/, { ud: 200 }], [/limon/, { ud: 60 }],
+  [/patata/, { ud: 170 }], [/boniato/, { ud: 200 }], [/\bajo\b/, { diente: 5 }], [/yogur/, { ud: 125 }], [/\bpan\b/, { rebanada: 30, loncha: 30, ud: 30 }],
+  [/jamon|fiambre|queso/, { loncha: 20 }], [/atun/, { lata: 52, ud: 52 }], [/tortita/, { ud: 9 }], [/mantequilla de cacahuete/, { cda: 16, cdta: 5 }], [/aceite|aove/, { cda: 13.5, cdta: 4.5 }],
+  [/\bmiel\b/, { cda: 21, cdta: 7 }], [/semilla|chia|\blino\b/, { cda: 10, cdta: 3 }], [/\bnuez|nueces|almendra|anacardo|pistacho|avellana|cacahuete|pasas|frutos secos/, { punado: 30 }], [/arroz|quinoa|cuscus/, { vasito: 125 }]
+];
+const MN_MEDIDA_GEN = { cdta: 5, cda: 15, vaso: 200, taza: 240, diente: 5, rebanada: 30, loncha: 20, punado: 30, tortita: 9, vasito: 125, rodaja: 15 };
+function mnUnidadClave(u) {
+  const t = mnNorm(u);
+  if (/^(cdta|cdita|cucharadita|cucharita)/.test(t)) return 'cdta'; if (/^(cda|cucharada)/.test(t)) return 'cda';
+  if (/^vasito/.test(t)) return 'vasito'; if (/^vaso/.test(t)) return 'vaso'; if (/^taza/.test(t)) return 'taza'; if (/^diente/.test(t)) return 'diente';
+  if (/^rebanada/.test(t)) return 'rebanada'; if (/^loncha/.test(t)) return 'loncha'; if (/^punado/.test(t)) return 'punado'; if (/^tortita/.test(t)) return 'tortita';
+  if (/^lata/.test(t)) return 'lata'; if (/^bote/.test(t)) return 'bote'; if (/^(ud|unidad|pieza)/.test(t)) return 'ud'; if (/^rodaja/.test(t)) return 'rodaja'; return t;
+}
+// Gramos de un ingrediente (con la mitad del rango si lo hay); null si no se pueden saber
+function mnGramos(i) {
+  const c = i.cant; if (!c || c.modo === 'libre') return null;
+  const q = c.max ? (c.min + c.max) / 2 : c.min;
+  if (c.modo === 'g') return q * ({ g: 1, kg: 1000, ml: 1, l: 1000 })[c.u];
+  const al = i.a ? MN.cat.find(x => x.id == i.a) : null, clave = c.modo === 'ud' ? 'ud' : mnUnidadClave(c.u);
+  if (al && Array.isArray(al.medidas)) { const m = al.medidas.find(x => mnUnidadClave(x.n) === clave); if (m) return q * m.g; }
+  const nom = mnNorm(i.n);
+  for (const [re, md] of MN_MEDIDAS_TIPO) if (re.test(nom) && md[clave] !== undefined) return q * md[clave];
+  return MN_MEDIDA_GEN[clave] !== undefined ? q * MN_MEDIDA_GEN[clave] : null;
+}
+// Nutrición de un ingrediente: { kcal, prot, hc, grasa, g, aviso } o { sin: 'libre' | 'gramos' | 'catalogo' | 'nutri' }
+function mnMacrosIng(i) {
+  if (!i.cant || i.cant.modo === 'libre') return { sin: 'libre' };
+  const g = mnGramos(i); if (g === null || !isFinite(g)) return { sin: 'gramos' };
+  const al = i.a ? MN.cat.find(x => x.id == i.a) : null; if (!al) return { sin: 'catalogo' };
+  const n = al.nutri; if (!n || typeof n.kcal !== 'number') return { sin: 'nutri' };
+  const k = g / 100, nota = mnNorm(i.nota || '');
+  const aviso = (al.estado === 'cocinado' && /\b(crudo|cruda|en seco|seco)\b/.test(nota)) || (al.estado === 'crudo' && /\b(cocid|cocin)/.test(nota)) || (al.estado === 'cocinado' && /\b(crudo|cruda|en seco)\b/.test(mnNorm(i.n)));
+  return { g, kcal: n.kcal * k, prot: (n.prot || 0) * k, hc: (n.hc || 0) * k, grasa: (n.grasa || 0) * k, aviso: !!aviso };
+}
+const MN_CERO = () => ({ kcal: 0, prot: 0, hc: 0, grasa: 0, calc: 0, fuera: 0, aviso: 0, receta: false });
+function mnSumar(t, m) { if (m.sin) { t.fuera++; return; } t.kcal += m.kcal; t.prot += m.prot; t.hc += m.hc; t.grasa += m.grasa; t.calc++; if (m.aviso) t.aviso++; }
+// Totales de una comida; sin ingredientes y con receta enlazada con nutrición, usa la de la receta (por ración)
+function mnTotComida(m) {
+  const s = mnSrc(m), t = MN_CERO(), ing = s.ing || [];
+  if (!ing.length && m.receta) { const r = MN.c.recetas.find(x => x.id === m.receta); if (r && r.nutri && typeof r.nutri.kcal === 'number') { t.kcal = r.nutri.kcal; t.prot = r.nutri.prot || 0; t.hc = r.nutri.hc || 0; t.grasa = r.nutri.grasa || 0; t.calc = 1; t.receta = true; return t; } }
+  ing.forEach(i => mnSumar(t, mnMacrosIng(i)));
+  return t;
+}
+function mnTotDia(d) { const t = MN_CERO(); d.comidas.forEach(m => { const x = mnTotComida(m); ['kcal', 'prot', 'hc', 'grasa', 'calc', 'fuera', 'aviso'].forEach(k => { t[k] += x[k]; }); }); return t; }
+const mnF = (x, d) => (x === null || x === undefined || !isFinite(x)) ? '—' : Number(x).toLocaleString('es-ES', { minimumFractionDigits: d || 0, maximumFractionDigits: d || 0 });
+// Objetivos nutricionales por tipo de día: kcal manual; proteína en g/kg; grasa como % de las kcal; hidratos, el resto
+const MN_TIPOS_DIA = [['base', 'Sin etiqueta'], ['descanso', 'Descanso'], ['entreno', 'Entreno'], ['partido', 'Partido'], ['libre', 'Día libre'], ['otro', 'Otro']];
+const MN_PAL = { base: 1.45, descanso: 1.4, entreno: 1.7, partido: 1.9, libre: 1.5, otro: 1.5 };
+function mnObjDia(tipo) {
+  const o = MN.c.obj; if (!o || !o.peso || !o.kcal) return null;
+  const kcal = o.kcal[tipo || 'base'] || o.kcal.base; if (!kcal) return null;
+  const prot = (o.prot || 1.8) * o.peso, grasa = ((o.grasaPct || 22) / 100) * kcal / 9, hc = (kcal - 4 * prot - 9 * grasa) / 4;
+  return { kcal, prot, grasa, hc, peso: o.peso, grasaPct: o.grasaPct || 22 };
+}
+const mnTipoDia = d => (d.ctx && d.ctx.tipo) || 'base';
+function mnEstadoBarra(val, obj) { const r = obj > 0 ? val / obj : 0; return Math.abs(r - 1) <= 0.07 ? 'ok' : Math.abs(r - 1) <= 0.15 ? 'warn' : 'bad'; }
+function mnTotComidaHtml(m) {
+  const t = mnTotComida(m); if (!t.calc && !t.fuera) return '';
+  const nota = [t.receta ? 'de la receta' : '', t.fuera ? t.fuera + ' sin calcular' : '', t.aviso ? 'revisa crudo/cocido' : ''].filter(Boolean).join(' · ');
+  return `<span class="mn-tot-v"><b>${t.calc ? '≈ ' + mnF(t.kcal) : '—'}</b> kcal</span><span>P ${mnF(t.prot)}</span><span>HC ${mnF(t.hc)}</span><span>G ${mnF(t.grasa)}</span>${nota ? `<span class="mn-tot-n">${sudEsc(nota)}</span>` : ''}`;
+}
+function mnTotDiaHtml(d) {
+  const t = mnTotDia(d), obj = mnObjDia(mnTipoDia(d)), peso = MN.c.obj && MN.c.obj.peso;
+  const aviso = [t.fuera ? `${t.fuera} ${t.fuera === 1 ? 'ingrediente queda' : 'ingredientes quedan'} fuera del cálculo (sin cantidad, sin gramos o sin nutrición en el catálogo)` : '', t.aviso ? `${t.aviso} con posible diferencia entre crudo y cocido` : ''].filter(Boolean).join('. ');
+  if (!d.comidas.length) return '';
+  const fila = (lbl, val, tgt, u, k) => { const est = tgt ? mnEstadoBarra(val, tgt) : ''; return `<div class="mn-dt"><div class="mn-dt-h"><span>${lbl}</span><b>${mnF(val)}${u}</b></div><div class="mn-dt-b"><i class="${est}" style="width:${tgt ? Math.min(100, Math.round(val / tgt * 100)) : 0}%"></i></div><div class="mn-dt-f">${tgt ? 'objetivo ' + mnF(tgt) + u : '&nbsp;'}</div></div>`; };
+  const pctG = t.kcal > 0 ? t.grasa * 9 / t.kcal * 100 : 0, estG = !t.kcal ? '' : pctG >= 20 && pctG <= 25 ? 'ok' : pctG >= 17 && pctG <= 28 ? 'warn' : 'bad';
+  const kg = peso ? ` · ${mnF(t.prot / peso, 1)} g/kg de proteína · ${mnF(t.hc / peso, 1)} g/kg de hidratos` : '';
+  return `<div class="mn-dtot"><div class="mn-dtot-h"><span class="mn-k" style="margin:0">Totales del día (estimados)</span><span class="mn-ayuda">${obj ? 'frente al objetivo de «' + sudEsc((MN_TIPOS_DIA.find(x => x[0] === mnTipoDia(d)) || ['', 'este día'])[1]) + '»' : 'sin objetivo definido'}</span></div>
+    <div class="mn-dt-g">${fila('kcal', t.kcal, obj && obj.kcal, '')}${fila('Proteína', t.prot, obj && obj.prot, ' g')}${fila('Hidratos', t.hc, obj && obj.hc, ' g')}${fila('Grasa', t.grasa, obj && obj.grasa, ' g')}</div>
+    <p class="mn-dt-n"><span class="mn-estado ${estG}"><i></i>Grasa ${mnF(pctG)} % de las kcal${estG ? '' : ''}</span> (referencia 20–25 %)${sudEsc(kg)}</p>${aviso ? `<p class="mn-dt-n warn">${sudEsc(aviso)}.</p>` : ''}</div>`;
+}
+function mnRefrescarTotales() {
+  if (!MN || MN.tab !== 'menu') return;
+  const d = mnDia(); if (!d) return;
+  d.comidas.forEach(m => { const e = document.querySelector(`.mn-tot[data-m="${m.id}"]`); if (e) e.innerHTML = mnTotComidaHtml(m); });
+  const e = document.getElementById('mnDiaTot'); if (e) e.innerHTML = mnTotDiaHtml(d);
+  document.querySelectorAll('.mn-dias .mn-nav-i').forEach((b, i) => { const x = mnSem().dias[i], s = b.querySelector('small'); if (x && s) s.textContent = mnDiaPie(x); });
+}
+function mnDiaPie(x) { const t = mnTotDia(x); return [x.ctx && x.ctx.texto, t.calc ? mnF(t.kcal) + ' kcal' : ''].filter(Boolean).join(' · '); }
+
+// ── Ventana «Objetivos nutricionales» ──
+async function mnCargarPerfil(depId) {
+  const out = { sexo: '', nac: '', talla: null, peso: null, pesoFecha: '' };
+  try { const r = await sb(`antropometria_perfil?deportista_id=eq.${depId}&select=*`); if (Array.isArray(r) && r[0]) { out.sexo = /^m/i.test(r[0].sexo || '') ? 'M' : 'H'; out.nac = r[0].fecha_nacimiento || ''; out.talla = r[0].talla ? +r[0].talla : null; } } catch (e) {}
+  try { const r = await sb(`antropometria_valoraciones?deportista_id=eq.${depId}&order=fecha.desc&limit=1&select=fecha,resumen,medidas`); if (Array.isArray(r) && r[0]) { const v = r[0], p = (v.resumen && v.resumen.peso) || (v.medidas && v.medidas.peso); if (p) { out.peso = +p; out.pesoFecha = v.fecha; } if (!out.talla && v.medidas && v.medidas.talla) out.talla = +v.medidas.talla; } } catch (e) {}
+  return out;
+}
+const mnEdadDe = nac => { if (!nac) return null; const n = new Date(nac), h = new Date(); let e = h.getFullYear() - n.getFullYear(); if (h < new Date(h.getFullYear(), n.getMonth(), n.getDate())) e--; return e; };
+function mnTiposEnUso() { const u = new Set(['base']); MN.c.semanas.forEach(s => s.dias.forEach(d => { if (d.comidas.length || (d.ctx && d.ctx.tipo)) u.add((d.ctx && d.ctx.tipo) || 'base'); })); return MN_TIPOS_DIA.filter(x => u.has(x[0])); }
+let _mnObj = null;
+function mnObjAbrir() {
+  const p = MN.perfil || {}, o = MN.c.obj || {};
+  _mnObj = { peso: o.peso || p.peso || '', prot: o.prot || 1.8, grasaPct: o.grasaPct || 22, kcal: { ...(o.kcal || {}) }, pal: { ...MN_PAL, ...(o.pal || {}) }, adj: o.adj || 0, sexo: o.sexo || p.sexo || 'H', edad: o.edad || mnEdadDe(p.nac) || '', talla: o.talla || p.talla || '' };
+  mnObjPintar(); document.getElementById('mMnObj').style.display = 'flex';
+}
+function mnObjCerrar() { _mnObj = null; document.getElementById('mMnObj').style.display = 'none'; }
+const mnNum2 = v => { const x = parseFloat(String(v).replace(',', '.')); return isFinite(x) ? x : null; };
+function mnObjCalc(tipo) {
+  const o = _mnObj, peso = mnNum2(o.peso), kcal = mnNum2(o.kcal[tipo]); if (!peso || !kcal) return null;
+  const prot = (mnNum2(o.prot) || 1.8) * peso, gr = ((mnNum2(o.grasaPct) || 22) / 100) * kcal / 9, hc = (kcal - 4 * prot - 9 * gr) / 4;
+  return { prot, gr, hc, kg: hc / peso };
+}
+function mnObjPintar() {
+  const o = _mnObj, el = document.getElementById('mnObjCuerpo'), p = MN.perfil || {}, edad = mnNum2(o.edad), menor = edad !== null && edad < 18;
+  const foco = document.activeElement && document.activeElement.closest && document.activeElement.closest('#mnObjCuerpo') ? document.activeElement.id : null;
+  const filas = mnTiposEnUso().map(([k, n]) => { const c = mnObjCalc(k); return `<tr><td>${n}</td><td><input class="inp num" id="mnOb_k_${k}" inputmode="numeric" value="${o.kcal[k] !== undefined ? o.kcal[k] : ''}" aria-label="kcal de ${n}" oninput="_mnObj.kcal['${k}']=mnNum2(this.value);mnObjLeer()"></td><td><input class="inp num" id="mnOb_p_${k}" inputmode="decimal" value="${o.pal[k]}" aria-label="Factor de actividad de ${n}" oninput="_mnObj.pal['${k}']=mnNum2(this.value)"></td><td class="mn-ob-r" id="mnOb_r_${k}">${c ? `P ${mnF(c.prot)} g · HC ${mnF(c.hc)} g (${mnF(c.kg, 1)} g/kg) · G ${mnF(c.gr)} g` : '—'}</td></tr>`; }).join('');
+  el.innerHTML = `<p class="mt" id="mnObjTit">Objetivos nutricionales</p><p class="ms">Para comparar cada día con lo que necesita. La proteína va por g/kg, la grasa como % de las kcal y los hidratos son el resto: así se ajustan a las kcal de cada tipo de día.</p>
+    <div class="mn-g3"><div class="mn-f"><label class="mn-l" for="mnOb_peso">Peso (kg)</label><input class="inp" id="mnOb_peso" inputmode="decimal" value="${o.peso}" oninput="_mnObj.peso=mnNum2(this.value);mnObjLeer()"><span class="mn-fuente">${p.peso ? 'Última antropometría' + (p.pesoFecha ? ' (' + sudEsc(mnFecha(p.pesoFecha)) + ')' : '') + ': ' + mnF(p.peso, 1) + ' kg' : 'Sin antropometría: escríbelo'}</span></div>
+      <div class="mn-f"><label class="mn-l" for="mnOb_prot">Proteína (g/kg)</label><input class="inp" id="mnOb_prot" inputmode="decimal" value="${o.prot}" oninput="_mnObj.prot=mnNum2(this.value);mnObjLeer()"><span class="mn-fuente">Sin déficit ≈ 1,2–1,6; en déficit 1,6–2,4</span></div>
+      <div class="mn-f"><label class="mn-l" for="mnOb_gr">Grasa (% de las kcal)</label><input class="inp" id="mnOb_gr" inputmode="decimal" value="${o.grasaPct}" oninput="_mnObj.grasaPct=mnNum2(this.value);mnObjLeer()"><span class="mn-fuente">Referencia: 20–25 %</span></div></div>
+    <p class="mn-sec">kcal por tipo de día</p>
+    <div style="overflow-x:auto"><table class="mn-auto-t"><thead><tr><th>Día</th><th>kcal</th><th>Factor act.</th><th>Resultado</th></tr></thead><tbody>${filas}</tbody></table></div>
+    <details class="mn-det"><summary>Estimar las kcal con Mifflin-St Jeor</summary>
+      <p class="mn-ayuda" style="margin:8px 0 12px">Gasto en reposo × factor de actividad de cada tipo de día, con el ajuste que quieras para el objetivo. Es una estimación: puedes corregir las kcal a mano.</p>
+      <div class="mn-g4"><div class="mn-f"><label class="mn-l" for="mnOb_sexo">Sexo</label><select class="inp" id="mnOb_sexo" onchange="_mnObj.sexo=this.value"><option value="H"${o.sexo === 'H' ? ' selected' : ''}>Hombre</option><option value="M"${o.sexo === 'M' ? ' selected' : ''}>Mujer</option></select></div>
+        <div class="mn-f"><label class="mn-l" for="mnOb_edad">Edad</label><input class="inp" id="mnOb_edad" inputmode="numeric" value="${o.edad}" oninput="_mnObj.edad=mnNum2(this.value)"></div>
+        <div class="mn-f"><label class="mn-l" for="mnOb_talla">Talla (cm)</label><input class="inp" id="mnOb_talla" inputmode="decimal" value="${o.talla}" oninput="_mnObj.talla=mnNum2(this.value)"></div>
+        <div class="mn-f"><label class="mn-l" for="mnOb_adj">Ajuste (%)</label><input class="inp" id="mnOb_adj" inputmode="decimal" value="${o.adj}" oninput="_mnObj.adj=mnNum2(this.value)"></div></div>
+      ${menor ? '<p class="mn-dt-n warn" style="margin-top:10px">Menor de 18 años: estimación orientativa y sin déficit (el ajuste negativo se ignora).</p>' : ''}
+      <div class="mn-add" style="margin:12px 0 0">${mnBtn('Estimar kcal', 'mnObjEstimar()', { icon: 'wand', sm: true })}</div></details>
+    <p class="merr" id="mnObMsg" role="alert"></p>
+    <div class="mbtns" style="margin-top:14px"><button type="button" class="btn-cancel" onclick="mnObjCerrar()">Cancelar</button><button type="button" class="btn-ok" onclick="mnObjGuardar()">Guardar objetivos</button></div>`;
+  if (foco) { const e = document.getElementById(foco); if (e) { e.focus(); try { e.setSelectionRange(e.value.length, e.value.length); } catch (x) {} } }
+}
+function mnObjLeer() { mnTiposEnUso().forEach(([k]) => { const c = mnObjCalc(k), e = document.getElementById('mnOb_r_' + k); if (e) e.textContent = c ? `P ${mnF(c.prot)} g · HC ${mnF(c.hc)} g (${mnF(c.kg, 1)} g/kg) · G ${mnF(c.gr)} g` : '—'; }); }
+function mnObjEstimar() {
+  const o = _mnObj, msg = document.getElementById('mnObMsg'), peso = mnNum2(o.peso), edad = mnNum2(o.edad), talla = mnNum2(o.talla);
+  if (!peso || !edad || !talla) { msg.textContent = 'Para estimar hacen falta peso, edad y talla.'; return; }
+  msg.textContent = '';
+  let adj = mnNum2(o.adj) || 0; if (edad < 18 && adj < 0) adj = 0;
+  const bmr = 10 * peso + 6.25 * talla - 5 * edad + (o.sexo === 'M' ? -161 : 5);
+  mnTiposEnUso().forEach(([k]) => { o.kcal[k] = Math.round(bmr * (o.pal[k] || 1.5) * (1 + adj / 100) / 10) * 10; });
+  mnObjPintar();
+}
+function mnObjGuardar() {
+  const o = _mnObj, msg = document.getElementById('mnObMsg');
+  if (!mnNum2(o.peso)) { msg.textContent = 'Escribe el peso.'; return; }
+  const kcal = {}; mnTiposEnUso().forEach(([k]) => { const x = mnNum2(o.kcal[k]); if (x) kcal[k] = Math.round(x); });
+  if (!Object.keys(kcal).length) { msg.textContent = 'Escribe las kcal de al menos un tipo de día.'; return; }
+  MN.c.obj = { peso: mnNum2(o.peso), prot: mnNum2(o.prot) || 1.8, grasaPct: mnNum2(o.grasaPct) || 22, kcal, pal: o.pal, adj: mnNum2(o.adj) || 0, sexo: o.sexo, edad: mnNum2(o.edad), talla: mnNum2(o.talla) };
+  mnObjCerrar(); mnCambio(); mnPintar(); toast('Objetivos guardados');
+}
+function mnObjResumenHtml() {
+  const o = MN.c.obj; if (!o || !o.kcal) return `<p class="mn-ayuda" style="margin:0 0 12px">Define las kcal por tipo de día para comparar lo que sumas con lo que necesita.</p>${mnBtn('Definir objetivos', 'mnObjAbrir()', { icon: 'plus', sm: true })}`;
+  return `<div class="mn-ob-l">${mnTiposEnUso().filter(([k]) => o.kcal[k]).map(([k, n]) => `<div><span>${n}</span><b>${mnF(o.kcal[k])} kcal</b></div>`).join('')}</div><p class="mn-ayuda" style="margin:8px 0 12px">${mnF(o.peso, 1)} kg · proteína ${mnF(o.prot, 1)} g/kg · grasa ${mnF(o.grasaPct)} % de las kcal</p>${mnBtn('Editar objetivos', 'mnObjAbrir()', { icon: 'doc', sm: true })}`;
 }
 
 // ── Funciones propias de la página de pruebas ──
