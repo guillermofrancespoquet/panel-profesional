@@ -76,6 +76,46 @@ input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]):
 .page-title{font-size:19px}
 .mc{padding:1.4rem 1.25rem;max-width:100%}}
 .hd-opt{font-weight:400;color:var(--g400)}
+.mnv-fac{display:flex;align-items:center;gap:10px;margin:0 0 12px;font-size:13px;color:var(--g500)}
+.mnv-fac b{min-width:48px;text-align:center;color:var(--g900)}
+.mnv-fac button{width:34px;height:34px;border-radius:10px;border:.5px solid var(--bdm);background:var(--sf);color:var(--g900);font-size:18px;line-height:1;cursor:pointer}
+.mnv-fac button:disabled{opacity:.4;cursor:default}
+.mnv-fac .mnv-fac-r{width:auto;padding:0 12px;font-size:12px;color:var(--t600)}
+.mnv-pdf{margin-top:14px;text-align:center}
+#mnPrint{display:none}
+@media print{
+body>*:not(#mnPrint){display:none !important}
+#mnPrint,#mnPrint *{visibility:visible !important}
+#mnPrint{display:block !important;font-family:Inter,system-ui,Arial,sans-serif;color:#1c1c1a;font-size:10.5pt;line-height:1.45;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+#mnPrint .pd-top{display:flex;align-items:center;gap:12pt;padding-bottom:9pt;margin-bottom:12pt;border-bottom:2pt solid #0F6E56}
+#mnPrint .pd-top img{width:34pt;height:34pt;border-radius:8pt}
+#mnPrint .pd-ti{font-size:17pt;font-weight:700;color:#04342C}
+#mnPrint .pd-su{font-size:10pt;color:#6A6963}
+#mnPrint .pd{break-inside:avoid;border:.5pt solid #d8d6cf;border-radius:8pt;padding:8pt 11pt;margin:0 0 9pt}
+#mnPrint .pd-ob{background:#F4F2ED}
+#mnPrint .pd-ob p{margin:2pt 0}
+#mnPrint .pd-h{display:flex;justify-content:space-between;align-items:center;gap:8pt}
+#mnPrint h2{font-size:12.5pt;margin:0;color:#04342C}
+#mnPrint .pd-t{font-size:8.5pt;font-weight:700;padding:2pt 8pt;border-radius:10pt;background:#DDF0E6;color:#0F6E56}
+#mnPrint .pd-av{background:#F5EDE0;color:#7A5A38;border-radius:6pt;padding:4pt 8pt;margin:5pt 0;font-size:9.5pt}
+#mnPrint .pd-m{display:grid;grid-template-columns:72pt 1fr;gap:8pt;padding:5pt 0;border-top:.5pt solid #e6e4dd}
+#mnPrint .pd-mt b{display:block;font-size:8.5pt;text-transform:uppercase;letter-spacing:.05em;color:#0F6E56}
+#mnPrint .pd-mt span{font-size:9pt;color:#6A6963}
+#mnPrint .pd-n{font-weight:700}
+#mnPrint .pd-i{font-size:9.8pt;color:#3d3d3a}
+#mnPrint .pd-no{font-size:9pt;font-style:italic;color:#6A6963;margin-top:2pt}
+#mnPrint .pd-pag{break-before:page}
+#mnPrint .pd-h2{margin:0 0 10pt;font-size:14pt}
+#mnPrint .pd-cp{column-count:2;column-gap:18pt}
+#mnPrint .pd-cg{break-inside:avoid;margin:0 0 9pt}
+#mnPrint .pd-cg h3{font-size:9pt;text-transform:uppercase;letter-spacing:.07em;color:#7A5A38;margin:0 0 3pt}
+#mnPrint .pd-cg p{display:flex;justify-content:space-between;gap:8pt;margin:0;padding:2.5pt 0;border-bottom:.5pt solid #eceae4;font-size:9.8pt}
+#mnPrint .pd-cg i{display:block;font-size:8.5pt;font-weight:400;color:#6A6963;font-style:normal}
+#mnPrint .pd-cg b{text-align:right;font-weight:600}
+#mnPrint .pd-r h3{margin:0 0 2pt;font-size:11.5pt;color:#04342C}
+#mnPrint .pd-r ol{margin:4pt 0 4pt 16pt;padding:0;font-size:9.8pt}
+#mnPrint .pd-pie{margin-top:12pt;font-size:8.5pt;color:#8F8E88;text-align:center}
+@page{size:A4;margin:14mm}}
 @media print{body *{visibility:hidden}
 .mbg,.view{display:none !important}
 body{background:#fff !important;padding:0 !important;min-height:0 !important}
@@ -220,7 +260,7 @@ body.dark-mode :focus-visible{outline-color:#5CC8A6}
 .mn-ib:hover{background:var(--g100);color:var(--g900)}
 .mn-tabs{display:flex;gap:2px;border-bottom:.5px solid var(--bdm);margin:0 0 24px;overflow-x:auto;scrollbar-width:none}
 .mn-tabs::-webkit-scrollbar{display:none}
-.mn-tab{position:relative;flex:0 0 auto;padding:11px 16px;background:none;border:none;font:600 14px var(--f);color:var(--g500);cursor:pointer;white-space:nowrap}
+.mn-tab{position:relative;flex:0 0 auto;padding:11px 12px;background:none;border:none;font:600 14px var(--f);color:var(--g500);cursor:pointer;white-space:nowrap}
 .mn-tab:hover{color:var(--g900)}
 .mn-tab.on{color:var(--t600)}
 .mn-tab.on::after{content:'';position:absolute;left:12px;right:12px;bottom:-.5px;height:2px;border-radius:2px;background:var(--t400)}
@@ -487,6 +527,15 @@ body.dark-mode .mn-bib-b.veg{color:var(--t800)}
 </div>
 <div class="mbg" id="mMnSu" style="display:none;z-index:325" role="dialog" aria-modal="true" aria-labelledby="mnSuTit" onclick="if(event.target===this)mnSuCerrar()">
   <div class="mc" style="max-width:680px;max-height:calc(100dvh - 2rem);overflow-y:auto" id="mnSuCuerpo"></div>
+</div>
+<div class="mbg" id="mMnVer" style="display:none;z-index:325" role="dialog" aria-modal="true" aria-labelledby="mnVerTit" onclick="if(event.target===this)mnVerCerrar()">
+  <div class="mc" style="max-width:620px;max-height:calc(100dvh - 2rem);overflow-y:auto" id="mnVerCuerpo"></div>
+</div>
+<div class="mbg" id="mMnCopC" style="display:none;z-index:325" role="dialog" aria-modal="true" aria-labelledby="mnCopCTit" onclick="if(event.target===this)mnCopCCerrar()">
+  <div class="mc" style="max-width:480px;max-height:calc(100dvh - 2rem);overflow-y:auto" id="mnCopCCuerpo"></div>
+</div>
+<div class="mbg" id="mMnImpr" style="display:none;z-index:325" role="dialog" aria-modal="true" aria-labelledby="mnImprTit" onclick="if(event.target===this)mnImprCerrar()">
+  <div class="mc" style="max-width:540px;max-height:calc(100dvh - 2rem);overflow-y:auto" id="mnImprCuerpo"></div>
 </div>
 <div class="mbg" id="mMnObj" style="display:none;z-index:315" role="dialog" aria-modal="true" aria-labelledby="mnObjTit" onclick="if(event.target===this)mnObjCerrar()">
   <div class="mc" style="max-width:720px;max-height:calc(100dvh - 2rem);overflow-y:auto" id="mnObjCuerpo"></div>
@@ -1022,6 +1071,7 @@ async function mnPublicar() {
   if (!MN) return;
   mnSyncTextos();
   if (!mnTodasComidas().length) { toast('Añade al menos una comida antes de publicar.', { tipo: 'aviso' }); return; }
+  mnVerGuardar('Publicada');
   await mnGuardarYa();
   const ahora = new Date().toISOString(), snap = mnSnapshot();
   const sem = MN.row.semana_actual && MN.c.semanas.some(s => s.id === MN.row.semana_actual) ? MN.row.semana_actual : MN.c.semanas[0].id;
@@ -1106,7 +1156,10 @@ function mnMenuHtml() {
   const comidas = d.comidas.length ? d.comidas.map((m, i) => mnComidaHtml(m, i, d.comidas.length)).join('') : `<div class="mn-vacio"><b>Este día no tiene comidas todavía</b><span class="mn-ayuda">Añade las que necesite este cliente: pueden ser 3, 4, 5 o las que haga falta.</span></div>`;
   return `<div class="mn-grid">
     <aside class="mn-side">
-      <section class="mn-card"><p class="mn-k">Plan</p><label class="mn-l" for="mnTitulo">Título</label><input class="inp" id="mnTitulo" maxlength="120" value="${sudEsc(c.titulo || '')}" oninput="MN.c.titulo=this.value;mnCambio()"></section>
+      <section class="mn-card"><p class="mn-k">Plan</p><label class="mn-l" for="mnTitulo">Título</label><input class="inp" id="mnTitulo" maxlength="120" value="${sudEsc(c.titulo || '')}" oninput="MN.c.titulo=this.value;mnCambio()">
+        <div class="mn-f" style="margin-top:12px"><label class="mn-l" for="mnFac">Cantidades al publicar <span class="hd-opt">(%)</span></label><input class="inp" id="mnFac" type="number" min="50" max="150" step="5" value="${Math.round((c.factor || 1) * 100)}" onchange="mnFactorSet(this.value)"></div>
+        <label class="mn-chk" style="margin-top:8px"><input type="checkbox"${c.ajusteCliente ? ' checked' : ''} onchange="mnAjusteSet(this.checked)"> El cliente puede ajustarlas</label>
+        <div class="mn-add" style="margin:12px 0 0">${mnBtn('Versiones' + ((c.versiones || []).length ? ' (' + c.versiones.length + ')' : ''), 'mnVerAbrir()', { sm: true, icon: 'undo' })}${mnBtn('Copiar de otro cliente', 'mnCopAbrir()', { sm: true, icon: 'copy' })}${mnBtn('PDF', 'mnImprAbrir()', { sm: true, icon: 'book' })}</div></section>
       <section class="mn-card"><p class="mn-k">Objetivos nutricionales</p>${mnObjResumenHtml()}</section>
       <section class="mn-card"><div class="mn-k-row"><p class="mn-k">Semanas</p>${mnBtn('', 'mnNuevaSemana()', { icon: 'plus', sm: true, ghost: true, title: 'Añadir semana' })}</div>
         <div class="mn-nav" role="group" aria-label="Semanas">${navSem}</div>
@@ -1354,11 +1407,12 @@ function pintarLista() {
 // ── Copia que ve el cliente ──
 function mnSnapshot() {
   const c = MN.c, d = deportistas.find(x => x.id == MN.depId) || {}, oi = d.objetivo_impresiones || {};
-  const ing = l => (l || []).map(i => { const o = { t: mnIngTxt(i), n: i.n, a: i.a || null, cant: i.cant, nota: i.nota || '' }, su = mnSuTextos(i); if (su.length) o.sust = su; return o; });
+  const fac = c.factor || 1;
+  const ing = l => (l || []).map(i0 => { const i = mnEscala(i0, fac), o = { t: mnIngTxt(i), n: i.n, a: i.a || null, cant: i.cant, nota: i.nota || '' }, su = mnSuTextos(i); if (su.length) o.sust = su; return o; });
   const resolver = m => { const s = mnSrc(m); return { tipo: m.tipo, hora: m.hora || '', nombre: s.nombre || '', nota: s.nota || '', libre: !!m.libre, receta: m.receta || null, ing: ing(s.ing) }; };
   return {
-    v: 1, titulo: c.titulo || '', objetivo: oi.objetivo || '', impresiones: (oi.impresiones || []).filter(x => x && x.t),
-    semanas: c.semanas.map(s => ({ id: s.id, nombre: s.nombre || 'Semana', nota: s.nota || '', compra: mnCompraSemana(s), dias: s.dias.map(d2 => ({ n: d2.n, dow: d2.dow || null, ctx: d2.ctx || {}, comidas: d2.comidas.map(resolver) })) })),
+    v: 1, ajuste: !!c.ajusteCliente, titulo: c.titulo || '', objetivo: oi.objetivo || '', impresiones: (oi.impresiones || []).filter(x => x && x.t),
+    semanas: c.semanas.map(s => ({ id: s.id, nombre: s.nombre || 'Semana', nota: s.nota || '', compra: mnCompraSemana(mnSemEscala(s, fac)), dias: s.dias.map(d2 => ({ n: d2.n, dow: d2.dow || null, ctx: d2.ctx || {}, comidas: d2.comidas.map(resolver) })) })),
     recetas: c.recetas.map(r => ({ id: r.id, nombre: r.nombre || '', tiempo: r.tiempo || '', raciones: r.raciones || '', momento: r.momento || '', objetivo: r.objetivo || '', dificultad: r.dificultad || '', nutri: r.nutri || null, ing: ing(r.ing), pasos: r.pasos || [], consejo: r.consejo || '', nota: r.nota || '', foto: r.foto || null }))
   };
 }
@@ -2117,7 +2171,7 @@ function mnvCompraMarca(k, v) { const s = mnvSem(), m = mnvCompraMarcas(s); if (
 function mnvCompra(s) {
   const filas = s.compra || [], marcas = mnvCompraMarcas(s); if (!filas.length) return '';
   const g = mnCompraAgrupa(filas), hechas = filas.filter(f => marcas[f.k]).length;
-  return `<p class="mnv-sub">Lo que necesitas para esta semana · ${hechas} de ${filas.length} marcados</p>` + g.map(x => `<div class="card mnv-cp"><p class="mnv-sh" style="margin-top:0">${esc(x.c)}</p>${x.f.map(f => `<label class="mnv-cpf${marcas[f.k] ? ' ok' : ''}"><input type="checkbox"${marcas[f.k] ? ' checked' : ''} onchange="mnvCompraMarca('${esc(f.k)}',this.checked)"><span class="mnv-cpn">${esc(f.n)}</span><span class="mnv-cpq">${f.libre ? 'al gusto' : esc(f.txt)}${f.fmt ? `<small>${esc(f.fmt)}</small>` : ''}</span></label>`).join('')}</div>`).join('');
+  return `<p class="mnv-sub">Lo que necesitas para esta semana · ${hechas} de ${filas.length} marcados${(MNV.f || 1) !== 1 ? ' · la lista es para las cantidades de tu plan (sin tu ajuste)' : ''}</p>` + g.map(x => `<div class="card mnv-cp"><p class="mnv-sh" style="margin-top:0">${esc(x.c)}</p>${x.f.map(f => `<label class="mnv-cpf${marcas[f.k] ? ' ok' : ''}"><input type="checkbox"${marcas[f.k] ? ' checked' : ''} onchange="mnvCompraMarca('${esc(f.k)}',this.checked)"><span class="mnv-cpn">${esc(f.n)}</span><span class="mnv-cpq">${f.libre ? 'al gusto' : esc(f.txt)}${f.fmt ? `<small>${esc(f.fmt)}</small>` : ''}</span></label>`).join('')}</div>`).join('');
 }
 
 // ── Sustituciones ──
@@ -2200,13 +2254,117 @@ function mnSuAqui(altId) {
 }
 function mnSuCerrar() { document.getElementById('mMnSu').style.display = 'none'; MNS = null; }
 
+// ── Cantidades ajustables ──
+// El profesional puede aplicar un factor global al publicar (c.factor, p. ej. 0,9 = 90 %) y dejar que el cliente ajuste las cantidades
+// en su móvil (c.ajusteCliente; 70–130 %). El editor siempre muestra las cantidades base; el factor se aplica a la copia publicada.
+function mnEscala(i, f) {
+  const c = i.cant; if (!c || c.modo === 'libre' || !f || f === 1) return i;
+  const red = v => { if (c.modo === 'g') return c.u === 'g' || c.u === 'ml' ? Math.max(5, Math.round(v * f / 5) * 5) : +(v * f).toFixed(2); return Math.max(0.5, Math.round(v * f / 0.5) * 0.5); };
+  const min = red(c.min), max = c.max ? Math.max(min, red(c.max)) : null;
+  return { ...i, cant: { ...c, min, max: max && max > min ? max : null } };
+}
+const mnSemEscala = (s, f) => f === 1 ? s : { ...s, dias: s.dias.map(d => ({ ...d, comidas: d.comidas.map(m => ({ ...m, plato: null, ing: (mnSrc(m).ing || []).map(i => mnEscala(i, f)) })) })) };
+function mnFactorSet(v) { const n = Math.round(+v); MN.c.factor = isFinite(n) && n >= 50 && n <= 150 ? n / 100 : 1; mnCambio(); mnMarca(); }
+function mnAjusteSet(on) { MN.c.ajusteCliente = !!on; mnCambio(); mnMarca(); }
+function mnvTxt(i) { return (typeof MNV !== 'undefined' && MNV.f && MNV.f !== 1 && i.cant && i.cant.modo !== 'libre') ? mnIngTxt(mnEscala({ n: i.n, cant: i.cant }, MNV.f)) : i.t; }
+function mnvFactor(d) { const f = Math.max(0.7, Math.min(1.3, Math.round(((MNV.f || 1) + d) * 100) / 100)); MNV.f = f; try { localStorage.setItem('mnv_factor', String(f)); } catch (e) {} pintarMenu(); }
+function mnvFactorHtml() { const f = MNV.f || 1; return `<div class="mnv-fac"><span>Cantidades</span><button type="button" aria-label="Menos cantidad" onclick="mnvFactor(-0.05)"${f <= 0.7 ? ' disabled' : ''}>−</button><b>${Math.round(f * 100)} %</b><button type="button" aria-label="Más cantidad" onclick="mnvFactor(0.05)"${f >= 1.3 ? ' disabled' : ''}>+</button>${f !== 1 ? '<button type="button" class="mnv-fac-r" onclick="MNV.f=1;mnvFactor(0)">Restablecer</button>' : ''}</div>`; }
+
+// ── Versiones del menú ──
+const MN_VER_MAX = 8;
+const mnVerContenido = () => { const o = mnClonar(MN.c); delete o.versiones; return o; };
+function mnVerGuardar(nombre) {
+  MN.c.versiones = MN.c.versiones || []; MN.c.versiones.unshift({ id: mnId('v'), en: new Date().toISOString(), nombre: (nombre || '').trim().slice(0, 60) || 'Versión', c: mnVerContenido() });
+  if (MN.c.versiones.length > MN_VER_MAX) MN.c.versiones.length = MN_VER_MAX; mnCambio();
+}
+function mnVerAbrir() { document.getElementById('mMnVer').style.display = 'flex'; mnVerPintar(); }
+function mnVerCerrar() { document.getElementById('mMnVer').style.display = 'none'; }
+function mnVerPintar() {
+  const v = MN.c.versiones || [], cuenta = c => { let n = 0; (c.semanas || []).forEach(s => s.dias.forEach(d => { n += d.comidas.length; })); return n; };
+  document.getElementById('mnVerCuerpo').innerHTML = `<p class="mt" id="mnVerTit">Versiones del menú</p>
+    <p class="ms">Se guarda una al publicar. Guarda otra cuando quieras antes de un cambio grande (máximo ${MN_VER_MAX}; se borran las más antiguas).</p>
+    <div class="mn-bib-r"><div class="mn-f" style="flex:1 1 220px"><label class="mn-l" for="mnVerN">Nombre</label><input class="inp" id="mnVerN" maxlength="60" placeholder="Ej. Antes de la pretemporada"></div><div class="mn-f"><span class="mn-l">&nbsp;</span>${mnBtn('Guardar versión ahora', 'mnVerGuardarYa()', { icon: 'plus' })}</div></div>
+    ${v.length ? `<div class="mn-su-l" style="margin-top:12px">${v.map(x => `<div class="mn-su-f"><span class="mn-su-c" style="cursor:default"><span><b>${sudEsc(x.nombre)}</b><br><span class="mn-su-q">${new Date(x.en).toLocaleString('es-ES', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })} · ${(x.c.semanas || []).length} ${(x.c.semanas || []).length === 1 ? 'semana' : 'semanas'} · ${cuenta(x.c)} comidas</span></span></span><span class="mn-su-a">${mnBtn('Restaurar', `mnVerRestaurar('${x.id}')`, { sm: true })}${mnBtn('Eliminar', `mnVerEliminar('${x.id}')`, { sm: true, ghost: true, dan: true })}</span></div>`).join('')}</div>` : '<div class="mn-vacio" style="margin-top:12px"><b>Aún no hay versiones</b><span class="mn-ayuda">Se crea la primera al publicar.</span></div>'}
+    <div class="mbtns" style="margin-top:14px"><button type="button" class="btn-cancel" onclick="mnVerCerrar()">Cerrar</button></div>`;
+}
+function mnVerGuardarYa() { mnVerGuardar(document.getElementById('mnVerN').value); mnVerPintar(); mnMarca(); toast('Versión guardada'); }
+function mnVerEliminar(id) { MN.c.versiones = (MN.c.versiones || []).filter(x => x.id !== id); mnCambio(); mnVerPintar(); }
+function mnVerRestaurar(id) {
+  const x = (MN.c.versiones || []).find(y => y.id === id); if (!x) return;
+  const antes = mnClonar(MN.c); mnVerGuardar('Antes de restaurar'); const vers = MN.c.versiones;
+  const nuevo = mnClonar(x.c); nuevo.versiones = vers; MN.c = nuevo; MN.sem = null; MN.dia = Math.min(MN.dia, 6); mnAsegurar(); mnRelinkTodo(); mnCambio(); mnVerCerrar(); mnPintar();
+  toast('Restaurada «' + x.nombre + '»', { accion: { texto: 'Deshacer', fn: () => { MN.c = antes; MN.sem = null; mnAsegurar(); mnCambio(); mnPintar(); } } });
+}
+
+// ── Copiar el menú de otro cliente ──
+function mnCopAbrir() {
+  const otros = deportistas.filter(d => d.id != MN.depId && _menus[d.id]);
+  document.getElementById('mnCopCCuerpo').innerHTML = `<p class="mt" id="mnCopCTit">Copiar el menú de otro cliente</p>
+    <p class="ms">Se añade como semanas nuevas, con sus recetas y comidas guardadas. No se copian los objetivos, las exclusiones ni las fotos de las recetas; lo que ya tengas no se toca.</p>
+    ${otros.length ? `<div class="mn-f"><label class="mn-l" for="mnCopCS">Cliente</label><select class="inp" id="mnCopCS" style="width:100%">${otros.map(d => `<option value="${d.id}">${sudEsc(d.nombre || 'Sin nombre')}</option>`).join('')}</select></div>` : '<div class="mn-vacio"><b>Ningún otro cliente tiene menú</b><span class="mn-ayuda">Cuando otro cliente tenga uno, podrás copiarlo desde aquí.</span></div>'}
+    <div class="mbtns" style="margin-top:14px"><button type="button" class="btn-cancel" onclick="mnCopCCerrar()">Cancelar</button>${otros.length ? '<button type="button" class="btn-ok" onclick="mnCopCHacer()">Copiar</button>' : ''}</div>`;
+  document.getElementById('mMnCopC').style.display = 'flex';
+}
+function mnCopCCerrar() { document.getElementById('mMnCopC').style.display = 'none'; }
+async function mnCopCHacer() {
+  const id = +document.getElementById('mnCopCS').value, d = deportistas.find(x => x.id == id) || {};
+  let r; try { r = await sb(`menus_cliente?deportista_id=eq.${id}&select=contenido&limit=1`); } catch (e) { r = null; }
+  const o = Array.isArray(r) && r[0] && r[0].contenido; if (!o || !Array.isArray(o.semanas)) { toast('No se pudo leer el menú de ese cliente.', { tipo: 'error' }); return; }
+  const rec = {}, pla = {}; (o.recetas || []).forEach(x => { rec[x.id] = mnId('r'); }); (o.platos || []).forEach(x => { pla[x.id] = mnId('p'); });
+  const renIng = l => (l || []).forEach(i => { i.id = mnId('i'); i.a = null; });
+  const recetas = (o.recetas || []).map(x => { const n = mnClonar(x); n.id = rec[x.id]; n.foto = null; renIng(n.ing); return n; });
+  const platos = (o.platos || []).map(x => { const n = mnClonar(x); n.id = pla[x.id]; renIng(n.ing); return n; });
+  const sufijo = ' · de ' + (d.nombre || '').split(' ')[0];
+  const semanas = o.semanas.map(s => { const n = mnClonar(s); n.id = mnId('s'); n.nombre = (n.nombre || 'Semana').slice(0, 40 - sufijo.length) + sufijo; n.dias.forEach(dd => { dd.id = mnId('d'); dd.comidas.forEach(m => { m.id = mnId('m'); m.receta = m.receta ? (rec[m.receta] || null) : null; m.plato = m.plato ? (pla[m.plato] || null) : null; renIng(m.ing); }); }); return n; });
+  const antS = MN.c.semanas.slice(), antR = MN.c.recetas.slice(), antP = MN.c.platos.slice(), antSem = MN.sem, vacia = MN.c.semanas.length === 1 && MN.c.semanas[0].dias.every(x => !x.comidas.length);
+  if (vacia) MN.c.semanas = []; MN.c.semanas = MN.c.semanas.concat(semanas); MN.c.recetas = MN.c.recetas.concat(recetas); MN.c.platos = MN.c.platos.concat(platos); MN.sem = semanas[0].id; MN.dia = 0;
+  mnRelinkTodo(); mnCambio(); mnCopCCerrar(); mnPintar();
+  toast('Copiado el menú de ' + (d.nombre || 'otro cliente') + ' (' + semanas.length + (semanas.length === 1 ? ' semana' : ' semanas') + ')', { accion: { texto: 'Deshacer', fn: () => { MN.c.semanas = antS; MN.c.recetas = antR; MN.c.platos = antP; MN.sem = antSem; mnCambio(); mnPintar(); } } });
+}
+
+// ── PDF del menú (imprimir → «Guardar como PDF»; texto real, varias páginas) ──
+// mnImprHtml solo usa la copia (snapshot): sirve igual para el borrador, lo publicado y la vista del cliente.
+const mnImprEsc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+function mnImprHtml(m, o) {
+  const e = mnImprEsc, sem = m.semanas.find(s => s.id === o.sem) || m.semanas[0], T = { D: 'Desayuno', A: 'Almuerzo', C: 'Comida', Me: 'Merienda', Ce: 'Cena', O: 'Otra' };
+  const f = o.factor && o.factor !== 1 ? o.factor : 1, txt = i => (f !== 1 && i.cant && i.cant.modo !== 'libre') ? mnIngTxt(mnEscala({ n: i.n, cant: i.cant }, f)) : i.t;
+  const dias = sem.dias.map(d => { const c = d.ctx || {}; return `<section class="pd"><div class="pd-h"><h2>${e(d.n)}</h2>${c.texto ? `<span class="pd-t">${e(c.texto)}</span>` : ''}</div>${c.aviso ? `<p class="pd-av">${e(c.aviso)}</p>` : ''}${c.suppl ? `<p class="pd-av"><b>Suplementación:</b> ${e(c.suppl)}</p>` : ''}
+    ${d.comidas.length ? d.comidas.map(x => `<div class="pd-m"><div class="pd-mt"><b>${T[x.tipo] || 'Comida'}</b>${x.hora ? `<span>${e(x.hora)}</span>` : ''}</div><div class="pd-mc">${x.nombre ? `<div class="pd-n">${e(x.nombre)}${x.libre ? ' <i>(libre)</i>' : ''}</div>` : ''}${(x.ing || []).length ? `<div class="pd-i">${x.ing.map(i => e(txt(i)) + (i.nota ? ` <i>(${e(i.nota)})</i>` : '')).join(' · ')}</div>` : ''}${x.nota ? `<div class="pd-no">${e(x.nota)}</div>` : ''}</div></div>`).join('') : '<p class="pd-av">Sin comidas</p>'}</section>`; }).join('');
+  const imp = (m.impresiones || []), obj = (o.objetivo && (m.objetivo || imp.length)) ? `<section class="pd pd-ob">${m.objetivo ? `<p><b>Objetivo:</b> ${e(m.objetivo)}</p>` : ''}${imp.length ? `<p><b>Impresiones:</b> ${imp.map(x => e(x.t)).join(' · ')}</p>` : ''}</section>` : '';
+  const compra = o.compra && (sem.compra || []).length ? `<section class="pd-pag"><h2 class="pd-h2">Lista de la compra · ${e(sem.nombre)}</h2><div class="pd-cp">${mnCompraAgrupa(sem.compra).map(g => `<div class="pd-cg"><h3>${e(g.c)}</h3>${g.f.map(x => `<p><span>${e(x.n)}</span><b>${x.libre ? 'al gusto' : e(x.txt)}${x.fmt ? ` <i>${e(x.fmt)}</i>` : ''}</b></p>`).join('')}</div>`).join('')}</div></section>` : '';
+  const rec = o.recetas && (m.recetas || []).length ? `<section class="pd-pag"><h2 class="pd-h2">Recetas</h2>${m.recetas.map(r => `<article class="pd pd-r"><h3>${e(r.nombre)}</h3><p class="pd-no">${[r.tiempo, r.raciones, r.dificultad].filter(Boolean).map(e).join(' · ')}</p>${(r.ing || []).length ? `<p class="pd-i"><b>Ingredientes:</b> ${r.ing.map(i => e(i.t)).join(' · ')}</p>` : ''}${(r.pasos || []).length ? `<ol>${r.pasos.map(p => `<li>${e(p)}</li>`).join('')}</ol>` : ''}${r.consejo ? `<p class="pd-no">${e(r.consejo)}</p>` : ''}</article>`).join('')}</section>` : '';
+  return `<header class="pd-top"><img src="icon-rounded-192.png" alt=""><div><div class="pd-ti">${e(m.titulo || 'Planificación nutricional')}</div><div class="pd-su">${e(o.cliente || '')}${o.cliente ? ' · ' : ''}${e(sem.nombre)}${sem.nota ? ' · ' + e(sem.nota) : ''}</div></div></header>${obj}${dias}${compra}${rec}<footer class="pd-pie">NutriLogos · ${new Date().toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })}</footer>`;
+}
+function mnImprAbrir() {
+  const pub = !!MN.row.publicado;
+  document.getElementById('mnImprCuerpo').innerHTML = `<p class="mt" id="mnImprTit">PDF del menú</p>
+    <p class="ms">Se abre la ventana de impresión: elige «Guardar como PDF». Sale con texto real y varias páginas si hace falta.</p>
+    <div class="mn-g2"><div class="mn-f"><label class="mn-l" for="mnImprO">Qué incluir</label><select class="inp" id="mnImprO" style="width:100%"><option value="b">Borrador (lo que ves ahora)</option>${pub ? '<option value="p">Lo publicado (lo que ve el cliente)</option>' : ''}</select></div>
+      <div class="mn-f"><label class="mn-l" for="mnImprS">Semana</label><select class="inp" id="mnImprS" style="width:100%">${MN.c.semanas.map(s => `<option value="${s.id}"${s.id === MN.sem ? ' selected' : ''}>${sudEsc(s.nombre)}</option>`).join('')}</select></div></div>
+    <div class="mn-checks" style="margin-top:14px"><label class="mn-chk2"><input type="checkbox" id="mnImprC" checked> Lista de la compra</label><label class="mn-chk2"><input type="checkbox" id="mnImprR"${MN.c.recetas.length ? ' checked' : ' disabled'}> Recetas</label><label class="mn-chk2"><input type="checkbox" id="mnImprOb" checked> Objetivo e impresiones</label></div>
+    <div class="mbtns" style="margin-top:16px"><button type="button" class="btn-cancel" onclick="mnImprCerrar()">Cancelar</button><button type="button" class="btn-ok" onclick="mnImprHacer()">Crear PDF</button></div>`;
+  document.getElementById('mMnImpr').style.display = 'flex';
+}
+function mnImprCerrar() { document.getElementById('mMnImpr').style.display = 'none'; }
+function mnImprImprimir(html) {
+  let b = document.getElementById('mnPrint'); if (!b) { b = document.createElement('div'); b.id = 'mnPrint'; document.body.appendChild(b); }
+  b.innerHTML = html; const img = b.querySelector('img'); const ir = () => { window.print(); setTimeout(() => { b.innerHTML = ''; }, 500); };
+  if (img && !img.complete) { img.onload = img.onerror = ir; } else ir();
+}
+function mnImprHacer() {
+  const borr = document.getElementById('mnImprO').value === 'b', m = borr ? mnSnapshot() : MN.row.publicado; if (!m) return;
+  const o = { sem: document.getElementById('mnImprS').value, compra: document.getElementById('mnImprC').checked, recetas: document.getElementById('mnImprR').checked, objetivo: document.getElementById('mnImprOb').checked, cliente: MN.nombre, factor: 1 };
+  mnImprCerrar(); mnImprImprimir(mnImprHtml(m, o));
+}
+function mnvImprimir() { const s = mnvSem(); mnImprImprimir(mnImprHtml(MENU.menu, { sem: s.id, compra: true, recetas: true, objetivo: true, cliente: '', factor: MNV.f || 1 })); }
+
 // ── Funciones propias de la página de pruebas ──
 function mnPrevSet(o) { mnSyncTextos(); MN.prev = o; mnPintar(); }
 function mnvPrev(origen) {
   const m = origen === 'borrador' ? mnSnapshot() : MN.row.publicado, box = document.getElementById('menuBody');
   if (!m) { box.innerHTML = vacioHtml('file', 'Todavía no hay menú publicado', 'Pulsa «Publicar» para que el cliente lo vea; hasta entonces puedes mirar el borrador.', null, true); return; }
   MENU = { menu: m, semana_actual: MN.row.semana_actual && m.semanas.some(s => s.id === MN.row.semana_actual) ? MN.row.semana_actual : m.semanas[0].id };
-  const s = MENU.menu.semanas.find(x => x.id === MENU.semana_actual); MNV.sem = s.id; MNV.dia = mnvIdxHoy(s); MNV.tab = 'hoy'; MNV.rec = null; pintarMenu();
+  const s = MENU.menu.semanas.find(x => x.id === MENU.semana_actual); MNV.sem = s.id; MNV.dia = mnvIdxHoy(s); MNV.tab = 'hoy'; MNV.rec = null; MNV.f = 1; try { const g = +localStorage.getItem('mnv_factor'); if (m.ajuste && g >= 0.7 && g <= 1.3) MNV.f = g; } catch (e) {} pintarMenu();
 }
 async function mnRetirar() {
   const r = await sb(`menus_cliente?id=eq.${MN.row.id}`, { method: 'PATCH', headers: { 'Prefer': 'return=minimal' }, body: JSON.stringify({ publicado: null, publicado_en: null }) });
@@ -2230,8 +2388,10 @@ function pintarMenu(){
   let h='';
   if(m.semanas.length>1) h+=`<div class="mnv-chips" role="group" aria-label="Semana">${m.semanas.map(x=>`<button type="button" class="mnv-chip${x.id===s.id?' on':''}" onclick="mnvSet('sem','${esc(x.id)}')">${esc(x.nombre)}${x.id===MENU.semana_actual?'<span class="mnv-hoy" aria-label="Esta semana"></span>':''}</button>`).join('')}</div>`;
   if(s.nota) h+=`<p class="mnv-sub">${esc(s.nota)}</p>`;
+  if(m.ajuste) h+=mnvFactorHtml();
   h+=`<div class="mnv-tabs" role="tablist" aria-label="Secciones">${tabs.map(t=>`<button type="button" role="tab" class="mnv-tab${MNV.tab===t[0]?' on':''}" aria-selected="${MNV.tab===t[0]}" onclick="mnvSet('tab','${t[0]}')">${t[1]}</button>`).join('')}</div>`;
   h+=MNV.tab==='hoy'?mnvHoy(s):MNV.tab==='semana'?mnvSemana(s):MNV.tab==='compra'?mnvCompra(s):MNV.tab==='recetas'?mnvRecetas():mnvPlan();
+  h+=`<div class="mnv-pdf"><button type="button" class="mnv-rb" onclick="mnvImprimir()">Descargar PDF</button></div>`;
   $('menuBody').innerHTML=h; cargarFotos($('menuBody'));
 }
 function mnvComida(m){
@@ -2240,8 +2400,8 @@ function mnvComida(m){
     <div class="mnv-mh"><span class="mnv-b mnv-b-${t[1]}">${t[0]}</span>${m.libre?'<span class="mnv-b mnv-b-l">Libre</span>':''}${m.hora?`<span class="mnv-h">${esc(m.hora)}</span>`:''}</div>
     ${m.nombre?`<div class="mnv-n">${esc(m.nombre)}</div>`:''}
     ${ing.length&&m.libre?'<div class="mnv-ideas">Ideas</div>':''}
-    ${ing.length?`<div class="mnv-ing">${ing.map(i=>`<span class="mnv-i">${esc(i.t)}${i.nota?` <i>(${esc(i.nota)})</i>`:''}</span>`).join('')}</div>`:''}
-    ${!m.libre&&ing.some(i=>(i.sust||[]).length)?`<details class="mnv-alt"><summary>Alternativas permitidas</summary>${ing.filter(i=>(i.sust||[]).length).map(i=>`<p><b>${esc(i.t)}</b> → ${i.sust.map(x=>esc(x.t)+(x.max?` <i>(máx. ${x.max} ${x.max===1?'vez':'veces'} por semana)</i>`:'')).join(' · ')}</p>`).join('')}</details>`:''}
+    ${ing.length?`<div class="mnv-ing">${ing.map(i=>`<span class="mnv-i">${esc(mnvTxt(i))}${i.nota?` <i>(${esc(i.nota)})</i>`:''}</span>`).join('')}</div>`:''}
+    ${!m.libre&&ing.some(i=>(i.sust||[]).length)?`<details class="mnv-alt"><summary>Alternativas permitidas</summary>${ing.filter(i=>(i.sust||[]).length).map(i=>`<p><b>${esc(mnvTxt(i))}</b> → ${i.sust.map(x=>esc(x.t)+(x.max?` <i>(máx. ${x.max} ${x.max===1?'vez':'veces'} por semana)</i>`:'')).join(' · ')}</p>`).join('')}</details>`:''}
     ${m.nota?`<p class="mnv-nota">${esc(m.nota)}</p>`:''}
     ${m.receta&&(MENU.menu.recetas||[]).some(r=>r.id===m.receta)?`<button type="button" class="mnv-rb" onclick="mnvVerReceta('${esc(m.receta)}')">Ver receta</button>`:''}
   </div>`;
