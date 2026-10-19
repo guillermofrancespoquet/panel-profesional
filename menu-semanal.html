@@ -140,6 +140,7 @@ body.dark-mode :focus-visible{outline-color:#5CC8A6}
 .mnv-ctx.entreno{background:var(--t50);color:var(--t800);border-color:var(--pill-g-bd)}
 .mnv-ctx.partido,.mnv-ctx.libre{background:var(--gold-50);color:var(--gold-dk);border-color:var(--pill-au-bd)}
 .mnv-ctx b{font-weight:700}
+.mnv-ctx{white-space:pre-line}
 .mnv-m{margin-bottom:10px;padding:14px 16px}
 .mnv-mh{display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap}
 .mnv-b{font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;background:var(--pill-g);color:var(--t900)}
@@ -303,9 +304,41 @@ body.dark-mode :focus-visible{outline-color:#5CC8A6}
 .mn-dt-g{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
 .mn-dt-h{display:flex;justify-content:space-between;align-items:baseline;font-size:12.5px;color:var(--g500);margin-bottom:6px}
 .mn-dt-h b{font-size:15px;color:var(--g900)}
-.mn-dt-b{height:8px;border-radius:6px;background:var(--g100);overflow:hidden}
-.mn-dt-b i{display:block;height:100%;border-radius:6px;background:var(--g200)}
-.mn-dt-b i.ok{background:var(--t400)}.mn-dt-b i.warn{background:var(--gold)}.mn-dt-b i.bad{background:#C0504D}
+.mn-dt-b{position:relative;height:10px;border-radius:6px;background:var(--g100);overflow:hidden}
+.mn-dt-b i{display:block;height:100%;border-radius:6px;background:var(--mn-k,var(--g200));transition:width .35s ease}
+.mn-dt.k-kcal{--mn-k:var(--t600)}.mn-dt.k-prot{--mn-k:#C4684A}.mn-dt.k-hc{--mn-k:var(--gold)}.mn-dt.k-grasa{--mn-k:#4F86A8}
+.mn-dt-f.ok{color:var(--t600)}.mn-dt-f.warn{color:var(--gold-dk)}.mn-dt-f.bad{color:var(--red)}
+.mn-dt-k{display:inline-block;width:8px;height:8px;border-radius:3px;background:var(--mn-k);margin-right:7px;vertical-align:1px}
+.mn-bib-bar{margin-bottom:0}
+.mn-bib-r{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;margin-bottom:12px}
+.mn-bib-ch{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.mn-fch{font:600 12.5px var(--f);padding:6px 13px;border-radius:20px;border:.5px solid var(--bdm);background:var(--sf);color:var(--g700);cursor:pointer}
+.mn-fch:hover{border-color:var(--t400)}
+.mn-fch.on{background:var(--t600);border-color:var(--t600);color:#fff}
+body.dark-mode .mn-fch.on{background:var(--t400);border-color:var(--t400);color:#06261f}
+.mn-bib-g{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+.mn-bib-c{display:flex;flex-direction:column;gap:10px;background:var(--sf);border:.5px solid var(--bd);border-radius:16px;padding:16px 18px;box-shadow:var(--mn-sh);min-width:0}
+.mn-bib-h h3{font-size:15px;line-height:1.35;margin:6px 0 0;color:var(--g900)}
+.mn-bib-m{display:inline-flex;align-items:center;gap:7px;font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--g500)}
+.mn-bib-m::before{content:'';width:8px;height:8px;border-radius:3px;background:var(--mn-c,var(--g200))}
+.mn-bib-i{list-style:none;margin:0;padding:0;font-size:12.5px;color:var(--g500);line-height:1.55;flex:1}
+.mn-bib-i li{padding-left:12px;position:relative}
+.mn-bib-i li::before{content:'';position:absolute;left:0;top:.65em;width:4px;height:4px;border-radius:50%;background:var(--g200)}
+.mn-bib-i li.mas{color:var(--g400)}.mn-bib-i li.mas::before{display:none}
+.mn-bib-f{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.mn-bib-b,.mn-bib-t{font-size:10.5px;font-weight:700;padding:2px 9px;border-radius:20px;background:var(--g100);color:var(--g700)}
+.mn-bib-b.veg{background:var(--pill-g);color:var(--t900)}
+body.dark-mode .mn-bib-b.veg{color:var(--t800)}
+.mn-bib-t{background:var(--pill-au);color:var(--gold-dk)}
+.mn-bib-o{font-size:11px;color:var(--g400);margin-right:auto}
+.mn-chips-r{display:flex;flex-wrap:wrap;gap:8px}
+.mn-imp-t{overflow:auto;border:.5px solid var(--bd);border-radius:12px}
+.mn-imp-t table{width:100%;border-collapse:collapse;font-size:12.5px}
+.mn-imp-t th,.mn-imp-t td{padding:8px 12px;text-align:left;vertical-align:top;border-bottom:.5px solid var(--bd)}
+.mn-imp-t thead th{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--g500);background:var(--g100)}
+.mn-imp-t tbody tr:last-child>*{border-bottom:0}
+.mn-imp-t tbody th{white-space:nowrap}
+.mn-imp-n{margin:14px 0 0;padding-left:18px;font-size:12.5px;color:var(--g500);line-height:1.6}
 .mn-dt-f{font-size:11.5px;color:var(--g400);margin-top:5px}
 .mn-dt-n{font-size:12.5px;color:var(--g500);margin:14px 0 0;line-height:1.55}
 .mn-dt-n.warn{color:var(--gold-dk)}
@@ -399,6 +432,10 @@ body.dark-mode :focus-visible{outline-color:#5CC8A6}
 <div class="mbg" id="mMnAuto" style="display:none;z-index:320" role="dialog" aria-modal="true" aria-labelledby="mnAutoTit" onclick="if(event.target===this)mnAutoCerrar()">
   <div class="mc" style="max-width:940px;max-height:calc(100dvh - 2rem);overflow-y:auto" id="mnAutoCuerpo"></div>
 </div>
+<div class="mbg" id="mMnImp" style="display:none;z-index:320" role="dialog" aria-modal="true" aria-labelledby="mnImpTit" onclick="if(event.target===this)mnImpCerrar()">
+  <div class="mc" style="max-width:760px;max-height:calc(100dvh - 2rem);overflow-y:auto" id="mnImpCuerpo"></div>
+</div>
+<input type="file" id="mnImpFile" accept=".html,.htm,text/html" style="display:none" aria-hidden="true" tabindex="-1" onchange="mnImpArchivo(this)">
 <div class="mbg" id="mMnObj" style="display:none;z-index:315" role="dialog" aria-modal="true" aria-labelledby="mnObjTit" onclick="if(event.target===this)mnObjCerrar()">
   <div class="mc" style="max-width:720px;max-height:calc(100dvh - 2rem);overflow-y:auto" id="mnObjCuerpo"></div>
 </div>
@@ -994,13 +1031,14 @@ function mnMarca() { const e = document.getElementById('mnEstado'); if (e) e.inn
 
 function mnPintar() {
   const c = MN.c, pub = MN.row.publicado_en, faltan = mnSinEnlazar().length;
-  const tabs = [['menu', 'Menú'], ['recetas', 'Recetas', c.recetas.length], ['platos', 'Comidas guardadas', c.platos.length], ['objetivo', 'Objetivo e impresiones'], ['cliente', 'Vista del cliente']];
+  const tabs = [['menu', 'Menú'], ['recetas', 'Recetas', c.recetas.length], ['platos', 'Comidas guardadas', c.platos.length], ['biblioteca', 'Biblioteca', MN_BIBLIOTECA.length], ['objetivo', 'Objetivo e impresiones'], ['cliente', 'Vista del cliente']];
   document.getElementById('mnPage').innerHTML = `
     <div class="mn-bar"><button type="button" class="mn-back" onclick="mnSalir()">${mnI('back')}Clientes</button><div id="mnEstado">${mnEstadoHtml()}</div></div>
     <div class="mn-head"><div><h1 class="mn-h1">Menú semanal</h1><p class="mn-cli">${sudEsc(MN.nombre)}</p></div>
       <div class="mn-acc">${faltan ? mnBtn('Completar catálogo (' + faltan + ')', 'mnAutoAbrir()', { icon: 'wand' }) : ''}${mnBtn('Catálogo', 'mnCatAbrir()', { icon: 'book' })}${pub ? mnBtn('Retirar', 'mnRetirar()', { icon: 'undo' }) : ''}${mnBtn(pub ? 'Publicar cambios' : 'Publicar', 'mnPublicar()', { pri: true, icon: 'send' })}</div></div>
     <div class="mn-tabs" role="tablist" aria-label="Secciones del menú">${tabs.map(t => `<button type="button" role="tab" class="mn-tab${MN.tab === t[0] ? ' on' : ''}" aria-selected="${MN.tab === t[0]}" onclick="mnTab('${t[0]}')">${t[1]}${t[2] ? `<span class="mn-n">${t[2]}</span>` : ''}</button>`).join('')}</div>
-    <div id="mnCuerpo">${MN.tab === 'menu' ? mnMenuHtml() : MN.tab === 'recetas' ? mnRecetasHtml() : MN.tab === 'platos' ? mnPlatosHtml() : MN.tab === 'objetivo' ? mnObjetivoHtml() : mnClienteHtml()}</div>`;
+    <div id="mnCuerpo">${MN.tab === 'menu' ? mnMenuHtml() : MN.tab === 'recetas' ? mnRecetasHtml() : MN.tab === 'platos' ? mnPlatosHtml() : MN.tab === 'biblioteca' ? mnBibHtml() : MN.tab === 'objetivo' ? mnObjetivoHtml() : mnClienteHtml()}</div>`;
+  if (MN.tab === 'biblioteca') mnBibPintar();
   cargarFotosCli(document.getElementById('mnPage'));
   if (MN.tab === 'cliente') mnvPrev(MN.prev || 'borrador');
 }
@@ -1020,7 +1058,7 @@ function mnMenuHtml() {
           <div class="mn-f"><label class="mn-l" for="mnSemNom">Nombre</label><input class="inp" id="mnSemNom" maxlength="40" value="${sudEsc(s.nombre)}" oninput="mnSemSet('nombre',this.value)"></div>
           <div class="mn-f"><label class="mn-l" for="mnSemNota">Cuándo toca <span class="hd-opt">(opcional)</span></label><input class="inp" id="mnSemNota" maxlength="200" value="${sudEsc(s.nota || '')}" placeholder="Ej. Entreno L, X, J + partido el domingo" oninput="mnSemSet('nota',this.value)"></div>
           ${c.semanas.length > 1 ? `<label class="mn-chk"><input type="checkbox" id="mnToca"${s.id === toca ? ' checked' : ''} onchange="mnTocaSemana('${s.id}')"> Es la semana que toca ahora</label>` : ''}
-          <div class="mn-add" style="margin:0">${mnBtn('Duplicar', 'mnDuplicarSemana()', { icon: 'copy', sm: true })}${c.semanas.length > 1 ? mnBtn('Eliminar', 'mnEliminarSemana()', { icon: 'trash', sm: true, dan: true }) : ''}</div>
+          <div class="mn-add" style="margin:0">${mnBtn('Duplicar', 'mnDuplicarSemana()', { icon: 'copy', sm: true })}${mnBtn('Importar HTML', 'mnImpAbrir()', { icon: 'upload', sm: true })}${c.semanas.length > 1 ? mnBtn('Eliminar', 'mnEliminarSemana()', { icon: 'trash', sm: true, dan: true }) : ''}</div>
         </div></section>
       <section class="mn-card"><p class="mn-k">Días</p><div class="mn-nav mn-dias" role="group" aria-label="Días">${navDias}</div></section>
     </aside>
@@ -1028,7 +1066,8 @@ function mnMenuHtml() {
       <section class="mn-card"><div class="mn-dia-h"><h2 class="mn-dia-t">${sudEsc(d.n)}</h2><span class="mn-ayuda">${d.comidas.length} ${d.comidas.length === 1 ? 'comida' : 'comidas'}</span></div>
         <div class="mn-g2"><div class="mn-f"><label class="mn-l" for="mnCtxT">Tipo de día</label><select class="inp" id="mnCtxT" onchange="mnCtxSet('tipo',this.value)">${MN_CTX.map(o => `<option value="${o[0]}"${(ctx.tipo || '') === o[0] ? ' selected' : ''}>${o[1]}</option>`).join('')}</select></div>
           <div class="mn-f"><label class="mn-l" for="mnCtxX">Etiqueta</label><input class="inp" id="mnCtxX" maxlength="60" value="${sudEsc(ctx.texto || '')}" placeholder="Ej. Entreno 19 h" oninput="mnCtxSet('texto',this.value)"></div></div>
-        <div class="mn-f" style="margin-top:12px"><label class="mn-l" for="mnCtxA">Aviso para el cliente <span class="hd-opt">(opcional)</span></label><input class="inp" id="mnCtxA" maxlength="300" value="${sudEsc(ctx.aviso || '')}" placeholder="Ej. La comida de las 14:00 es la carga previa al entreno" oninput="mnCtxSet('aviso',this.value)"></div>
+        <div class="mn-f" style="margin-top:12px"><label class="mn-l" for="mnCtxA">Aviso para el cliente <span class="hd-opt">(opcional)</span></label><textarea class="inp" id="mnCtxA" rows="2" maxlength="600" placeholder="Ej. La comida de las 14:00 es la carga previa al entreno" oninput="mnCtxSet('aviso',this.value)">${sudEsc(ctx.aviso || '')}</textarea></div>
+        <div class="mn-f" style="margin-top:12px"><label class="mn-l" for="mnCtxS">Suplementación de este día <span class="hd-opt">(opcional)</span></label><textarea class="inp" id="mnCtxS" rows="2" maxlength="600" placeholder="Ej. Creatina 5 g con el desayuno" oninput="mnCtxSet('suppl',this.value)">${sudEsc(ctx.suppl || '')}</textarea></div>
       </section>
       <div style="height:16px"></div>
       <div id="mnDiaTot">${mnTotDiaHtml(d)}</div>
@@ -1445,11 +1484,11 @@ function mnTotDiaHtml(d) {
   const t = mnTotDia(d), obj = mnObjDia(mnTipoDia(d)), peso = MN.c.obj && MN.c.obj.peso;
   const aviso = [t.fuera ? `${t.fuera} ${t.fuera === 1 ? 'ingrediente queda' : 'ingredientes quedan'} fuera del cálculo (sin cantidad, sin gramos o sin nutrición en el catálogo)` : '', t.aviso ? `${t.aviso} con posible diferencia entre crudo y cocido` : ''].filter(Boolean).join('. ');
   if (!d.comidas.length) return '';
-  const fila = (lbl, val, tgt, u, k) => { const est = tgt ? mnEstadoBarra(val, tgt) : ''; return `<div class="mn-dt"><div class="mn-dt-h"><span>${lbl}</span><b>${mnF(val)}${u}</b></div><div class="mn-dt-b"><i class="${est}" style="width:${tgt ? Math.min(100, Math.round(val / tgt * 100)) : 0}%"></i></div><div class="mn-dt-f">${tgt ? 'objetivo ' + mnF(tgt) + u : '&nbsp;'}</div></div>`; };
+  const fila = (lbl, val, tgt, u, k) => { const est = tgt ? mnEstadoBarra(val, tgt) : '', dif = tgt ? Math.round((val / tgt - 1) * 100) : 0; return `<div class="mn-dt k-${k}"><div class="mn-dt-h"><span><i class="mn-dt-k"></i>${lbl}</span><b>${mnF(val)}${u}</b></div><div class="mn-dt-b"><i style="width:${tgt ? Math.min(100, Math.round(val / tgt * 100)) : 0}%"></i></div><div class="mn-dt-f ${est}">${tgt ? 'objetivo ' + mnF(tgt) + u + (est === 'ok' ? '' : ' · ' + (dif > 0 ? '+' : '') + dif + ' %') : '&nbsp;'}</div></div>`; };
   const pctG = t.kcal > 0 ? t.grasa * 9 / t.kcal * 100 : 0, estG = !t.kcal ? '' : pctG >= 20 && pctG <= 25 ? 'ok' : pctG >= 17 && pctG <= 28 ? 'warn' : 'bad';
   const kg = peso ? ` · ${mnF(t.prot / peso, 1)} g/kg de proteína · ${mnF(t.hc / peso, 1)} g/kg de hidratos` : '';
   return `<div class="mn-dtot"><div class="mn-dtot-h"><span class="mn-k" style="margin:0">Totales del día (estimados)</span><span class="mn-ayuda">${obj ? 'frente al objetivo de «' + sudEsc((MN_TIPOS_DIA.find(x => x[0] === mnTipoDia(d)) || ['', 'este día'])[1]) + '»' : 'sin objetivo definido'}</span></div>
-    <div class="mn-dt-g">${fila('kcal', t.kcal, obj && obj.kcal, '')}${fila('Proteína', t.prot, obj && obj.prot, ' g')}${fila('Hidratos', t.hc, obj && obj.hc, ' g')}${fila('Grasa', t.grasa, obj && obj.grasa, ' g')}</div>
+    <div class="mn-dt-g">${fila('kcal', t.kcal, obj && obj.kcal, '', 'kcal')}${fila('Proteína', t.prot, obj && obj.prot, ' g', 'prot')}${fila('Hidratos', t.hc, obj && obj.hc, ' g', 'hc')}${fila('Grasa', t.grasa, obj && obj.grasa, ' g', 'grasa')}</div>
     <p class="mn-dt-n"><span class="mn-estado ${estG}"><i></i>Grasa ${mnF(pctG)} % de las kcal${estG ? '' : ''}</span> (referencia 20–25 %)${sudEsc(kg)}</p>${aviso ? `<p class="mn-dt-n warn">${sudEsc(aviso)}.</p>` : ''}</div>`;
 }
 function mnRefrescarTotales() {
@@ -1528,6 +1567,249 @@ function mnObjResumenHtml() {
   return `<div class="mn-ob-l">${mnTiposEnUso().filter(([k]) => o.kcal[k]).map(([k, n]) => `<div><span>${n}</span><b>${mnF(o.kcal[k])} kcal</b></div>`).join('')}</div><p class="mn-ayuda" style="margin:8px 0 12px">${mnF(o.peso, 1)} kg · proteína ${mnF(o.prot, 1)} g/kg · grasa ${mnF(o.grasaPct)} % de las kcal</p>${mnBtn('Editar objetivos', 'mnObjAbrir()', { icon: 'doc', sm: true })}`;
 }
 
+// ── Importar una planificación HTML ya hecha (días y recetas) ──
+// El archivo se lee en el navegador. Su código (solo las listas `days` y `recetas`) se ejecuta en un marco aislado
+// (sandbox sin acceso a la página ni a la sesión) y devuelve datos; nada se guarda hasta confirmar.
+let MNI = null;
+const mnImpQuitaEmoji = t => String(t == null ? '' : t).replace(/[\u{1F000}-\u{1FFFF}\u{2190}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE0F}\u{200D}]/gu, '').replace(/\s+/g, ' ').trim();
+function mnImpExtraer(html) {
+  const bloque = nombre => {
+    const m = new RegExp('^\\s*(?:const|let|var)\\s+' + nombre + '\\s*=\\s*\\[', 'm').exec(html); if (!m) return '';
+    const resto = html.slice(m.index), fin = /^\];?[ \t]*\r?$/m.exec(resto); if (!fin) return '';
+    return resto.slice(0, fin.index + fin[0].length);
+  };
+  return { days: bloque('days'), recetas: bloque('recetas') };
+}
+function mnImpEvaluar(cod) {
+  return new Promise((res, rej) => {
+    const f = document.createElement('iframe'); f.setAttribute('sandbox', 'allow-scripts'); f.style.display = 'none'; f.setAttribute('aria-hidden', 'true');
+    const t = setTimeout(() => { window.removeEventListener('message', h); f.remove(); rej(new Error('El archivo tarda demasiado en leerse')); }, 5000);
+    function h(e) { if (e.source !== f.contentWindow) return; window.removeEventListener('message', h); clearTimeout(t); f.remove(); e.data && e.data.ok ? res(e.data) : rej(new Error((e.data && e.data.err) || 'No se pudo leer')); }
+    window.addEventListener('message', h);
+    f.srcdoc = '<!doctype html><script>try{' + cod.replace(/<\/script/gi, '<\\/script') + '\n;parent.postMessage({ok:1,days:typeof days!=="undefined"?JSON.parse(JSON.stringify(days)):null,recetas:typeof recetas!=="undefined"?JSON.parse(JSON.stringify(recetas)):[]},"*")}catch(e){parent.postMessage({ok:0,err:String(e)},"*")}<\/script>';
+    document.body.appendChild(f);
+  });
+}
+function mnImpTipoDia(d) {
+  const t = mnNorm((d.sport || '') + ' ' + (d.full || '')), c = String(d.sportClass || '');
+  if (/menu base/.test(t)) return '';
+  if (/partido|prueba|carrera|competic/.test(t)) return 'partido';
+  if (d.libre || /\blibre\b/.test(t)) return 'libre';
+  if (c === 'rest' || /descanso|paseo|recuper/.test(t)) return 'descanso';
+  return 'entreno';
+}
+// Una línea de «desc» → ingredientes y frases sueltas (que pasan a la nota de la comida)
+function mnImpLineas(desc) {
+  const ing = [], extra = [];
+  String(desc || '').split('\n').forEach(l => {
+    l = l.trim(); if (!l) return;
+    const partes = [];
+    mnSplitTop(l, '+').forEach(p => p.split(/\.\s+(?=[A-ZÁÉÍÓÚ0-9])/).forEach(q => q.split(/\s+(?:con|y)\s+(?=[\d¼½¾])/).forEach(z => partes.push(z))));
+    partes.forEach(p => {
+      p = p.replace(/[.\s]+$/, '').trim(); if (!p) return;
+      const prosa = p.length > 90 || (/[:]\s/.test(p) && p.length > 50) || /^(opci[oó]n|si |nota|puedes|usa |mejor|sin )/i.test(p);
+      (prosa ? extra : ing).push(p);
+    });
+  });
+  return { ing: ing.join('\n'), extra };
+}
+function mnImpConvertir(raw, nombre) {
+  const av = { prosa: 0, libres: 0 }, dias = [], desde = (r, a, b) => r.length >= b ? r : r;
+  const recetas = (raw.recetas || []).map(r => {
+    const n = MN_RECETA_NUEVA(); n.nombre = mnImpQuitaEmoji(r.nombre); n.tiempo = mnImpQuitaEmoji(r.tiempo); n.raciones = mnImpQuitaEmoji(r.raciones);
+    n.ing = mnParseTexto((r.ingredientes || []).join('\n')); n.pasos = (r.pasos || []).map(x => String(x).trim()).filter(Boolean); n.consejo = mnImpQuitaEmoji(r.tip);
+    return n;
+  });
+  const batch = [];
+  (raw.days || []).forEach((d, i) => {
+    [].concat(d.batchCooking || []).forEach(b => { if (b && !batch.some(x => x.title === b.title)) batch.push(b); });
+  });
+  batch.forEach(b => { const n = MN_RECETA_NUEVA(); n.nombre = mnImpQuitaEmoji(b.title); n.pasos = (b.items || []).map(x => String(x).trim()); n.consejo = b.note || ''; recetas.push(n); });
+  let ligadas = 0;
+  (raw.days || []).forEach((d, i) => {
+    const dia = { id: mnId('d'), n: MN_DIAS[i] || d.full, dow: i + 1, ctx: { tipo: mnImpTipoDia(d), texto: [(String(d.full || '').match(/\d.*$/) || [''])[0], mnImpQuitaEmoji(d.sport)].filter(Boolean).join(' · ').slice(0, 60), aviso: String(d.sportBanner || '').trim(), suppl: mnImpQuitaEmoji(String(d.suppl || '')).replace(/ *\n */g, '\n') }, comidas: [] };
+    (d.meals || []).forEach(m => {
+      const l = mnImpLineas(m.desc), ing = mnParseTexto(l.ing); av.prosa += l.extra.length; av.libres += ing.filter(x => x.cant.modo === 'libre').length;
+      const nota = [m.note, ...l.extra].map(x => String(x || '').trim()).filter(Boolean).join(' ');
+      const nom = mnImpQuitaEmoji(m.name), k = mnNorm(nom);
+      const r = recetas.find(x => { const y = mnNorm(x.nombre); return y && k && (y === k || (y.length > 8 && k.indexOf(y) >= 0) || (k.length > 8 && y.indexOf(k) >= 0)); });
+      if (r) ligadas++;
+      dia.comidas.push({ id: mnId('m'), tipo: ['D', 'A', 'C', 'Me', 'Ce'].indexOf(m.type) >= 0 ? m.type : 'O', hora: String(m.time || '').trim(), nombre: nom, nota, libre: !!m.libre, receta: r ? r.id : null, plato: null, ing });
+    });
+    dias.push(dia);
+  });
+  return { semana: { id: mnId('s'), nombre, nota: '', dias }, recetas, av, ligadas };
+}
+async function mnImpAbrir() { const i = document.getElementById('mnImpFile'); i.value = ''; i.click(); }
+async function mnImpArchivo(inp) {
+  const f = inp.files && inp.files[0]; if (!f) return;
+  let txt; try { txt = await f.text(); } catch (e) { toast('No se pudo leer el archivo', { tipo: 'error' }); return; }
+  const b = mnImpExtraer(txt);
+  if (!b.days) { toast('No encuentro una planificación en ese archivo (busco la lista «days» de tus HTML de menú).', { tipo: 'error' }); return; }
+  let raw; try { raw = await mnImpEvaluar(b.days + '\n' + b.recetas); } catch (e) { toast('No se pudo leer la planificación: ' + e.message, { tipo: 'error' }); return; }
+  if (!Array.isArray(raw.days) || !raw.days.length) { toast('La planificación está vacía', { tipo: 'error' }); return; }
+  const nom = f.name.replace(/\.html?$/i, '').replace(/[_-]+/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+  MNI = mnImpConvertir(raw, nom);
+  MNI.vacia = MN.c.semanas.length === 1 && MN.c.semanas[0].dias.every(d => !d.comidas.length);
+  mnImpPintar();
+}
+function mnImpPintar() {
+  const r = MNI, nCom = r.semana.dias.reduce((a, d) => a + d.comidas.length, 0), nIng = r.semana.dias.reduce((a, d) => a + d.comidas.reduce((b, m) => b + m.ing.length, 0), 0);
+  const filas = r.semana.dias.map(d => `<tr><th scope="row">${sudEsc(d.n)}</th><td>${sudEsc((MN_CTX.find(x => x[0] === d.ctx.tipo) || ['', ''])[1] || '—')}${d.ctx.texto ? ' · ' + sudEsc(d.ctx.texto) : ''}</td><td>${d.comidas.map(m => sudEsc(m.nombre || (MN_TIPOS.find(t => t[0] === m.tipo) || [0, 'Comida'])[1])).join(' · ') || '—'}</td></tr>`).join('');
+  document.getElementById('mnImpCuerpo').innerHTML = `<p class="mt" id="mnImpTit">Importar planificación</p>
+    <p class="ms">Revisa lo que he leído. Se añade como una <b>semana nueva</b>${MNI.vacia ? ' (sustituye a la semana vacía de este plan)' : ''}; no se toca nada de lo que ya tengas.</p>
+    <div class="mn-chips-r"><span class="mn-estado ok"><i></i>${r.semana.dias.length} días</span><span class="mn-estado ok"><i></i>${nCom} comidas</span><span class="mn-estado ok"><i></i>${nIng} ingredientes</span><span class="mn-estado ok"><i></i>${r.recetas.length} recetas${r.ligadas ? ' · ' + r.ligadas + ' enlazadas a su comida' : ''}</span></div>
+    <div class="mn-f" style="margin:14px 0"><label class="mn-l" for="mnImpNom">Nombre de la semana</label><input class="inp" id="mnImpNom" maxlength="40" value="${sudEsc(r.semana.nombre)}"></div>
+    <div class="mn-imp-t"><table><thead><tr><th>Día</th><th>Tipo y etiqueta</th><th>Comidas</th></tr></thead><tbody>${filas}</tbody></table></div>
+    <ul class="mn-imp-n"><li>Los ingredientes sin cantidad quedan como «libres» (${r.av.libres}); los puedes ajustar en el editor.</li>${r.av.prosa ? `<li>${r.av.prosa} frases largas de ingredientes se han pasado a la nota de su comida.</li>` : ''}<li>El aviso del día y la suplementación se copian tal cual; el batch cooking pasa a una receta.</li><li>Después, «Completar catálogo» enlaza los ingredientes con su nutrición para ver los totales.</li></ul>
+    <div class="mbtns" style="margin-top:14px"><button type="button" class="btn-cancel" onclick="mnImpCerrar()">Cancelar</button><button type="button" class="btn-ok" onclick="mnImpHacer()">Importar</button></div>`;
+  document.getElementById('mMnImp').style.display = 'flex';
+}
+function mnImpCerrar() { document.getElementById('mMnImp').style.display = 'none'; MNI = null; }
+function mnImpHacer() {
+  if (!MNI || !MN) return;
+  const nom = (document.getElementById('mnImpNom').value || '').trim() || MNI.semana.nombre; MNI.semana.nombre = nom;
+  const antS = MN.c.semanas.slice(), antR = MN.c.recetas.slice(), antSem = MN.sem, antDia = MN.dia, vacia = MNI.vacia;
+  if (vacia) MN.c.semanas = [];
+  MN.c.semanas.push(MNI.semana); MN.c.recetas = MN.c.recetas.concat(MNI.recetas); MN.sem = MNI.semana.id; MN.dia = 0;
+  mnRelinkTodo(); mnCambio(); const n = MNI.recetas.length; mnImpCerrar(); mnPintar();
+  toast('Importada «' + nom + '»' + (n ? ' con ' + n + ' recetas' : ''), { accion: { texto: 'Deshacer', fn: () => { MN.c.semanas = antS; MN.c.recetas = antR; MN.sem = antSem; MN.dia = antDia; mnCambio(); mnPintar(); } } });
+}
+
+// ── Biblioteca de platos (de las planificaciones del profesional) ──
+const MN_BIBLIOTECA = [
+  {"n":"Tostada + pavo + AOVE + fruta","m":"A","i":["Tostada integral o de centeno (2 rebanadas)","Tomate natural","Pavo fiambre (2-3 lonchas, ≈50g)","AOVE (1 cdta, moderado)","Fruta (1 pieza)"],"d":["entreno"],"o":["Carlos"],"nt":"El AOVE es saludable pero muy calórico: 1 cucharadita es suficiente, no hace falta más."},
+  {"n":"Arroz + pollo + verduras","m":"C","i":["Arroz integral (1 vasito precocinado ≈125g, o 90-100g en crudo)","Pechuga de pollo (150g, un filete tipo palma de la mano)","Tomate, pepino y pimiento","AOVE (1 cda, moderado)"],"d":["entreno"],"o":["Carlos"],"nt":"Mejor pechuga que contramuslo como base, aunque algún día puntual con contramuslo no pasa nada."},
+  {"n":"Tostada + miel + plátano","m":"Me","i":["Tostada de pan blanco (1-2 rebanadas)","Miel (1 cda)","Plátano"],"d":["entreno"],"o":["Carlos"],"nt":"Carga rápida de carbohidrato antes de entrenar."},
+  {"n":"Salmón + patata + ensalada + kéfir","m":"Ce","i":["Salmón al horno (150g)","Patata (250g, de bote en conserva o al momento en air fryer)","Lechuga, tomate y pepino","Kéfir"],"d":["entreno"],"o":["Carlos"],"nt":"Priorizamos pescado azul por el colesterol."},
+  {"n":"Tostada + aguacate + tomate","m":"A","i":["Tostada integral o de centeno (2 rebanadas)","Aguacate (1/2 unidad)","Tomate en rodajas"],"d":["descanso"],"o":["Carlos"],"nt":"Sin AOVE hoy: el aguacate ya aporta grasa saludable de por sí."},
+  {"n":"Ensalada de garbanzos","m":"C","i":["Garbanzos cocidos (≈150g escurridos)","Lechuga, tomate y zanahoria rallada","Atún (1 lata)","Nueces (puñado, ≈20g)"],"d":["descanso"],"o":["Carlos"],"nt":"Legumbre en día sin entreno, en modo ensalada — vamos probando tu tolerancia digestiva al SIBO. Las nueces son calóricas, un puñado es suficiente."},
+  {"n":"Pollo + patata + brócoli/zanahoria + fruta","m":"Ce","i":["Pechuga de pollo (150g)","Patata (250g, de bote en conserva o al momento en air fryer)","Brócoli y zanahoria congelados","Fruta"],"d":["descanso"],"o":["Carlos"],"nt":"Cena estándar de descanso."},
+  {"n":"Tostada + huevo + tomate","m":"A","i":["Tostada integral o de centeno (2 rebanadas)","Tomate natural","Huevo revuelto (2 huevos)","AOVE (1 cdta, moderado)"],"d":["entreno"],"o":["Carlos"],"nt":"Único día de huevo en la semana — el resto de días priorizamos otras proteínas por el colesterol."},
+  {"n":"Pasta + tomate + verduras + atún","m":"C","i":["Pasta integral (80-90g en crudo)","Tomate natural triturado (o frito, 2 cdas si no te gusta el natural)","Calabacín, champiñón y pimiento salteados (pueden ser congelados)","Atún (1 lata)"],"d":["entreno"],"o":["Carlos"],"nt":"Cereal fácil de digerir antes del entreno de las 19h."},
+  {"n":"Caballa + patata + verduras + kéfir","m":"Ce","i":["Caballa (150g)","Patata (250g, de bote en conserva o al momento en air fryer)","Judía verde y zanahoria congeladas","Kéfir"],"d":["entreno"],"o":["Carlos"],"nt":"Pescado azul pequeño, buena opción para el colesterol."},
+  {"n":"Tostada + aguacate + pavo","m":"A","i":["Tostada integral o de centeno (2 rebanadas)","Aguacate (1/2 unidad)","Pavo fiambre (2-3 lonchas, ≈50g)"],"d":["entreno"],"o":["Carlos"],"nt":"Sin huevo ni jamón hoy — ya los tienes cubiertos esta semana."},
+  {"n":"Quinoa + pavo + verduras","m":"C","i":["Quinoa precocinada (1 vasito ≈125g)","Pavo a la plancha (150g)","Tomate, maíz y pimiento"],"d":["entreno"],"o":["Carlos"],"nt":"Variamos el cereal respecto al resto de la semana. Mismo peso de referencia que el pollo."},
+  {"n":"Pollo + patata + ensalada + fruta","m":"Ce","i":["Pechuga de pollo (150g)","Patata (250g, de bote en conserva o al momento en air fryer)","Lechuga, tomate y maíz","Fruta"],"d":["entreno"],"o":["Carlos"],"nt":"Cena estándar de recuperación."},
+  {"n":"Tostada + jamón + tomate","m":"A","i":["Tostada integral o de centeno (2 rebanadas)","Tomate natural","Jamón serrano (3-4 lonchas)"],"d":["descanso"],"o":["Carlos"],"nt":"Único día de jamón serrano en la semana — el resto de días priorizamos otras proteínas por el colesterol."},
+  {"n":"Ensalada de alubias","m":"C","i":["Alubias cocidas (≈150g escurridas)","Zanahoria, pepino y tomate","Pollo a la plancha (150g) o huevo duro","Nueces (puñado, ≈20g)"],"d":["descanso"],"o":["Carlos"],"nt":"Segunda ración de legumbre de la semana, en modo ensalada y en día sin entreno — seguimos valorando tu tolerancia al SIBO."},
+  {"n":"Merluza + patata + verduras + kéfir","m":"Ce","i":["Merluza (150g)","Patata (250g, de bote en conserva o al momento en air fryer)","Brócoli y coliflor congelados","Kéfir"],"d":["descanso"],"o":["Carlos"],"nt":"Cena ligera antes del fin de semana de entreno y partido."},
+  {"n":"Arroz blanco + pollo + ensalada","m":"C","i":["Arroz blanco (1 vasito precocinado ≈125g — blanco, no integral)","Pechuga de pollo (150g)","Lechuga, tomate y zanahoria"],"d":["entreno"],"o":["Carlos"],"nt":"Arroz blanco en vez de integral: mañana toca partido y reducimos algo la fibra desde hoy."},
+  {"n":"Pescado blanco + patata + verduras + fruta","m":"Ce","i":["Pescado blanco (lubina o dorada, 150g)","Patata (250g, de bote en conserva o al momento en air fryer)","Judía verde y zanahoria congeladas","Fruta"],"d":["entreno"],"o":["Carlos"],"nt":"Cena de cara al partido de mañana."},
+  {"n":"Tostada + pavo + tomate + fruta","m":"A","i":["Tostada integral o de centeno (2 rebanadas)","Tomate natural","Pavo fiambre (2-3 lonchas, ≈50g)","Fruta (1 pieza)"],"d":["partido"],"o":["Carlos"],"nt":"Almuerzo estándar, el partido es por la tarde."},
+  {"n":"Tostada integral con hummus y aguacate","m":"D","i":["Pan integral tostado (3 rebanadas, ~90 g)","Hummus (2 cdas. soperas, ~40 g)","1/3 de aguacate (~40 g)","Miel (1 cda. postre, ~15 g)","Café con bebida de soja o avellana (~150 ml)","Fruta de temporada (1 pieza, ~150 g)"],"d":["entreno"],"o":["Rumu"],"nt":"Sustituye la tostada con filadelfia y el café con leche de vaca por esta opción, manteniendo el café pero con la bebida vegetal."},
+  {"n":"Fruta + frutos secos","m":"A","i":["Fruta de temporada (2 piezas, ~300 g)","Frutos secos (30 g, un buen puñado)"],"d":["entreno","libre"],"o":["Rumu"],"nt":"Sustituye a la barrita proteica del trabajo. Si algún día tienes mucho ajetreo o simplemente te apetece, la barrita también tiene cabida puntualmente, o puedes optar por un batido de proteína como alt"},
+  {"n":"Lentejas estofadas con verduras y salmón","m":"C","i":["Lentejas cocidas de bote (160 g)","Verduras salteadas (calabacín, zanahoria, pimiento — ~200 g)","Salmón a la plancha (100 g)","AOVE (12 g, ≈1 cda. sopera)","Pan integral (1 rebanada, ~30 g)"],"d":["entreno"],"o":["Rumu"],"nt":"Escurre y enjuaga bien las lentejas de bote con agua antes de usarlas. Legumbre como base proteica + CHO; sin necesidad de carga extra de hidrato en día de rodaje suave. Receta completa más abajo."},
+  {"n":"Fruta + yogur de soja + dátiles","m":"Me","i":["Fruta de temporada (1 pieza, ~150 g)","Yogur de soja (125 g)","Dátiles (~100 g, 4 uds.)"],"d":["entreno"],"o":["Rumu"],"nt":"Merienda para reponer tras el rodaje y llegar bien a la cena. Los dátiles aportan hidrato de rápida absorción."},
+  {"n":"Tofu salteado con verduras y patata","m":"Ce","i":["Tofu firme salteado (100 g)","Verduras al gusto (~200 g)","Patata (500 g en crudo)","AOVE (12 g, ≈1 cda. sopera)"],"d":["entreno"],"o":["Rumu"],"nt":"Cena ligera con proteína vegetal; la patata es el aporte de hidrato de la noche. Puede hacerse cocida, al horno o en air fryer — al gusto. Si un día te apetece algo más elaborado, tienes la versión el"},
+  {"n":"Tostada integral con filadelfia light y miel","m":"D","i":["Pan integral tostado (3 rebanadas, ~90 g)","Filadelfia light (40 g)","Miel (1 cda. sopera, ~20 g)","Café con bebida de soja o avellana (~150 ml)","Fruta de temporada (1 pieza, ~150 g)"],"d":["entreno","libre"],"o":["Rumu"],"nt":"Mantenemos esta opción como preferencia habitual; solo cambia la leche de vaca por bebida de soja, manteniendo el café con leche de siempre."},
+  {"n":"Tostada con hummus (o barrita puntual)","m":"A","i":["Pan integral (3 rebanadas, ~90 g) o tortitas de arroz","Hummus (2 cdas. soperas, ~40 g)","Fruta de temporada (1 pieza, ~150 g)"],"d":["entreno"],"o":["Rumu"],"nt":"Sustituye a la barrita habitual. Si tienes mucho ajetreo o te apetece, la barrita tiene cabida puntualmente, o puedes optar por un batido de proteína como alternativa rápida — opcional, no es necesari"},
+  {"n":"Pasta blanca con atún y AOVE","m":"C","i":["Pasta blanca (120 g en crudo)","Atún al natural (1 lata)","AOVE (20 g, ≈1,5 cdas. soperas)","Tomate o verdura salteada (~150 g)"],"d":["entreno","libre"],"o":["Rumu"],"nt":"Carga de hidrato de rápida digestión antes de las series de la tarde. Si un día te apetece algo más elaborado, tienes la versión elaborada de este plato en la sección Recetas."},
+  {"n":"Fruta + cereales + dátiles + café pre-entreno","m":"Me","i":["Fruta de temporada (1 pieza, ~150 g)","Cereales de avena Mercadona (50 g) con un poco de bebida vegetal (~100 ml)","Dátiles (~80 g, 3 uds.)","Frutos secos (10 g, un puñadito pequeño)","Café (opcional, aliado ergogénico)"],"d":["entreno"],"o":["Rumu"],"nt":"El café 30-60' antes de la sesión de series ayuda al rendimiento, aunque tomado por la tarde puede restar calidad al sueño — decide tú según cómo te sienta ese día. Los cereales y los dátiles aportan "},
+  {"n":"Filete de pescado blanco con verduras y arroz","m":"Ce","i":["Merluza o similar a la plancha (100 g)","Verduras al vapor o salteadas (~200 g)","AOVE (20 g, ≈1,5 cdas. soperas)"],"d":["entreno"],"o":["Rumu"],"nt":"Cena post-series: en días de series/rodaje el carbohidrato nocturno es necesario para reponer el glucógeno, no solo proteína y verdura."},
+  {"n":"Cereales de avena con bebida de soja","m":"D","i":["Cereales de avena Mercadona (100 g)","Bebida de soja (250 ml)","Fruta troceada (1 pieza, ~150 g)","Miel (1 cdta., ~10 g)","Café solo o con un chorrito de bebida vegetal"],"d":["partido","descanso"],"o":["Rumu"],"nt":"Alternativa a copos/overnight oats que no le entran por textura."},
+  {"n":"Yogur de soja con fruta","m":"A","i":["Yogur de soja (125 g)","Fruta de temporada (1 pieza, ~150 g)","Frutos secos (30 g, un buen puñado)"],"d":["partido","descanso"],"o":["Rumu"],"nt":"Sustituye a la barrita habitual; también tiene cabida puntual si tienes ajetreo, igual que un batido de proteína como opción rápida — opcional, no necesario nutricionalmente, solo por conveniencia."},
+  {"n":"Garbanzos con arroz integral y caballa","m":"C","i":["Garbanzos cocidos de bote (180 g)","Arroz integral (100 g en crudo / ~250 g cocido)","Caballa a la plancha (80 g)","Verduras (~150 g)","AOVE (15 g)","Zumo de limón, comino y pimentón"],"d":["partido"],"o":["Rumu"],"nt":"Escurre y enjuaga bien los garbanzos de bote con agua antes de usarlos. Combinación legumbre + cereal para completar aminoácidos; buena carga antes de fuerza. El limón, comino y pimentón dan un toque "},
+  {"n":"Fruta + cereales de avena + dátiles","m":"Me","i":["Fruta de temporada (1 pieza, ~150 g)","Cereales de avena Mercadona (50 g) con un poco de bebida vegetal (~100 ml)","Dátiles (~60 g, 2-3 uds.)"],"d":["partido"],"o":["Rumu"],"nt":"Día fuerte (fuerza + carrera) — los cereales y los dátiles aportan hidrato de cara al entreno de la tarde."},
+  {"n":"Tofu marinado con verduras y patata","m":"Ce","i":["Tofu marinado (100 g)","1 cucharada sopera de salsa teriyaki","Verduras asadas (~200 g)","Patata (350 g en crudo)","AOVE (15 g)"],"d":["partido"],"o":["Rumu"],"nt":"Usa el tofu marinado preparado en el batch cooking del domingo; la salsa teriyaki le da un toque extra de sabor. La patata puede hacerse al horno o en air fryer. Receta completa más abajo."},
+  {"n":"Tostada integral con hummus y miel","m":"D","i":["Pan integral tostado (3 rebanadas, ~90 g)","Hummus (2 cdas. soperas, ~40 g)","Miel (1 cda. sopera, ~20 g)","Café con bebida de soja o avellana (~150 ml)","Fruta de temporada (1 pieza, ~150 g)"],"d":["entreno"],"o":["Rumu"],"nt":""},
+  {"n":"Merluza con verduras y quinoa","m":"Ce","i":["Merluza a la plancha (100 g)","Verduras al vapor (~200 g)","AOVE (20 g, ≈1,5 cdas. soperas)"],"d":["entreno"],"o":["Rumu"],"nt":"En día de series el carbohidrato nocturno es necesario para reponer glucógeno, no solo proteína y verdura."},
+  {"n":"Porridge de harina de avena","m":"D","i":["Harina de avena (70 g) cocinada tipo gachas","Bebida de soja (250 ml)","Fruta (1 pieza, ~150 g)","Miel (1 cdta., ~10 g)","Canela"],"d":["entreno"],"o":["Rumu"],"nt":"Textura tipo gachas, no copos — mejor aceptación que el overnight oats. Receta completa más abajo."},
+  {"n":"Edamame y tofu con quinoa","m":"C","i":["Edamame congelado (80 g)","Tofu a la plancha (80 g)","Vasito de quinoa cocida tipo Sabroz (125 g)","Verduras (~200 g)","AOVE (15 g)","Pan integral (1 rebanada, ~30 g)"],"d":["entreno"],"o":["Rumu"],"nt":"Cuece el edamame congelado 3-4 min en agua hirviendo o al vapor, marca el tofu a la plancha con el AOVE y saltea las verduras; la quinoa Sabroz solo necesita calentarse. Día de rodaje suave, base vege"},
+  {"n":"Fruta + frutos secos + dátiles","m":"Me","i":["Fruta de temporada (1 pieza, ~150 g)","Frutos secos (30 g, un buen puñado)","Dátiles (~100 g, 4 uds.)"],"d":["entreno"],"o":["Rumu"],"nt":"Merienda para reponer de cara al rodaje largo del sábado."},
+  {"n":"Pescado blanco con verduras y patata","m":"Ce","i":["Pescado blanco a la plancha (110 g)","Verduras (~200 g)","Patata (400 g en crudo)","AOVE (15 g)"],"d":["entreno"],"o":["Rumu"],"nt":"La patata puede hacerse cocida, al horno o en air fryer."},
+  {"n":"Fruta + cereales de avena + dátiles + yogur de soja","m":"Me","i":["Fruta de temporada (1 pieza, ~150 g)","Cereales de avena Mercadona (60 g) con un poco de bebida vegetal (~100 ml)","Dátiles (~60 g, 2-3 uds.)","Yogur de soja (125 g)"],"d":["libre"],"o":["Rumu"],"nt":"Día fuerte (rodaje largo) — hidrato extra y algo de proteína para recuperar antes de la cena libre."},
+  {"n":"Lentejas con arroz, verduras y salmón","m":"C","i":["Lentejas cocidas de bote (160 g)","Arroz integral (50 g crudo / ~125 g cocido)","Verduras (~200 g)","Salmón (100 g)","AOVE (12 g)"],"d":["descanso"],"o":["Rumu"],"nt":"Escurre y enjuaga bien las lentejas de bote con agua antes de usarlas. Sofríe las verduras troceadas, añade las lentejas con un poco de agua o caldo y deja reducir; marca el salmón a la plancha aparte"},
+  {"n":"Fruta + dátiles","m":"Me","i":["Fruta de temporada (1 pieza, ~150 g)","Dátiles (~20 g, 1 ud.)"],"d":["descanso"],"o":["Rumu"],"nt":""},
+  {"n":"Tofu o legumbre con verduras y pan","m":"Ce","i":["Tofu o legumbre (120 g)","Verduras al vapor (~200 g)","AOVE (12 g)","Pan integral (3 rebanadas, ~90 g)"],"d":["descanso"],"o":["Rumu"],"nt":"Cena ligera, día de menor gasto energético. Opción alternativa: crema de verduras comercial + picatostes + un puñado de legumbre o tofu salteado como aporte extra de proteína."},
+  {"n":"Tostadas con tomate triturado, AOVE y sal + zumo + café","m":"D","i":["3 tostadas de pan integral con tomate triturado extendido","1 cda. de AOVE","sal al gusto","200 ml de zumo de naranja natural","Café","Creatina 5 g"],"d":["entreno"],"o":["Víctor"],"nt":"Día previo: 3 tostadas fijas. Zumo de naranja como CHO de inicio. Sin cafeína extra para que el efecto de mañana sea máximo."},
+  {"n":"Sandwich integral con hummus y aguacate + fruta","m":"A","i":["2 rebanadas de pan integral","3 cdas. de hummus","1/2 aguacate","tomate","1 plátano","1 naranja","Remolacha en polvo 16 g (2 dosificadores de 10 ml) en 300 ml de agua"],"d":["entreno"],"o":["Víctor"],"nt":"Plátano + naranja = CHO de absorción mixta. Último almuerzo con fibra moderada antes de la prueba."},
+  {"n":"Arroz blanco con pollo y verduras cocidas","m":"C","i":["150 g de arroz blanco en seco (cocido)","150 g de pollo a la plancha","judías verdes o espinacas","Aliño AOVE","125 g de yogur de soja"],"d":["entreno"],"o":["Víctor"],"nt":"Carga de CHO principal: arroz BLANCO (digestión más rápida) para llegar con el glucógeno lleno al 3000m. Poca fibra para cuidar el estómago."},
+  {"n":"Noche previa: Pasta blanca + proteína magra + verdura cocida","m":"Ce","i":["130–150 g de pasta blanca en seco (cocida)","150 g de pollo a la plancha o 1 lata de atún escurrido","judías verdes o espinacas cocidas"],"d":["entreno"],"o":["Víctor"],"nt":"NOCHE PREVIA: mañana MARTES 13/10 es el 3000m a las 10:30. Cenar antes de las 20:30h y acostarse antes de las 23:00h. Dejar preparados el desayuno y el equipaje."},
+  {"n":"Pre-prueba: CHO rápidos sin fibra","m":"D","i":["1 plátano maduro","2 cdas. de mermelada","agua","2 cdas. de mermelada","200 ml de zumo de naranja","1 plátano","Creatina 5 g","remolacha en polvo 24 g (3 dosificadores) en 300–400 ml de agua con el desayuno","Agua: 400–500 ml en pequeños sorbos"],"d":["partido"],"o":["Víctor"],"nt":"Timing: 3h antes de la prueba para que el estómago llegue vacío. SIN avena, SIN frutos secos, SIN lácteos. Solo alimentos ya probados. Hidratación desde que te levantas."},
+  {"n":"Recuperación: Arroz + proteína + verduras","m":"C","i":["Inmediato (en mochila): 1 plátano","125 g de yogur de soja","500 ml de agua","150 g de pollo a la plancha","judías verdes cocidas","1 cda. de AOVE","125 g de yogur de soja","1 cdita. de miel"],"d":["partido"],"o":["Víctor"],"nt":"Ventana post-prueba: CHO + proteína lo antes posible. Si sobre las 17:00 hay hambre: 1 fruta + 125 g de yogur de soja."},
+  {"n":"Cena de recuperación — Pasta con lentejas rojas","m":"Ce","i":["130 g de pasta blanca en seco (cocida)","80 g de lentejas rojas en seco (cocidas)","tomate triturado","AOVE","orégano","125 g de yogur de soja"],"d":["partido"],"o":["Víctor"],"nt":"Lentejas rojas: rápidas de digerir y con buena proteína vegetal para reparar. Mañana vuelves al menú base."},
+  {"n":"Porridge de avena o Overnight Oats + tortitas de arroz","m":"D","i":["Porridge de avena o Overnight Oats (EN RECETAS)","2 tortitas de arroz","1 cda. de mermelada","Creatina 5 g"],"d":["descanso"],"o":["Víctor"],"nt":"Vuelta a la avena: ya no hace falta evitar la fibra."},
+  {"n":"Bowl de kéfir o yogur de soja con granola y plátano","m":"A","i":["Bowl: 250 g de kéfir o yogur de soja","60 g de granola o avena","1 plátano en rodajas","1 puñado de frutos rojos","1/2 cda. de crema de cacahuete"],"d":["descanso"],"o":["Víctor"],"nt":"Almuerzo completo en CHO y proteína para reponer del esfuerzo de ayer."},
+  {"n":"Ensalada de arroz integral con sardinas","m":"C","i":["Ensalada: 100 g de arroz integral en seco","1 lata de sardinas en aceite de oliva (escurridas, ≈120 g)","tomate cherry","pepino","puñado de pistachos (10 g)","canónigos","1/2 aguacate","1 cda. de semillas","Aliño al gusto con orégano y AOVE","125 g de yogur de soja o kéfir"],"d":["descanso"],"o":["Víctor"],"nt":"Sardinas: omega-3 antiinflamatorio para la recuperación. Hacer ración extra de arroz integral para la cena."},
+  {"n":"Seitán / Solomillo a la pimienta con arroz integral","m":"Ce","i":["Seitán / Solomillo a la Pimienta (EN RECETAS)","120 g de arroz integral en seco","Ensalada verde al gusto","1 cda. de AOVE"],"d":["descanso"],"o":["Víctor"],"nt":"Proteína vegetal de reparación + cereal integral."},
+  {"n":"Porridge de avena + tortitas de arroz","m":"D","i":["Porridge de avena (EN RECETAS)","3 tortitas de arroz","1 cda. de mermelada repartida","Creatina 5 g"],"d":[],"o":["Víctor"],"nt":"Desayuno de arranque con CHO complejos y fibra."},
+  {"n":"Tostadas con crema de cacahuete y plátano + yogur con nueces","m":"A","i":["2 tostadas de pan integral","1 cda. de crema de cacahuete y rodajas de plátano","125 g de yogur de soja o kéfir","nueces (≈10 g)","1 fruta de temporada"],"d":[],"o":["Víctor"],"nt":"Almuerzo con grasa saludable (cacahuete, nueces) y proteína del yogur."},
+  {"n":"Boloñesa con edamame + fruta","m":"C","i":["1 fruta al gusto"],"d":[],"o":["Víctor"],"nt":"Edamame: proteína vegetal completa que sustituye a la soja texturizada."},
+  {"n":"Curry de garbanzos con patatas","m":"Ce","i":["Curry de garbanzos (EN RECETAS)","150 g de patatas incorporadas al guiso","RC: 1 yogur griego ligero","1 onza de chocolate 85%"],"d":[],"o":["Víctor"],"nt":"Legumbre + cúrcuma y jengibre antiinflamatorios. Guiso que admite ración doble."},
+  {"n":"Porridge o Overnight Oats con 60 g de avena + tortitas","m":"D","i":["Porridge de avena o Overnight Oats","60 g de avena (EN RECETAS)","2 tortitas de arroz","1 cda. de mermelada","Creatina 5 g"],"d":[],"o":["Víctor"],"nt":"Desayuno estándar."},
+  {"n":"Tostada con salmón ahumado + bowl de yogur","m":"A","i":["Tostada con salmón ahumado, queso, aguacate y semillas de chía","Bowl: 125 g de kéfir o yogur de soja","1 plátano","1 puñado de frutos rojos","1 cda. de semillas"],"d":[],"o":["Víctor"],"nt":"Omega-3 del salmón y grasas saludables del aguacate y la chía."},
+  {"n":"Ensalada de lentejas con pollo y verduras a la plancha","m":"C","i":["Ensalada: 275 g de lentejas cocidas","120 g de pollo a la plancha en tiras","pimiento rojo, cebolla morada, calabacín y champiñones a la plancha","picatostes","1 plátano"],"d":[],"o":["Víctor"],"nt":"Legumbre como base de la comida del viernes."},
+  {"n":"Verduras a la plancha con tofu + gnocchis","m":"Ce","i":["Verduras a la plancha con tofu (o 150 g de pescado blanco) (EN RECETAS)","175 g de gnocchis en seco","1 fruta"],"d":[],"o":["Víctor"],"nt":"Cena ligera con proteína vegetal y CHO de fácil digestión."},
+  {"n":"Bowl de kéfir o yogur de soja con granola, plátano y frutos rojos","m":"A","i":["Bowl: 125 g de kéfir o yogur de soja","30 g de granola o avena","1 plátano","1 puñado de frutos rojos","1 cda. de semillas","Creatina 5 g"],"d":["libre"],"o":["Víctor"],"nt":"Almuerzo ligero antes de la comida libre."},
+  {"n":"Tostadas con hummus y aguacate + yogur","m":"A","i":["2 tostadas de pan integral","2 cdas. de hummus extendido, 1/2 aguacate y tomate en rodajas","125 g de yogur de soja o kéfir","1 fruta","Creatina 5 g"],"d":[],"o":["Víctor"],"nt":"Almuerzo completo para llegar bien a la comida."},
+  {"n":"Ensalada de patata y garbanzos con sardinas","m":"C","i":["Ensalada: 200 g de patatas cocidas troceadas","150 g de garbanzos","1 lata de sardinas en aceite de oliva (escurridas, ≈120 g)","espinacas crudas","1 cdita. de mix de semillas","verduras al gusto","Aliño al gusto con comino y AOVE"],"d":[],"o":["Víctor"],"nt":"Legumbre + omega-3. Comida fría fácil de preparar."},
+  {"n":"Pizzas caseras con base de tortilla de avena","m":"Ce","i":["2 Pizzas Caseras (EN RECETAS)"],"d":[],"o":["Víctor"],"nt":"Cena de domingo: pizza casera con base de avena."},
+  {"n":"Tostadas integrales con crema de cacahuete y plátano, y yogur de soja con chía","m":"D","i":["3 rebanadas de pan integral","1 cda. de crema de cacahuete 100%","1 plátano en rodajas","125 g de yogur de soja o Alpro sin azúcares añadidos","1 cdita. de semillas de chía","un puñado de frutos rojos","1 cdita. de miel","250 ml de bebida vegetal enriquecida en calcio (café, té o aparte)"],"d":["descanso"],"o":["Javier"],"nt":"Semana de competición: sin avena por si entrenas. El pan integral te da los hidratos con buena tolerancia. Usa siempre bebida vegetal enriquecida en calcio (120 mg/100 ml en etiqueta)."},
+  {"n":"Bowl de cuscús integral con tofu salteado y edamame","m":"C","i":["1 vasito de cuscús integral precocinado (125 g)","160 g de tofu firme salteado en sartén con tamari","ajo","un chorrito de AOVE","100 g de edamame cocido","¼ de aguacate en cubos","zanahoria rallada","1 cda. de semillas de sésamo"],"d":["descanso"],"o":["Javier"],"nt":"Hacer el doble de tofu. El sobrante aguanta 3 días en nevera y sirve para el poke del jueves o la cena del viernes directamente."},
+  {"n":"Tostadas integrales con hummus, aguacate y tomate","m":"Me","i":["2 rebanadas de pan integral","3 cdas. de hummus","¼ de aguacate","rodajas de tomate","1 cdita. de AOVE","1 fruta grande al gusto"],"d":["descanso"],"o":["Javier"],"nt":"Si el rodaje fue largo (+60 min), añadir 1 plátano extra. Sustituir hummus por crema de almendra si se quiere variar el sabor."},
+  {"n":"Lentejas estofadas con boniato y verduras","m":"Ce","i":["Sofrito: rehogar cebolla","zanahoria","ajo en AOVE 5 min","Añadir tomate triturado","pimentón ahumado","comino","laurel y cocinar 3 min","Incorporar 150 g de lentejas ya cocidas (del batch)","200 g de boniato ya asado en cubos, mezclar y calentar 5 min todo junto","Ensalada verde pequeña","1 cdita. de AOVE","1 fruta"],"d":["descanso"],"o":["Javier"],"nt":"Hacer el doble de estofado. El sobrante sirve para la cena del miércoles o como comodín si un día no hay tiempo de cocinar. Congela perfectamente en porciones."},
+  {"n":"Tostadas de masa madre con aguacate y tomate, y yogur de soja con plátano","m":"D","i":["2 rebanadas de pan de masa madre o integral","¼ de aguacate en rodajas","tomate en rodajas","1 cdita. de AOVE","125 g de yogur de soja o Alpro sin azúcares añadidos","1 plátano en rodajas","un puñado de frutos rojos","250 ml de bebida vegetal enriquecida en calcio (café, té o aparte)"],"d":["descanso"],"o":["Javier"],"nt":"Sin avena por si entrenas fuerza de activación. Añade 1 cda. de crema de cacahuete en una tostada si quieres más proteína."},
+  {"n":"Pasta integral con boloñesa de soja texturizada y espinacas","m":"C","i":["80 g de pasta integral en crudo (hervir 8–10 min)","orégano y albahaca al gusto","1 cda. de levadura nutricional por encima"],"d":["descanso"],"o":["Javier"],"nt":"Hacer el doble o triple de boloñesa (sin pasta). El sobrante se guarda en nevera hasta 4 días — ideal para tener un almuerzo resuelto en cualquier día suelto de la semana con estrés de tiempo."},
+  {"n":"Yogur de soja con plátano y nueces","m":"Me","i":["150 g de yogur de soja o Alpro sin azúcares añadidos","1 plátano en rodajas","30 g de nueces","1 cdita. de miel opcional"],"d":["descanso"],"o":["Javier"],"nt":"Si el entreno de fuerza es vespertino, tomar esta merienda como pre-entreno 60–90 min antes. Si es por la mañana, tomarla como recuperación post-entreno."},
+  {"n":"Tofu a la plancha con patatas al horno y brócoli al vapor","m":"Ce","i":["180 g de tofu firme cortado en láminas, marinado 10 min en tamari","zumo de limón","ajo","pimentón, cocinado a la plancha","200 g de patatas al horno con AOVE y romero","150 g de brócoli al vapor con limón y AOVE"],"d":["descanso"],"o":["Javier"],"nt":"El brócoli es una de las mejores fuentes de calcio vegetal biodisponible del plan. Si se quiere variar la proteína: sustituir el tofu por 150 g de edamame, 160 g de seitán a la plancha o 150 g de garb"},
+  {"n":"Tostadas integrales con crema de cacahuete, manzana y yogur de soja","m":"D","i":["3 rebanadas de pan integral","1 cda. de crema de cacahuete 100%","1 manzana pequeña rallada","canela","1 cdita. de miel","125 g de yogur de soja o Alpro sin azúcares añadidos","20 g de nueces troceadas","250 ml de bebida vegetal enriquecida en calcio (café, té o aparte)"],"d":["entreno"],"o":["Javier"],"nt":"Sin avena antes de la activación. Variación: sustituye la manzana por pera o kiwi troceado. Las nueces son fuente de omega-3 vegetal (ALA) — relevante para el perfil de corredor."},
+  {"n":"Ensalada de cuscús con gazpacho y tofu","m":"C","i":["220 g de cuscús seco hidratado","330 ml de gazpacho comercial frío (tapar 20 min y remover con tenedor)","150 g de tofu firme en dados dorado en sartén con especias","80 g de pepino","100 g de tomate","60 g de maíz dulce cocido","un puñado de albahaca fresca","Aliño: zumo de limón","AOVE al gusto"],"d":["entreno"],"o":["Javier"],"nt":"Receta sin fuego apenas — solo dorar el tofu 5–6 min. El gazpacho hidrata el cuscús y suma verdura líquida sin pasos extra. Ideal para días calurosos de rodaje."},
+  {"n":"Tortitas de arroz con crema de cacahuete y plátano","m":"Me","i":["4 tortitas de arroz","2 cdas. de crema de cacahuete 100%","1 plátano en rodajas encima","1 kiwi aparte"],"d":["entreno"],"o":["Javier"],"nt":"El kiwi es excelente fuente de vitamina C, que facilita la absorción del hierro vegetal de las legumbres de los otros días. La crema de cacahuete aporta proteína y grasas saludables de calidad."},
+  {"n":"Curry de garbanzos con espinacas y patata","m":"Ce","i":["200 g de garbanzos cocidos (de bote, escurridos)","espinacas frescas (puñado grande)","150 ml de crema de soja","200 g de tomate triturado","curry en polvo","cúrcuma","comino","200 g de patata en crudo cortada en dados pequeños, cocida 15–20 min en la propia salsa","Ensalada verde","1 cdita. de AOVE"],"d":["entreno"],"o":["Javier"],"nt":"Los garbanzos aportan calcio vegetal (~80 mg/100 g). La cúrcuma tiene efecto antiinflamatorio relevante con el volumen de entrenamiento actual. Hacer el doble de curry si se quiere tener para el jueve"},
+  {"n":"Tostadas integrales con tomate y yogur de soja con plátano, nueces y semillas","m":"D","i":["2 rebanadas de pan integral","tomate en rodajas","125 g de yogur de soja o Alpro sin azúcares añadidos","1 plátano en rodajas","frutos rojos al gusto","15 g de nueces picadas","1 cda. de mix de semillas (lino, chía, calabaza)","canela al gusto","250 ml de bebida vegetal enriquecida en calcio (café, té o aparte)"],"d":["descanso"],"o":["Javier"],"nt":"Sin avena por si entrenas fuerza de activación; si entrenas por la mañana, tómalo 45–60 min antes. El mix de semillas del yogur aporta omega-3, calcio y fibra de golpe."},
+  {"n":"Ensalada templada de quinoa con garbanzos, boniato y tahini","m":"C","i":["1 vasito de quinoa precocinada (125 g)","200 g de garbanzos cocidos (de bote, escurridos)","250 g de boniato asado en cubos (del batch)","rúcula","aliño: 1 cda. de tahini","zumo de limón","1 cdita. de AOVE","comino y pimentón al gusto","1 fruta"],"d":["descanso"],"o":["Javier"],"nt":"El tahini es la fuente de calcio vegetal más concentrada del plan (~130 mg/cda.). La combinación quinoa + garbanzos cubre todos los aminoácidos esenciales. Todo del batch: 0 minutos de cocina."},
+  {"n":"Smoothie proteico pre o post entreno de fuerza","m":"Me","i":["1 scoop de proteína en polvo","1 plátano","300 ml de bebida vegetal enriquecida en calcio","canela","Batir todo junto"],"d":["descanso"],"o":["Javier"],"nt":"Si el entreno es vespertino (+18h): tomar 60–90 min antes como pre-entreno. Si es matutino: tomar como recuperación post-entreno en la ventana de 30 min tras acabar."},
+  {"n":"Poke bowl con tofu salteado, edamame y aliño de miso","m":"Ce","i":["80 g de arroz basmati en crudo (hervir según indicaciones del paquete)","160 g de tofu firme salteado en tamari","jengibre","ajo (o usar salsa teriyaki comprada para ir más rápido)","100 g de edamame","pepino en rodajas","60 g de mango en cubitos","1 cda. de semillas de sésamo tostado","Aliño de miso: 1 cdita. pasta miso","1 cda. zumo de lima","1 cdita","AOVE","½ cdita. jengibre fresco rallado","1 cdita. agua"],"d":["descanso"],"o":["Javier"],"nt":"Cena alta en proteína y recuperación muscular. El aliño de miso se hace en 2 min y se conserva 5 días tapado en nevera. Si sobró tofu del lunes, usarlo aquí directamente sin necesidad de volver a coci"},
+  {"n":"Tostadas integrales con tortilla de garbanzo (o huevo) y aguacate","m":"D","i":["3 rebanadas de pan integral con:","Cocinar en sartén con unas gotas de AOVE","En ambas opciones: ½ aguacate en rodajas","tomate","1 cdita. de AOVE","Café o té","1 fruta"],"d":["descanso"],"o":["Javier"],"nt":"Hoy o el domingo: recordar tomar la pastilla de B12 semanal (1 vez/semana, día fijo). La opción B (huevo) es compatible con los resultados de analítica actuales — no superar 1–2 veces/semana."},
+  {"n":"Seitán salteado con arroz basmati y verduras al wok","m":"C","i":["180 g de seitán cortado en tiras, salteado con tamari","ajo","jengibre rallado","80 g de arroz basmati en crudo (hervir según indicaciones del paquete)","Verduras al wok: pimiento","calabacín","cebolla","zanahoria con AOVE y especias orientales","1 cda. de semillas de sésamo"],"d":["descanso"],"o":["Javier"],"nt":"Si hiciste batch el domingo, usa el arroz basmati ya cocido (aguanta 4 días en nevera) y solo saltea el seitán y las verduras."},
+  {"n":"Smoothie de avena, plátano y crema de cacahuete","m":"Me","i":["40 g de avena","1 plátano","2 cdas. de crema de cacahuete 100%","300 ml de bebida vegetal enriquecida en calcio","canela al gusto","Batir"],"d":["descanso"],"o":["Javier"],"nt":"Usar siempre bebida vegetal enriquecida en calcio. Esta noche: preparar los overnight oats del sábado en 3 min (avena + bebida vegetal + yogur de soja + semillas + miel)."},
+  {"n":"Tofu al horno con boniato asado y ensalada de rúcula","m":"Ce","i":["180 g de tofu firme marinado en tamari","ajo","pimentón ahumado, horneado 20 min a 200°C","250 g de boniato asado en cubos","Rúcula","tomate cherry","1 cda. de AOVE","vinagre de Módena","1 fruta al gusto"],"d":["descanso"],"o":["Javier"],"nt":"Recordar preparar los overnight oats del sábado antes de dormir. El boniato puede ir al horno a la vez que el tofu — misma temperatura, mismo tiempo. Sin esfuerzo extra."},
+  {"n":"Overnight oats con mix de semillas y frutos rojos","m":"D","i":["60 g de copos de avena","250 ml de bebida vegetal enriquecida en calcio","125 g de yogur de soja","2 cdas. de mix de semillas (lino, chía, calabaza)","1 cdita. de miel","un puñado de frutos rojos","Preparado el viernes por la noche"],"d":["partido"],"o":["Javier"],"nt":"El más abundante de los overnight oats de la semana — el rodaje del sábado suele ser el más largo. El mix de semillas aporta omega-3 y calcio adicional."},
+  {"n":"Cuscús integral con edamame y verduras salteadas","m":"C","i":["1 vasito de cuscús integral precocinado (125 g, hidratar 5 min)","100 g de edamame o 200 g de garbanzos cocidos (de bote, escurridos)","verduras salteadas al gusto (pimiento, calabacín, zanahoria)","1 cdita. de tamari","1 cdita. de AOVE","125 g de yogur de soja o Alpro","1 cdita. de miel"],"d":["partido"],"o":["Javier"],"nt":"Almuerzo de 10 min post-rodaje sin cocinar nada desde cero. Si sobró curry del miércoles, es otra opción perfecta para hoy."},
+  {"n":"Kiwis + almendras + yogur de soja","m":"Me","i":["2 kiwis","30 g de almendras crudas","125 g de yogur de soja o Alpro sin azúcares añadidos"],"d":["partido"],"o":["Javier"],"nt":"Las almendras aportan ~75 mg de calcio por 30 g. Merienda ligera antes de la cena — no hace falta que sea abundante."},
+  {"n":"Gazpacho de remolacha con tofu","m":"Ce","i":["5 tomates pera escaldados y pelados","1 remolacha cocida pequeña","150–200 g de tofu","2 cdas. de AOVE","hierbas provenzales","cúrcuma","pimienta y sal al gusto","Triturar todo hasta obtener una crema fina y homogénea","Enfriar en nevera mínimo 30 min antes de servir","1 fruta"],"d":["partido"],"o":["Javier"],"nt":"Receta para 2 raciones — guardar la mitad para otro día de cena ligera. La remolacha aporta nitratos naturales y antioxidantes; el tofu suma proteína completa y cremosidad sin lácteos. Cena fresca ide"},
+  {"n":"Estofado de lentejas con verduras y pan de masa madre o integral","m":"C","i":["Sofrito: rehogar cebolla","puerro","zanahoria en AOVE 5 min","Añadir tomate triturado","laurel","comino y cocinar 3 min","Incorporar 150 g de lentejas pardinas","patata pequeña en cubos (100 g)","agua o caldo vegetal hasta cubrir","Cocción 25–30 min a fuego medio","1 rebanada de pan de masa madre o integral"],"d":["partido"],"o":["Javier"],"nt":"Plato digestivo y reconfortante para el domingo. El estofado puede servir de punto de partida del batch: cocer el doble y guardar lentejas extra en tupper para la semana."}
+];
+// n nombre · m momento · i ingredientes (uno por línea) · d tipos de día donde se usó · o de quién viene · nt nota
+// Base de cada plato: lo que lleva de origen animal (vacío = vegetal). Sirve para filtrar y, luego, para el generador.
+const MN_BASE_RE = [['carne', /\b(pollo|pavo|ternera|cerdo|jam[oó]n|solomillo|lomo|cordero|embutido|bacon|chorizo)\b/i], ['pescado', /\b(at[uú]n|salm[oó]n|pescado|merluza|caballa|sardinas?|bacalao|gambas?|marisco|boquerones?|anchoas?|mejill[oó]n|lubina|dorada)\b/i],
+  ['huevo', /\b(huevos?|tortilla de huevo|clara)\b/i], ['lácteo', /\b(queso|filadelfia|k[eé]fir|nata|mantequilla|yogur(?! (de )?(soja|vegetal|coco|avena|almendra))|leche(?! (de )?(soja|avena|almendra|coco)))/i]];
+function mnBase(p) { const t = (p.i || []).join(' ') + ' ' + p.n; return MN_BASE_RE.filter(x => x[1].test(t)).map(x => x[0]); }
+const MN_BIB_DIAS = [['entreno', 'Entreno'], ['descanso', 'Descanso'], ['partido', 'Partido / prueba'], ['libre', 'Libre']];
+const MN_BIB = { q: '', m: '', t: '', veg: false, dia: null };
+function mnBibLista() {
+  const q = mnNorm(MN_BIB.q);
+  return MN_BIBLIOTECA.map((p, ix) => ({ p, ix })).filter(({ p }) => (!MN_BIB.m || p.m === MN_BIB.m) && (!MN_BIB.t || p.d.indexOf(MN_BIB.t) >= 0) && (!MN_BIB.veg || !mnBase(p).length) && (!q || mnNorm(p.n + ' ' + p.i.join(' ')).indexOf(q) >= 0));
+}
+function mnBibTarjeta({ p, ix }) {
+  const base = mnBase(p), tipo = MN_TIPOS.find(t => t[0] === p.m);
+  return `<article class="mn-bib-c"><div class="mn-bib-h"><span class="mn-bib-m t-${p.m}">${sudEsc(tipo ? tipo[1] : p.m)}</span><h3>${sudEsc(p.n)}</h3></div>
+    <ul class="mn-bib-i">${p.i.slice(0, 6).map(l => `<li>${sudEsc(l)}</li>`).join('')}${p.i.length > 6 ? `<li class="mas">+${p.i.length - 6} más</li>` : ''}</ul>
+    <div class="mn-bib-f"><span class="mn-bib-b ${base.length ? '' : 'veg'}">${base.length ? sudEsc(base.join(' · ')) : 'Vegetal'}</span>${p.d.map(x => `<span class="mn-bib-t">${sudEsc((MN_BIB_DIAS.find(y => y[0] === x) || [0, x])[1])}</span>`).join('')}<span class="mn-bib-o">${sudEsc(p.o.join(', '))}</span>
+    <button type="button" class="mn-btn sm" onclick="mnBibUsar(${ix})">${mnI('plus')}Añadir</button></div></article>`;
+}
+function mnBibHtml() {
+  const s = mnSem(); if (MN_BIB.dia === null || MN_BIB.dia >= s.dias.length) MN_BIB.dia = MN.dia || 0;
+  const chip = (k, v, l) => `<button type="button" class="mn-fch${MN_BIB[k] === v ? ' on' : ''}" aria-pressed="${MN_BIB[k] === v}" onclick="mnBibSet('${k}','${v}')">${l}</button>`;
+  return `<section class="mn-card mn-bib-bar"><div class="mn-bib-r"><div class="mn-f" style="flex:1 1 220px"><label class="mn-l" for="mnBibQ">Buscar</label><input class="inp" id="mnBibQ" type="search" value="${sudEsc(MN_BIB.q)}" placeholder="Ej. lentejas, tofu, porridge…" oninput="MN_BIB.q=this.value;mnBibPintar()"></div>
+      <div class="mn-f"><label class="mn-l" for="mnBibD">Añadir a</label><select class="inp" id="mnBibD" onchange="MN_BIB.dia=+this.value">${s.dias.map((d, i) => `<option value="${i}"${i === MN_BIB.dia ? ' selected' : ''}>${sudEsc(d.n)}</option>`).join('')}</select></div></div>
+    <div class="mn-bib-ch" role="group" aria-label="Momento">${chip('m', '', 'Todos')}${MN_TIPOS.filter(t => t[0] !== 'O').map(t => chip('m', t[0], t[1])).join('')}</div>
+    <div class="mn-bib-ch" role="group" aria-label="Tipo de día">${chip('t', '', 'Cualquier día')}${MN_BIB_DIAS.map(t => chip('t', t[0], t[1])).join('')}<button type="button" class="mn-fch${MN_BIB.veg ? ' on' : ''}" aria-pressed="${MN_BIB.veg}" onclick="MN_BIB.veg=!MN_BIB.veg;mnBibPintar(true)">Solo vegetal</button></div></section>
+    <p class="mn-ayuda" id="mnBibN" style="margin:12px 2px"></p><div class="mn-bib-g" id="mnBibG"></div>`;
+}
+function mnBibPintar(chips) {
+  if (chips) { const t = document.getElementById('mnCuerpo'), q = document.getElementById('mnBibQ'), f = q && document.activeElement === q; t.innerHTML = mnBibHtml(); if (f) { const n = document.getElementById('mnBibQ'); n.focus(); n.setSelectionRange(n.value.length, n.value.length); } }
+  const l = mnBibLista(); document.getElementById('mnBibN').textContent = l.length + (l.length === 1 ? ' plato' : ' platos') + ' · de tus planificaciones, con sus ingredientes tal cual';
+  document.getElementById('mnBibG').innerHTML = l.length ? l.map(mnBibTarjeta).join('') : `<div class="mn-vacio"><b>Ningún plato con esos filtros</b><span class="mn-ayuda">Prueba con otra búsqueda o quita algún filtro.</span></div>`;
+}
+function mnBibSet(k, v) { MN_BIB[k] = MN_BIB[k] === v ? '' : v; mnBibPintar(true); }
+function mnBibUsar(ix) {
+  const p = MN_BIBLIOTECA[ix], s = mnSem(), d = s.dias[MN_BIB.dia] || s.dias[0]; if (!p || !d) return;
+  d.comidas.push({ id: mnId('m'), tipo: p.m, hora: '', nombre: p.n, nota: '', libre: false, receta: null, plato: null, ing: mnParseTexto(p.i.join('\n')) });
+  mnRelinkTodo(); mnCambio(); toast('Añadido a ' + d.n + ': «' + p.n + '»', { accion: { texto: 'Deshacer', fn: () => { const j = d.comidas.length - 1; if (j >= 0 && d.comidas[j].nombre === p.n) { d.comidas.pop(); mnCambio(); } } } });
+}
+
 // ── Funciones propias de la página de pruebas ──
 function mnPrevSet(o) { mnSyncTextos(); MN.prev = o; mnPintar(); }
 function mnvPrev(origen) {
@@ -1575,7 +1857,7 @@ function mnvComida(m){
 function mnvHoy(s){
   const hoy=mnvIdxHoy(s), d=s.dias[Math.min(MNV.dia,s.dias.length-1)]||s.dias[0];
   const chips=`<div class="mnv-chips" role="group" aria-label="Día">${s.dias.map((x,i)=>`<button type="button" class="mnv-chip${x===d?' on':''}" onclick="mnvSet('dia',${i})">${esc(x.n)}${i===hoy&&s.id===(MENU.semana_actual||MENU.menu.semanas[0].id)?'<span class="mnv-hoy" aria-label="Hoy"></span>':''}</button>`).join('')}</div>`;
-  const c=d.ctx||{}, ctx=(c.texto||c.aviso)?`<div class="mnv-ctx ${esc(c.tipo||'')}">${c.texto?`<b>${esc(c.texto)}</b>`:''}${c.texto&&c.aviso?' — ':''}${esc(c.aviso||'')}</div>`:'';
+  const c=d.ctx||{}, ctx=((c.texto||c.aviso)?`<div class="mnv-ctx ${esc(c.tipo||'')}">${c.texto?`<b>${esc(c.texto)}</b>`:''}${c.texto&&c.aviso?' — ':''}${esc(c.aviso||'')}</div>`:'')+(c.suppl?`<div class="mnv-ctx mnv-suppl"><b>Suplementación de hoy</b><br>${esc(c.suppl)}</div>`:'');
   const cuerpo=d.comidas.length?d.comidas.map(mnvComida).join(''):vacioC('<path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/>','Nada planificado este día','Tu nutricionista no ha añadido comidas a este día.');
   return chips+ctx+cuerpo;
 }
