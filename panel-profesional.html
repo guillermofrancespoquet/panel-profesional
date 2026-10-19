@@ -517,7 +517,7 @@ body.dark-mode img{opacity:.92}
 .sb-chevron.open{transform:rotate(0deg)}
 .sb-chevron:not(.open){transform:rotate(-90deg)}
 .sb-subnav{overflow:hidden;max-height:0;transition:max-height .22s ease;display:flex;flex-direction:column;gap:2px}
-.sb-subnav.open{max-height:120px;margin-top:2px}
+.sb-subnav.open{max-height:170px;margin-top:2px}
 .sb-subitem{padding-left:2.4rem;font-size:12.5px}
 .sb-item.on{background:rgba(255,255,255,.1);color:#fff}
 .sb-item.on::before{content:'';position:absolute;left:-.75rem;top:8px;bottom:8px;width:3px;background:var(--gold);border-radius:0 3px 3px 0}
@@ -1327,6 +1327,10 @@ body.dark-mode .ref-src,body.dark-mode .sup-badge,body.dark-mode .depd-avatar-fa
         <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="5" r="2.5"/><path d="M12 8v6"/><path d="M8 22l2-8"/><path d="M16 22l-2-8"/><path d="M6 12h12"/></svg>
         Antropometría
       </button>
+      <button class="sb-item sb-subitem" id="sbMenuSem" onclick="navTo('menusem')">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3zm0 0v7"/></svg>
+        Menús de clientes
+      </button>
     </div>
     <button class="sb-item" id="sbFact" onclick="navTo('facturacion')">
       <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
@@ -1624,6 +1628,9 @@ body.dark-mode .ref-src,body.dark-mode .sup-badge,body.dark-mode .depd-avatar-fa
 </div>
 
 <!-- ANTROPOMETRÍA (calculadora incrustada) -->
+<div id="vmenusem" class="view" role="main">
+  <iframe id="menuFrame" class="antro-frame" title="Menú semanal" onload="window.syncMenuDark && syncMenuDark()"></iframe>
+</div>
 <div id="vantro" class="view" role="main">
   <iframe id="antroFrame" class="antro-frame" title="Calculadora de antropometría" onload="window.syncAntroDark && syncAntroDark()"></iframe>
 </div>
@@ -3013,6 +3020,7 @@ function accHtml(q, deps){
   (deps||[]).forEach(d=>{
     todas.push({t:'Nueva cita con '+d.nombre, k:'', f:()=>{ navTo('agenda'); openAddCita(); document.getElementById('citaCliente').value = d.nombre; }});
     todas.push({t:'Antropometría de '+d.nombre, k:'medidas valoracion', f:()=>abrirAntropometria(d.id)});
+    todas.push({t:'Menú semanal de '+d.nombre, k:'menu dieta plan comidas compra', f:()=>abrirMenuSemanal(d.id)});
   });
   const lista = palabras.length ? todas.filter(a=>{ const h=_nrm(a.t+' '+a.k); return palabras.every(w=>h.includes(w)); }) : ACC_BASE.slice(0,6);
   _accList = lista.slice(0,6);
@@ -3806,7 +3814,7 @@ function toggleDarkMode(){
   const isDark = document.body.classList.toggle('dark-mode');
   localStorage.setItem('nutrilogos_dark', isDark ? '1' : '0');
   document.getElementById('darkModeLabel').textContent = isDark ? 'Modo claro' : 'Modo oscuro';
-  syncAntroDark();
+  syncAntroDark(); syncMenuDark();
 }
 function initDarkMode(){
   if(localStorage.getItem('nutrilogos_dark') === '1'){
@@ -3845,6 +3853,7 @@ function navTo(section){
   else if(section==='deportiva'){document.getElementById('sbDep').classList.add('on');show('vdepdash');loadDeportistas();}
   else if(section==='facturacion'){document.getElementById('sbFact').classList.add('on');show('vfact');loadFacturacion();}
   else if(section==='antropometria'){document.getElementById('sbAntropo').classList.add('on');show('vantro');cargarAntropometria();}
+  else if(section==='menusem'){document.getElementById('sbMenuSem').classList.add('on');show('vmenusem');cargarMenuSemanal();}
   else if(section==='plan'){document.getElementById('sbPlan').classList.add('on');show('vplan');initPlan();}
   else if(section==='calc-energia'||section==='calc-hidra'){
     const hidra = section==='calc-hidra';
@@ -4214,6 +4223,25 @@ function abrirAntropometria(depId){
   navTo('antropometria');
   cargarAntropometria(depId);
 }
+// El menú semanal (otra app del repo) también va dentro del panel en un iframe con ?embed=1; &c=<id> abre el menú de ese cliente.
+let menuSrc = '';
+function cargarMenuSemanal(depId){
+  const base = window.location.origin + window.location.pathname.replace('panel-profesional.html', 'menu-semanal.html');
+  const src = base + '?embed=1' + (depId ? '&c=' + encodeURIComponent(depId) : '');
+  const f = document.getElementById('menuFrame');
+  if(depId || !menuSrc){ f.src = src; menuSrc = src; }
+  closeMobileSidebar();
+}
+function abrirMenuSemanal(depId){
+  navTo('menusem');
+  cargarMenuSemanal(depId);
+}
+function syncMenuDark(){
+  try{
+    const d = document.getElementById('menuFrame').contentDocument;
+    if(d && d.body) d.body.classList.toggle('dark-mode', document.body.classList.contains('dark-mode'));
+  }catch(e){}
+}
 // El modo oscuro lo decide el panel: se copia al documento del iframe
 function syncAntroDark(){
   try{
@@ -4564,7 +4592,7 @@ async function refrescarVista(){
   let y0 = null, tirado = 0, ocupado = false;
   const movil = ()=>window.matchMedia('(max-width:860px)').matches;
   document.addEventListener('touchstart', e=>{
-    y0 = (!ocupado && movil() && window.scrollY <= 0 && e.touches[0].clientX > 28 && !e.target.closest('textarea,input,select,iframe,.mbg,.sidebar,.agenda-swipe-bg,.agenda-item,#vantro,#vplan,#vcalc')) ? e.touches[0].clientY : null;
+    y0 = (!ocupado && movil() && window.scrollY <= 0 && e.touches[0].clientX > 28 && !e.target.closest('textarea,input,select,iframe,.mbg,.sidebar,.agenda-swipe-bg,.agenda-item,#vantro,#vmenusem,#vplan,#vcalc')) ? e.touches[0].clientY : null;
     tirado = 0;
   }, {passive:true});
   document.addEventListener('touchmove', e=>{
@@ -5671,6 +5699,11 @@ function openDepDet(id) {
     </div>
 
     <div class="depd-section">
+      <p class="sec-title">Menú semanal</p>
+      <div class="med-box" id="menuBox">${skel(2)}</div>
+    </div>
+
+    <div class="depd-section">
       <p class="sec-title">Suplementación</p>
       <div class="med-box" id="suplBox">${skel(2)}</div>
     </div>
@@ -5715,6 +5748,7 @@ function openDepDet(id) {
   loadEstado(d.id);
   loadSudoracion(d.id);
   loadPlanes(d.id);
+  loadMenuBox(d.id);
   loadSuplementacion(d.id);
 }
 
@@ -7176,6 +7210,20 @@ function planEstadoCliente(r){
   return r.fecha < planLimiteCliente()
     ? '<span class="acc-pill" style="margin-top:4px;display:inline-block">Compartido · ya no lo ve el cliente</span>'
     : '<span class="acc-pill on" style="margin-top:4px;display:inline-block">Compartido con el cliente</span>';
+}
+// Menú semanal en la ficha: estado y acceso al editor (que es otra app, incrustada en el panel)
+async function loadMenuBox(depId){
+  let r = null;
+  try{ r = await sb(`menus_cliente?deportista_id=eq.${depId}&select=publicado_en,actualizado,titulo&limit=1`); }catch(e){}
+  const el = document.getElementById('menuBox');
+  if(!el || currentDepId != depId) return;
+  const fmt = f=>new Date(f).toLocaleDateString('es-ES',{day:'numeric',month:'short'});
+  if(!Array.isArray(r)){ el.innerHTML = `<p class="med-empty">Para usar el menú semanal falta ejecutar <b>supabase_menu_semanal.sql</b> en Supabase.</p>`; return; }
+  const m = r[0];
+  if(!m){ el.innerHTML = `<p class="med-empty">Este cliente todavía no tiene menú semanal.</p><div class="med-actions">${btnSoft('Crear menú semanal',`abrirMenuSemanal(${depId})`,'plus')}</div>`; return; }
+  const pub = m.publicado_en, cambios = pub && (new Date(m.actualizado) - new Date(pub) > 1500);
+  const estado = !pub ? '<span class="acc-pill">Borrador sin publicar</span>' : cambios ? `<span class="acc-pill">Publicado el ${fmt(pub)} · hay cambios sin publicar</span>` : `<span class="acc-pill on">Publicado el ${fmt(pub)} · lo ve el cliente</span>`;
+  el.innerHTML = `<p style="margin:0 0 10px">${estado}</p><div class="med-actions">${btnSoft('Abrir menú semanal',`abrirMenuSemanal(${depId})`,'doc')}</div>`;
 }
 async function loadPlanes(depId){
   let rows = [];

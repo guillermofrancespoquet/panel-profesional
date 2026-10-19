@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow">
-<title>Menú semanal · Pruebas</title>
+<title>Menú semanal · NutriLogos</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
 <style>
 :root{
@@ -228,6 +228,8 @@ body.dark-mode :focus-visible{outline-color:#5CC8A6}
 .mnv-dot{flex:0 0 8px;height:8px;border-radius:50%;margin-top:8px}
 /* ═══ Menú semanal: sistema visual de la página ═══ */
 :root{--mn-sh:0 1px 2px rgba(4,52,44,.04),0 4px 16px rgba(4,52,44,.05)}
+.embed .lab-top{display:none}
+.embed .mn-side{top:16px}
 .lab-top{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:12px;height:56px;padding:0 28px;background:var(--sf);border-bottom:.5px solid var(--bd)}
 .lab-brand{display:flex;align-items:center;gap:10px;font-size:15px;font-weight:700;color:var(--g900);letter-spacing:-.01em}
 .lab-brand img{width:28px;height:28px;border-radius:8px}
@@ -492,13 +494,13 @@ body.dark-mode .mn-bib-b.veg{color:var(--t800)}
 <body>
 
 <div id="toasts" aria-live="polite"></div>
-<header class="lab-top"><div class="lab-brand"><img src="icon-rounded-192.png" alt="">NutriLogos <span>Menú semanal</span></div><span class="lab-badge">Versión de pruebas</span></header>
+<header class="lab-top"><div class="lab-brand"><img src="icon-rounded-192.png" alt="">NutriLogos <span>Menú semanal</span></div></header>
 
 <div id="vsin" class="view" role="main"></div>
 
 <div id="vlista" class="view" role="main">
   <div class="page">
-    <div class="page-header"><div><p class="page-title" role="heading" aria-level="1">Menú semanal</p><p class="page-sub">Página de pruebas: nada de esto aparece todavía en el panel ni en el área de clientes. Misma base de datos y misma sesión que el panel.</p></div></div>
+    <div class="page-header"><div><p class="page-title" role="heading" aria-level="1">Menú semanal</p><p class="page-sub">Planificación semanal de cada cliente: se publica cuando tú lo decides y el cliente la ve en su área.</p></div></div>
     <input class="inp" id="listaQ" placeholder="Buscar cliente…" aria-label="Buscar cliente" oninput="pintarLista()" style="margin-bottom:18px;max-width:420px">
     <div id="lista"></div>
   </div>
@@ -2442,10 +2444,14 @@ async function cargarLista() {
   window._sinSql = !Array.isArray(m);
   pintarLista();
 }
+// ?embed=1 → dentro del panel (sin cabecera propia); ?c=<id> → abre directamente el menú de ese cliente.
 (async function arrancar() {
+  const q = new URLSearchParams(location.search);
+  if (q.get('embed') === '1') document.body.classList.add('embed');
   if (localStorage.getItem('nutrilogos_dark') === '1') document.body.classList.add('dark-mode');
   if (!authLoad()) { mostrarSinSesion(); return; }
-  cargarLista();
+  await cargarLista();
+  const c = q.get('c'); if (c && deportistas.some(d => d.id == c)) mnAbrir(c);
 })();
 
 </script>
