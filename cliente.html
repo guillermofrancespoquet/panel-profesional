@@ -136,6 +136,54 @@ body.in-plan .topbar{display:none}
 .dia-co b{display:block;font-size:11px;letter-spacing:.03em;text-transform:uppercase;margin-bottom:2px}
 .dia-co.nuevo{box-shadow:inset 0 0 0 1.5px var(--t400)}
 .dia-bo{background:none;border:0;padding:6px 0 0;color:var(--g500);font:inherit;font-size:12px;text-decoration:underline;cursor:pointer}
+/* Mi menú semanal */
+.mnv-chips{display:flex;gap:6px;overflow-x:auto;padding:2px 0 10px;margin:0 -2px;scrollbar-width:none}
+.mnv-chips::-webkit-scrollbar{display:none}
+.mnv-chip{flex:0 0 auto;display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border:.5px solid var(--bdm);border-radius:20px;background:var(--sf);color:var(--g700);font-size:13.5px;font-weight:600;white-space:nowrap}
+.mnv-chip.on{background:var(--btn);border-color:var(--btn);color:#fff}
+.mnv-hoy{width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.75}
+.mnv-tabs{display:flex;gap:4px;padding:4px;background:var(--g100);border-radius:12px;margin-bottom:14px;overflow-x:auto;scrollbar-width:none}
+.mnv-tabs::-webkit-scrollbar{display:none}
+.mnv-tab{flex:1 0 auto;padding:9px 14px;border:none;background:none;border-radius:9px;font-size:13.5px;font-weight:600;color:var(--g500);white-space:nowrap}
+.mnv-tab.on{background:var(--sf);color:var(--t600);box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.mnv-sub{font-size:12.5px;color:var(--g500);margin:-6px 0 12px}
+.mnv-ctx{border-radius:12px;padding:10px 14px;margin-bottom:12px;font-size:13px;line-height:1.5;background:var(--g100);color:var(--g700);border:.5px solid var(--bd)}
+.mnv-ctx.entreno{background:var(--t50);color:var(--t800);border-color:var(--pill-g-bd)}
+.mnv-ctx.partido,.mnv-ctx.libre{background:var(--gold-50);color:var(--gold-dk);border-color:var(--pill-au-bd)}
+.mnv-ctx b{font-weight:700}
+.mnv-m{margin-bottom:10px;padding:14px 16px}
+.mnv-mh{display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap}
+.mnv-b{font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;background:var(--pill-g);color:var(--t900)}
+.mnv-b-d,.mnv-b-l{background:var(--pill-au);color:var(--gold-dk)}
+.mnv-b-a{background:var(--t50);color:var(--t800)}
+.mnv-b-me,.mnv-b-o{background:var(--pill-n);color:var(--g700)}
+.mnv-b-ce{background:var(--t800);color:#fff}
+.mnv-h{font-size:12px;color:var(--g500)}
+.mnv-n{font-size:15.5px;font-weight:700;margin-bottom:6px}
+.mnv-ing{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:6px}
+.mnv-i{font-size:13px;background:var(--g100);border:.5px solid var(--bd);border-radius:20px;padding:4px 11px;color:var(--g700);line-height:1.4}
+.mnv-i i{font-style:normal;color:var(--g500)}
+.mnv-nota{font-size:12.5px;color:var(--g500);line-height:1.5;border-left:2px solid var(--gold);padding-left:9px;margin:8px 0 0}
+.mnv-ideas{font-size:11.5px;font-weight:700;color:var(--gold-dk);text-transform:uppercase;letter-spacing:.05em;margin:2px 0 6px}
+.mnv-rb{display:inline-flex;margin-top:10px;padding:8px 14px;border-radius:10px;border:.5px solid var(--pill-g-bd);background:var(--t50);color:var(--t800);font-size:13px;font-weight:600}
+.mnv-dia{width:100%;text-align:left;background:var(--sf);border:.5px solid var(--bdm);border-radius:14px;padding:12px 14px;margin-bottom:10px;font-family:var(--f);color:var(--g900)}
+.mnv-dia-h{display:flex;justify-content:space-between;gap:8px;font-size:14.5px;font-weight:700;margin-bottom:6px}
+.mnv-dia-h span{font-size:12px;font-weight:600;color:var(--g500)}
+.mnv-dia p{font-size:13px;color:var(--g700);margin:3px 0;line-height:1.45}
+.mnv-dia p b{font-weight:700;color:var(--g900)}
+.mnv-rec{margin-bottom:10px;padding:0;overflow:hidden}
+.mnv-rec-h{display:flex;justify-content:space-between;align-items:center;gap:10px;width:100%;padding:13px 16px;background:none;border:none;text-align:left;font-family:var(--f);font-size:15px;font-weight:700;color:var(--g900)}
+.mnv-rec-h span{font-size:12px;font-weight:600;color:var(--g500)}
+.mnv-rec-b{padding:0 16px 16px;border-top:.5px solid var(--bd)}
+.mnv-rec-b img{display:block;width:100%;max-height:260px;object-fit:cover;border-radius:12px;margin-top:12px}
+.mnv-sh{font-size:11px;font-weight:700;color:var(--gold-dk);text-transform:uppercase;letter-spacing:.07em;margin:14px 0 6px}
+.mnv-pasos{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px}
+.mnv-pasos li{display:flex;gap:10px;font-size:13.5px;line-height:1.5;color:var(--g700)}
+.mnv-pn{flex:0 0 22px;height:22px;border-radius:50%;background:var(--t50);border:.5px solid var(--pill-g-bd);color:var(--t800);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;margin-top:1px}
+.mnv-obj{font-size:14.5px;font-weight:600;color:var(--t900);line-height:1.65}
+.mnv-imp{display:flex;gap:10px;font-size:13.5px;color:var(--g700);line-height:1.6;padding:9px 0;border-bottom:.5px solid var(--bd)}
+.mnv-imp:last-child{border-bottom:none;padding-bottom:0}
+.mnv-dot{flex:0 0 8px;height:8px;border-radius:50%;margin-top:8px}
 .supl-card{margin-bottom:10px;padding:14px 16px}
 .supl-n{font-size:15px;font-weight:700;color:var(--g900)}
 .supl-d{font-size:15px;font-weight:600;color:var(--t600);margin-top:2px}
@@ -406,6 +454,11 @@ body.dark-mode :focus-visible{outline-color:#5CC8A6}
     <span><span class="tile-t">Mi planificación nutricional</span><br><span class="tile-d">Tu plan personalizado</span></span>
     <span class="tile-go"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></span>
   </button>
+  <button class="tile" id="tileMenu" style="display:none" onclick="abrirMenu()">
+    <span class="tile-ic"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3zm0 0v7"/></svg></span>
+    <span><span class="tile-t">Mi menú semanal</span><br><span class="tile-d" id="tileMenuD">Qué comer cada día</span></span>
+    <span class="tile-go"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></span>
+  </button>
   <button class="tile" id="tileSupl" style="display:none" onclick="abrirSupl()">
     <span class="tile-ic"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M10.5 20.5 3.5 13.5a4.95 4.95 0 0 1 7-7l7 7a4.95 4.95 0 0 1-7 7z"/><line x1="8.5" y1="8.5" x2="15.5" y2="15.5"/></svg></span>
     <span><span class="tile-t">Mi suplementación</span><br><span class="tile-d" id="tileSuplD">Qué tomar y cuándo</span></span>
@@ -440,6 +493,12 @@ body.dark-mode :focus-visible{outline-color:#5CC8A6}
   <div id="diaBody"></div>
 </div></div>
 <input type="file" id="diaFile" accept="image/*" style="display:none">
+
+<div id="vmenu" class="view" role="main"><div class="wrap">
+  <button class="back" onclick="show('vhome')"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Inicio</button>
+  <h1 class="h2">Mi menú semanal</h1>
+  <div id="menuBody"></div>
+</div></div>
 
 <div id="vsupl" class="view" role="main"><div class="wrap">
   <button class="back" onclick="show('vhome')"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Inicio</button>
@@ -520,7 +579,7 @@ const BUCKET='deportistas-docs';
 let FICHA=null, DATOS=null;
 
 // ═══ Vistas ═══
-const APP_VIEWS=['vhome','vdatos','vreg','vplan','vforms','vform','vseg','vcomp','vsin'];
+const APP_VIEWS=['vhome','vdatos','vreg','vplan','vforms','vform','vseg','vcomp','vsin','vmenu'];
 function show(v){
   document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));
   $(v).classList.add('active');
@@ -640,8 +699,9 @@ async function entrar(){
   $('helloSub').textContent=[FICHA.deporte,FICHA.objetivo].filter(Boolean).join(' · ')||'Aquí tienes tu información.';
   try{ const pl=await rpc('cliente_mis_planes'); PLANES=Array.isArray(pl)?pl:[]; }catch(e){ PLANES=[]; }
   try{ const dd=await rpc('cliente_mis_comidas'); DIA=dd&&Array.isArray(dd.comidas)?dd:null; }catch(e){ DIA=null; }   // opcional: sin su SQL no sale la tarjeta
+  try{ const mm=await rpc('cliente_mi_menu'); MENU=mm&&mm.menu&&Array.isArray(mm.menu.semanas)&&mm.menu.semanas.length?mm:null; }catch(e){ MENU=null; }   // opcional: sin su SQL, o sin menú publicado, no sale la tarjeta
   try{ const su=await rpc('cliente_mi_suplementacion'); SUPL=Array.isArray(su)?su:[]; }catch(e){ SUPL=[]; }   // opcional: sin su SQL, o sin nada asignado, no sale la opción
-  pintarNota(); pintarRevision(); pintarInstTip(); pintarTileForms(); pintarTileComp(); pintarTileSupl(); pintarTileDia(); pintarMensajeDia();
+  pintarNota(); pintarRevision(); pintarInstTip(); pintarTileForms(); pintarTileComp(); pintarTileMenu(); pintarTileSupl(); pintarTileDia(); pintarMensajeDia();
   show('vhome');
 }
 // Nota que el profesional deja para el cliente (si hay); se muestra arriba, antes de la próxima revisión.
@@ -1216,6 +1276,76 @@ function abrirSupl(){
       ${x.nota?`<p class="note" style="margin:8px 0 0">${esc(x.nota)}</p>`:''}
     </div>`).join('')+`<p class="note" style="margin:14px 2px 0">Pruébalo siempre en entrenamiento, nunca por primera vez en competición.</p>`;
   show('vsupl');
+}
+// ═══ Mi menú semanal (copia que el profesional publica; el cliente nunca ve el borrador) ═══
+let MENU=null; const MNV={sem:null,dia:0,tab:'hoy',rec:null};
+const MNV_TIPO={D:['Desayuno','d'],A:['Almuerzo','a'],C:['Comida','c'],Me:['Merienda','me'],Ce:['Cena','ce'],O:['Otra comida','o']};
+const MNV_COL={green:'#1D9E75',blue:'#185FA5',amber:'#BA7517',coral:'#993C1D'};
+function mnvHoyDow(){ const d=new Date(new Date().toLocaleString('en-US',{timeZone:'Europe/Madrid'})).getDay(); return d===0?7:d; }
+const mnvSem=()=>MENU.menu.semanas.find(s=>s.id===MNV.sem)||MENU.menu.semanas.find(s=>s.id===MENU.semana_actual)||MENU.menu.semanas[0];
+function mnvIdxHoy(s){ const i=s.dias.findIndex(d=>d.dow===mnvHoyDow()); return i>=0?i:0; }
+function pintarTileMenu(){
+  const t=$('tileMenu'); if(!t) return; t.style.display=MENU?'flex':'none';
+  if(!MENU) return;
+  const s=MENU.menu.semanas.find(x=>x.id===MENU.semana_actual)||MENU.menu.semanas[0], d=s.dias[mnvIdxHoy(s)], n=d?d.comidas.length:0;
+  $('tileMenuD').textContent=n?('Hoy: '+n+(n===1?' comida':' comidas')):'Qué comer cada día';
+}
+function abrirMenu(){
+  const s=MENU.menu.semanas.find(x=>x.id===MENU.semana_actual)||MENU.menu.semanas[0];
+  MNV.sem=s.id; MNV.dia=mnvIdxHoy(s); MNV.tab='hoy'; MNV.rec=null; pintarMenu(); show('vmenu');
+}
+function mnvSet(k,v){ MNV[k]=v; if(k==='sem'){ const s=mnvSem(); MNV.dia=Math.min(MNV.dia,s.dias.length-1); } pintarMenu(); }
+function pintarMenu(){
+  const m=MENU.menu, s=mnvSem(), tabs=[['hoy','Hoy'],['semana','Semana']];
+  if((m.recetas||[]).length) tabs.push(['recetas','Recetas']);
+  if(m.objetivo||(m.impresiones||[]).length) tabs.push(['plan','Sobre mi plan']);
+  if(!tabs.some(t=>t[0]===MNV.tab)) MNV.tab='hoy';
+  let h='';
+  if(m.semanas.length>1) h+=`<div class="mnv-chips" role="group" aria-label="Semana">${m.semanas.map(x=>`<button type="button" class="mnv-chip${x.id===s.id?' on':''}" onclick="mnvSet('sem','${esc(x.id)}')">${esc(x.nombre)}${x.id===MENU.semana_actual?'<span class="mnv-hoy" aria-label="Esta semana"></span>':''}</button>`).join('')}</div>`;
+  if(s.nota) h+=`<p class="mnv-sub">${esc(s.nota)}</p>`;
+  h+=`<div class="mnv-tabs" role="tablist" aria-label="Secciones">${tabs.map(t=>`<button type="button" role="tab" class="mnv-tab${MNV.tab===t[0]?' on':''}" aria-selected="${MNV.tab===t[0]}" onclick="mnvSet('tab','${t[0]}')">${t[1]}</button>`).join('')}</div>`;
+  h+=MNV.tab==='hoy'?mnvHoy(s):MNV.tab==='semana'?mnvSemana(s):MNV.tab==='recetas'?mnvRecetas():mnvPlan();
+  $('menuBody').innerHTML=h; cargarFotos($('menuBody'));
+}
+function mnvComida(m){
+  const t=MNV_TIPO[m.tipo]||MNV_TIPO.O, ing=m.ing||[];
+  return `<div class="card mnv-m">
+    <div class="mnv-mh"><span class="mnv-b mnv-b-${t[1]}">${t[0]}</span>${m.libre?'<span class="mnv-b mnv-b-l">Libre</span>':''}${m.hora?`<span class="mnv-h">${esc(m.hora)}</span>`:''}</div>
+    ${m.nombre?`<div class="mnv-n">${esc(m.nombre)}</div>`:''}
+    ${ing.length&&m.libre?'<div class="mnv-ideas">Ideas</div>':''}
+    ${ing.length?`<div class="mnv-ing">${ing.map(i=>`<span class="mnv-i">${esc(i.t)}${i.nota?` <i>(${esc(i.nota)})</i>`:''}</span>`).join('')}</div>`:''}
+    ${m.nota?`<p class="mnv-nota">${esc(m.nota)}</p>`:''}
+    ${m.receta&&(MENU.menu.recetas||[]).some(r=>r.id===m.receta)?`<button type="button" class="mnv-rb" onclick="mnvVerReceta('${esc(m.receta)}')">Ver receta</button>`:''}
+  </div>`;
+}
+function mnvHoy(s){
+  const hoy=mnvIdxHoy(s), d=s.dias[Math.min(MNV.dia,s.dias.length-1)]||s.dias[0];
+  const chips=`<div class="mnv-chips" role="group" aria-label="Día">${s.dias.map((x,i)=>`<button type="button" class="mnv-chip${x===d?' on':''}" onclick="mnvSet('dia',${i})">${esc(x.n)}${i===hoy&&s.id===(MENU.semana_actual||MENU.menu.semanas[0].id)?'<span class="mnv-hoy" aria-label="Hoy"></span>':''}</button>`).join('')}</div>`;
+  const c=d.ctx||{}, ctx=(c.texto||c.aviso)?`<div class="mnv-ctx ${esc(c.tipo||'')}">${c.texto?`<b>${esc(c.texto)}</b>`:''}${c.texto&&c.aviso?' — ':''}${esc(c.aviso||'')}</div>`:'';
+  const cuerpo=d.comidas.length?d.comidas.map(mnvComida).join(''):vacioC('<path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/>','Nada planificado este día','Tu nutricionista no ha añadido comidas a este día.');
+  return chips+ctx+cuerpo;
+}
+function mnvSemana(s){
+  return s.dias.map((d,i)=>{
+    const c=d.ctx||{}, filas=d.comidas.map(m=>{ const t=MNV_TIPO[m.tipo]||MNV_TIPO.O; return `<p><b>${t[0]}${m.hora?' · '+esc(m.hora):''}:</b> ${m.libre?'Libre':esc(m.nombre||(m.ing||[]).map(x=>x.n).join(', ')||'—')}</p>`; }).join('');
+    return `<button type="button" class="mnv-dia" onclick="MNV.dia=${i};mnvSet('tab','hoy')"><div class="mnv-dia-h">${esc(d.n)}<span>${esc(c.texto||'')}</span></div>${filas||'<p>Sin comidas</p>'}</button>`;
+  }).join('');
+}
+function mnvRecetas(){
+  return (MENU.menu.recetas||[]).map(r=>{
+    const ab=MNV.rec===r.id;
+    return `<div class="card mnv-rec"><button type="button" class="mnv-rec-h" aria-expanded="${ab}" onclick="MNV.rec=${ab?'null':`'${esc(r.id)}'`};pintarMenu()">${esc(r.nombre||'Receta')}<span>${[r.tiempo,r.raciones?r.raciones+' rac.':''].filter(Boolean).map(esc).join(' · ')}</span></button>
+      ${ab?`<div class="mnv-rec-b" id="mnvR_${esc(r.id)}">${r.foto?`<img data-p="${esc(r.foto)}" alt="">`:''}
+        ${(r.ing||[]).length?`<p class="mnv-sh">Ingredientes</p><div class="mnv-ing">${r.ing.map(i=>`<span class="mnv-i">${esc(i.t)}${i.nota?` <i>(${esc(i.nota)})</i>`:''}</span>`).join('')}</div>`:''}
+        ${(r.pasos||[]).length?`<p class="mnv-sh">Preparación</p><ol class="mnv-pasos">${r.pasos.map((p,i)=>`<li><span class="mnv-pn">${i+1}</span><span>${esc(p)}</span></li>`).join('')}</ol>`:''}
+        ${r.consejo?`<p class="mnv-nota" style="margin-top:12px">${esc(r.consejo)}</p>`:''}</div>`:''}</div>`;
+  }).join('');
+}
+function mnvVerReceta(id){ MNV.tab='recetas'; MNV.rec=id; pintarMenu(); const e=$('mnvR_'+id); if(e) e.scrollIntoView({block:'start'}); }
+function mnvPlan(){
+  const m=MENU.menu, imp=(m.impresiones||[]);
+  return (m.objetivo?`<div class="card" style="margin-bottom:12px"><p class="mnv-sh" style="margin-top:0">Objetivo</p><p class="mnv-obj">${esc(m.objetivo)}</p></div>`:'')+
+    (imp.length?`<div class="card"><p class="mnv-sh" style="margin-top:0">Impresiones de tu nutricionista</p>${imp.map(x=>`<div class="mnv-imp"><span class="mnv-dot" style="background:${MNV_COL[x.c]||MNV_COL.green}"></span><span>${esc(x.t)}</span></div>`).join('')}</div>`:'');
 }
 const DOW=['dom','lun','mar','mié','jue','vie','sáb'];
 // Solo se permite <b> en los textos de opciones (vienen del panel del profesional, pero se escapa todo lo demás).
