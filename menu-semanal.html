@@ -134,6 +134,10 @@ body.dark-mode :focus-visible{outline-color:#5CC8A6}
 .mnv-cpq{text-align:right;color:var(--g700);max-width:50%}
 .mnv-cpq small{display:block;font-size:11.5px;color:var(--g400)}
 .mnv-cpf.ok .mnv-cpn,.mnv-cpf.ok .mnv-cpq{text-decoration:line-through;color:var(--g400)}
+.mnv-alt{margin-top:10px;font-size:13px;color:var(--g700)}
+.mnv-alt summary{cursor:pointer;font-weight:600;color:var(--t600);padding:4px 0}
+.mnv-alt p{margin:6px 0 0;line-height:1.5}
+.mnv-alt i{color:var(--g400)}
 .mnv-chips{display:flex;gap:6px;overflow-x:auto;padding:2px 0 10px;margin:0 -2px;scrollbar-width:none}
 .mnv-chips::-webkit-scrollbar{display:none}
 .mnv-chip{flex:0 0 auto;display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border:.5px solid var(--bdm);border-radius:20px;background:var(--sf);color:var(--g700);font-size:13.5px;font-weight:600;white-space:nowrap}
@@ -239,6 +243,7 @@ body.dark-mode :focus-visible{outline-color:#5CC8A6}
 .mn-nav-i:hover{background:var(--g100)}
 .mn-nav-i.on{background:var(--t50);color:var(--t800);font-weight:600}
 .mn-nav-i small{display:block;font-size:11.5px;font-weight:500;color:var(--g400);margin-top:1px}
+.mn-nav-i.on small{color:var(--g500)}
 .mn-tag{font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:20px;background:var(--pill-g);color:var(--t900);white-space:nowrap}
 body.dark-mode .mn-tag{color:var(--t800)}
 .mn-wk{margin-top:14px;padding-top:14px;border-top:.5px solid var(--bd);display:flex;flex-direction:column;gap:12px}
@@ -328,6 +333,17 @@ body.dark-mode .mn-tag{color:var(--t800)}
 .mn-cp-n small,.mn-cp-q small{display:block;font-size:11.5px;font-weight:400;color:var(--g400)}
 .mn-cp-q{text-align:right;color:var(--g700);flex:0 0 auto;max-width:55%}
 .mn-cp-q i{color:var(--g400)}
+.mn-ing-su{margin-left:2px;width:20px;font-size:12px}
+.mn-su-l{display:flex;flex-direction:column;border:.5px solid var(--bd);border-radius:12px;overflow:hidden}
+.mn-su-f{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border-top:.5px solid var(--bd);flex-wrap:wrap}
+.mn-su-f:first-child{border-top:0}
+.mn-su-f.on{background:var(--t50)}
+.mn-su-c{display:flex;gap:12px;align-items:flex-start;flex:1 1 260px;min-width:0;cursor:pointer;font-size:13.5px;line-height:1.5}
+.mn-su-c input{width:18px;height:18px;margin-top:3px;accent-color:var(--t600);flex:0 0 auto}
+.mn-su-q{font-size:12px;color:var(--g500)}
+.mn-su-a{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.mn-su-m{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--g500)}
+.mn-su-m input{width:64px;height:32px;padding:0 8px}
 .mn-bib-bar{margin-bottom:0}
 .mn-bib-av{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;margin:0 0 14px;padding:12px 16px;border-radius:12px;background:var(--gold-50);color:var(--gold-dk);font-size:13px;line-height:1.5}
 .mn-bib-av.warn{background:var(--pill-r);color:var(--red)}
@@ -468,6 +484,9 @@ body.dark-mode .mn-bib-b.veg{color:var(--t800)}
 </div>
 <div class="mbg" id="mMnBibE" style="display:none;z-index:325" role="dialog" aria-modal="true" aria-labelledby="mnBibETit" onclick="if(event.target===this)mnBibECerrar()">
   <div class="mc" style="max-width:600px;max-height:calc(100dvh - 2rem);overflow-y:auto" id="mnBibECuerpo"></div>
+</div>
+<div class="mbg" id="mMnSu" style="display:none;z-index:325" role="dialog" aria-modal="true" aria-labelledby="mnSuTit" onclick="if(event.target===this)mnSuCerrar()">
+  <div class="mc" style="max-width:680px;max-height:calc(100dvh - 2rem);overflow-y:auto" id="mnSuCuerpo"></div>
 </div>
 <div class="mbg" id="mMnObj" style="display:none;z-index:315" role="dialog" aria-modal="true" aria-labelledby="mnObjTit" onclick="if(event.target===this)mnObjCerrar()">
   <div class="mc" style="max-width:720px;max-height:calc(100dvh - 2rem);overflow-y:auto" id="mnObjCuerpo"></div>
@@ -790,7 +809,8 @@ function mnIngChips(ing, entId) {
   if (!ing || !ing.length) return '<span class="mn-ayuda">Sin ingredientes todavía.</span>';
   return ing.map((i, ix) => {
     const link = i.a ? '' : ` <button type="button" class="mn-ing-add" aria-label="Añadir «${sudEsc(i.n)}» al catálogo" title="Añadir al catálogo" onclick="mnVincularChip('${entId}',${ix})">+</button>`;
-    return `<span class="mn-ing${i.a ? '' : ' sin'}">${sudEsc(mnIngTxt(i))}${i.nota ? ` <i>(${sudEsc(i.nota)})</i>` : ''}${link}</span>`;
+    const su = i.a && i.cant && i.cant.modo !== 'libre' ? ` <button type="button" class="mn-ing-add mn-ing-su" aria-label="Sustituciones de «${sudEsc(i.n)}»" title="Sustituciones" onclick="mnSuAbrir('${entId}',${ix})">⇄</button>` : '';
+    return `<span class="mn-ing${i.a ? '' : ' sin'}">${sudEsc(mnIngTxt(i))}${i.nota ? ` <i>(${sudEsc(i.nota)})</i>` : ''}${link}${su}</span>`;
   }).join('');
 }
 function mnIngBloque(entId, ing, ph) {
@@ -1334,7 +1354,7 @@ function pintarLista() {
 // ── Copia que ve el cliente ──
 function mnSnapshot() {
   const c = MN.c, d = deportistas.find(x => x.id == MN.depId) || {}, oi = d.objetivo_impresiones || {};
-  const ing = l => (l || []).map(i => ({ t: mnIngTxt(i), n: i.n, a: i.a || null, cant: i.cant, nota: i.nota || '' }));
+  const ing = l => (l || []).map(i => { const o = { t: mnIngTxt(i), n: i.n, a: i.a || null, cant: i.cant, nota: i.nota || '' }, su = mnSuTextos(i); if (su.length) o.sust = su; return o; });
   const resolver = m => { const s = mnSrc(m); return { tipo: m.tipo, hora: m.hora || '', nombre: s.nombre || '', nota: s.nota || '', libre: !!m.libre, receta: m.receta || null, ing: ing(s.ing) }; };
   return {
     v: 1, titulo: c.titulo || '', objetivo: oi.objetivo || '', impresiones: (oi.impresiones || []).filter(x => x && x.t),
@@ -2100,6 +2120,86 @@ function mnvCompra(s) {
   return `<p class="mnv-sub">Lo que necesitas para esta semana · ${hechas} de ${filas.length} marcados</p>` + g.map(x => `<div class="card mnv-cp"><p class="mnv-sh" style="margin-top:0">${esc(x.c)}</p>${x.f.map(f => `<label class="mnv-cpf${marcas[f.k] ? ' ok' : ''}"><input type="checkbox"${marcas[f.k] ? ' checked' : ''} onchange="mnvCompraMarca('${esc(f.k)}',this.checked)"><span class="mnv-cpn">${esc(f.n)}</span><span class="mnv-cpq">${f.libre ? 'al gusto' : esc(f.txt)}${f.fmt ? `<small>${esc(f.fmt)}</small>` : ''}</span></label>`).join('')}</div>`).join('');
 }
 
+// ── Sustituciones ──
+// Para un ingrediente enlazado al catálogo, propone alimentos de su misma categoría con la cantidad equivalente en el macro que
+// manda (hidratos, proteína, grasa o, si ninguno destaca, kcal). El profesional elige cuáles permite al cliente (con un máximo
+// de veces por semana opcional) o sustituye el ingrediente en esa comida. Lo permitido vive en contenido.sust = { <id alimento>: [{ a, max }] }
+// y viaja ya calculado (texto) en el menú publicado. Los excluidos del cliente son los de «No puede o no quiere comer» (contenido.gen.excl).
+let MNS = null;
+const mnSuRed = g => Math.max(5, Math.round(g / 5) * 5);
+function mnSuClave(n) {
+  const k = { prot: (n.prot || 0) * 4, hc: (n.hc || 0) * 4, grasa: (n.grasa || 0) * 9 }; let b = 'hc', v = -1;
+  Object.keys(k).forEach(x => { if (k[x] > v) { v = k[x]; b = x; } });
+  return (v >= 0.4 * n.kcal && (n[b] || 0) >= 2) ? b : 'kcal';
+}
+const mnSuMac = (n, g) => ({ kcal: n.kcal * g / 100, prot: (n.prot || 0) * g / 100, hc: (n.hc || 0) * g / 100, grasa: (n.grasa || 0) * g / 100 });
+function mnSuEquiv(i, alt) { // cantidad equivalente de alt para el ingrediente i, o null
+  const al = i.a ? MN.cat.find(x => x.id == i.a) : null, g = mnGramos(i);
+  if (!al || !al.nutri || typeof al.nutri.kcal !== 'number' || !g || !alt.nutri || typeof alt.nutri.kcal !== 'number') return null;
+  const k = mnSuClave(al.nutri), a = al.nutri[k], b = alt.nutri[k]; if (!(a > 0) || !(b > 0)) return null;
+  const eq = mnSuRed(g * a / b), o = mnSuMac(al.nutri, g), s = mnSuMac(alt.nutri, eq);
+  return { eq, k, ratio: eq / g, d: { kcal: s.kcal - o.kcal, prot: s.prot - o.prot, hc: s.hc - o.hc, grasa: s.grasa - o.grasa }, o, s, aviso: !!(al.estado && alt.estado && al.estado !== alt.estado) };
+}
+function mnSuCandidatos(i) {
+  const al = i.a ? MN.cat.find(x => x.id == i.a) : null; if (!al) return { sin: 'Enlaza el ingrediente al catálogo para ver equivalencias.' };
+  if (!i.cant || i.cant.modo === 'libre' || !mnGramos(i)) return { sin: 'Necesita una cantidad (en gramos o con medida conocida) para calcular equivalencias.' };
+  if (!al.nutri || typeof al.nutri.kcal !== 'number') return { sin: 'Este alimento no tiene nutrición en el catálogo.' };
+  const g = MN.c.gen || {}, excl = mnGenPalabras(g.excl), solo = g.base === 'solo', pref = g.base !== 'libre', perm = (MN.c.sust && MN.c.sust[al.id]) || [];
+  const out = [];
+  MN.cat.forEach(alt => {
+    if (alt.id == al.id || alt.categoria !== al.categoria) return;
+    const p = perm.find(x => x.a == alt.id), nom = mnNorm(alt.nombre);
+    if (!p && excl.some(w => mnGenTiene(nom, w))) return;
+    const vegetal = !mnBase({ n: alt.nombre, i: [] }).length; if (!p && solo && !vegetal) return;
+    const e = mnSuEquiv(i, alt); if (!e) return; if (!p && (e.ratio < 0.3 || e.ratio > 3)) return;
+    const den = k => Math.abs(e.o[k]) + 5, score = Math.abs(e.d.kcal) / (e.o.kcal + 20) + (Math.abs(e.d.prot) / den('prot') + Math.abs(e.d.hc) / den('hc') + Math.abs(e.d.grasa) / den('grasa')) / 3 - (pref && vegetal ? 0.15 : 0);
+    out.push({ alt, e, vegetal, perm: p || null, score });
+  });
+  out.sort((a, b) => (!!b.perm - !!a.perm) || (pref ? (b.vegetal - a.vegetal) : 0) || a.score - b.score); // lo permitido primero; con base vegetal, los vegetales antes que el resto
+  return { al, lista: out.filter(x => x.perm).concat(out.filter(x => !x.perm).slice(0, 8)) };
+}
+function mnSuTextos(i) { // lo que ve el cliente de este ingrediente: alternativas permitidas ya calculadas
+  const perm = i.a && MN.c.sust && MN.c.sust[i.a]; if (!perm || !perm.length) return [];
+  const excl = mnGenPalabras((MN.c.gen || {}).excl), r = [];
+  perm.forEach(p => { const alt = MN.cat.find(x => x.id == p.a); if (!alt || excl.some(w => mnGenTiene(mnNorm(alt.nombre), w))) return; const e = mnSuEquiv(i, alt); if (e) r.push({ t: '≈ ' + e.eq + ' g de ' + alt.nombre, max: p.max || null }); });
+  return r;
+}
+const mnSuF = v => (v > 0.05 ? '+' : v < -0.05 ? '−' : '') + mnF(Math.abs(v));
+function mnSuAbrir(entId, ix) {
+  const e = mnEnt(entId); if (!e || !e.ing[ix]) return; MNS = { entId, ix, id: e.ing[ix].id };
+  document.getElementById('mMnSu').style.display = 'flex'; mnSuPintar(true);
+}
+function mnSuIng() { const e = MNS && mnEnt(MNS.entId); return e ? (e.ing.find(x => x.id === MNS.id) || null) : null; }
+function mnSuPintar(todo) {
+  const i = mnSuIng(); if (!i) { mnSuCerrar(); return; } const r = mnSuCandidatos(i);
+  if (todo) document.getElementById('mnSuCuerpo').innerHTML = `<p class="mt" id="mnSuTit">Sustituciones de «${sudEsc(mnIngTxt(i))}»</p>
+    <p class="ms">Equivalencias por el macro que manda en este alimento. Marca las que <b>permites al cliente</b>; o sustituye el ingrediente solo en esta comida.</p>
+    <div class="mn-f"><label class="mn-l" for="mnSuEx">No puede o no quiere comer <span class="hd-opt">(separados por comas; vale para todo este cliente)</span></label><input class="inp" id="mnSuEx" maxlength="200" value="${sudEsc((MN.c.gen || {}).excl || '')}" placeholder="Ej. frutos secos, gluten, cerdo" oninput="mnSuExcl(this.value)"></div>
+    <div id="mnSuL" style="margin-top:14px"></div><div class="mbtns" style="margin-top:14px"><button type="button" class="btn-cancel" onclick="mnSuCerrar()">Cerrar</button></div>`;
+  const box = document.getElementById('mnSuL'); if (!box) return;
+  if (r.sin) { box.innerHTML = `<div class="mn-vacio"><b>No puedo proponer sustituciones</b><span class="mn-ayuda">${sudEsc(r.sin)}</span></div>`; return; }
+  const m = r.al.nutri, k = mnSuClave(m), kl = { kcal: 'kcal', prot: 'proteína', hc: 'hidratos', grasa: 'grasa' }[k];
+  box.innerHTML = `<p class="mn-ayuda" style="margin:0 0 8px">Se iguala por <b>${kl}</b> · cantidad actual ≈ ${mnF(mnGramos(i))} g</p>` + (r.lista.length ? `<div class="mn-su-l">${r.lista.map(x => {
+    const on = !!x.perm, d = x.e.d;
+    return `<div class="mn-su-f${on ? ' on' : ''}"><label class="mn-su-c"><input type="checkbox" ${on ? 'checked' : ''} onchange="mnSuToggle(${x.alt.id},this.checked)"><span><b>${sudEsc(x.alt.nombre)}</b> <span class="mn-bib-b${x.vegetal ? ' veg' : ''}">${x.vegetal ? 'Vegetal' : 'No vegetal'}</span><br><span class="mn-su-q">≈ ${x.e.eq} g · kcal ${mnSuF(d.kcal)} · P ${mnSuF(d.prot)} · HC ${mnSuF(d.hc)} · G ${mnSuF(d.grasa)}${x.e.aviso ? ' · revisa crudo/cocido' : ''}</span></span></label>
+      <span class="mn-su-a">${on ? `<label class="mn-su-m"><span>máx./sem.</span><input class="inp" type="number" min="1" max="21" value="${x.perm.max || ''}" placeholder="—" aria-label="Máximo de veces por semana de ${sudEsc(x.alt.nombre)}" onchange="mnSuMax(${x.alt.id},this.value)"></label>` : ''}${mnBtn('Sustituir aquí', `mnSuAqui(${x.alt.id})`, { sm: true, ghost: true })}</span></div>`; }).join('')}</div>` : '<div class="mn-vacio"><b>Sin candidatos</b><span class="mn-ayuda">No hay otros alimentos de esta categoría en el catálogo (o están excluidos).</span></div>');
+}
+function mnSuExcl(v) { MN.c.gen = MN.c.gen || {}; MN.c.gen.excl = v.trim(); mnCambio(); mnSuPintar(); }
+function mnSuToggle(altId, on) {
+  const i = mnSuIng(); if (!i) return; MN.c.sust = MN.c.sust || {}; const l = MN.c.sust[i.a] = MN.c.sust[i.a] || [];
+  const j = l.findIndex(x => x.a == altId); if (on && j < 0) l.push({ a: altId, max: null }); if (!on && j >= 0) l.splice(j, 1); if (!l.length) delete MN.c.sust[i.a];
+  mnCambio(); mnSuPintar();
+}
+function mnSuMax(altId, v) { const i = mnSuIng(); if (!i) return; const p = ((MN.c.sust || {})[i.a] || []).find(x => x.a == altId); if (!p) return; const n = Math.round(+v); p.max = isFinite(n) && n >= 1 ? n : null; mnCambio(); }
+function mnSuAqui(altId) {
+  const i = mnSuIng(), alt = MN.cat.find(x => x.id == altId); if (!i || !alt) return; const e = mnSuEquiv(i, alt); if (!e) return;
+  const antes = JSON.stringify([i.n, i.a, i.cant, i.nota]);
+  i.n = alt.nombre; i.a = alt.id; i.cant = { modo: 'g', min: e.eq, max: null, u: 'g' }; i.nota = '';
+  mnCambio(); mnSuCerrar(); mnPintar();
+  toast('Sustituido por «' + alt.nombre + '»', { accion: { texto: 'Deshacer', fn: () => { const o = JSON.parse(antes); i.n = o[0]; i.a = o[1]; i.cant = o[2]; i.nota = o[3]; mnCambio(); mnPintar(); } } });
+}
+function mnSuCerrar() { document.getElementById('mMnSu').style.display = 'none'; MNS = null; }
+
 // ── Funciones propias de la página de pruebas ──
 function mnPrevSet(o) { mnSyncTextos(); MN.prev = o; mnPintar(); }
 function mnvPrev(origen) {
@@ -2141,6 +2241,7 @@ function mnvComida(m){
     ${m.nombre?`<div class="mnv-n">${esc(m.nombre)}</div>`:''}
     ${ing.length&&m.libre?'<div class="mnv-ideas">Ideas</div>':''}
     ${ing.length?`<div class="mnv-ing">${ing.map(i=>`<span class="mnv-i">${esc(i.t)}${i.nota?` <i>(${esc(i.nota)})</i>`:''}</span>`).join('')}</div>`:''}
+    ${!m.libre&&ing.some(i=>(i.sust||[]).length)?`<details class="mnv-alt"><summary>Alternativas permitidas</summary>${ing.filter(i=>(i.sust||[]).length).map(i=>`<p><b>${esc(i.t)}</b> → ${i.sust.map(x=>esc(x.t)+(x.max?` <i>(máx. ${x.max} ${x.max===1?'vez':'veces'} por semana)</i>`:'')).join(' · ')}</p>`).join('')}</details>`:''}
     ${m.nota?`<p class="mnv-nota">${esc(m.nota)}</p>`:''}
     ${m.receta&&(MENU.menu.recetas||[]).some(r=>r.id===m.receta)?`<button type="button" class="mnv-rb" onclick="mnvVerReceta('${esc(m.receta)}')">Ver receta</button>`:''}
   </div>`;
