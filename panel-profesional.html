@@ -1073,6 +1073,46 @@ body.has-sidebar #offlineBar{left:248px}
 .gsearch-item.acc .gsearch-avatar{background:var(--gold-50);color:var(--gold-dk)}
 
 /* ── Ficha del deportista: pestañas y línea de tiempo ── */
+/* ── Menú semanal (editor del profesional) ── */
+.mn-chips{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:0 0 12px}
+.mn-chip{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border:.5px solid var(--bdm);border-radius:20px;background:var(--sf);color:var(--g700);font:500 13px var(--f);cursor:pointer}
+.mn-chip:hover{background:var(--t50)}
+.mn-chip.on{background:var(--btn);border-color:var(--btn);color:#fff}
+.mn-chip-add{border-style:dashed;color:var(--t600)}
+.mn-dot{width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.7}
+.mn-box{background:var(--sf);border:.5px solid var(--bd);border-radius:14px;padding:12px 14px;margin-bottom:12px}
+.mn-fila{display:flex;gap:10px;flex-wrap:wrap}
+.mn-lbl{display:block;font-size:12px;font-weight:600;color:var(--g700);margin:0 0 4px}
+.mn-meal{background:var(--sf);border:.5px solid var(--bdm);border-radius:16px;padding:14px;margin-bottom:12px;box-shadow:0 2px 10px rgba(4,52,44,.05)}
+.mn-ta{min-height:96px;line-height:1.5}
+.mn-ings{display:flex;flex-wrap:wrap;gap:5px;margin:8px 0 2px}
+.mn-ing{display:inline-flex;align-items:center;gap:5px;font-size:12px;background:var(--g100);border:.5px solid var(--bd);border-radius:20px;padding:3px 10px;color:var(--g700)}
+.mn-ing.sin{border-style:dashed}
+.mn-ing i{font-style:normal;color:var(--g400)}
+.mn-ing-add{border:none;background:var(--t50);color:var(--t600);width:18px;height:18px;border-radius:50%;font-size:13px;line-height:1;cursor:pointer;padding:0}
+.mn-ayuda{font-size:12px;color:var(--g400);line-height:1.5}
+.mn-plato{margin:8px 0 0;padding:6px 10px;background:var(--gold-50);border-radius:8px;color:var(--gold-dk)}
+.mn-chk{display:flex;align-items:center;gap:8px;font-size:13px;margin:10px 0 8px;cursor:pointer}
+.mn-chk2{display:inline-flex;align-items:center;gap:6px;font-size:13px;margin:0 12px 6px 0;cursor:pointer}
+.mn-macc{margin-top:10px;padding-top:10px;border-top:.5px solid var(--bd)}
+.mn-add{margin:4px 0 24px;align-items:center}
+.mn-rec{border:.5px solid var(--bdm);border-radius:12px;margin-bottom:8px;overflow:hidden}
+.mn-rec-h{display:flex;justify-content:space-between;align-items:center;gap:10px;width:100%;padding:11px 14px;background:var(--sf);border:none;font:600 14px var(--f);color:var(--g900);cursor:pointer;text-align:left}
+.mn-rec-h:hover{background:var(--t50)}
+.mn-rec-b{padding:6px 14px 14px;border-top:.5px solid var(--bd)}
+.mn-foto{margin-top:10px}
+.mn-foto img{display:block;max-width:240px;width:100%;border-radius:12px;margin-bottom:8px}
+.mn-cat-l{margin:12px 0}
+.mn-cat-i,.mn-plato-f{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:.5px solid var(--bd)}
+.mn-macc,.mn-add,.mn-sem .row-actions,#mnPage .page-header .row-actions{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-start}
+.mn-ext-i{display:flex;flex-direction:column;align-items:flex-start;width:100%;gap:2px;padding:8px 10px;margin-bottom:4px;background:var(--g100);border:none;border-radius:10px;cursor:pointer;text-align:left;font-family:var(--f)}
+.mn-ext-i:hover{background:var(--t50)}
+.mn-ext-n{font-size:13px;font-weight:600;color:var(--g900)}
+.mn-nutri{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.oi-f{display:flex;gap:8px;align-items:flex-start;margin-bottom:8px}
+.oi-c{flex:0 0 96px;width:96px}
+.oi-t{flex:1;min-height:60px}
+@media(max-width:600px){.mn-nutri{grid-template-columns:repeat(3,1fr)}.oi-c{flex-basis:84px;width:84px}}
 .depd-tabbar{position:sticky;top:0;z-index:20;background:var(--bg);padding:6px 0 10px;margin:0 0 1rem}
 .depd-tabs{display:flex;gap:4px;overflow-x:auto;padding:4px;background:var(--g100);border-radius:12px;scrollbar-width:none}
 .depd-tabs::-webkit-scrollbar{display:none}
@@ -1766,6 +1806,11 @@ body.dark-mode .ref-src,body.dark-mode .sup-badge,body.dark-mode .depd-avatar-fa
   <div class="page" id="depdetPage"></div>
 </div>
 
+<!-- MENÚ SEMANAL DEL CLIENTE (editor) -->
+<div id="vmenuc" class="view" role="main">
+  <div class="page" id="mnPage"></div>
+</div>
+
 <!-- MODAL: NUEVO DEPORTISTA -->
 <div class="mbg" id="mAddDep" style="display:none">
   <div class="mc">
@@ -1931,6 +1976,16 @@ body.dark-mode .ref-src,body.dark-mode .sup-badge,body.dark-mode .depd-avatar-fa
   </div>
 </div>
 <input type="file" id="bioFile" accept=".pdf,image/*" style="display:none" aria-hidden="true" tabindex="-1">
+
+<!-- MODAL: CATÁLOGO DE ALIMENTOS -->
+<div class="mbg" id="mMnCat" style="display:none;z-index:310" role="dialog" aria-modal="true" aria-labelledby="mnCatTit" onclick="if(event.target===this)mnCatCerrar()">
+  <div class="mc" style="max-width:600px;max-height:calc(100dvh - 2rem);overflow-y:auto" id="mnCatCuerpo"></div>
+</div>
+<!-- MODAL: COPIAR UN DÍA DEL MENÚ -->
+<div class="mbg" id="mMnCopiar" style="display:none;z-index:310" role="dialog" aria-modal="true" aria-labelledby="mnCopTit" onclick="if(event.target===this)mnCopiarCerrar()">
+  <div class="mc" style="max-width:420px;max-height:calc(100dvh - 2rem);overflow-y:auto" id="mnCopCuerpo"></div>
+</div>
+<input type="file" id="mnFoto" accept="image/*" style="display:none" aria-hidden="true" tabindex="-1" onchange="mnFotoSubida(this)">
 
 <!-- MODAL: SUPLEMENTO DEL CLIENTE -->
 <div class="mbg" id="mSupl" style="display:none;z-index:300" role="dialog" aria-modal="true" aria-labelledby="supTit" onclick="if(event.target===this)supCerrar()">
@@ -3800,7 +3855,7 @@ function logout(){
   document.getElementById('sidebar').classList.remove('show');
   show('vlogin');
 }
-function show(v){_autoDep.ahora();_autoM3.ahora();document.querySelectorAll('.view').forEach(e=>e.classList.remove('active'));document.getElementById(v).classList.add('active');}
+function show(v){_autoDep.ahora();_autoM3.ahora();if(typeof mnFlush==='function')mnFlush();document.querySelectorAll('.view').forEach(e=>e.classList.remove('active'));document.getElementById(v).classList.add('active');}
 // ═══════════════ MODO OSCURO ═══════════════
 function toggleDarkMode(){
   const isDark = document.body.classList.toggle('dark-mode');
@@ -5671,6 +5726,16 @@ function openDepDet(id) {
     </div>
 
     <div class="depd-section">
+      <p class="sec-title">Menú semanal</p>
+      <div class="med-box" id="menuBox">${skel(2)}</div>
+    </div>
+
+    <div class="depd-section">
+      <p class="sec-title">Objetivo e impresiones</p>
+      <div class="med-box" id="objImpBox">${objImpHtml(d)}</div>
+    </div>
+
+    <div class="depd-section">
       <p class="sec-title">Suplementación</p>
       <div class="med-box" id="suplBox">${skel(2)}</div>
     </div>
@@ -5716,6 +5781,7 @@ function openDepDet(id) {
   loadSudoracion(d.id);
   loadPlanes(d.id);
   loadSuplementacion(d.id);
+  loadMenuSemanal(d.id);
 }
 
 
@@ -7392,6 +7458,551 @@ function supEliminar(id, depId, btn){
     restaurar: () => { if(fila) fila.style.display = ''; },
     ejecutar: async () => { const r = await sb(`suplementos_cliente?id=eq.${id}`, { method:'DELETE', headers:{ 'Prefer':'return=minimal' } }); if(!esErrorSb(r)) loadSuplementacion(depId); return r; }
   });
+}
+
+// ═══════════════ MENÚ SEMANAL POR CLIENTE (ficha → Plan → «Menú semanal») ═══════════════
+// Cada plan empieza en blanco: la estructura (semanas → días → comidas → ingredientes) la decide el profesional.
+// El borrador vive en menus_cliente.contenido y se guarda solo; «Publicar» escribe la copia que ve el cliente (publicado).
+// Los ingredientes se escriben como texto, una línea cada uno («80 g avena (en copos)»), y la app los estructura.
+const MN_TIPOS = [['D','Desayuno'],['A','Almuerzo'],['C','Comida'],['Me','Merienda'],['Ce','Cena'],['O','Otra']];
+const MN_DIAS = ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'];
+const MN_CTX = [['','Sin etiqueta'],['entreno','Entreno'],['descanso','Descanso'],['partido','Partido'],['libre','Día libre'],['otro','Otro']];
+const MN_COL = [['green','Verde'],['blue','Azul'],['amber','Ámbar'],['coral','Coral']];
+let MN = null, _mnT = null, _mnFila = null;
+const mnId = p => p + Math.random().toString(36).slice(2, 8);
+const mnNorm = s => String(s == null ? '' : s).normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/\s+/g, ' ').trim();
+const mnFecha = iso => new Date(iso).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
+
+// ── Texto → ingredientes ──
+const MN_UG = { g:'g', gr:'g', grs:'g', gramo:'g', gramos:'g', kg:'kg', ml:'ml', l:'l', lt:'l', litro:'l', litros:'l' };
+const MN_UU = ['ud', 'uds', 'u', 'unidad', 'unidades'];
+const MN_UC = /^(cdas?|cdtas?|cucharad[ao]s?|cucharitas?|vasos?|vasitos?|lonchas?|rebanadas?|puñados?|latas?|botes?|tarros?|rodajas?|dientes?|ramas?|tazas?|platos?|piezas?|sobres?|barras?|paquetes?|tortitas?|filetes?|hojas?|trozos?|chorritos?)$/i;
+const MN_RE_N = '(\\d+(?:[.,]\\d+)?(?:\\/\\d+)?|[¼½¾])';
+function mnNum(s) {
+  s = String(s).replace(',', '.');
+  if (s === '¼') return 0.25; if (s === '½') return 0.5; if (s === '¾') return 0.75;
+  if (s.indexOf('/') > 0) { const p = s.split('/'); return +p[0] / +p[1]; }
+  return +s;
+}
+// «2-3 lonchas pavo» → { cant:{modo,min,max,u}, rest:'pavo', exp:true si trae unidad }
+function mnQty(str) {
+  str = String(str || '').trim();
+  let m = str.match(new RegExp('^' + MN_RE_N + '(?:\\s*[-–]\\s*' + MN_RE_N + ')?\\s*(.*)$'));
+  if (!m) {
+    const w = str.match(/^(un|una|medio|media)\s+(.*)$/i);
+    if (!w) return null;
+    m = [0, /^m/i.test(w[1]) ? '0.5' : '1', undefined, w[2]];
+  }
+  const min = mnNum(m[1]); let max = m[2] !== undefined ? mnNum(m[2]) : null, rest = (m[3] || '').trim();
+  if (!isFinite(min) || min <= 0) return null;
+  if (max !== null && (!isFinite(max) || max <= min)) max = null;
+  const w = rest.match(/^([A-Za-zÁÉÍÓÚáéíóúñÑ]+)\.?\s*(.*)$/);
+  let modo = 'ud', u = 'ud', exp = false;
+  if (w) {
+    const k = w[1].toLowerCase();
+    if (MN_UG[k]) { modo = 'g'; u = MN_UG[k]; rest = w[2]; exp = true; }
+    else if (MN_UU.indexOf(k) >= 0) { modo = 'ud'; rest = w[2]; exp = true; }
+    else if (MN_UC.test(k)) { modo = 'casera'; u = k; rest = w[2]; exp = true; }
+  }
+  rest = rest.replace(/^de\s+/i, '').trim();
+  return { cant: { modo, min, max, u }, rest, exp };
+}
+function mnParseLinea(l) {
+  l = String(l || '').trim(); if (!l) return null;
+  const notas = [];
+  const t = l.replace(/\(([^)]*)\)/g, (m, g) => { if (g.trim()) notas.push(g.trim()); return ' '; }).replace(/\s+/g, ' ').trim();
+  let q = mnQty(t), nota = notas.join('; ');
+  if (!q && notas.length) { // «Pollo (150 g)»: la cantidad va entre paréntesis
+    const q2 = mnQty(notas[0]);
+    if (q2 && q2.exp) {
+      q = { cant: q2.cant, rest: t };
+      const resto = q2.rest.replace(/^[,;:\s]+|[\s,;:]+$/g, '');
+      nota = [resto].concat(notas.slice(1)).filter(Boolean).join('; ');
+    }
+  }
+  let n = (q ? q.rest : t).replace(/^[,;:\-–\s]+|[\s,;:]+$/g, '');
+  if (!n) n = t || l;
+  n = n.charAt(0).toUpperCase() + n.slice(1);
+  return { id: mnId('i'), a: null, n, cant: q ? q.cant : { modo: 'libre' }, nota };
+}
+function mnSplitTop(s, sep) {
+  const out = []; let d = 0, cur = '';
+  for (const ch of s) {
+    if (ch === '(') d++; else if (ch === ')') d = Math.max(0, d - 1);
+    if (ch === sep && d === 0) { out.push(cur); cur = ''; } else cur += ch;
+  }
+  out.push(cur); return out;
+}
+// Una línea por ingrediente (o ';'). Una línea con varias cantidades separadas por comas («80 g avena, 1 plátano») también se separa.
+function mnParseTexto(txt, previos) {
+  const piezas = [];
+  String(txt || '').split(/\n|;/).forEach(l => {
+    const partes = mnSplitTop(l, ',');
+    if (partes.length > 1 && partes.every(p => /^\s*([\d¼½¾]|un\s|una\s|medio\s|media\s)/i.test(p))) partes.forEach(p => piezas.push(p)); else piezas.push(l);
+  });
+  const ant = {}; (previos || []).forEach(i => { ant[mnNorm(i.n)] = i; });
+  return piezas.map(mnParseLinea).filter(Boolean).map(i => { const p = ant[mnNorm(i.n)]; if (p) { i.a = p.a || null; i.id = p.id; } return i; });
+}
+const mnRng = c => { const f = x => ({ 0.25: '¼', 0.5: '½', 0.75: '¾' })[+x] || String(+(+x).toFixed(2)).replace('.', ','); return c.max ? f(c.min) + '-' + f(c.max) : f(c.min); };
+const mnQtyTxt = c => (!c || c.modo === 'libre') ? '' : (c.modo === 'ud' ? mnRng(c) : mnRng(c) + ' ' + c.u);
+const mnIngTxt = i => { const q = mnQtyTxt(i.cant); return q ? (i.cant.modo === 'ud' ? q + ' ' + i.n : q + ' de ' + i.n) : i.n; }; // lo que lee el cliente
+const mnIngEdit = i => { const q = mnQtyTxt(i.cant); return (q ? q + ' ' : '') + i.n + (i.nota ? ' (' + i.nota + ')' : ''); }; // lo que se edita
+const mnTextoIng = ing => (ing || []).map(mnIngEdit).join('\n');
+
+// ── Estructura ──
+function mnDiasNuevos() { return MN_DIAS.map((n, i) => ({ id: mnId('d'), n, dow: i + 1, ctx: { tipo: '', texto: '', aviso: '' }, comidas: [] })); }
+function mnSemanaNueva(nombre) { return { id: mnId('s'), nombre: nombre || 'Semana típica', nota: '', dias: mnDiasNuevos() }; }
+function mnContenidoNuevo(nombre) { return { v: 1, titulo: 'Planificación nutricional' + (nombre ? ' — ' + nombre : ''), semanas: [mnSemanaNueva()], recetas: [], platos: [] }; }
+const mnSem = () => MN.c.semanas.find(s => s.id === MN.sem) || MN.c.semanas[0];
+const mnDia = () => { const s = mnSem(); return s && (s.dias[MN.dia] || s.dias[0]); };
+function mnTodasComidas() { const r = []; MN.c.semanas.forEach(s => s.dias.forEach(d => d.comidas.forEach(m => r.push(m)))); return r; }
+const mnSrc = m => m.plato ? (MN.c.platos.find(p => p.id === m.plato) || m) : m;
+function mnEnt(id) { // quien guarda los ingredientes de ese id: una receta, una comida guardada o una comida suelta
+  let r = MN.c.recetas.find(x => x.id === id); if (r) return r;
+  r = MN.c.platos.find(x => x.id === id); if (r) return r;
+  const m = mnTodasComidas().find(x => x.id === id); return m ? mnSrc(m) : null;
+}
+function mnLink(n) {
+  const x = mnNorm(n); if (!x || !MN) return null; let best = null;
+  for (const a of MN.cat) { const y = mnNorm(a.nombre); if (x === y) return a.id; if (x.indexOf(y + ' ') === 0 && (!best || y.length > best.l)) best = { id: a.id, l: y.length }; }
+  return best ? best.id : null;
+}
+function mnRelinkTodo() {
+  const todos = [].concat(MN.c.recetas, MN.c.platos, mnTodasComidas());
+  todos.forEach(e => (e.ing || []).forEach(i => { if (!i.a || !MN.cat.some(a => a.id == i.a)) i.a = mnLink(i.n); }));
+}
+
+// ── Guardado ──
+function mnEstadoTxt() {
+  const r = MN.row, pub = r.publicado_en;
+  const sinPub = pub && new Date(r.actualizado) - new Date(pub) > 1500;
+  const partes = [MN.dirty ? 'Sin guardar…' : '✓ Guardado'];
+  partes.push(pub ? ('Publicado el ' + mnFecha(pub) + (sinPub || MN.dirty ? ' · hay cambios sin publicar' : '')) : 'Sin publicar: el cliente aún no lo ve');
+  return partes.join(' · ');
+}
+function mnMarca() { const e = document.getElementById('mnEstado'); if (e) e.textContent = mnEstadoTxt(); }
+function mnCambio() { if (!MN) return; MN.dirty = true; mnMarca(); clearTimeout(_mnT); _mnT = setTimeout(() => mnGuardarYa(), 1200); }
+async function mnGuardarYa(oculta) {
+  if (!MN || !MN.dirty) return;
+  clearTimeout(_mnT);
+  const ahora = new Date().toISOString(), c = MN.c, id = MN.row.id;
+  let r; try { r = await sb(`menus_cliente?id=eq.${id}`, { method: 'PATCH', headers: { 'Prefer': 'return=minimal' }, body: JSON.stringify({ contenido: c, titulo: c.titulo || null, actualizado: ahora }), ...(oculta ? { keepalive: true } : {}) }); } catch (e) { r = { code: 'red' }; }
+  if (esErrorSb(r)) { const e = document.getElementById('mnEstado'); if (e) e.textContent = 'No se pudo guardar'; toast('No se pudo guardar el menú. Inténtalo de nuevo.', { tipo: 'error' }); return; }
+  if (MN && MN.row.id === id) { MN.dirty = false; MN.row.actualizado = ahora; MN.row.contenido = c; mnMarca(); }
+}
+function mnFlush() { if (!MN) return; mnSyncTextos(); if (MN.dirty) mnGuardarYa(true); }
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') mnFlush(); });
+
+// ── Bloque de la ficha (Plan → Menú semanal) ──
+async function mnCargarFila(depId) {
+  try { const r = await sb(`menus_cliente?deportista_id=eq.${depId}&select=*&limit=1`); if (Array.isArray(r)) return r[0] || null; } catch (e) {}
+  return undefined; // la tabla no existe todavía
+}
+async function loadMenuSemanal(depId) {
+  const row = await mnCargarFila(depId);
+  const el = document.getElementById('menuBox');
+  if (!el || currentDepId != depId) return;
+  if (row === undefined) { el.innerHTML = '<p class="med-empty">Esta función necesita el SQL <b>supabase_menu_semanal.sql</b> ejecutado en Supabase.</p>'; return; }
+  _mnFila = row;
+  if (!row) { el.innerHTML = vacioHtml('file', 'Sin menú semanal', 'Cada plan empieza en blanco y lo adaptas a este cliente. El cliente solo lo ve cuando lo publicas.', { f: `mnAbrir(${depId})`, t: 'Crear menú' }, true); return; }
+  const c = row.contenido || {}, sems = c.semanas || [];
+  const nCom = sems.reduce((a, s) => a + (s.dias || []).reduce((b, d) => b + (d.comidas || []).length, 0), 0);
+  const pub = row.publicado_en, sinPub = pub && new Date(row.actualizado) - new Date(pub) > 1500;
+  const estado = !pub ? '<span class="sud-cond">Sin publicar: el cliente aún no lo ve</span>' : `<span class="sud-cond">Publicado el ${sudEsc(mnFecha(pub))}${sinPub ? ' · hay cambios sin publicar' : ''}</span>`;
+  const selSem = sems.length > 1 ? `<label class="mfl" for="mnToca" style="margin:10px 0 4px">Esta semana toca</label><select class="inp" id="mnToca" style="max-width:260px" onchange="mnTocaSemana(${depId},this.value)">${sems.map(s => `<option value="${sudEsc(s.id)}"${(row.semana_actual || sems[0].id) === s.id ? ' selected' : ''}>${sudEsc(s.nombre)}</option>`).join('')}</select>` : '';
+  el.innerHTML = `<div class="sup-item-n">${sudEsc(c.titulo || row.titulo || 'Menú')}</div>
+    <div class="sup-item-d">${sems.length} ${sems.length === 1 ? 'semana' : 'semanas'} · ${nCom} ${nCom === 1 ? 'comida' : 'comidas'}${(c.recetas || []).length ? ' · ' + c.recetas.length + (c.recetas.length === 1 ? ' receta' : ' recetas') : ''}</div>${estado}${selSem}
+    <div class="med-actions" style="margin-top:12px">${btnSoft('Abrir editor', `mnAbrir(${depId})`, 'doc')}${btnSoft(pub ? 'Publicar cambios' : 'Publicar', `mnPublicarDesdeFicha(${depId})`, 'plus')}${pub ? btnSoft('Retirar', `mnRetirar(${depId})`, 'trash') : ''}</div>`;
+}
+async function mnTocaSemana(depId, semId) {
+  const r = await sb(`menus_cliente?deportista_id=eq.${depId}`, { method: 'PATCH', headers: { 'Prefer': 'return=minimal' }, body: JSON.stringify({ semana_actual: semId }) });
+  if (esErrorSb(r)) { toast('No se pudo cambiar. Inténtalo de nuevo.', { tipo: 'error' }); return; }
+  toast('Semana actualizada: el cliente ya ve esta semana');
+}
+async function mnPublicarDesdeFicha(depId) {
+  const row = _mnFila && _mnFila.deportista_id == depId ? _mnFila : await mnCargarFila(depId);
+  if (!row) return;
+  MN = { depId, row, c: row.contenido || {}, cat: [], sem: null, dia: 0, tab: 'menu', dirty: false }; mnAsegurar();
+  await mnPublicar(true);
+}
+async function mnRetirar(depId) {
+  const r = await sb(`menus_cliente?deportista_id=eq.${depId}`, { method: 'PATCH', headers: { 'Prefer': 'return=minimal' }, body: JSON.stringify({ publicado: null, publicado_en: null }) });
+  if (esErrorSb(r)) { toast('No se pudo retirar. Inténtalo de nuevo.', { tipo: 'error' }); return; }
+  toast('Menú retirado: el cliente deja de verlo'); if (MN && MN.depId == depId) { MN.row.publicado = null; MN.row.publicado_en = null; mnMarca(); } loadMenuSemanal(depId);
+}
+
+// ── Editor ──
+function mnAsegurar() { // deja el contenido con todas las listas
+  const c = MN.c; c.v = 1; c.semanas = Array.isArray(c.semanas) && c.semanas.length ? c.semanas : [mnSemanaNueva()];
+  c.recetas = c.recetas || []; c.platos = c.platos || [];
+  c.semanas.forEach(s => { s.dias = Array.isArray(s.dias) && s.dias.length ? s.dias : mnDiasNuevos(); s.dias.forEach(d => { d.comidas = d.comidas || []; d.ctx = d.ctx || { tipo: '', texto: '', aviso: '' }; }); });
+  if (!MN.sem || !c.semanas.some(s => s.id === MN.sem)) MN.sem = c.semanas[0].id;
+}
+async function mnAbrir(depId) {
+  let row = await mnCargarFila(depId);
+  if (row === undefined) { toast('Falta ejecutar supabase_menu_semanal.sql en Supabase.', { tipo: 'error' }); return; }
+  const d = deportistas.find(x => x.id == depId) || {};
+  if (!row) {
+    const c = mnContenidoNuevo(d.nombre);
+    const r = await sb('menus_cliente', { method: 'POST', body: JSON.stringify({ deportista_id: depId, titulo: c.titulo, contenido: c }) });
+    if (esErrorSb(r) || !Array.isArray(r) || !r[0]) { toast('No se pudo crear el menú. Inténtalo de nuevo.', { tipo: 'error' }); return; }
+    row = r[0];
+  }
+  let cat = []; try { const r = await sb('alimentos?select=*&order=nombre.asc&limit=2000'); if (Array.isArray(r)) cat = r; } catch (e) {}
+  const hoy = (new Date().getDay() + 6) % 7;
+  MN = { depId, nombre: d.nombre || '', row, c: row.contenido || {}, cat, sem: null, dia: hoy, tab: 'menu', dirty: false, rec: null };
+  mnAsegurar(); mnRelinkTodo(); _mnFila = row;
+  show('vmenuc'); mnPintar(); window.scrollTo(0, 0);
+}
+function mnSalir() { mnFlush(); const id = MN && MN.depId; _depTab = 'plan'; _depTabDep = id; MN = null; if (id) openDepDet(id); }
+function mnTab(k) { MN.tab = k; mnPintar(); }
+
+function mnIngChips(ing, entId) {
+  if (!ing || !ing.length) return '<span class="mn-ayuda">Sin ingredientes todavía.</span>';
+  return ing.map((i, ix) => {
+    const link = i.a ? '' : ` <button type="button" class="mn-ing-add" aria-label="Añadir «${sudEsc(i.n)}» al catálogo" title="Añadir al catálogo" onclick="mnVincularChip('${entId}',${ix})">+</button>`;
+    return `<span class="mn-ing${i.a ? '' : ' sin'}">${sudEsc(mnIngTxt(i))}${i.nota ? ` <i>(${sudEsc(i.nota)})</i>` : ''}${link}</span>`;
+  }).join('');
+}
+function mnIngBloque(entId, ing, ph) {
+  return `<label class="mn-lbl" for="mnIng_${entId}">Ingredientes <span class="hd-opt">· uno por línea</span></label>
+    <textarea class="notes-ta mn-ta" id="mnIng_${entId}" rows="4" placeholder="${sudEsc(ph || '80 g avena\n1 plátano\n200 ml bebida de soja\nTomate, pepino')}" oninput="mnIngInput('${entId}',this.value)">${sudEsc(mnTextoIng(ing))}</textarea>
+    <div class="mn-ings" id="mnCh_${entId}">${mnIngChips(ing, entId)}</div>`;
+}
+let _mnIT = {};
+function mnAplicarIng(entId, txt) {
+  const e = mnEnt(entId); if (!e) return;
+  e.ing = mnParseTexto(txt, e.ing); e.ing.forEach(i => { if (!i.a) i.a = mnLink(i.n); });
+  const ch = document.getElementById('mnCh_' + entId); if (ch) ch.innerHTML = mnIngChips(e.ing, entId);
+  mnCambio();
+}
+function mnIngInput(entId, txt) { clearTimeout(_mnIT[entId]); _mnIT[entId] = setTimeout(() => { delete _mnIT[entId]; mnAplicarIng(entId, txt); }, 350); }
+function mnSyncTextos() { Object.keys(_mnIT).forEach(k => { clearTimeout(_mnIT[k]); delete _mnIT[k]; const t = document.getElementById('mnIng_' + k); if (t) mnAplicarIng(k, t.value); }); }
+
+function mnPintar() {
+  const c = MN.c, s = mnSem();
+  const tabs = [['menu', 'Menú'], ['recetas', 'Recetas' + (c.recetas.length ? ' (' + c.recetas.length + ')' : '')], ['platos', 'Comidas guardadas' + (c.platos.length ? ' (' + c.platos.length + ')' : '')]];
+  document.getElementById('mnPage').innerHTML = `
+    <button class="det-back" onclick="mnSalir()"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Volver a la ficha</button>
+    <div class="page-header" style="margin-bottom:1rem">
+      <div><p class="page-title" role="heading" aria-level="1">Menú semanal · ${sudEsc(MN.nombre)}</p><p class="page-sub" id="mnEstado">${sudEsc(mnEstadoTxt())}</p></div>
+      <div class="row-actions">${btnSoft('Catálogo de alimentos', 'mnCatAbrir()', 'doc')}${btnSoft(MN.row.publicado_en ? 'Publicar cambios' : 'Publicar', 'mnPublicar()', 'plus')}</div>
+    </div>
+    <div class="depd-tabs mn-tabs" role="tablist" aria-label="Secciones del menú">${tabs.map(t => `<button type="button" role="tab" class="depd-tab${MN.tab === t[0] ? ' on' : ''}" aria-selected="${MN.tab === t[0]}" onclick="mnTab('${t[0]}')">${t[1]}</button>`).join('')}</div>
+    <div id="mnCuerpo">${MN.tab === 'menu' ? mnMenuHtml() : MN.tab === 'recetas' ? mnRecetasHtml() : mnPlatosHtml()}</div>`;
+  cargarFotosCli(document.getElementById('mnPage'));
+}
+
+function mnMenuHtml() {
+  const c = MN.c, s = mnSem(), d = mnDia();
+  const chipsS = c.semanas.map(x => `<button type="button" class="mn-chip${x.id === s.id ? ' on' : ''}" onclick="mnElegirSemana('${x.id}')">${sudEsc(x.nombre)}</button>`).join('') + `<button type="button" class="mn-chip mn-chip-add" onclick="mnNuevaSemana()">+ Semana</button>`;
+  const chipsD = s.dias.map((x, i) => `<button type="button" class="mn-chip${i === MN.dia ? ' on' : ''}" onclick="mnElegirDia(${i})">${sudEsc(x.n)}${x.comidas.length ? `<span class="mn-dot" aria-label="${x.comidas.length} comidas"></span>` : ''}</button>`).join('');
+  const ctx = d.ctx || {};
+  return `<div class="mn-box">
+      <label class="mn-lbl" for="mnTitulo">Título del plan</label>
+      <input class="inp" id="mnTitulo" maxlength="120" value="${sudEsc(c.titulo || '')}" oninput="MN.c.titulo=this.value;mnCambio()">
+    </div>
+    <div class="mn-chips" role="group" aria-label="Semanas">${chipsS}</div>
+    <div class="mn-box mn-sem">
+      <div class="mn-fila"><div style="flex:1;min-width:180px"><label class="mn-lbl" for="mnSemNom">Nombre de la semana</label><input class="inp" id="mnSemNom" maxlength="40" value="${sudEsc(s.nombre)}" oninput="mnSemSet('nombre',this.value)"></div>
+        <div style="flex:2;min-width:220px"><label class="mn-lbl" for="mnSemNota">Cuándo toca <span class="hd-opt">(opcional)</span></label><input class="inp" id="mnSemNota" maxlength="200" value="${sudEsc(s.nota || '')}" placeholder="Ej. Entreno L, X, J a las 19 h + partido el domingo" oninput="mnSemSet('nota',this.value)"></div></div>
+      <div class="row-actions" style="margin-top:8px">${btnSoft('Duplicar semana', 'mnDuplicarSemana()', 'plus', true)}${c.semanas.length > 1 ? btnSoft('Eliminar semana', 'mnEliminarSemana()', 'trash', true) : ''}</div>
+    </div>
+    <div class="mn-chips" role="group" aria-label="Días">${chipsD}</div>
+    <div class="mn-box">
+      <div class="mn-fila"><div style="flex:0 0 150px"><label class="mn-lbl" for="mnCtxT">Tipo de día</label><select class="inp" id="mnCtxT" onchange="mnCtxSet('tipo',this.value)">${MN_CTX.map(o => `<option value="${o[0]}"${(ctx.tipo || '') === o[0] ? ' selected' : ''}>${o[1]}</option>`).join('')}</select></div>
+        <div style="flex:1;min-width:180px"><label class="mn-lbl" for="mnCtxX">Etiqueta del día</label><input class="inp" id="mnCtxX" maxlength="60" value="${sudEsc(ctx.texto || '')}" placeholder="Ej. Entreno 19 h" oninput="mnCtxSet('texto',this.value)"></div></div>
+      <label class="mn-lbl" for="mnCtxA" style="margin-top:8px">Aviso del día <span class="hd-opt">(lo ve el cliente arriba, opcional)</span></label>
+      <input class="inp" id="mnCtxA" maxlength="300" value="${sudEsc(ctx.aviso || '')}" placeholder="Ej. La comida de las 14:00 es la carga previa al entreno" oninput="mnCtxSet('aviso',this.value)">
+    </div>
+    <div id="mnComidas">${d.comidas.map((m, i) => mnComidaHtml(m, i, d.comidas.length)).join('') || '<p class="mn-ayuda" style="margin:8px 2px 12px">Este día no tiene comidas todavía. Añade las que necesite este cliente: pueden ser 3, 4, 5 o las que haga falta.</p>'}</div>
+    <div class="row-actions mn-add">${btnSoft('Añadir comida', 'mnNuevaComida()', 'plus')}${MN.c.platos.length ? `<select class="inp" style="max-width:240px" aria-label="Usar una comida guardada" onchange="mnUsarPlato(this.value);this.value=''"><option value="">Usar una comida guardada…</option>${MN.c.platos.map(p => `<option value="${p.id}">${sudEsc(p.nombre || 'Sin nombre')}</option>`).join('')}</select>` : ''}${btnSoft('Copiar este día a…', 'mnCopiarAbrir()', 'doc')}${d.comidas.length ? btnSoft('Vaciar día', 'mnVaciarDia()', 'trash') : ''}</div>`;
+}
+function mnComidaHtml(m, i, n) {
+  const s = mnSrc(m), id = m.id;
+  const usos = m.plato ? mnTodasComidas().filter(x => x.plato === m.plato).length : 0;
+  const recs = MN.c.recetas.length ? `<div style="flex:1 1 200px"><label class="mn-lbl" for="mnRec_${id}">Receta</label><select class="inp" id="mnRec_${id}" onchange="mnSetM('${id}','receta',this.value||null)"><option value="">Sin receta</option>${MN.c.recetas.map(r => `<option value="${r.id}"${m.receta === r.id ? ' selected' : ''}>${sudEsc(r.nombre || 'Receta sin nombre')}</option>`).join('')}</select></div>` : '';
+  return `<div class="mn-meal" id="mnM_${id}">
+    <div class="mn-fila">
+      <div style="flex:0 0 130px"><label class="mn-lbl" for="mnT_${id}">Tipo</label><select class="inp" id="mnT_${id}" onchange="mnSetM('${id}','tipo',this.value)">${MN_TIPOS.map(o => `<option value="${o[0]}"${m.tipo === o[0] ? ' selected' : ''}>${o[1]}</option>`).join('')}</select></div>
+      <div style="flex:0 0 130px"><label class="mn-lbl" for="mnH_${id}">Hora</label><input class="inp" id="mnH_${id}" maxlength="40" value="${sudEsc(m.hora || '')}" placeholder="9:00" oninput="mnSetM('${id}','hora',this.value)"></div>
+      <div style="flex:1 1 200px"><label class="mn-lbl" for="mnN_${id}">Nombre del plato</label><input class="inp" id="mnN_${id}" maxlength="100" value="${sudEsc(s.nombre || '')}" placeholder="Ej. Pre-entreno, Ensalada de garbanzos…" oninput="mnSetS('${id}','nombre',this.value)"></div>
+    </div>
+    ${m.plato ? `<p class="mn-ayuda mn-plato">Comida guardada: se usa en ${usos} ${usos === 1 ? 'sitio' : 'sitios'}; si la editas aquí cambia en todos.</p>` : ''}
+    <label class="mn-chk"><input type="checkbox"${m.libre ? ' checked' : ''} onchange="mnSetM('${id}','libre',this.checked,true)"> Comida libre <span class="hd-opt">(los ingredientes son ideas, no una pauta)</span></label>
+    ${mnIngBloque(id, s.ing || [])}
+    <div class="mn-fila" style="margin-top:8px"><div style="flex:2 1 280px"><label class="mn-lbl" for="mnNo_${id}">Adaptación <span class="hd-opt">(el porqué, lo ve el cliente)</span></label><input class="inp" id="mnNo_${id}" maxlength="400" value="${sudEsc(s.nota || '')}" oninput="mnSetS('${id}','nota',this.value)"></div>${recs}</div>
+    <div class="row-actions mn-macc">${i > 0 ? btnSoft('Subir', `mnMover('${id}',-1)`, 'plus', true) : ''}${i < n - 1 ? btnSoft('Bajar', `mnMover('${id}',1)`, 'plus', true) : ''}${m.plato ? btnSoft('Desvincular', `mnDesvincular('${id}')`, 'doc', true) : btnSoft('Guardar como comida guardada', `mnGuardarPlato('${id}')`, 'doc', true)}${btnSoft('Duplicar', `mnDuplicarComida('${id}')`, 'plus', true)}${btnSoft('Eliminar', `mnEliminarComida('${id}')`, 'trash', true)}</div>
+  </div>`;
+}
+function mnBuscaComida(id) { for (const s of MN.c.semanas) for (const d of s.dias) { const i = d.comidas.findIndex(m => m.id === id); if (i >= 0) return { d, i, m: d.comidas[i] }; } return null; }
+function mnSetM(id, k, v, repintar) { const r = mnBuscaComida(id); if (!r) return; r.m[k] = v; mnCambio(); if (repintar) mnPintar(); }
+function mnSetS(id, k, v) { const r = mnBuscaComida(id); if (!r) return; mnSrc(r.m)[k] = v; mnCambio(); }
+function mnSemSet(k, v) { mnSem()[k] = v; mnCambio(); if (k === 'nombre') document.querySelectorAll('.mn-chips')[0].querySelectorAll('.mn-chip.on').forEach(b => { b.textContent = v || 'Semana'; }); }
+function mnCtxSet(k, v) { mnDia().ctx[k] = v; mnCambio(); }
+function mnElegirSemana(id) { MN.sem = id; mnPintar(); }
+function mnElegirDia(i) { MN.dia = i; mnPintar(); }
+function mnNuevaSemana() { const s = mnSemanaNueva('Semana ' + (MN.c.semanas.length + 1)); MN.c.semanas.push(s); MN.sem = s.id; mnCambio(); mnPintar(); }
+function mnClonar(o) { return JSON.parse(JSON.stringify(o)); }
+function mnRenovarIds(s) { s.id = mnId('s'); s.dias.forEach(d => { d.id = mnId('d'); d.comidas.forEach(m => { m.id = mnId('m'); (m.ing || []).forEach(i => { i.id = mnId('i'); }); }); }); return s; }
+function mnDuplicarSemana() { const o = mnSem(), s = mnRenovarIds(mnClonar(o)); s.nombre = (o.nombre + ' (copia)').slice(0, 40); const ix = MN.c.semanas.indexOf(o); MN.c.semanas.splice(ix + 1, 0, s); MN.sem = s.id; mnCambio(); mnPintar(); toast('Semana duplicada'); }
+function mnEliminarSemana() {
+  const o = mnSem(), ix = MN.c.semanas.indexOf(o); if (MN.c.semanas.length < 2) return;
+  MN.c.semanas.splice(ix, 1); MN.sem = MN.c.semanas[Math.max(0, ix - 1)].id; mnCambio(); mnPintar();
+  toast('Semana eliminada', { accion: { texto: 'Deshacer', fn: () => { MN.c.semanas.splice(ix, 0, o); MN.sem = o.id; mnCambio(); mnPintar(); } } });
+}
+function mnNuevaComida() {
+  const d = mnDia(), usados = d.comidas.map(m => m.tipo), tipo = ['D', 'A', 'C', 'Me', 'Ce'].find(t => usados.indexOf(t) < 0) || 'O';
+  d.comidas.push({ id: mnId('m'), tipo, hora: '', nombre: '', nota: '', libre: false, receta: null, plato: null, ing: [] });
+  mnCambio(); mnPintar();
+  const u = d.comidas[d.comidas.length - 1]; const e = document.getElementById('mnN_' + u.id); if (e) e.focus();
+}
+function mnMover(id, dir) { const r = mnBuscaComida(id); if (!r) return; const j = r.i + dir; if (j < 0 || j >= r.d.comidas.length) return; const t = r.d.comidas[j]; r.d.comidas[j] = r.m; r.d.comidas[r.i] = t; mnCambio(); mnPintar(); }
+function mnDuplicarComida(id) { const r = mnBuscaComida(id); if (!r) return; const n = mnClonar(r.m); n.id = mnId('m'); (n.ing || []).forEach(i => { i.id = mnId('i'); }); r.d.comidas.splice(r.i + 1, 0, n); mnCambio(); mnPintar(); }
+function mnEliminarComida(id) {
+  const r = mnBuscaComida(id); if (!r) return; r.d.comidas.splice(r.i, 1); mnCambio(); mnPintar();
+  toast('Comida eliminada', { accion: { texto: 'Deshacer', fn: () => { r.d.comidas.splice(r.i, 0, r.m); mnCambio(); mnPintar(); } } });
+}
+function mnVaciarDia() {
+  const d = mnDia(), ant = d.comidas, ctx = d.ctx; d.comidas = []; d.ctx = { tipo: '', texto: '', aviso: '' }; mnCambio(); mnPintar();
+  toast('Día vaciado', { accion: { texto: 'Deshacer', fn: () => { d.comidas = ant; d.ctx = ctx; mnCambio(); mnPintar(); } } });
+}
+// Comidas guardadas (reutilizables): se escriben una vez y se usan en varios días; editarlas cambia todos los usos.
+function mnGuardarPlato(id) {
+  const r = mnBuscaComida(id); if (!r) return; const m = r.m;
+  const p = { id: mnId('p'), nombre: m.nombre || '', nota: m.nota || '', ing: mnClonar(m.ing || []) };
+  if (!p.nombre) { toast('Ponle nombre al plato para poder reutilizarlo', { tipo: 'aviso' }); const e = document.getElementById('mnN_' + id); if (e) e.focus(); return; }
+  MN.c.platos.push(p); m.plato = p.id; m.nombre = ''; m.nota = ''; m.ing = []; mnCambio(); mnPintar(); toast('Guardada: «' + p.nombre + '»');
+}
+function mnDesvincular(id) { const r = mnBuscaComida(id); if (!r || !r.m.plato) return; const p = mnSrc(r.m); r.m.nombre = p.nombre; r.m.nota = p.nota; r.m.ing = mnClonar(p.ing || []); r.m.plato = null; mnCambio(); mnPintar(); }
+function mnUsarPlato(pid) {
+  if (!pid) return; const d = mnDia(), p = MN.c.platos.find(x => x.id === pid); if (!p) return;
+  const usados = d.comidas.map(m => m.tipo), tipo = ['D', 'A', 'C', 'Me', 'Ce'].find(t => usados.indexOf(t) < 0) || 'O';
+  d.comidas.push({ id: mnId('m'), tipo, hora: '', nombre: '', nota: '', libre: false, receta: null, plato: pid, ing: [] }); mnCambio(); mnPintar();
+}
+function mnPlatosHtml() {
+  const ps = MN.c.platos;
+  if (!ps.length) return vacioHtml('file', 'Sin comidas guardadas', 'En cualquier comida, «Guardar como comida guardada» la deja aquí para reutilizarla en otros días sin volver a escribirla.', null, true);
+  return `<div class="mn-box"><p class="mn-ayuda" style="margin:0 0 8px">Se editan desde la comida donde se usan. Eliminar una comida guardada deja una copia en cada sitio donde se usaba.</p>${ps.map(p => {
+    const usos = mnTodasComidas().filter(m => m.plato === p.id).length;
+    return `<div class="mn-fila mn-plato-f"><div style="flex:1"><div class="sup-item-n">${sudEsc(p.nombre || 'Sin nombre')}</div><div class="sup-item-d">${(p.ing || []).length} ingredientes · ${usos} ${usos === 1 ? 'uso' : 'usos'}</div></div>${btnSoft('Eliminar', `mnEliminarPlato('${p.id}')`, 'trash', true)}</div>`;
+  }).join('')}</div>`;
+}
+function mnEliminarPlato(pid) {
+  const p = MN.c.platos.find(x => x.id === pid); if (!p) return;
+  mnTodasComidas().filter(m => m.plato === pid).forEach(m => { m.nombre = p.nombre; m.nota = p.nota; m.ing = mnClonar(p.ing || []); m.plato = null; });
+  MN.c.platos = MN.c.platos.filter(x => x.id !== pid); mnCambio(); mnPintar(); toast('Comida guardada eliminada; los usos conservan su copia');
+}
+
+// Copiar un día a otros
+function mnCopiarAbrir() {
+  const o = mnDia(); let h = '';
+  MN.c.semanas.forEach(s => { h += `<p class="mn-lbl" style="margin:10px 0 4px">${sudEsc(s.nombre)}</p><div class="mn-checks">${s.dias.map(d => d === o ? '' : `<label class="mn-chk2"><input type="checkbox" data-d="${d.id}"> ${sudEsc(d.n)}${d.comidas.length ? ' <span class="hd-opt">(ya tiene comidas)</span>' : ''}</label>`).join('')}</div>`; });
+  document.getElementById('mnCopCuerpo').innerHTML = `<p class="mt" id="mnCopTit">Copiar «${sudEsc(o.n)}» a…</p><p class="ms">Sustituye las comidas de los días que marques.</p>${h}
+    <div class="mbtns" style="margin-top:14px"><button type="button" class="btn-cancel" onclick="mnCopiarCerrar()">Cancelar</button><button type="button" class="btn-ok" onclick="mnCopiarHacer()">Copiar</button></div>`;
+  document.getElementById('mMnCopiar').style.display = 'flex';
+}
+function mnCopiarCerrar() { document.getElementById('mMnCopiar').style.display = 'none'; }
+function mnCopiarHacer() {
+  const o = mnDia(), ids = [...document.querySelectorAll('#mnCopCuerpo input[data-d]:checked')].map(x => x.dataset.d); let n = 0;
+  MN.c.semanas.forEach(s => s.dias.forEach(d => { if (ids.indexOf(d.id) < 0) return; d.comidas = mnClonar(o.comidas); d.comidas.forEach(m => { m.id = mnId('m'); (m.ing || []).forEach(i => { i.id = mnId('i'); }); }); d.ctx = mnClonar(o.ctx); n++; }));
+  mnCopiarCerrar(); if (n) { mnCambio(); mnPintar(); toast('Copiado a ' + n + (n === 1 ? ' día' : ' días')); }
+}
+
+// ── Recetas ──
+function mnRecetasHtml() {
+  const rs = MN.c.recetas;
+  const lista = rs.map(r => {
+    const ab = MN.rec === r.id;
+    return `<div class="mn-rec${ab ? ' open' : ''}"><button type="button" class="mn-rec-h" aria-expanded="${ab}" onclick="mnRecAbrir('${r.id}')"><span>${sudEsc(r.nombre || 'Receta sin nombre')}</span><span class="hd-opt">${(r.ing || []).length} ingredientes · ${(r.pasos || []).length} pasos</span></button>
+      ${ab ? `<div class="mn-rec-b">
+        <div class="mn-fila"><div style="flex:2 1 220px"><label class="mn-lbl" for="mnRN_${r.id}">Nombre</label><input class="inp" id="mnRN_${r.id}" maxlength="100" value="${sudEsc(r.nombre || '')}" oninput="mnRecSet('${r.id}','nombre',this.value)"></div>
+          <div style="flex:1 1 120px"><label class="mn-lbl" for="mnRT_${r.id}">Tiempo</label><input class="inp" id="mnRT_${r.id}" maxlength="40" value="${sudEsc(r.tiempo || '')}" placeholder="20 min" oninput="mnRecSet('${r.id}','tiempo',this.value)"></div>
+          <div style="flex:1 1 120px"><label class="mn-lbl" for="mnRR_${r.id}">Raciones</label><input class="inp" id="mnRR_${r.id}" maxlength="40" value="${sudEsc(r.raciones || '')}" placeholder="2" oninput="mnRecSet('${r.id}','raciones',this.value)"></div></div>
+        ${mnIngBloque(r.id, r.ing || [])}
+        <label class="mn-lbl" for="mnRP_${r.id}" style="margin-top:8px">Pasos <span class="hd-opt">· uno por línea</span></label>
+        <textarea class="notes-ta mn-ta" id="mnRP_${r.id}" rows="4" oninput="mnRecPasos('${r.id}',this.value)">${sudEsc((r.pasos || []).join('\n'))}</textarea>
+        <label class="mn-lbl" for="mnRC_${r.id}" style="margin-top:8px">Consejo <span class="hd-opt">(opcional)</span></label>
+        <input class="inp" id="mnRC_${r.id}" maxlength="300" value="${sudEsc(r.consejo || '')}" oninput="mnRecSet('${r.id}','consejo',this.value)">
+        <div class="mn-foto">${r.foto ? `<img data-p="${sudEsc(r.foto)}" alt="Foto de la receta">` : ''}<div class="row-actions">${btnSoft(r.foto ? 'Cambiar foto' : 'Añadir foto', `mnFotoElegir('${r.id}')`, 'plus', true)}${r.foto ? btnSoft('Quitar foto', `mnFotoQuitar('${r.id}')`, 'trash', true) : ''}</div></div>
+        <div class="row-actions mn-macc">${btnSoft('Eliminar receta', `mnEliminarReceta('${r.id}')`, 'trash', true)}</div></div>` : ''}</div>`;
+  }).join('');
+  return `<div class="mn-box">${rs.length ? lista : '<p class="mn-ayuda" style="margin:0">Aún no hay recetas. Añade las que quieras que el cliente tenga a mano: ingredientes, pasos, un consejo y, si quieres, una foto. Luego las enlazas desde cada comida.</p>'}</div><div class="row-actions mn-add">${btnSoft('Añadir receta', 'mnNuevaReceta()', 'plus')}</div>`;
+}
+function mnRecAbrir(id) { MN.rec = MN.rec === id ? null : id; mnPintar(); }
+function mnRecSet(id, k, v) { const r = MN.c.recetas.find(x => x.id === id); if (r) { r[k] = v; mnCambio(); } }
+function mnRecPasos(id, v) { const r = MN.c.recetas.find(x => x.id === id); if (r) { r.pasos = v.split('\n').map(x => x.trim()).filter(Boolean); mnCambio(); } }
+function mnNuevaReceta() { const r = { id: mnId('r'), nombre: '', tiempo: '', raciones: '', ing: [], pasos: [], consejo: '', foto: null }; MN.c.recetas.push(r); MN.rec = r.id; mnCambio(); mnPintar(); const e = document.getElementById('mnRN_' + r.id); if (e) e.focus(); }
+function mnEliminarReceta(id) {
+  const r = MN.c.recetas.find(x => x.id === id); if (!r) return; const ix = MN.c.recetas.indexOf(r);
+  const usos = mnTodasComidas().filter(m => m.receta === id); usos.forEach(m => { m.receta = null; });
+  MN.c.recetas.splice(ix, 1); MN.rec = null; mnCambio(); mnPintar();
+  toast('Receta eliminada', { accion: { texto: 'Deshacer', fn: () => { MN.c.recetas.splice(ix, 0, r); usos.forEach(m => { m.receta = id; }); mnCambio(); mnPintar(); } } });
+}
+let _mnFotoRec = null;
+function mnFotoElegir(rid) { _mnFotoRec = rid; const f = document.getElementById('mnFoto'); f.value = ''; f.click(); }
+async function mnReducirFoto(file) { // máx. 1280 px, JPEG (igual que las fotos del cliente)
+  const url = URL.createObjectURL(file);
+  try {
+    const img = await new Promise((ok, ko) => { const i = new Image(); i.onload = () => ok(i); i.onerror = ko; i.src = url; });
+    const k = Math.min(1, 1280 / Math.max(img.width, img.height)), cv = document.createElement('canvas');
+    cv.width = Math.round(img.width * k); cv.height = Math.round(img.height * k); cv.getContext('2d').drawImage(img, 0, 0, cv.width, cv.height);
+    return await new Promise((ok, ko) => cv.toBlob(b => b ? ok(b) : ko(new Error('foto')), 'image/jpeg', 0.82));
+  } finally { URL.revokeObjectURL(url); }
+}
+async function mnFotoSubida(input) {
+  const file = input.files && input.files[0], rid = _mnFotoRec; if (!file || !rid || !MN) return;
+  const r = MN.c.recetas.find(x => x.id === rid); if (!r) return;
+  try {
+    const blob = await mnReducirFoto(file), path = `${MN.depId}/menu/${rid}-${Date.now()}.jpg`;
+    const up = await authFetch(`${SURL}/storage/v1/object/${FOTO_BUCKET}/${path.split('/').map(encodeURIComponent).join('/')}`, { method: 'POST', headers: { 'Content-Type': 'image/jpeg' }, body: blob });
+    if (!up.ok) throw new Error('subida');
+    const vieja = r.foto; r.foto = path; mnCambio(); mnPintar();
+    if (vieja) authFetch(`${SURL}/storage/v1/object/${FOTO_BUCKET}/${vieja.split('/').map(encodeURIComponent).join('/')}`, { method: 'DELETE' }).catch(() => {});
+  } catch (e) { toast('No se pudo subir la foto. Inténtalo de nuevo.', { tipo: 'error' }); }
+}
+function mnFotoQuitar(rid) {
+  const r = MN.c.recetas.find(x => x.id === rid); if (!r || !r.foto) return; const vieja = r.foto; r.foto = null; mnCambio(); mnPintar();
+  authFetch(`${SURL}/storage/v1/object/${FOTO_BUCKET}/${vieja.split('/').map(encodeURIComponent).join('/')}`, { method: 'DELETE' }).catch(() => {});
+}
+
+// ── Catálogo de alimentos ──
+let _mnCatQ = '', _mnCatExt = null, _mnCatEd = null, _mnCatTm = null, _mnCatCb = null;
+function mnCatAbrir() { _mnCatEd = null; _mnCatExt = null; _mnCatQ = ''; _mnCatCb = null; mnCatPintar(); document.getElementById('mMnCat').style.display = 'flex'; }
+function mnCatCerrar() { document.getElementById('mMnCat').style.display = 'none'; _mnCatEd = null; _mnCatCb = null; _mnCatCbCerrar = false; }
+function mnCatPintar() {
+  const el = document.getElementById('mnCatCuerpo');
+  if (_mnCatEd) { el.innerHTML = mnCatFormHtml(); return; }
+  const q = mnNorm(_mnCatQ), lista = MN.cat.filter(a => !q || mnNorm(a.nombre).indexOf(q) >= 0 || mnNorm(a.categoria || '').indexOf(q) >= 0);
+  el.innerHTML = `<p class="mt" id="mnCatTit">Catálogo de alimentos</p><p class="ms">Tus alimentos, compartidos entre todos los clientes. Crece con el uso: añade lo que te haga falta desde aquí o desde el «+» de un ingrediente.</p>
+    <div class="mn-fila" style="align-items:center"><input class="inp" id="mnCatQ" style="flex:1" placeholder="Buscar en tu catálogo o en USDA / Open Food Facts…" value="${sudEsc(_mnCatQ)}" oninput="mnCatBuscar(this.value)" aria-label="Buscar alimento"><button type="button" class="btn-soft" onclick="mnCatNuevo()">Nuevo</button></div>
+    <div class="mn-cat-l">${lista.length ? lista.map(a => `<div class="mn-cat-i"><div style="flex:1;min-width:0"><div class="sup-item-n">${sudEsc(a.nombre)}${a.estado ? ` <span class="hd-opt">· ${sudEsc(a.estado)}</span>` : ''}</div><div class="sup-item-d">${sudEsc(a.categoria || 'Sin categoría')}${(a.medidas || []).length ? ' · ' + a.medidas.map(x => sudEsc(x.n) + ' ' + x.g + ' g').join(', ') : ''}</div></div>${btnSoft('Editar', `mnCatEditar(${a.id})`, 'doc', true)}${btnDel('Eliminar ' + sudEsc(a.nombre), `mnCatBorrar(${a.id})`)}</div>`).join('') : `<p class="mn-ayuda" style="margin:10px 2px">${q ? 'Nada con ese nombre en tu catálogo.' : 'Tu catálogo está vacío. Búscalo arriba (USDA / Open Food Facts) o pulsa «Nuevo».'}</p>`}</div>
+    <div id="mnCatExt">${_mnCatExt ? mnCatExtHtml() : ''}</div>
+    <div class="mbtns" style="margin-top:12px"><button type="button" class="btn-cancel" onclick="mnCatCerrar()">Cerrar</button></div>`;
+}
+function mnCatBuscar(q) {
+  _mnCatQ = q; clearTimeout(_mnCatTm);
+  const pos = document.getElementById('mnCatQ'); const caret = pos ? pos.selectionStart : null;
+  mnCatPintar(); const n = document.getElementById('mnCatQ'); if (n) { n.focus(); try { n.setSelectionRange(caret, caret); } catch (e) {} }
+  if (q.trim().length < 3) { _mnCatExt = null; return; }
+  _mnCatTm = setTimeout(async () => {
+    _mnCatExt = { cargando: true }; const e = document.getElementById('mnCatExt'); if (e) e.innerHTML = mnCatExtHtml();
+    const [off, usda] = await Promise.all([
+      fetch(`https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(q)}&search_simple=1&action=process&json=1&page_size=6&lc=es`).then(r => r.json()).then(d => (d.products || []).filter(p => p.product_name || p.generic_name)).catch(() => null),
+      fetch(`https://api.nal.usda.gov/fdc/v1/foods/search?api_key=${USDA_KEY}&query=${encodeURIComponent(q)}&pageSize=6`).then(r => r.json()).then(d => d.foods || []).catch(() => null)]);
+    if (_mnCatQ !== q) return;
+    _mnCatExt = { off, usda }; const e2 = document.getElementById('mnCatExt'); if (e2) e2.innerHTML = mnCatExtHtml();
+  }, 500);
+}
+function mnCatExtHtml() {
+  const x = _mnCatExt; if (!x) return '';
+  if (x.cargando) return '<p class="mn-ayuda" style="margin:12px 2px">Buscando en Open Food Facts y USDA…</p>';
+  const fila = (it, fuente, i) => { const n = compNormalize(it, fuente); return `<button type="button" class="mn-ext-i" onclick="mnCatDesdeExt('${fuente}',${i})"><span class="mn-ext-n">${sudEsc(n.name)}</span><span class="hd-opt">${sudEsc(n.brand || '')}${n.kcal !== undefined ? ' · ' + Math.round(n.kcal) + ' kcal/100 g' : ''}</span></button>`; };
+  return `<p class="mn-lbl" style="margin:14px 0 4px">Open Food Facts (productos de supermercado)</p>${x.off === null ? '<p class="mn-ayuda">No se pudo consultar.</p>' : x.off.length ? x.off.map((it, i) => fila(it, 'off', i)).join('') : '<p class="mn-ayuda">Sin resultados.</p>'}
+    <p class="mn-lbl" style="margin:12px 0 4px">USDA (alimentos genéricos, nombres en inglés: ponle tu nombre al guardarlo)</p>${x.usda === null ? '<p class="mn-ayuda">No se pudo consultar.</p>' : x.usda.length ? x.usda.map((it, i) => fila(it, 'usda', i)).join('') : '<p class="mn-ayuda">Sin resultados.</p>'}`;
+}
+function mnCatDesdeExt(fuente, i) {
+  const it = (fuente === 'off' ? _mnCatExt.off : _mnCatExt.usda)[i], n = compNormalize(it, fuente);
+  _mnCatEd = { id: null, nombre: n.name, categoria: '', estado: '', medidas: [], nutri: { kcal: n.kcal, prot: n.protein, hc: n.carbs, grasa: n.fat, fibra: n.fiber }, fuente, fuente_ref: String(fuente === 'off' ? (it.code || it._id || '') : (it.fdcId || '')).slice(0, 120) };
+  mnCatPintar();
+}
+function mnCatNuevo(nombre) { _mnCatEd = { id: null, nombre: nombre || _mnCatQ.trim(), categoria: '', estado: '', medidas: [], nutri: {}, fuente: 'manual', fuente_ref: '' }; mnCatPintar(); }
+function mnCatEditar(id) { const a = MN.cat.find(x => x.id == id); if (!a) return; _mnCatEd = { ...a, nutri: a.nutri || {}, medidas: a.medidas || [] }; mnCatPintar(); }
+function mnCatFormHtml() {
+  const a = _mnCatEd, nu = a.nutri || {}, cats = [...new Set(MN.cat.map(x => x.categoria).filter(Boolean))];
+  const nv = k => nu[k] === undefined || nu[k] === null || isNaN(nu[k]) ? '' : String(Math.round(nu[k] * 10) / 10).replace('.', ',');
+  return `<p class="mt" id="mnCatTit">${a.id ? 'Editar alimento' : 'Nuevo alimento'}</p><p class="ms">${a.fuente === 'usda' ? 'Viene de USDA: ponle el nombre en español con el que lo vas a usar.' : a.fuente === 'off' ? 'Viene de Open Food Facts: revisa el nombre para que sea el genérico que usarás.' : 'Los datos nutricionales son opcionales.'}</p>
+    <label class="mfl" for="mnCfN">Nombre</label><input class="inp" id="mnCfN" maxlength="80" value="${sudEsc(a.nombre)}">
+    <div class="mn-fila" style="margin-top:8px"><div style="flex:1 1 180px"><label class="mfl" for="mnCfC">Categoría <span class="hd-opt">(la tuya)</span></label><input class="inp" id="mnCfC" list="mnCfCL" maxlength="40" value="${sudEsc(a.categoria || '')}" placeholder="Proteínas, Hidratos, Grasas…"><datalist id="mnCfCL">${cats.map(c => `<option value="${sudEsc(c)}">`).join('')}</datalist></div>
+      <div style="flex:0 0 160px"><label class="mfl" for="mnCfE">Estado</label><select class="inp" id="mnCfE">${[['', 'Sin especificar'], ['crudo', 'Crudo'], ['cocinado', 'Cocinado'], ['precocinado', 'Precocinado']].map(o => `<option value="${o[0]}"${(a.estado || '') === o[0] ? ' selected' : ''}>${o[1]}</option>`).join('')}</select></div></div>
+    <label class="mfl" for="mnCfM" style="margin-top:8px">Medidas caseras <span class="hd-opt">(opcional, en gramos)</span></label>
+    <input class="inp" id="mnCfM" maxlength="300" value="${sudEsc((a.medidas || []).map(m => m.n + '=' + m.g).join('; '))}" placeholder="vasito=125; cucharada=15; loncha=20">
+    <p class="mfl" style="margin:10px 0 4px">Por 100 g <span class="hd-opt">(opcional)</span></p>
+    <div class="mn-nutri">${[['kcal', 'kcal'], ['prot', 'Proteína'], ['hc', 'Hidratos'], ['grasa', 'Grasa'], ['fibra', 'Fibra']].map(o => `<div><label class="mn-lbl" for="mnCfn_${o[0]}">${o[1]}</label><input class="inp" id="mnCfn_${o[0]}" inputmode="decimal" value="${nv(o[0])}"></div>`).join('')}</div>
+    <p class="merr" id="mnCfMsg" role="alert"></p>
+    <div class="mbtns" style="margin-top:12px"><button type="button" class="btn-cancel" onclick="_mnCatEd=null;mnCatPintar()">Volver</button><button type="button" class="btn-ok" id="mnCfOk" onclick="mnCatGuardar()">Guardar</button></div>`;
+}
+async function mnCatGuardar() {
+  const a = _mnCatEd, v = id => document.getElementById(id).value.trim(), msg = document.getElementById('mnCfMsg');
+  const nombre = v('mnCfN'); if (!nombre) { msg.textContent = 'Escribe el nombre.'; return; }
+  const medidas = []; for (const p of v('mnCfM').split(';')) { const m = p.split('='); if (m.length === 2) { const g = parseFloat(m[1].replace(',', '.')); if (m[0].trim() && g > 0) medidas.push({ n: m[0].trim().slice(0, 30), g }); } }
+  const nutri = {}; ['kcal', 'prot', 'hc', 'grasa', 'fibra'].forEach(k => { const x = parseFloat(v('mnCfn_' + k).replace(',', '.')); if (isFinite(x) && x >= 0) nutri[k] = x; });
+  const fila = { nombre, categoria: v('mnCfC') || null, estado: v('mnCfE') || null, medidas, nutri: Object.keys(nutri).length ? nutri : null, fuente: a.fuente || 'manual', fuente_ref: a.fuente_ref || null };
+  const btn = document.getElementById('mnCfOk'); btn.disabled = true; msg.textContent = '';
+  const r = a.id ? await sb(`alimentos?id=eq.${a.id}`, { method: 'PATCH', body: JSON.stringify(fila) }) : await sb('alimentos', { method: 'POST', body: JSON.stringify(fila) });
+  btn.disabled = false;
+  if (esErrorSb(r)) { msg.textContent = r.code === '23505' ? 'Ya tienes un alimento con ese nombre y estado.' : /42P01|PGRST205|schema cache/i.test(String(r.message || '')) ? 'Falta ejecutar supabase_menu_semanal.sql en Supabase.' : 'No se pudo guardar. Inténtalo de nuevo.'; return; }
+  const nuevo = Array.isArray(r) ? r[0] : null; if (!nuevo) { msg.textContent = 'No se pudo guardar. Inténtalo de nuevo.'; return; }
+  const ix = MN.cat.findIndex(x => x.id == nuevo.id); if (ix >= 0) MN.cat[ix] = nuevo; else MN.cat.push(nuevo);
+  MN.cat.sort((x, y) => x.nombre.localeCompare(y.nombre, 'es'));
+  if (_mnCatCb) _mnCatCb(nuevo);
+  const cerrar = _mnCatCbCerrar; _mnCatEd = null; _mnCatCb = null; _mnCatCbCerrar = false; mnRelinkTodo(); mnCambio();
+  if (cerrar) document.getElementById('mMnCat').style.display = 'none'; else mnCatPintar();
+  mnPintar(); toast('Alimento guardado');
+}
+let _mnCatCbCerrar = false;
+function mnCatBorrar(id) {
+  const a = MN.cat.find(x => x.id == id); if (!a) return;
+  deshacerBorrado({
+    texto: 'Alimento eliminado',
+    ocultar: () => { MN.cat = MN.cat.filter(x => x.id != id); mnCatPintar(); },
+    restaurar: () => { MN.cat.push(a); MN.cat.sort((x, y) => x.nombre.localeCompare(y.nombre, 'es')); mnCatPintar(); },
+    ejecutar: async () => { const r = await sb(`alimentos?id=eq.${id}`, { method: 'DELETE', headers: { 'Prefer': 'return=minimal' } }); if (!esErrorSb(r)) { mnRelinkTodo(); mnPintar(); } return r; }
+  });
+}
+// «+» en un ingrediente que no está en el catálogo: se abre el formulario con su nombre y, al guardar, se enlaza.
+function mnVincularChip(entId, ix) {
+  const e = mnEnt(entId); if (!e || !e.ing[ix]) return; const nombre = e.ing[ix].n;
+  _mnCatEd = { id: null, nombre, categoria: '', estado: '', medidas: [], nutri: {}, fuente: 'manual', fuente_ref: '' };
+  _mnCatCb = nuevo => { const x = mnNorm(nombre); [].concat(MN.c.recetas, MN.c.platos, mnTodasComidas()).forEach(en => (en.ing || []).forEach(i => { if (mnNorm(i.n) === x) i.a = nuevo.id; })); };
+  _mnCatCbCerrar = true; mnCatPintar(); document.getElementById('mMnCat').style.display = 'flex';
+}
+
+// ── Publicar ──
+function mnSnapshot() {
+  const c = MN.c, d = deportistas.find(x => x.id == MN.depId) || {}, oi = d.objetivo_impresiones || {};
+  const ing = l => (l || []).map(i => ({ t: mnIngTxt(i), n: i.n, a: i.a || null, cant: i.cant, nota: i.nota || '' }));
+  const resolver = m => { const s = mnSrc(m); return { tipo: m.tipo, hora: m.hora || '', nombre: s.nombre || '', nota: s.nota || '', libre: !!m.libre, receta: m.receta || null, ing: ing(s.ing) }; };
+  return {
+    v: 1, titulo: c.titulo || '', objetivo: oi.objetivo || '', impresiones: (oi.impresiones || []).filter(x => x && x.t),
+    semanas: c.semanas.map(s => ({ id: s.id, nombre: s.nombre || 'Semana', nota: s.nota || '', dias: s.dias.map(d2 => ({ n: d2.n, dow: d2.dow || null, ctx: d2.ctx || {}, comidas: d2.comidas.map(resolver) })) })),
+    recetas: c.recetas.map(r => ({ id: r.id, nombre: r.nombre || '', tiempo: r.tiempo || '', raciones: r.raciones || '', ing: ing(r.ing), pasos: r.pasos || [], consejo: r.consejo || '', foto: r.foto || null }))
+  };
+}
+async function mnPublicar(desdeFicha) {
+  if (!MN) return;
+  mnSyncTextos();
+  if (!mnTodasComidas().length) { toast('Añade al menos una comida antes de publicar.', { tipo: 'aviso' }); return; }
+  await mnGuardarYa();
+  const ahora = new Date().toISOString(), snap = mnSnapshot();
+  const sem = MN.row.semana_actual && MN.c.semanas.some(s => s.id === MN.row.semana_actual) ? MN.row.semana_actual : MN.c.semanas[0].id;
+  const r = await sb(`menus_cliente?id=eq.${MN.row.id}`, { method: 'PATCH', headers: { 'Prefer': 'return=minimal' }, body: JSON.stringify({ publicado: snap, publicado_en: ahora, actualizado: ahora, semana_actual: sem, titulo: MN.c.titulo || null }) });
+  if (esErrorSb(r)) { toast('No se pudo publicar. Inténtalo de nuevo.', { tipo: 'error' }); return; }
+  MN.row.publicado = snap; MN.row.publicado_en = ahora; MN.row.actualizado = ahora; MN.row.semana_actual = sem; MN.dirty = false;
+  toast('Menú publicado: el cliente ya lo ve'); mnMarca();
+  if (desdeFicha) { const id = MN.depId; MN = null; loadMenuSemanal(id); } else mnPintar();
+}
+
+// ── Objetivo e impresiones (ficha → Plan): se copian al menú al publicarlo ──
+function objImpHtml(d) {
+  const oi = d.objetivo_impresiones || {}, imp = oi.impresiones || [];
+  return `<textarea class="notes-ta" id="oiObj" maxlength="1500" style="min-height:90px" placeholder="Objetivo del plan, tal como se lo explicas al cliente…" aria-label="Objetivo">${sudEsc(oi.objetivo || '')}</textarea>
+    <p class="mfl" style="margin:12px 0 6px">Impresiones del profesional <span class="hd-opt">(máx. 8)</span></p>
+    <div id="oiLista">${imp.map((x, i) => oiFila(x, i)).join('')}</div>
+    <div class="notes-foot"><button class="btn-save" onclick="oiGuardar(${d.id})">Guardar</button>${btnSoft('Añadir impresión', 'oiAnadir()', 'plus')}<span class="med-note" style="margin:0">Se publica junto al menú; el cliente lo ve en «Sobre mi plan».</span></div>`;
+}
+function oiFila(x, i) {
+  return `<div class="oi-f"><select class="inp oi-c" aria-label="Color" data-oi="c">${MN_COL.map(o => `<option value="${o[0]}"${(x.c || 'green') === o[0] ? ' selected' : ''}>${o[1]}</option>`).join('')}</select><textarea class="notes-ta oi-t" rows="2" maxlength="600" aria-label="Impresión ${i + 1}" data-oi="t">${sudEsc(x.t || '')}</textarea><button type="button" class="file-btn del" aria-label="Quitar impresión" onclick="this.parentNode.remove()">×</button></div>`;
+}
+function oiAnadir() { const l = document.getElementById('oiLista'); if (l.children.length >= 8) { toast('Máximo 8 impresiones', { tipo: 'aviso' }); return; } l.insertAdjacentHTML('beforeend', oiFila({ c: 'green', t: '' }, l.children.length)); l.lastElementChild.querySelector('textarea').focus(); }
+async function oiGuardar(depId) {
+  const objetivo = document.getElementById('oiObj').value.trim().slice(0, 1500);
+  const impresiones = [...document.querySelectorAll('#oiLista .oi-f')].map(f => ({ c: f.querySelector('select').value, t: f.querySelector('textarea').value.trim() })).filter(x => x.t).slice(0, 8);
+  const val = objetivo || impresiones.length ? { objetivo, impresiones } : null;
+  const r = await patchDep(depId, { objetivo_impresiones: val });
+  if (esErrorSb(r)) { toast(/objetivo_impresiones|PGRST204|schema cache/i.test(String(r.message || '')) ? 'Falta ejecutar supabase_menu_semanal.sql en Supabase.' : 'No se pudo guardar. Inténtalo de nuevo.', { tipo: 'error' }); return; }
+  const d = deportistas.find(x => x.id == depId); if (d) d.objetivo_impresiones = val;
+  toast('Objetivo e impresiones guardados' + (_mnFila && _mnFila.publicado_en ? '. Vuelve a publicar el menú para que el cliente lo vea.' : ''));
 }
 
 // ═══════════════ HISTORIAL DE SESIONES + ACTIVIDAD ═══════════════
