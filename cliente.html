@@ -289,6 +289,119 @@ body.dark-mode :focus-visible{outline-color:#5CC8A6}
 .skip-link{position:fixed;left:12px;top:-60px;z-index:20000;background:#fff;color:#04342C;font:600 14px var(--f,system-ui);padding:10px 16px;border-radius:10px;box-shadow:0 4px 16px rgba(0,0,0,.25);text-decoration:none;transition:top .15s}
 .skip-link:focus{top:12px}
 @media(pointer:coarse){.btn{min-height:44px}}
+.mnv-fac{display:flex;align-items:center;gap:10px;margin:0 0 12px;font-size:13px;color:var(--g500)}
+.mnv-fac b{min-width:48px;text-align:center;color:var(--g900)}
+.mnv-fac button{width:34px;height:34px;border-radius:10px;border:.5px solid var(--bdm);background:var(--sf);color:var(--g900);font-size:18px;line-height:1;cursor:pointer}
+.mnv-fac button:disabled{opacity:.4;cursor:default}
+.mnv-fac .mnv-fac-r{width:auto;padding:0 12px;font-size:12px;color:var(--t600)}
+.mnv-pdf{margin-top:14px;text-align:center}
+.mnv-cp{margin-bottom:12px}
+.mnv-cpf{display:flex;align-items:flex-start;gap:12px;padding:11px 0;border-top:.5px solid var(--bd);font-size:14px;cursor:pointer}
+.mnv-cpf:first-of-type{border-top:0}
+.mnv-cpf input{width:20px;height:20px;margin:0;accent-color:var(--t600);flex:0 0 auto}
+.mnv-cpn{flex:1;min-width:0;color:var(--g900);font-weight:600}
+.mnv-cpq{text-align:right;color:var(--g700);max-width:50%}
+.mnv-cpq small{display:block;font-size:11.5px;color:var(--g400)}
+.mnv-cpf.ok .mnv-cpn,.mnv-cpf.ok .mnv-cpq{text-decoration:line-through;color:var(--g400)}
+.mnv-alt{margin-top:10px;font-size:13px;color:var(--g700)}
+.mnv-alt summary{cursor:pointer;font-weight:600;color:var(--t600);padding:4px 0}
+.mnv-alt p{margin:6px 0 0;line-height:1.5}
+.mnv-alt i{color:var(--g400)}
+.mnv-chips{display:flex;gap:6px;overflow-x:auto;padding:2px 0 10px;margin:0 -2px;scrollbar-width:none}
+.mnv-chips::-webkit-scrollbar{display:none}
+.mnv-chip{flex:0 0 auto;display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border:.5px solid var(--bdm);border-radius:20px;background:var(--sf);color:var(--g700);font-size:13.5px;font-weight:600;white-space:nowrap}
+.mnv-chip.on{background:var(--btn);border-color:var(--btn);color:#fff}
+.mnv-hoy{width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.75}
+.mnv-tabs{display:flex;gap:4px;padding:4px;background:var(--g100);border-radius:12px;margin-bottom:14px;overflow-x:auto;scrollbar-width:none}
+.mnv-tabs::-webkit-scrollbar{display:none}
+.mnv-tab{flex:1 0 auto;padding:9px 14px;border:none;background:none;border-radius:9px;font-size:13.5px;font-weight:600;color:var(--g500);white-space:nowrap}
+.mnv-tab.on{background:var(--sf);color:var(--t600);box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.mnv-sub{font-size:12.5px;color:var(--g500);margin:-6px 0 12px}
+.mnv-ctx{border-radius:12px;padding:10px 14px;margin-bottom:12px;font-size:13px;line-height:1.5;background:var(--g100);color:var(--g700);border:.5px solid var(--bd)}
+.mnv-ctx.entreno{background:var(--t50);color:var(--t800);border-color:var(--pill-g-bd)}
+.mnv-ctx.partido,.mnv-ctx.libre{background:var(--gold-50);color:var(--gold-dk);border-color:var(--pill-au-bd)}
+.mnv-ctx b{font-weight:700}
+.mnv-ctx{white-space:pre-line}
+.mnv-m{margin-bottom:10px;padding:14px 16px}
+.mnv-mh{display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap}
+.mnv-b{font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;background:var(--pill-g);color:var(--t900)}
+.mnv-b-d,.mnv-b-l{background:var(--pill-au);color:var(--gold-dk)}
+.mnv-b-a{background:var(--t50);color:var(--t800)}
+.mnv-b-me,.mnv-b-o{background:var(--pill-n);color:var(--g700)}
+.mnv-b-ce{background:var(--t800);color:#fff}
+.mnv-h{font-size:12px;color:var(--g500)}
+.mnv-n{font-size:15.5px;font-weight:700;margin-bottom:6px}
+.mnv-ing{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:6px}
+.mnv-i{font-size:13px;background:var(--g100);border:.5px solid var(--bd);border-radius:20px;padding:4px 11px;color:var(--g700);line-height:1.4}
+.mnv-i i{font-style:normal;color:var(--g500)}
+.mnv-nota{font-size:12.5px;color:var(--g500);line-height:1.5;border-left:2px solid var(--gold);padding-left:9px;margin:8px 0 0}
+.mnv-ideas{font-size:11.5px;font-weight:700;color:var(--gold-dk);text-transform:uppercase;letter-spacing:.05em;margin:2px 0 6px}
+.mnv-rb{display:inline-flex;margin-top:10px;padding:8px 14px;border-radius:10px;border:.5px solid var(--pill-g-bd);background:var(--t50);color:var(--t800);font-size:13px;font-weight:600}
+.mnv-dia{width:100%;text-align:left;background:var(--sf);border:.5px solid var(--bdm);border-radius:14px;padding:12px 14px;margin-bottom:10px;font-family:var(--f);color:var(--g900)}
+.mnv-dia-h{display:flex;justify-content:space-between;gap:8px;font-size:14.5px;font-weight:700;margin-bottom:6px}
+.mnv-dia-h span{font-size:12px;font-weight:600;color:var(--g500)}
+.mnv-dia p{font-size:13px;color:var(--g700);margin:3px 0;line-height:1.45}
+.mnv-dia p b{font-weight:700;color:var(--g900)}
+.mnv-rec{margin-bottom:10px;padding:0;overflow:hidden}
+.mnv-rec-h{display:flex;justify-content:space-between;align-items:center;gap:10px;width:100%;padding:13px 16px;background:none;border:none;text-align:left;font-family:var(--f);font-size:15px;font-weight:700;color:var(--g900)}
+.mnv-rec-h span{font-size:12px;font-weight:600;color:var(--g500)}
+.mnv-rec-b{padding:0 16px 16px;border-top:.5px solid var(--bd)}
+.mnv-rec-b img{display:block;width:100%;max-height:260px;object-fit:cover;border-radius:12px;margin-top:12px}
+.mnv-sh{font-size:11px;font-weight:700;color:var(--gold-dk);text-transform:uppercase;letter-spacing:.07em;margin:14px 0 6px}
+.mnv-pasos{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px}
+.mnv-pasos li{display:flex;gap:10px;font-size:13.5px;line-height:1.5;color:var(--g700)}
+.mnv-pn{flex:0 0 22px;height:22px;border-radius:50%;background:var(--t50);border:.5px solid var(--pill-g-bd);color:var(--t800);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;margin-top:1px}
+.mnv-obj{font-size:14.5px;font-weight:600;color:var(--t900);line-height:1.65}
+.mnv-imp{display:flex;gap:10px;font-size:13.5px;color:var(--g700);line-height:1.6;padding:9px 0;border-bottom:.5px solid var(--bd)}
+.mnv-imp:last-child{border-bottom:none;padding-bottom:0}
+.mnv-dot{flex:0 0 8px;height:8px;border-radius:50%;margin-top:8px}
+.mnv-frame{max-width:420px;margin:0 auto 2rem;border:.5px solid var(--bdm);border-radius:28px;padding:16px;background:var(--bg);box-shadow:var(--mn-sh)}
+.mnv-bar{font-size:12px;font-weight:700;color:var(--t800);text-align:center;margin-bottom:14px}
+.mnv-frame .card{background:var(--sf);border:.5px solid var(--bdm);border-radius:14px;padding:1.05rem 1.15rem}
+.mnv-frame .vacio{display:flex;flex-direction:column;align-items:center;text-align:center;padding:1.6rem 1rem;gap:4px}
+.mnv-meta{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 0}
+.mnv-meta span{font-size:12px;background:var(--g100);border:.5px solid var(--bd);border-radius:20px;padding:4px 11px;color:var(--g700)}
+.mnv-meta b{color:var(--g400);font-weight:600;margin-right:4px}
+.mnv-nu{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:8px}
+.mnv-nu div{background:var(--g100);border-radius:12px;padding:10px 4px;text-align:center}
+.mnv-nu div:first-child{background:var(--t900);color:#fff}
+.mnv-nu b{display:block;font-size:17px;font-weight:700}
+.mnv-nu span{font-size:11px;opacity:.75}
+.mnv-nu-n{font-size:11px;color:var(--g400);margin:6px 2px 0}
+#mnPrint{display:none}
+@media print{
+body>*:not(#mnPrint){display:none !important}
+#mnPrint,#mnPrint *{visibility:visible !important}
+#mnPrint{display:block !important;font-family:Inter,system-ui,Arial,sans-serif;color:#1c1c1a;font-size:10.5pt;line-height:1.45;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+#mnPrint .pd-top{display:flex;align-items:center;gap:12pt;padding-bottom:9pt;margin-bottom:12pt;border-bottom:2pt solid #0F6E56}
+#mnPrint .pd-top img{width:34pt;height:34pt;border-radius:8pt}
+#mnPrint .pd-ti{font-size:17pt;font-weight:700;color:#04342C}
+#mnPrint .pd-su{font-size:10pt;color:#6A6963}
+#mnPrint .pd{break-inside:avoid;border:.5pt solid #d8d6cf;border-radius:8pt;padding:8pt 11pt;margin:0 0 9pt}
+#mnPrint .pd-ob{background:#F4F2ED}
+#mnPrint .pd-ob p{margin:2pt 0}
+#mnPrint .pd-h{display:flex;justify-content:space-between;align-items:center;gap:8pt}
+#mnPrint h2{font-size:12.5pt;margin:0;color:#04342C}
+#mnPrint .pd-t{font-size:8.5pt;font-weight:700;padding:2pt 8pt;border-radius:10pt;background:#DDF0E6;color:#0F6E56}
+#mnPrint .pd-av{background:#F5EDE0;color:#7A5A38;border-radius:6pt;padding:4pt 8pt;margin:5pt 0;font-size:9.5pt}
+#mnPrint .pd-m{display:grid;grid-template-columns:72pt 1fr;gap:8pt;padding:5pt 0;border-top:.5pt solid #e6e4dd}
+#mnPrint .pd-mt b{display:block;font-size:8.5pt;text-transform:uppercase;letter-spacing:.05em;color:#0F6E56}
+#mnPrint .pd-mt span{font-size:9pt;color:#6A6963}
+#mnPrint .pd-n{font-weight:700}
+#mnPrint .pd-i{font-size:9.8pt;color:#3d3d3a}
+#mnPrint .pd-no{font-size:9pt;font-style:italic;color:#6A6963;margin-top:2pt}
+#mnPrint .pd-pag{break-before:page}
+#mnPrint .pd-h2{margin:0 0 10pt;font-size:14pt}
+#mnPrint .pd-cp{column-count:2;column-gap:18pt}
+#mnPrint .pd-cg{break-inside:avoid;margin:0 0 9pt}
+#mnPrint .pd-cg h3{font-size:9pt;text-transform:uppercase;letter-spacing:.07em;color:#7A5A38;margin:0 0 3pt}
+#mnPrint .pd-cg p{display:flex;justify-content:space-between;gap:8pt;margin:0;padding:2.5pt 0;border-bottom:.5pt solid #eceae4;font-size:9.8pt}
+#mnPrint .pd-cg i{display:block;font-size:8.5pt;font-weight:400;color:#6A6963;font-style:normal}
+#mnPrint .pd-cg b{text-align:right;font-weight:600}
+#mnPrint .pd-r h3{margin:0 0 2pt;font-size:11.5pt;color:#04342C}
+#mnPrint .pd-r ol{margin:4pt 0 4pt 16pt;padding:0;font-size:9.8pt}
+#mnPrint .pd-pie{margin-top:12pt;font-size:8.5pt;color:#8F8E88;text-align:center}
+@page{size:A4;margin:14mm}}
 </style>
 </head>
 <body>
@@ -398,17 +511,17 @@ body.dark-mode :focus-visible{outline-color:#5CC8A6}
   </div>
   <button class="tile" onclick="abrirDatos()">
     <span class="tile-ic"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>
-    <span><span class="tile-t">Mis datos</span><br><span class="tile-d">Antropometría, bioimpedancia y evolución</span></span>
+    <span><span class="tile-t">Composición corporal</span><br><span class="tile-d">Antropometría, bioimpedancia y evolución</span></span>
     <span class="tile-go"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></span>
   </button>
   <button class="tile" onclick="abrirPlan()">
     <span class="tile-ic au"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="14" y2="17"/></svg></span>
-    <span><span class="tile-t">Mi planificación nutricional</span><br><span class="tile-d">Tu plan personalizado</span></span>
+    <span><span class="tile-t">Planificación nutricional</span><br><span class="tile-d">Tu plan personalizado</span></span>
     <span class="tile-go"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></span>
   </button>
   <button class="tile" id="tileSupl" style="display:none" onclick="abrirSupl()">
     <span class="tile-ic"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M10.5 20.5 3.5 13.5a4.95 4.95 0 0 1 7-7l7 7a4.95 4.95 0 0 1-7 7z"/><line x1="8.5" y1="8.5" x2="15.5" y2="15.5"/></svg></span>
-    <span><span class="tile-t">Mi suplementación</span><br><span class="tile-d" id="tileSuplD">Qué tomar y cuándo</span></span>
+    <span><span class="tile-t">Suplementación</span><br><span class="tile-d" id="tileSuplD">Qué tomar y cuándo</span></span>
     <span class="tile-go"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></span>
   </button>
   <button class="tile" onclick="abrirReg()">
@@ -423,7 +536,7 @@ body.dark-mode :focus-visible{outline-color:#5CC8A6}
   </button>
   <button class="tile" id="tileForms" style="display:none" onclick="abrirForms()">
     <span class="tile-ic au"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span>
-    <span><span class="tile-t">Mis formularios</span><br><span class="tile-d" id="tileFormsD">Cuestionarios de tu nutricionista</span><br><span class="tile-badge" id="tileFormsB"></span></span>
+    <span><span class="tile-t">Formularios</span><br><span class="tile-d" id="tileFormsD">Cuestionarios de tu nutricionista</span><br><span class="tile-badge" id="tileFormsB"></span></span>
     <span class="tile-go"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></span>
   </button>
   <div class="home-sep" id="compSep" style="display:none"><span>Próxima competición</span></div>
@@ -441,15 +554,21 @@ body.dark-mode :focus-visible{outline-color:#5CC8A6}
 </div></div>
 <input type="file" id="diaFile" accept="image/*" style="display:none">
 
+<div id="vmenu" class="view" role="main"><div class="wrap">
+  <button class="back" onclick="show('vhome')"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Inicio</button>
+  <h1 class="h2">Planificación nutricional</h1>
+  <div id="menuBody"></div>
+</div></div>
+
 <div id="vsupl" class="view" role="main"><div class="wrap">
   <button class="back" onclick="show('vhome')"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Inicio</button>
-  <h1 class="h2">Mi suplementación</h1>
+  <h1 class="h2">Suplementación</h1>
   <div id="suplBody"></div>
 </div></div>
 
 <div id="vdatos" class="view" role="main"><div class="wrap">
   <button class="back" onclick="show('vhome')"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Inicio</button>
-  <h1 class="h2">Mis datos</h1>
+  <h1 class="h2">Composición corporal</h1>
   <div id="datosBody"><div class="spin" style="margin-top:6vh"></div></div>
 </div></div>
 
@@ -467,7 +586,7 @@ body.dark-mode :focus-visible{outline-color:#5CC8A6}
 <div id="vplan" class="view" role="main">
   <div class="plan-bar">
     <button class="back" onclick="cerrarPlan()"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Inicio</button>
-    <span class="plan-t">Mi planificación</span>
+    <span class="plan-t">Planificación nutricional</span>
     <a class="plan-ext" id="planExt" href="#" target="_blank" rel="noopener noreferrer">Abrir aparte</a>
   </div>
   <div id="planBody"></div>
@@ -475,7 +594,7 @@ body.dark-mode :focus-visible{outline-color:#5CC8A6}
 
 <div id="vforms" class="view" role="main"><div class="wrap">
   <button class="back" onclick="show('vhome')"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Inicio</button>
-  <h1 class="h2">Mis formularios</h1>
+  <h1 class="h2">Formularios</h1>
   <p class="fcard-h">Rellénalos con calma: nos ayudan a preparar tu planificación. Cuando termines cada uno, pulsa «Ya lo he enviado» para que quede marcado.</p>
   <div id="formsBody"></div>
 </div></div>
@@ -520,7 +639,7 @@ const BUCKET='deportistas-docs';
 let FICHA=null, DATOS=null;
 
 // ═══ Vistas ═══
-const APP_VIEWS=['vhome','vdatos','vreg','vplan','vforms','vform','vseg','vcomp','vsin'];
+const APP_VIEWS=['vhome','vdatos','vreg','vplan','vforms','vform','vseg','vcomp','vsin','vmenu'];
 function show(v){
   document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));
   $(v).classList.add('active');
@@ -640,6 +759,7 @@ async function entrar(){
   $('helloSub').textContent=[FICHA.deporte,FICHA.objetivo].filter(Boolean).join(' · ')||'Aquí tienes tu información.';
   try{ const pl=await rpc('cliente_mis_planes'); PLANES=Array.isArray(pl)?pl:[]; }catch(e){ PLANES=[]; }
   try{ const dd=await rpc('cliente_mis_comidas'); DIA=dd&&Array.isArray(dd.comidas)?dd:null; }catch(e){ DIA=null; }   // opcional: sin su SQL no sale la tarjeta
+  try{ const mm=await rpc('cliente_mi_menu'); MENU_DATA=mm&&mm.menu&&Array.isArray(mm.menu.semanas)&&mm.menu.semanas.length?mm:null; }catch(e){ MENU_DATA=null; }   // opcional: sin su SQL, o sin menú publicado, no sale la tarjeta
   try{ const su=await rpc('cliente_mi_suplementacion'); SUPL=Array.isArray(su)?su:[]; }catch(e){ SUPL=[]; }   // opcional: sin su SQL, o sin nada asignado, no sale la opción
   pintarNota(); pintarRevision(); pintarInstTip(); pintarTileForms(); pintarTileComp(); pintarTileSupl(); pintarTileDia(); pintarMensajeDia();
   show('vhome');
@@ -669,7 +789,7 @@ function pintarMensajeDia(){
 function vacioC(svgPath,t,s){ return `<div class="vacio"><span class="vacio-ic" aria-hidden="true"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">${svgPath}</svg></span><p class="vacio-t">${t}</p>${s?`<p class="vacio-s">${s}</p>`:''}</div>`; }
 function mostrarSin(t,m){ $('sinTitle').textContent=t; $('sinMsg').textContent=m; show('vsin'); }
 
-// ═══ Mis datos ═══
+// ═══ Composición corporal (Mis datos) ═══
 const nf=(v,d=1)=>v==null||isNaN(v)?'—':(+v).toLocaleString('es-ES',{minimumFractionDigits:d,maximumFractionDigits:d});
 const fmtF=(f,corto)=>new Date(f+'T00:00:00').toLocaleDateString('es-ES',corto?{day:'numeric',month:'short',year:'2-digit'}:{day:'numeric',month:'long',year:'numeric'});
 function punto(v){ const r=v.resumen||{}; return {fecha:v.fecha,peso:r.peso!=null?+r.peso:null,grasa:r.pct_grasa!=null?+r.pct_grasa:null,mg:r.masa_grasa_kg!=null?+r.masa_grasa_kg:null,modelo:r.modelo||null}; }
@@ -996,15 +1116,16 @@ async function diaBorrar(id,btn){
   }catch(e){ toast('No se pudo borrar.',{tipo:'error'}); }
 }
 
-// ═══ Mi planificación ═══
+// ═══ Planificación nutricional ═══
 function abrirPlan(){
+  if(MENU_DATA){ abrirMenu(); return; }   // con plan publicado en la app nueva, «Planificación nutricional» es ese plan; si no, el enlace de siempre
   show('vplan');
   const url=FICHA&&FICHA.plan_url, ok=!!(url&&/^https?:\/\//i.test(url));
   $('planExt').style.visibility=ok?'visible':'hidden';
   if(ok){
     $('planExt').href=url;
     // Dentro de la propia app: así, si la tienes en la pantalla de inicio del móvil, no salta al navegador.
-    $('planBody').innerHTML=`<iframe class="plan-frame" src="${esc(url)}" title="Mi planificación nutricional"></iframe>`;
+    $('planBody').innerHTML=`<iframe class="plan-frame" src="${esc(url)}" title="Planificación nutricional"></iframe>`;
   }else{
     $('planBody').innerHTML='<div class="plan-msg"><div class="card">'+vacioC('<path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>','Tu planificación está en camino','Tu nutricionista la está preparando y te avisará cuando esté lista.')+'</div></div>';
   }
@@ -1202,6 +1323,122 @@ function evolucionSeg(){
 
 // ═══ Plan de competición (copia ya calculada por el profesional; solo hasta el día siguiente a la competición) ═══
 let PLANES=[], SUPL=[];
+// ═══ Mi menú semanal: copia ya publicada por el profesional (nunca el borrador ni el catálogo) ═══
+// El bloque mnv*/mnImpr* es el mismo de menu-semanal.html (vista del cliente): si cambia allí, copiarlo aquí.
+let MENU=null, MENU_DATA=null; const MNV={sem:null,dia:0,tab:'hoy',rec:null,f:1};
+const mnRng = c => { const f = x => ({ 0.25: '¼', 0.5: '½', 0.75: '¾' })[+x] || String(+(+x).toFixed(2)).replace('.', ','); return c.max ? f(c.min) + '-' + f(c.max) : f(c.min); };
+const mnQtyTxt = c => (!c || c.modo === 'libre') ? '' : (c.modo === 'ud' ? mnRng(c) : mnRng(c) + ' ' + c.u);
+const mnIngTxt = i => { const q = mnQtyTxt(i.cant); return q ? (i.cant.modo === 'ud' ? q + ' ' + i.n : q + ' de ' + i.n) : i.n; }; // lo que lee el cliente
+const mnIngEdit = i => { const q = mnQtyTxt(i.cant); return (q ? q + ' ' : '') + i.n + (i.nota ? ' (' + i.nota + ')' : ''); }; // lo que se edita
+const mnTextoIng = ing => (ing || []).map(mnIngEdit).join('\n');
+function mnEscala(i, f) {
+  const c = i.cant; if (!c || c.modo === 'libre' || !f || f === 1) return i;
+  const red = v => { if (c.modo === 'g') return c.u === 'g' || c.u === 'ml' ? Math.max(5, Math.round(v * f / 5) * 5) : +(v * f).toFixed(2); return Math.max(0.5, Math.round(v * f / 0.5) * 0.5); };
+  const min = red(c.min), max = c.max ? Math.max(min, red(c.max)) : null;
+  return { ...i, cant: { ...c, min, max: max && max > min ? max : null } };
+}
+function mnCompraAgrupa(filas) { const g = []; filas.forEach(f => { const c = f.libre ? 'Al gusto' : f.cat; let x = g.find(y => y.c === c); if (!x) { x = { c, f: [] }; g.push(x); } x.f.push(f); }); g.sort((a, b) => (a.c === 'Al gusto') - (b.c === 'Al gusto')); return g; }
+const mnImprEsc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+function mnImprHtml(m, o) {
+  const e = mnImprEsc, sem = m.semanas.find(s => s.id === o.sem) || m.semanas[0], T = { D: 'Desayuno', A: 'Almuerzo', C: 'Comida', Me: 'Merienda', Ce: 'Cena', O: 'Otra' };
+  const f = o.factor && o.factor !== 1 ? o.factor : 1, txt = i => (f !== 1 && i.cant && i.cant.modo !== 'libre') ? mnIngTxt(mnEscala({ n: i.n, cant: i.cant }, f)) : i.t;
+  const dias = sem.dias.map(d => { const c = d.ctx || {}; return `<section class="pd"><div class="pd-h"><h2>${e(d.n)}</h2>${c.texto ? `<span class="pd-t">${e(c.texto)}</span>` : ''}</div>${c.aviso ? `<p class="pd-av">${e(c.aviso)}</p>` : ''}${c.suppl ? `<p class="pd-av"><b>Suplementación:</b> ${e(c.suppl)}</p>` : ''}
+    ${d.comidas.length ? d.comidas.map(x => `<div class="pd-m"><div class="pd-mt"><b>${T[x.tipo] || 'Comida'}</b>${x.hora ? `<span>${e(x.hora)}</span>` : ''}</div><div class="pd-mc">${x.nombre ? `<div class="pd-n">${e(x.nombre)}${x.libre ? ' <i>(libre)</i>' : ''}</div>` : ''}${(x.ing || []).length ? `<div class="pd-i">${x.ing.map(i => e(txt(i)) + (i.nota ? ` <i>(${e(i.nota)})</i>` : '')).join(' · ')}</div>` : ''}${x.nota ? `<div class="pd-no">${e(x.nota)}</div>` : ''}</div></div>`).join('') : '<p class="pd-av">Sin comidas</p>'}</section>`; }).join('');
+  const imp = (m.impresiones || []), obj = (o.objetivo && (m.objetivo || imp.length)) ? `<section class="pd pd-ob">${m.objetivo ? `<p><b>Objetivo:</b> ${e(m.objetivo)}</p>` : ''}${imp.length ? `<p><b>Impresiones:</b> ${imp.map(x => e(x.t)).join(' · ')}</p>` : ''}</section>` : '';
+  const compra = o.compra && (sem.compra || []).length ? `<section class="pd-pag"><h2 class="pd-h2">Lista de la compra · ${e(sem.nombre)}</h2><div class="pd-cp">${mnCompraAgrupa(sem.compra).map(g => `<div class="pd-cg"><h3>${e(g.c)}</h3>${g.f.map(x => `<p><span>${e(x.n)}</span><b>${x.libre ? 'al gusto' : e(x.txt)}${x.fmt ? ` <i>${e(x.fmt)}</i>` : ''}</b></p>`).join('')}</div>`).join('')}</div></section>` : '';
+  const rec = o.recetas && (m.recetas || []).length ? `<section class="pd-pag"><h2 class="pd-h2">Recetas</h2>${m.recetas.map(r => `<article class="pd pd-r"><h3>${e(r.nombre)}</h3><p class="pd-no">${[r.tiempo, r.raciones, r.dificultad].filter(Boolean).map(e).join(' · ')}</p>${(r.ing || []).length ? `<p class="pd-i"><b>Ingredientes:</b> ${r.ing.map(i => e(i.t)).join(' · ')}</p>` : ''}${(r.pasos || []).length ? `<ol>${r.pasos.map(p => `<li>${e(p)}</li>`).join('')}</ol>` : ''}${r.consejo ? `<p class="pd-no">${e(r.consejo)}</p>` : ''}</article>`).join('')}</section>` : '';
+  return `<header class="pd-top"><img src="icon-rounded-192.png" alt=""><div><div class="pd-ti">${e(m.titulo || 'Planificación nutricional')}</div><div class="pd-su">${e(o.cliente || '')}${o.cliente ? ' · ' : ''}${e(sem.nombre)}${sem.nota ? ' · ' + e(sem.nota) : ''}</div></div></header>${obj}${dias}${compra}${rec}<footer class="pd-pie">NutriLogos · ${new Date().toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })}</footer>`;
+}
+function mnImprImprimir(html) {
+  let b = document.getElementById('mnPrint'); if (!b) { b = document.createElement('div'); b.id = 'mnPrint'; document.body.appendChild(b); }
+  b.innerHTML = html; const img = b.querySelector('img'); const ir = () => { window.print(); setTimeout(() => { b.innerHTML = ''; }, 500); };
+  if (img && !img.complete) { img.onload = img.onerror = ir; } else ir();
+}
+function mnvImprimir() { const s = mnvSem(); mnImprImprimir(mnImprHtml(MENU.menu, { sem: s.id, compra: true, recetas: true, objetivo: true, cliente: '', factor: MNV.f || 1 })); }
+const MNV_TIPO={D:['Desayuno','d'],A:['Almuerzo','a'],C:['Comida','c'],Me:['Merienda','me'],Ce:['Cena','ce'],O:['Otra comida','o']};
+const MNV_COL={green:'#1D9E75',blue:'#185FA5',amber:'#BA7517',coral:'#993C1D'};
+function mnvHoyDow(){ const d=new Date(new Date().toLocaleString('en-US',{timeZone:'Europe/Madrid'})).getDay(); return d===0?7:d; }
+const mnvSem=()=>MENU.menu.semanas.find(s=>s.id===MNV.sem)||MENU.menu.semanas.find(s=>s.id===MENU.semana_actual)||MENU.menu.semanas[0];
+function mnvIdxHoy(s){ const i=s.dias.findIndex(d=>d.dow===mnvHoyDow()); return i>=0?i:0; }
+function mnvSet(k,v){ MNV[k]=v; if(k==='sem'){ const s=mnvSem(); MNV.dia=Math.min(MNV.dia,s.dias.length-1); } pintarMenu(); }
+function pintarMenu(){
+  const m=MENU.menu, s=mnvSem(), tabs=[['hoy','Hoy'],['semana','Semana']];
+  if((s.compra||[]).length) tabs.push(['compra','Compra']);
+  if((m.recetas||[]).length) tabs.push(['recetas','Recetas']);
+  if(m.objetivo||(m.impresiones||[]).length) tabs.push(['plan','Sobre mi plan']);
+  if(!tabs.some(t=>t[0]===MNV.tab)) MNV.tab='hoy';
+  let h='';
+  if(m.semanas.length>1) h+=`<div class="mnv-chips" role="group" aria-label="Semana">${m.semanas.map(x=>`<button type="button" class="mnv-chip${x.id===s.id?' on':''}" onclick="mnvSet('sem','${esc(x.id)}')">${esc(x.nombre)}${x.id===MENU.semana_actual?'<span class="mnv-hoy" aria-label="Esta semana"></span>':''}</button>`).join('')}</div>`;
+  if(s.nota) h+=`<p class="mnv-sub">${esc(s.nota)}</p>`;
+  if(m.ajuste) h+=mnvFactorHtml();
+  h+=`<div class="mnv-tabs" role="tablist" aria-label="Secciones">${tabs.map(t=>`<button type="button" role="tab" class="mnv-tab${MNV.tab===t[0]?' on':''}" aria-selected="${MNV.tab===t[0]}" onclick="mnvSet('tab','${t[0]}')">${t[1]}</button>`).join('')}</div>`;
+  h+=MNV.tab==='hoy'?mnvHoy(s):MNV.tab==='semana'?mnvSemana(s):MNV.tab==='compra'?mnvCompra(s):MNV.tab==='recetas'?mnvRecetas():mnvPlan();
+  h+=`<div class="mnv-pdf"><button type="button" class="mnv-rb" onclick="mnvImprimir()">Descargar PDF</button></div>`;
+  $('menuBody').innerHTML=h; cargarFotos($('menuBody'));
+}
+function mnvComida(m){
+  const t=MNV_TIPO[m.tipo]||MNV_TIPO.O, ing=m.ing||[];
+  return `<div class="card mnv-m">
+    <div class="mnv-mh"><span class="mnv-b mnv-b-${t[1]}">${t[0]}</span>${m.libre?'<span class="mnv-b mnv-b-l">Libre</span>':''}${m.hora?`<span class="mnv-h">${esc(m.hora)}</span>`:''}</div>
+    ${m.nombre?`<div class="mnv-n">${esc(m.nombre)}</div>`:''}
+    ${ing.length&&m.libre?'<div class="mnv-ideas">Ideas</div>':''}
+    ${ing.length?`<div class="mnv-ing">${ing.map(i=>`<span class="mnv-i">${esc(mnvTxt(i))}${i.nota?` <i>(${esc(i.nota)})</i>`:''}</span>`).join('')}</div>`:''}
+    ${!m.libre&&ing.some(i=>(i.sust||[]).length)?`<details class="mnv-alt"><summary>Alternativas permitidas</summary>${ing.filter(i=>(i.sust||[]).length).map(i=>`<p><b>${esc(mnvTxt(i))}</b> → ${i.sust.map(x=>esc(x.t)+(x.max?` <i>(máx. ${x.max} ${x.max===1?'vez':'veces'} por semana)</i>`:'')).join(' · ')}</p>`).join('')}</details>`:''}
+    ${m.nota?`<p class="mnv-nota">${esc(m.nota)}</p>`:''}
+    ${m.receta&&(MENU.menu.recetas||[]).some(r=>r.id===m.receta)?`<button type="button" class="mnv-rb" onclick="mnvVerReceta('${esc(m.receta)}')">Ver receta</button>`:''}
+  </div>`;
+}
+function mnvHoy(s){
+  const hoy=mnvIdxHoy(s), d=s.dias[Math.min(MNV.dia,s.dias.length-1)]||s.dias[0];
+  const chips=`<div class="mnv-chips" role="group" aria-label="Día">${s.dias.map((x,i)=>`<button type="button" class="mnv-chip${x===d?' on':''}" onclick="mnvSet('dia',${i})">${esc(x.n)}${i===hoy&&s.id===(MENU.semana_actual||MENU.menu.semanas[0].id)?'<span class="mnv-hoy" aria-label="Hoy"></span>':''}</button>`).join('')}</div>`;
+  const c=d.ctx||{}, ctx=((c.texto||c.aviso)?`<div class="mnv-ctx ${esc(c.tipo||'')}">${c.texto?`<b>${esc(c.texto)}</b>`:''}${c.texto&&c.aviso?' — ':''}${esc(c.aviso||'')}</div>`:'')+(c.suppl?`<div class="mnv-ctx mnv-suppl"><b>Suplementación de hoy</b><br>${esc(c.suppl)}</div>`:'');
+  const cuerpo=d.comidas.length?d.comidas.map(mnvComida).join(''):vacioC('<path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/>','Nada planificado este día','Tu nutricionista no ha añadido comidas a este día.');
+  return chips+ctx+cuerpo;
+}
+function mnvSemana(s){
+  return s.dias.map((d,i)=>{
+    const c=d.ctx||{}, filas=d.comidas.map(m=>{ const t=MNV_TIPO[m.tipo]||MNV_TIPO.O; return `<p><b>${t[0]}${m.hora?' · '+esc(m.hora):''}:</b> ${m.libre?'Libre':esc(m.nombre||(m.ing||[]).map(x=>x.n).join(', ')||'—')}</p>`; }).join('');
+    return `<button type="button" class="mnv-dia" onclick="MNV.dia=${i};mnvSet('tab','hoy')"><div class="mnv-dia-h">${esc(d.n)}<span>${esc(c.texto||'')}</span></div>${filas||'<p>Sin comidas</p>'}</button>`;
+  }).join('');
+}
+function mnvVerReceta(id){ MNV.tab='recetas'; MNV.rec=id; pintarMenu(); const e=$('mnvR_'+id); if(e) e.scrollIntoView({block:'start'}); }
+function mnvPlan(){
+  const m=MENU.menu, imp=(m.impresiones||[]);
+  return (m.objetivo?`<div class="card" style="margin-bottom:12px"><p class="mnv-sh" style="margin-top:0">Objetivo</p><p class="mnv-obj">${esc(m.objetivo)}</p></div>`:'')+
+    (imp.length?`<div class="card"><p class="mnv-sh" style="margin-top:0">Impresiones de tu nutricionista</p>${imp.map(x=>`<div class="mnv-imp"><span class="mnv-dot" style="background:${MNV_COL[x.c]||MNV_COL.green}"></span><span>${esc(x.t)}</span></div>`).join('')}</div>`:'');
+}
+function mnvRecetas() {
+  return (MENU.menu.recetas || []).map(r => {
+    const ab = MNV.rec === r.id, nu = r.nutri || {};
+    const meta = [['Momento', r.momento], ['Objetivo', r.objetivo], ['Dificultad', r.dificultad], ['Tiempo', r.tiempo], ['Raciones', r.raciones]].filter(x => x[1]).map(x => `<span><b>${x[0]}</b>${esc(x[1])}</span>`).join('');
+    const tiles = nu.kcal || nu.prot || nu.hc || nu.grasa ? `<p class="mnv-sh">Información nutricional</p><div class="mnv-nu">${[['kcal', 'kcal', ''], ['prot', 'proteína', ' g'], ['hc', 'hidratos', ' g'], ['grasa', 'grasa', ' g']].map(x => `<div><b>${nu[x[0]] !== undefined ? Math.round(nu[x[0]]) + x[2] : '—'}</b><span>${x[1]}</span></div>`).join('')}</div><p class="mnv-nu-n">Valores estimados por ración</p>` : '';
+    return `<div class="card mnv-rec"><button type="button" class="mnv-rec-h" aria-expanded="${ab}" onclick="MNV.rec=${ab ? 'null' : `'${esc(r.id)}'`};pintarMenu()">${esc(r.nombre || 'Receta')}<span>${[r.tiempo, r.raciones ? r.raciones + ' rac.' : ''].filter(Boolean).map(esc).join(' · ')}</span></button>
+      ${ab ? `<div class="mnv-rec-b" id="mnvR_${esc(r.id)}">${r.foto ? `<img data-p="${esc(r.foto)}" alt="">` : ''}${meta ? `<div class="mnv-meta">${meta}</div>` : ''}
+        ${(r.ing || []).length ? `<p class="mnv-sh">Ingredientes</p><div class="mnv-ing">${r.ing.map(i => `<span class="mnv-i">${esc(i.t)}${i.nota ? ` <i>(${esc(i.nota)})</i>` : ''}</span>`).join('')}</div>` : ''}
+        ${tiles}
+        ${(r.pasos || []).length ? `<p class="mnv-sh">Preparación</p><ol class="mnv-pasos">${r.pasos.map((p, i) => `<li><span class="mnv-pn">${i + 1}</span><span>${esc(p)}</span></li>`).join('')}</ol>` : ''}
+        ${r.nota ? `<p class="mnv-sh">Nota nutricional</p><p class="mnv-nota" style="margin-top:0">${esc(r.nota)}</p>` : ''}
+        ${r.consejo ? `<p class="mnv-nota" style="margin-top:12px">${esc(r.consejo)}</p>` : ''}</div>` : ''}</div>`;
+  }).join('');
+}
+function mnvTxt(i) { return (typeof MNV !== 'undefined' && MNV.f && MNV.f !== 1 && i.cant && i.cant.modo !== 'libre') ? mnIngTxt(mnEscala({ n: i.n, cant: i.cant }, MNV.f)) : i.t; }
+function mnvFactor(d) { const f = Math.max(0.7, Math.min(1.3, Math.round(((MNV.f || 1) + d) * 100) / 100)); MNV.f = f; try { localStorage.setItem('mnv_factor', String(f)); } catch (e) {} pintarMenu(); }
+function mnvFactorHtml() { const f = MNV.f || 1; return `<div class="mnv-fac"><span>Cantidades</span><button type="button" aria-label="Menos cantidad" onclick="mnvFactor(-0.05)"${f <= 0.7 ? ' disabled' : ''}>−</button><b>${Math.round(f * 100)} %</b><button type="button" aria-label="Más cantidad" onclick="mnvFactor(0.05)"${f >= 1.3 ? ' disabled' : ''}>+</button>${f !== 1 ? '<button type="button" class="mnv-fac-r" onclick="MNV.f=1;mnvFactor(0)">Restablecer</button>' : ''}</div>`; }
+function mnvCompraKey(s) { return 'mnv_compra_' + (MENU.menu.titulo || '') + '_' + s.id; }
+function mnvCompraMarcas(s) { try { return JSON.parse(localStorage.getItem(mnvCompraKey(s)) || '{}'); } catch (e) { return {}; } }
+function mnvCompraMarca(k, v) { const s = mnvSem(), m = mnvCompraMarcas(s); if (v) m[k] = 1; else delete m[k]; try { localStorage.setItem(mnvCompraKey(s), JSON.stringify(m)); } catch (e) {} pintarMenu(); }
+function mnvCompra(s) {
+  const filas = s.compra || [], marcas = mnvCompraMarcas(s); if (!filas.length) return '';
+  const g = mnCompraAgrupa(filas), hechas = filas.filter(f => marcas[f.k]).length;
+  return `<p class="mnv-sub">Lo que necesitas para esta semana · ${hechas} de ${filas.length} marcados${(MNV.f || 1) !== 1 ? ' · la lista es para las cantidades de tu plan (sin tu ajuste)' : ''}</p>` + g.map(x => `<div class="card mnv-cp"><p class="mnv-sh" style="margin-top:0">${esc(x.c)}</p>${x.f.map(f => `<label class="mnv-cpf${marcas[f.k] ? ' ok' : ''}"><input type="checkbox"${marcas[f.k] ? ' checked' : ''} onchange="mnvCompraMarca('${esc(f.k)}',this.checked)"><span class="mnv-cpn">${esc(f.n)}</span><span class="mnv-cpq">${f.libre ? 'al gusto' : esc(f.txt)}${f.fmt ? `<small>${esc(f.fmt)}</small>` : ''}</span></label>`).join('')}</div>`).join('');
+}
+function abrirMenu(){
+  const d=MENU_DATA; if(!d) return; const m=d.menu;
+  MENU={menu:m,semana_actual:d.semana_actual&&m.semanas.some(s=>s.id===d.semana_actual)?d.semana_actual:m.semanas[0].id};
+  const s=m.semanas.find(x=>x.id===MENU.semana_actual); MNV.sem=s.id; MNV.dia=mnvIdxHoy(s); MNV.tab='hoy'; MNV.rec=null; MNV.f=1;
+  try{ const g=+localStorage.getItem('mnv_factor'); if(m.ajuste&&g>=0.7&&g<=1.3) MNV.f=g; }catch(e){}
+  pintarMenu(); show('vmenu');
+}
 // Suplementación: solo aparece si el profesional ha asignado algo; el cliente ve la dosis, cuándo y una nota corta (nunca el cálculo ni las referencias).
 function pintarTileSupl(){
   const t=$('tileSupl'); if(!t) return; const n=SUPL.length;

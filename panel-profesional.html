@@ -1323,16 +1323,20 @@ body.dark-mode .ref-src,body.dark-mode .sup-badge,body.dark-mode .depd-avatar-fa
         <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
         Nutrición Deportiva
       </button>
-      <button class="sb-item sb-subitem" id="sbAntropo" onclick="navTo('antropometria')">
-        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="5" r="2.5"/><path d="M12 8v6"/><path d="M8 22l2-8"/><path d="M16 22l-2-8"/><path d="M6 12h12"/></svg>
-        Antropometría
-      </button>
     </div>
     <button class="sb-item" id="sbFact" onclick="navTo('facturacion')">
       <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
       Facturación
     </button>
     <p class="sb-divider">Herramientas</p>
+    <button class="sb-item" id="sbAntropo" onclick="navTo('antropometria')">
+        <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="5" r="2.5"/><path d="M12 8v6"/><path d="M8 22l2-8"/><path d="M16 22l-2-8"/><path d="M6 12h12"/></svg>
+        Antropometría
+      </button>
+    <button class="sb-item" id="sbMenuSem" onclick="navTo('menusem')">
+        <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3zm0 0v7"/></svg>
+        Plan nutricional
+      </button>
     <button class="sb-item" id="sbRef" onclick="navTo('referencia')">
       <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
       Referencias clínicas
@@ -1624,6 +1628,9 @@ body.dark-mode .ref-src,body.dark-mode .sup-badge,body.dark-mode .depd-avatar-fa
 </div>
 
 <!-- ANTROPOMETRÍA (calculadora incrustada) -->
+<div id="vmenusem" class="view" role="main">
+  <iframe id="menuFrame" class="antro-frame" title="Plan nutricional" onload="window.syncMenuDark && syncMenuDark()"></iframe>
+</div>
 <div id="vantro" class="view" role="main">
   <iframe id="antroFrame" class="antro-frame" title="Calculadora de antropometría" onload="window.syncAntroDark && syncAntroDark()"></iframe>
 </div>
@@ -3013,6 +3020,7 @@ function accHtml(q, deps){
   (deps||[]).forEach(d=>{
     todas.push({t:'Nueva cita con '+d.nombre, k:'', f:()=>{ navTo('agenda'); openAddCita(); document.getElementById('citaCliente').value = d.nombre; }});
     todas.push({t:'Antropometría de '+d.nombre, k:'medidas valoracion', f:()=>abrirAntropometria(d.id)});
+    todas.push({t:'Plan nutricional de '+d.nombre, k:'menu semanal dieta plan comidas compra planificacion', f:()=>abrirMenuSemanal(d.id)});
   });
   const lista = palabras.length ? todas.filter(a=>{ const h=_nrm(a.t+' '+a.k); return palabras.every(w=>h.includes(w)); }) : ACC_BASE.slice(0,6);
   _accList = lista.slice(0,6);
@@ -3806,7 +3814,7 @@ function toggleDarkMode(){
   const isDark = document.body.classList.toggle('dark-mode');
   localStorage.setItem('nutrilogos_dark', isDark ? '1' : '0');
   document.getElementById('darkModeLabel').textContent = isDark ? 'Modo claro' : 'Modo oscuro';
-  syncAntroDark();
+  syncAntroDark(); syncMenuDark();
 }
 function initDarkMode(){
   if(localStorage.getItem('nutrilogos_dark') === '1'){
@@ -3845,6 +3853,7 @@ function navTo(section){
   else if(section==='deportiva'){document.getElementById('sbDep').classList.add('on');show('vdepdash');loadDeportistas();}
   else if(section==='facturacion'){document.getElementById('sbFact').classList.add('on');show('vfact');loadFacturacion();}
   else if(section==='antropometria'){document.getElementById('sbAntropo').classList.add('on');show('vantro');cargarAntropometria();}
+  else if(section==='menusem'){document.getElementById('sbMenuSem').classList.add('on');show('vmenusem');cargarMenuSemanal();}
   else if(section==='plan'){document.getElementById('sbPlan').classList.add('on');show('vplan');initPlan();}
   else if(section==='calc-energia'||section==='calc-hidra'){
     const hidra = section==='calc-hidra';
@@ -4214,6 +4223,25 @@ function abrirAntropometria(depId){
   navTo('antropometria');
   cargarAntropometria(depId);
 }
+// El menú semanal (otra app del repo) también va dentro del panel en un iframe con ?embed=1; &c=<id> abre el menú de ese cliente.
+let menuSrc = '';
+function cargarMenuSemanal(depId){
+  const base = window.location.origin + window.location.pathname.replace('panel-profesional.html', 'menu-semanal.html');
+  const src = base + '?embed=1' + (depId ? '&c=' + encodeURIComponent(depId) : '');
+  const f = document.getElementById('menuFrame');
+  if(depId || !menuSrc){ f.src = src; menuSrc = src; }
+  closeMobileSidebar();
+}
+function abrirMenuSemanal(depId){
+  navTo('menusem');
+  cargarMenuSemanal(depId);
+}
+function syncMenuDark(){
+  try{
+    const d = document.getElementById('menuFrame').contentDocument;
+    if(d && d.body) d.body.classList.toggle('dark-mode', document.body.classList.contains('dark-mode'));
+  }catch(e){}
+}
 // El modo oscuro lo decide el panel: se copia al documento del iframe
 function syncAntroDark(){
   try{
@@ -4564,7 +4592,7 @@ async function refrescarVista(){
   let y0 = null, tirado = 0, ocupado = false;
   const movil = ()=>window.matchMedia('(max-width:860px)').matches;
   document.addEventListener('touchstart', e=>{
-    y0 = (!ocupado && movil() && window.scrollY <= 0 && e.touches[0].clientX > 28 && !e.target.closest('textarea,input,select,iframe,.mbg,.sidebar,.agenda-swipe-bg,.agenda-item,#vantro,#vplan,#vcalc')) ? e.touches[0].clientY : null;
+    y0 = (!ocupado && movil() && window.scrollY <= 0 && e.touches[0].clientX > 28 && !e.target.closest('textarea,input,select,iframe,.mbg,.sidebar,.agenda-swipe-bg,.agenda-item,#vantro,#vmenusem,#vplan,#vcalc')) ? e.touches[0].clientY : null;
     tirado = 0;
   }, {passive:true});
   document.addEventListener('touchmove', e=>{
@@ -5659,6 +5687,7 @@ function openDepDet(id) {
     <div class="depd-panel${_depTab==='plan' ? ' on' : ''}" role="tabpanel" id="depPanel-plan" aria-labelledby="depTab-plan" data-k="plan" tabindex="0">
     <div class="depd-section">
       <p class="sec-title">Planificación nutricional</p>
+      <div id="menuBox">
       ${d.plan_url ? `
       <div class="plan-box">
         <span class="plan-url">${d.plan_url}</span>
@@ -5668,6 +5697,7 @@ function openDepDet(id) {
         </a>
         <button class="btn-plan-copy" onclick="copyDepUrl('${d.plan_url}')">Copiar</button>
       </div>` : `<div class="depd-desc-box" style="color:var(--g400)">Sin plan nutricional enlazado todavía.</div>`}
+      </div>
     </div>
 
     <div class="depd-section">
@@ -5715,6 +5745,7 @@ function openDepDet(id) {
   loadEstado(d.id);
   loadSudoracion(d.id);
   loadPlanes(d.id);
+  loadMenuBox(d.id);
   loadSuplementacion(d.id);
 }
 
@@ -7176,6 +7207,24 @@ function planEstadoCliente(r){
   return r.fecha < planLimiteCliente()
     ? '<span class="acc-pill" style="margin-top:4px;display:inline-block">Compartido · ya no lo ve el cliente</span>'
     : '<span class="acc-pill on" style="margin-top:4px;display:inline-block">Compartido con el cliente</span>';
+}
+// Plan nutricional en la ficha: mientras no haya un plan publicado en la app nueva (menu-semanal.html) sigue el enlace de siempre;
+// al publicarlo, el enlace anterior deja de mostrarse (el dato plan_url no se toca) y la ficha lleva al plan nuevo.
+async function loadMenuBox(depId){
+  const el = document.getElementById('menuBox'); if(!el) return;
+  const viejo = el.innerHTML;
+  let r = null;
+  try{ r = await sb(`menus_cliente?deportista_id=eq.${depId}&select=publicado_en,actualizado,titulo&limit=1`); }catch(e){}
+  if(!document.getElementById('menuBox') || currentDepId != depId) return;
+  if(!Array.isArray(r)) return;   // sin el SQL del menú: se queda el enlace de siempre
+  const m = r[0], fmt = f=>new Date(f).toLocaleDateString('es-ES',{day:'numeric',month:'short'});
+  const pub = m && m.publicado_en, cambios = pub && (new Date(m.actualizado) - new Date(pub) > 1500);
+  if(pub){
+    el.innerHTML = `<p style="margin:0 0 10px">${cambios ? `<span class="acc-pill">Plan nutricional publicado el ${fmt(pub)} · hay cambios sin publicar</span>` : `<span class="acc-pill on">Plan nutricional publicado el ${fmt(pub)} · lo ve el cliente</span>`}</p><div class="med-actions">${btnSoft('Abrir plan nutricional',`abrirMenuSemanal(${depId})`,'doc')}</div>`;
+    return;
+  }
+  const texto = m ? 'Plan nutricional en borrador: el cliente aún no lo ve y sigue viendo el enlace de arriba.' : 'Puedes montar su plan nutricional en la app nueva; hasta que lo publiques, el cliente sigue viendo el enlace de arriba.';
+  el.innerHTML = viejo + `<p class="med-empty" style="margin:12px 0 8px">${texto}</p><div class="med-actions">${btnSoft(m ? 'Abrir plan nutricional' : 'Crear plan nutricional',`abrirMenuSemanal(${depId})`,m ? 'doc' : 'plus')}</div>`;
 }
 async function loadPlanes(depId){
   let rows = [];
