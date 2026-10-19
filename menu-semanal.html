@@ -232,6 +232,7 @@ body.dark-mode :focus-visible{outline-color:#5CC8A6}
 .mn-nav-i.on{background:var(--t50);color:var(--t800);font-weight:600}
 .mn-nav-i small{display:block;font-size:11.5px;font-weight:500;color:var(--g400);margin-top:1px}
 .mn-tag{font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:20px;background:var(--pill-g);color:var(--t900);white-space:nowrap}
+body.dark-mode .mn-tag{color:var(--t800)}
 .mn-wk{margin-top:14px;padding-top:14px;border-top:.5px solid var(--bd);display:flex;flex-direction:column;gap:12px}
 .mn-chk{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--g700);cursor:pointer}
 .mn-chk input{width:16px;height:16px;accent-color:var(--t600)}
@@ -331,6 +332,10 @@ body.dark-mode .mn-fch.on{background:var(--t400);border-color:var(--t400);color:
 body.dark-mode .mn-bib-b.veg{color:var(--t800)}
 .mn-bib-t{background:var(--pill-au);color:var(--gold-dk)}
 .mn-bib-o{font-size:11px;color:var(--g400);margin-right:auto}
+.mn-gen-d{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.mn-gen-t{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.mn-gen-r{margin-top:18px;padding-top:16px;border-top:.5px solid var(--bd)}
+.mn-gen-r small{color:var(--g400)}
 .mn-chips-r{display:flex;flex-wrap:wrap;gap:8px}
 .mn-imp-t{overflow:auto;border:.5px solid var(--bd);border-radius:12px}
 .mn-imp-t table{width:100%;border-collapse:collapse;font-size:12.5px}
@@ -398,6 +403,7 @@ body.dark-mode .mn-bib-b.veg{color:var(--t800)}
   .mn-meal-ex{grid-template-columns:1fr}
   .mn-g2,.mn-g3{grid-template-columns:1fr}
   .mn-dt-g{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .mn-gen-t{grid-template-columns:repeat(2,minmax(0,1fr))}
   .mn-g4{grid-template-columns:repeat(2,minmax(0,1fr))}
   .mn-nutri{grid-template-columns:repeat(3,1fr)}
   .oi-c{flex-basis:88px;width:88px}
@@ -436,6 +442,9 @@ body.dark-mode .mn-bib-b.veg{color:var(--t800)}
   <div class="mc" style="max-width:760px;max-height:calc(100dvh - 2rem);overflow-y:auto" id="mnImpCuerpo"></div>
 </div>
 <input type="file" id="mnImpFile" accept=".html,.htm,text/html" style="display:none" aria-hidden="true" tabindex="-1" onchange="mnImpArchivo(this)">
+<div class="mbg" id="mMnGen" style="display:none;z-index:320" role="dialog" aria-modal="true" aria-labelledby="mnGenTit" onclick="if(event.target===this)mnGenCerrar()">
+  <div class="mc" style="max-width:760px;max-height:calc(100dvh - 2rem);overflow-y:auto" id="mnGenCuerpo"></div>
+</div>
 <div class="mbg" id="mMnObj" style="display:none;z-index:315" role="dialog" aria-modal="true" aria-labelledby="mnObjTit" onclick="if(event.target===this)mnObjCerrar()">
   <div class="mc" style="max-width:720px;max-height:calc(100dvh - 2rem);overflow-y:auto" id="mnObjCuerpo"></div>
 </div>
@@ -1035,7 +1044,7 @@ function mnPintar() {
   document.getElementById('mnPage').innerHTML = `
     <div class="mn-bar"><button type="button" class="mn-back" onclick="mnSalir()">${mnI('back')}Clientes</button><div id="mnEstado">${mnEstadoHtml()}</div></div>
     <div class="mn-head"><div><h1 class="mn-h1">Menú semanal</h1><p class="mn-cli">${sudEsc(MN.nombre)}</p></div>
-      <div class="mn-acc">${faltan ? mnBtn('Completar catálogo (' + faltan + ')', 'mnAutoAbrir()', { icon: 'wand' }) : ''}${mnBtn('Catálogo', 'mnCatAbrir()', { icon: 'book' })}${pub ? mnBtn('Retirar', 'mnRetirar()', { icon: 'undo' }) : ''}${mnBtn(pub ? 'Publicar cambios' : 'Publicar', 'mnPublicar()', { pri: true, icon: 'send' })}</div></div>
+      <div class="mn-acc">${faltan ? mnBtn('Completar catálogo (' + faltan + ')', 'mnAutoAbrir()', { icon: 'wand' }) : ''}${mnBtn('Generar semana', 'mnGenAbrir()', { icon: 'wand' })}${mnBtn('Catálogo', 'mnCatAbrir()', { icon: 'book' })}${pub ? mnBtn('Retirar', 'mnRetirar()', { icon: 'undo' }) : ''}${mnBtn(pub ? 'Publicar cambios' : 'Publicar', 'mnPublicar()', { pri: true, icon: 'send' })}</div></div>
     <div class="mn-tabs" role="tablist" aria-label="Secciones del menú">${tabs.map(t => `<button type="button" role="tab" class="mn-tab${MN.tab === t[0] ? ' on' : ''}" aria-selected="${MN.tab === t[0]}" onclick="mnTab('${t[0]}')">${t[1]}${t[2] ? `<span class="mn-n">${t[2]}</span>` : ''}</button>`).join('')}</div>
     <div id="mnCuerpo">${MN.tab === 'menu' ? mnMenuHtml() : MN.tab === 'recetas' ? mnRecetasHtml() : MN.tab === 'platos' ? mnPlatosHtml() : MN.tab === 'biblioteca' ? mnBibHtml() : MN.tab === 'objetivo' ? mnObjetivoHtml() : mnClienteHtml()}</div>`;
   if (MN.tab === 'biblioteca') mnBibPintar();
@@ -1808,6 +1817,132 @@ function mnBibUsar(ix) {
   const p = MN_BIBLIOTECA[ix], s = mnSem(), d = s.dias[MN_BIB.dia] || s.dias[0]; if (!p || !d) return;
   d.comidas.push({ id: mnId('m'), tipo: p.m, hora: '', nombre: p.n, nota: '', libre: false, receta: null, plato: null, ing: mnParseTexto(p.i.join('\n')) });
   mnRelinkTodo(); mnCambio(); toast('Añadido a ' + d.n + ': «' + p.n + '»', { accion: { texto: 'Deshacer', fn: () => { const j = d.comidas.length - 1; if (j >= 0 && d.comidas[j].nombre === p.n) { d.comidas.pop(); mnCambio(); } } } });
+}
+
+// ── Generador de semana (borrador) ──
+// Propone una semana tipo con los platos de la biblioteca, según el tipo de cada día, las kcal objetivo, la base vegetal,
+// los topes por semana de lo que no es vegetal, las exclusiones y los alimentos ancla del cliente. Siempre se crea una
+// semana NUEVA (nunca toca las que ya hay) y el profesional la edita después. Los hidratos se ajustan a las kcal del día.
+const MN_GEN_REP = { D: 0.22, A: 0.10, C: 0.33, Me: 0.12, Ce: 0.23 }; // reparto orientativo de las kcal entre momentos
+const MN_GEN_BASE = [['prefer', 'Vegetal por defecto'], ['solo', 'Solo vegetal'], ['libre', 'Sin preferencia']];
+const MN_GEN_TOPES = [['carne', 'Carne', 2], ['pescado', 'Pescado', 3], ['huevo', 'Huevo', 3], ['lácteo', 'Lácteo', 7]];
+let MNG = null, _mnGenK = null;
+function mnGenCfg() {
+  const g = MN.c.gen || {}, caps = {}; MN_GEN_TOPES.forEach(t => { caps[t[0]] = g.caps && typeof g.caps[t[0]] === 'number' ? g.caps[t[0]] : t[2]; });
+  return { momentos: g.momentos || ['D', 'A', 'C', 'Me', 'Ce'], base: g.base || 'prefer', caps, excl: g.excl || '', anclas: g.anclas || '', anclasN: g.anclasN || 1 };
+}
+const mnGenPalabras = t => String(t || '').split(/[,;\n]/).map(x => mnNorm(x)).filter(x => x.length >= 3);
+const mnGenEsc = w => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const mnGenTiene = (txt, w) => new RegExp('\\b' + mnGenEsc(w)).test(txt);
+function mnGenAbrir() {
+  const g = mnGenCfg(), s = mnSem();
+  MNG = { tipos: s.dias.map(d => (d.ctx && d.ctx.tipo) || ''), res: null };
+  const f = (id, l, h) => `<div class="mn-f"><label class="mn-l" for="${id}">${l}</label>${h}</div>`;
+  document.getElementById('mnGenCuerpo').innerHTML = `<p class="mt" id="mnGenTit">Generar una semana</p>
+    <p class="ms">Propone un borrador con los platos de tu biblioteca. Se crea como <b>semana nueva</b> y lo cambias todo después; no toca las semanas que ya tienes.</p>
+    <p class="mn-l" style="margin:16px 0 6px">Tipo de cada día <span class="hd-opt">(del día se toman las kcal objetivo)</span></p>
+    <div class="mn-gen-d">${s.dias.map((d, i) => `<label class="mn-f"><span class="mn-l">${sudEsc(d.n)}</span><select class="inp" style="width:100%" data-gd="${i}">${MN_CTX.map(o => `<option value="${o[0]}"${(MNG.tipos[i] || '') === o[0] ? ' selected' : ''}>${o[1]}</option>`).join('')}</select></label>`).join('')}</div>
+    <p class="mn-l" style="margin:18px 0 6px">Comidas de cada día</p>
+    <div class="mn-checks">${MN_TIPOS.filter(t => t[0] !== 'O').map(t => `<label class="mn-chk2"><input type="checkbox" data-gm="${t[0]}"${g.momentos.indexOf(t[0]) >= 0 ? ' checked' : ''}> ${t[1]}</label>`).join('')}</div>
+    <div class="mn-g2" style="margin-top:16px">${f('mnGenBase', 'Base de la alimentación', `<select class="inp" id="mnGenBase" style="width:100%">${MN_GEN_BASE.map(o => `<option value="${o[0]}"${g.base === o[0] ? ' selected' : ''}>${o[1]}</option>`).join('')}</select>`)}
+      ${f('mnGenN', 'Alimentos ancla: veces por semana', `<input class="inp" id="mnGenN" type="number" min="1" max="7" value="${g.anclasN}">`)}</div>
+    <p class="mn-l" style="margin:18px 0 6px">Máximo de platos por semana con…</p>
+    <div class="mn-gen-t">${MN_GEN_TOPES.map(t => `<label class="mn-f"><span class="mn-l">${t[1]}</span><input class="inp" type="number" min="0" max="35" data-gt="${t[0]}" value="${g.caps[t[0]]}"></label>`).join('')}</div>
+    <p class="mn-ayuda" style="margin:6px 0 0">0 = ninguno. Con «Solo vegetal» se ignoran.</p>
+    <div class="mn-f" style="margin-top:16px"><label class="mn-l" for="mnGenAn">Alimentos ancla <span class="hd-opt">(los que no quiere quitar; separados por comas)</span></label><input class="inp" id="mnGenAn" maxlength="200" value="${sudEsc(g.anclas)}" placeholder="Ej. pollo, atún, queso"></div>
+    <div class="mn-f" style="margin-top:12px"><label class="mn-l" for="mnGenEx">No puede o no quiere comer <span class="hd-opt">(separados por comas)</span></label><input class="inp" id="mnGenEx" maxlength="200" value="${sudEsc(g.excl)}" placeholder="Ej. cerdo, frutos secos, gluten, pan"></div>
+    <div id="mnGenRes"></div>
+    <div class="mbtns" style="margin-top:16px"><button type="button" class="btn-cancel" onclick="mnGenCerrar()">Cerrar</button><button type="button" class="btn-ok" onclick="mnGenHacer()">Generar semana</button></div>`;
+  document.getElementById('mMnGen').style.display = 'flex';
+}
+function mnGenCerrar() { document.getElementById('mMnGen').style.display = 'none'; MNG = null; }
+// kcal estimadas de un plato de la biblioteca con el catálogo (null si no se pueden calcular)
+function mnGenKcal(p) {
+  if (!_mnGenK) _mnGenK = new Map(); if (_mnGenK.has(p)) return _mnGenK.get(p);
+  let k = 0, n = 0; mnParseTexto(p.i.join('\n')).forEach(i => { i.a = mnLink(i.n); const x = mnMacrosIng(i); if (!x.sin) { k += x.kcal; n++; } });
+  const r = n >= 2 ? k : null; _mnGenK.set(p, r); return r;
+}
+function mnGenElige(c) { const t = c.reduce((a, x) => a + x.w, 0); if (!t) return null; let r = Math.random() * t; for (const x of c) { r -= x.w; if (r <= 0) return x; } return c[c.length - 1]; }
+function mnGenPesoTipo(p, tipo) {
+  if (tipo === 'base' || tipo === 'otro') return 1.5;
+  if (p.d.indexOf(tipo) >= 0) return 3;
+  if (tipo === 'partido' && p.d.indexOf('entreno') >= 0) return 2;
+  return p.d.length ? 0.4 : 1.5;
+}
+function mnGenPlan(cfg, tipos) {
+  const s = mnSem(), excl = mnGenPalabras(cfg.excl), anclas = mnGenPalabras(cfg.anclas);
+  const topes = {}; MN_GEN_TOPES.forEach(t => { topes[t[0]] = cfg.base === 'solo' ? 0 : cfg.caps[t[0]]; });
+  const usos = {}, cuenta = {}, avisos = [];
+  const ok = ix => { const p = MN_BIBLIOTECA[ix], x = mnNorm(p.n + ' ' + p.i.join(' ')); return !excl.some(w => mnGenTiene(x, w)); };
+  const admitidos = MN_BIBLIOTECA.map((p, ix) => ix).filter(ok);
+  const cabe = ix => mnBase(MN_BIBLIOTECA[ix]).every(b => (cuenta[b] || 0) < (topes[b] == null ? 99 : topes[b]));
+  const marca = ix => { usos[ix] = (usos[ix] || 0) + 1; mnBase(MN_BIBLIOTECA[ix]).forEach(b => { cuenta[b] = (cuenta[b] || 0) + 1; }); };
+  const dias = s.dias.map((d, i) => ({ d, i, tipo: tipos[i] || 'base', plan: {} }));
+  const generables = dias.filter(x => x.tipo !== 'libre');
+  const slots = []; generables.forEach(x => cfg.momentos.forEach(m => slots.push({ x, m })));
+  // 1) alimentos ancla: se reservan primero, en un día cualquiera donde el plato encaje
+  anclas.forEach(a => {
+    const cands = admitidos.filter(ix => mnGenTiene(mnNorm(MN_BIBLIOTECA[ix].n + ' ' + MN_BIBLIOTECA[ix].i.join(' ')), a));
+    if (!cands.length) { avisos.push('No hay platos con «' + a + '» en la biblioteca.'); return; }
+    for (let v = 0; v < cfg.anclasN; v++) {
+      const libres = slots.filter(sl => !sl.x.plan[sl.m]), opciones = [];
+      cands.forEach(ix => { const p = MN_BIBLIOTECA[ix]; libres.filter(sl => sl.m === p.m && !Object.values(sl.x.plan).includes(ix)).forEach(sl => opciones.push({ ix, sl, w: mnGenPesoTipo(p, sl.x.tipo) * ((usos[ix] || 0) ? 0.2 : 1) })); });
+      const e = mnGenElige(opciones); if (!e) { avisos.push('No encontré hueco para «' + a + '» ' + (v + 1) + ' veces.'); break; }
+      e.sl.x.plan[e.sl.m] = e.ix; marca(e.ix);
+    }
+  });
+  // 2) resto de huecos, en orden aleatorio para repartir bien los topes
+  slots.filter(sl => sl.x.plan[sl.m] === undefined).sort(() => Math.random() - 0.5).forEach(sl => {
+    const obj = mnObjDia(sl.x.tipo === 'base' ? '' : sl.x.tipo), rep = cfg.momentos.reduce((a, m) => a + MN_GEN_REP[m], 0), meta = obj ? obj.kcal * MN_GEN_REP[sl.m] / rep : null;
+    const cands = admitidos.filter(ix => MN_BIBLIOTECA[ix].m === sl.m && cabe(ix) && !Object.values(sl.x.plan).includes(ix)).map(ix => {
+      const p = MN_BIBLIOTECA[ix]; let w = mnGenPesoTipo(p, sl.x.tipo) * ((usos[ix] || 0) ? 0.15 : 1);
+      if (cfg.base === 'prefer' && !mnBase(p).length) w *= 4;
+      const k = meta ? mnGenKcal(p) : null; if (k != null) w *= 0.3 + 1 / (1 + 2 * Math.abs(k - meta) / meta);
+      return { ix, w };
+    });
+    const e = mnGenElige(cands); if (!e) { avisos.push((MN_TIPOS.find(t => t[0] === sl.m) || [0, sl.m])[1] + ' de ' + sl.x.d.n + ': no hay plato que cumpla las condiciones.'); return; }
+    sl.x.plan[sl.m] = e.ix; marca(e.ix);
+  });
+  return { dias, avisos, cuenta };
+}
+// Los hidratos se ajustan a las kcal del día (solo los alimentos de la categoría «Hidratos»; el resto se queda como está)
+function mnGenAjusta(dia, obj) {
+  const carb = []; let kc = 0, tot = 0, ok = 0, falta = 0;
+  dia.comidas.forEach(m => (m.ing || []).forEach(i => { const x = mnMacrosIng(i); if (x.sin) { if (x.sin !== 'libre') falta++; return; } ok++; tot += x.kcal; const al = MN.cat.find(a => a.id == i.a); if (al && al.categoria === 'Hidratos') { carb.push(i); kc += x.kcal; } }));
+  if (!carb.length || kc <= 0) return false;
+  if (ok / (ok + falta) < 0.75) return 'datos'; // con pocos datos del catálogo el ajuste sería engañoso
+  let r = (obj.kcal - (tot - kc)) / kc; r = Math.max(0.5, Math.min(2, r)); if (Math.abs(r - 1) < 0.03) return false;
+  const red = (v, c) => { const m = c.modo === 'g' && (c.u === 'g' || c.u === 'ml') ? 5 : c.modo === 'g' ? 0.05 : 0.5; return Math.max(m, Math.round(v * r / m) * m); };
+  carb.forEach(i => { const c = i.cant; c.min = +red(c.min, c).toFixed(2); if (c.max) c.max = Math.max(c.min, +red(c.max, c).toFixed(2)); });
+  return true;
+}
+function mnGenNotas(filas) {
+  const v = filas.filter(x => x.o && x.t.calc), n = (k, lim) => v.filter(x => x.t[k] < x.o[k] * lim).length, out = [];
+  if (v.length >= 3 && n('prot', 0.85) >= Math.ceil(v.length / 2)) out.push('La proteína queda por debajo del objetivo en ' + n('prot', 0.85) + ' días: sube la proteína en algún plato (tofu, legumbres, yogur de soja…).');
+  if (v.length >= 3 && n('grasa', 0.8) >= Math.ceil(v.length / 2)) out.push('La grasa queda baja en ' + n('grasa', 0.8) + ' días (referencia 20–25 % de las kcal): puedes añadir aceite, frutos secos o aguacate.');
+  return out.map(t => `<li>${sudEsc(t)}</li>`).join('');
+}
+function mnGenHacer() {
+  if (!MNG || !MN) return;
+  const cfg = { momentos: [...document.querySelectorAll('#mnGenCuerpo [data-gm]:checked')].map(x => x.dataset.gm), base: document.getElementById('mnGenBase').value, caps: {}, excl: document.getElementById('mnGenEx').value.trim(), anclas: document.getElementById('mnGenAn').value.trim(), anclasN: Math.max(1, Math.min(7, +document.getElementById('mnGenN').value || 1)) };
+  MN_GEN_TOPES.forEach(t => { const v = +document.querySelector(`#mnGenCuerpo [data-gt="${t[0]}"]`).value; cfg.caps[t[0]] = isFinite(v) && v >= 0 ? Math.round(v) : t[2]; });
+  if (!cfg.momentos.length) { toast('Elige al menos una comida', { tipo: 'error' }); return; }
+  const tipos = [...document.querySelectorAll('#mnGenCuerpo [data-gd]')].map(x => x.value); MN.c.gen = cfg; _mnGenK = null;
+  const fuente = mnSem(), plan = mnGenPlan(cfg, tipos), sem = mnSemanaNueva('Propuesta ' + (MN.c.semanas.filter(x => /^Propuesta/.test(x.nombre)).length + 1));
+  sem.dias = plan.dias.map(x => {
+    const ctx = mnClonar(fuente.dias[x.i].ctx || { tipo: '', texto: '', aviso: '' }); ctx.tipo = tipos[x.i] || '';
+    return { id: mnId('d'), n: x.d.n, dow: x.d.dow || x.i + 1, ctx, comidas: cfg.momentos.filter(m => x.plan[m] !== undefined).map(m => { const p = MN_BIBLIOTECA[x.plan[m]]; return { id: mnId('m'), tipo: p.m, hora: '', nombre: p.n, nota: '', libre: false, receta: null, plato: null, bib: x.plan[m], ing: mnParseTexto(p.i.join('\n')) }; }) };
+  });
+  const antS = MN.c.semanas.slice(), antSem = MN.sem, antDia = MN.dia;
+  MN.c.semanas.push(sem); MN.sem = sem.id; MN.dia = 0; mnRelinkTodo();
+  let aj = 0, sinObj = 0, sinDatos = 0; const filas = sem.dias.map(d => { const o = mnObjDia(d.ctx.tipo || ''); if (!o) sinObj++; else if (d.comidas.length) { const q = mnGenAjusta(d, o); if (q === true) aj++; else if (q === 'datos') sinDatos++; } return { d, o, t: mnTotDia(d) }; });
+  mnCambio(); mnPintar();
+  const f = (v, o) => o ? `<span class="mn-estado ${mnEstadoBarra(v, o)}"><i></i>${mnF(v)}</span> <small>/ ${mnF(o)}</small>` : mnF(v);
+  document.getElementById('mnGenRes').innerHTML = `<div class="mn-gen-r"><p class="mn-l" style="margin:0 0 8px">Resultado · «${sudEsc(sem.nombre)}» ya está creada</p>
+    <div class="mn-imp-t"><table><thead><tr><th>Día</th><th>Comidas</th><th>kcal</th><th>Proteína g</th><th>Hidratos g</th><th>Grasa g</th></tr></thead><tbody>${filas.map(x => `<tr><th scope="row">${sudEsc(x.d.n)}</th><td>${x.d.comidas.length || '—'}</td>${x.t.calc ? `<td>${f(x.t.kcal, x.o && x.o.kcal)}</td><td>${f(x.t.prot, x.o && x.o.prot)}</td><td>${f(x.t.hc, x.o && x.o.hc)}</td><td>${f(x.t.grasa, x.o && x.o.grasa)}</td>` : '<td colspan="4"><small>sin calcular</small></td>'}</tr>`).join('')}</tbody></table></div>
+    <ul class="mn-imp-n">${aj ? `<li>Hidratos ajustados a las kcal en ${aj} ${aj === 1 ? 'día' : 'días'}.</li>` : ''}${mnGenNotas(filas)}${sinDatos ? `<li>${sinDatos} ${sinDatos === 1 ? 'día' : 'días'} sin ajustar: faltan datos de nutrición en el catálogo (usa «Completar catálogo»).</li>` : ''}${sinObj === filas.length ? '<li>Define los <b>objetivos nutricionales</b> para que ajuste las cantidades a las kcal de cada día.</li>' : ''}${filas.every(x => !x.t.calc) ? '<li>Sin nutrición en el catálogo no puedo calcular los totales: usa «Completar catálogo».</li>' : ''}${plan.avisos.map(a => `<li>${sudEsc(a)}</li>`).join('')}<li>Es un borrador: revisa los platos y las cantidades antes de publicar.</li></ul></div>`;
+  const dlg = document.getElementById('mnGenCuerpo'); dlg.scrollTop = dlg.scrollHeight;
+  toast('Propuesta creada', { accion: { texto: 'Deshacer', fn: () => { MN.c.semanas = antS; MN.sem = antSem; MN.dia = antDia; mnCambio(); mnPintar(); mnGenCerrar(); } } });
 }
 
 // ── Funciones propias de la página de pruebas ──
