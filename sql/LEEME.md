@@ -18,6 +18,7 @@ Todos se ejecutan a mano en Supabase → SQL Editor → New query → Run. Son s
    - `supabase_suplementacion.sql`
    - `supabase_citas_hecha.sql`
    - `supabase_menu_semanal.sql` (menú semanal: catálogo de alimentos, menús, publicar)
+   - `supabase_biblioteca_platos.sql` (menú semanal: biblioteca de platos ampliable desde la app; requiere solo `supabase_clientes_acceso.sql`)
 7. `supabase_seguridad_2_cerrar.sql`, **el último**, solo cuando se cumplan las condiciones de su cabecera.
 
 ## Ojo
