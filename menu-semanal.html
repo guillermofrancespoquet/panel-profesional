@@ -109,46 +109,6 @@ body.dark-mode .toast.aviso{background:#4A3A28}
 .toast{animation:none}}
 @keyframes ptrSpin{to{transform:rotate(360deg)}}
 @media(max-width:860px){html{overscroll-behavior-y:contain}}
-.mn-chips{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:0 0 12px}
-.mn-chip{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border:.5px solid var(--bdm);border-radius:20px;background:var(--sf);color:var(--g700);font:500 13px var(--f);cursor:pointer}
-.mn-chip:hover{background:var(--t50)}
-.mn-chip.on{background:var(--btn);border-color:var(--btn);color:#fff}
-.mn-chip-add{border-style:dashed;color:var(--t600)}
-.mn-dot{width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.7}
-.mn-box{background:var(--sf);border:.5px solid var(--bd);border-radius:14px;padding:12px 14px;margin-bottom:12px}
-.mn-fila{display:flex;gap:10px;flex-wrap:wrap}
-.mn-lbl{display:block;font-size:12px;font-weight:600;color:var(--g700);margin:0 0 4px}
-.mn-meal{background:var(--sf);border:.5px solid var(--bdm);border-radius:16px;padding:14px;margin-bottom:12px;box-shadow:0 2px 10px rgba(4,52,44,.05)}
-.mn-ta{min-height:96px;line-height:1.5}
-.mn-ings{display:flex;flex-wrap:wrap;gap:5px;margin:8px 0 2px}
-.mn-ing{display:inline-flex;align-items:center;gap:5px;font-size:12px;background:var(--g100);border:.5px solid var(--bd);border-radius:20px;padding:3px 10px;color:var(--g700)}
-.mn-ing.sin{border-style:dashed}
-.mn-ing i{font-style:normal;color:var(--g400)}
-.mn-ing-add{border:none;background:var(--t50);color:var(--t600);width:18px;height:18px;border-radius:50%;font-size:13px;line-height:1;cursor:pointer;padding:0}
-.mn-ayuda{font-size:12px;color:var(--g400);line-height:1.5}
-.mn-plato{margin:8px 0 0;padding:6px 10px;background:var(--gold-50);border-radius:8px;color:var(--gold-dk)}
-.mn-chk{display:flex;align-items:center;gap:8px;font-size:13px;margin:10px 0 8px;cursor:pointer}
-.mn-chk2{display:inline-flex;align-items:center;gap:6px;font-size:13px;margin:0 12px 6px 0;cursor:pointer}
-.mn-macc{margin-top:10px;padding-top:10px;border-top:.5px solid var(--bd)}
-.mn-add{margin:4px 0 24px;align-items:center}
-.mn-rec{border:.5px solid var(--bdm);border-radius:12px;margin-bottom:8px;overflow:hidden}
-.mn-rec-h{display:flex;justify-content:space-between;align-items:center;gap:10px;width:100%;padding:11px 14px;background:var(--sf);border:none;font:600 14px var(--f);color:var(--g900);cursor:pointer;text-align:left}
-.mn-rec-h:hover{background:var(--t50)}
-.mn-rec-b{padding:6px 14px 14px;border-top:.5px solid var(--bd)}
-.mn-foto{margin-top:10px}
-.mn-foto img{display:block;max-width:240px;width:100%;border-radius:12px;margin-bottom:8px}
-.mn-cat-l{margin:12px 0}
-.mn-cat-i,.mn-plato-f{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:.5px solid var(--bd)}
-.mn-macc,.mn-add,.mn-sem .row-actions,#mnPage .page-header .row-actions{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-start}
-.mn-ext-i{display:flex;flex-direction:column;align-items:flex-start;width:100%;gap:2px;padding:8px 10px;margin-bottom:4px;background:var(--g100);border:none;border-radius:10px;cursor:pointer;text-align:left;font-family:var(--f)}
-.mn-ext-i:hover{background:var(--t50)}
-.mn-ext-n{font-size:13px;font-weight:600;color:var(--g900)}
-.mn-nutri{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
-.oi-f{display:flex;gap:8px;align-items:flex-start;margin-bottom:8px}
-.oi-c{flex:0 0 96px;width:96px}
-.oi-t{flex:1;min-height:60px}
-@media(max-width:600px){.mn-nutri{grid-template-columns:repeat(3,1fr)}
-.oi-c{flex-basis:84px;width:84px}}
 .depd-tabs{display:flex;gap:4px;overflow-x:auto;padding:4px;background:var(--g100);border-radius:12px;scrollbar-width:none}
 .depd-tabs::-webkit-scrollbar{display:none}
 .depd-tab{flex:1 0 auto;display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:9px 15px;border:none;background:none;border-radius:9px;font:600 13px var(--f);color:var(--g500);cursor:pointer;white-space:nowrap;min-height:38px}
@@ -213,34 +173,193 @@ body.dark-mode :focus-visible{outline-color:#5CC8A6}
 .mnv-imp{display:flex;gap:10px;font-size:13.5px;color:var(--g700);line-height:1.6;padding:9px 0;border-bottom:.5px solid var(--bd)}
 .mnv-imp:last-child{border-bottom:none;padding-bottom:0}
 .mnv-dot{flex:0 0 8px;height:8px;border-radius:50%;margin-top:8px}
-
-
-.lab-top{display:flex;flex-wrap:nowrap;align-items:center;justify-content:space-between;gap:10px;padding:12px 20px;background:var(--t900);color:#fff;font-size:14px}
-.lab-badge{white-space:nowrap;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;background:var(--gold-50);color:var(--gold-dk)}
-.lab-fila{display:flex;justify-content:space-between;align-items:center;gap:12px;width:100%;text-align:left;padding:12px 4px;background:none;border:none;border-bottom:.5px solid var(--bd);font-family:var(--f);color:var(--g900);cursor:pointer}
-.lab-fila:hover{background:var(--t50)}
-.lab-est{font-size:12px;font-weight:600;color:var(--g500);white-space:nowrap}
-.lab-est.pub{color:var(--t600)}
-.mnv-frame{max-width:420px;margin:0 auto 2rem;border:.5px solid var(--bdm);border-radius:24px;padding:14px;background:var(--bg)}
-.mnv-bar{font-size:12px;font-weight:700;color:var(--t800);text-align:center;margin-bottom:12px}
+/* ═══ Menú semanal: sistema visual de la página ═══ */
+:root{--mn-sh:0 1px 2px rgba(4,52,44,.04),0 4px 16px rgba(4,52,44,.05)}
+.lab-top{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:12px;height:56px;padding:0 28px;background:var(--sf);border-bottom:.5px solid var(--bd)}
+.lab-brand{display:flex;align-items:center;gap:10px;font-size:15px;font-weight:700;color:var(--g900);letter-spacing:-.01em}
+.lab-brand img{width:28px;height:28px;border-radius:8px}
+.lab-brand{white-space:nowrap}
+.lab-brand span{font-weight:500;color:var(--g500)}
+.lab-badge{white-space:nowrap;font-size:11px;font-weight:700;padding:4px 11px;border-radius:20px;background:var(--gold-50);color:var(--gold-dk);box-shadow:inset 0 0 0 .5px var(--pill-au-bd)}
+.page{max-width:1120px;padding:32px 28px 72px}
+.mn-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 20px}
+.mn-back{display:inline-flex;align-items:center;gap:6px;background:none;border:none;color:var(--t600);font:600 13.5px var(--f);padding:6px 0;cursor:pointer}
+.mn-back:hover{color:var(--t800)}
+.mn-estado{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;color:var(--g500)}
+.mn-estado i{width:7px;height:7px;border-radius:50%;background:var(--g200);flex-shrink:0}
+.mn-estado.ok i{background:var(--t400)}
+.mn-estado.warn i{background:var(--gold)}
+.mn-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:24px}
+.mn-h1{font-size:28px;font-weight:700;letter-spacing:-.025em;line-height:1.15;color:var(--g900)}
+.mn-cli{font-size:14.5px;color:var(--g500);margin-top:4px}
+.mn-acc{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.mn-btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;height:38px;padding:0 15px;border-radius:10px;border:.5px solid var(--bdm);background:var(--sf);color:var(--g900);font:600 13.5px var(--f);cursor:pointer;transition:background .15s,border-color .15s;white-space:nowrap}
+.mn-btn:hover{background:var(--t50);border-color:var(--t400)}
+.mn-btn.pri{background:var(--btn);border-color:var(--btn);color:#fff}
+.mn-btn.pri:hover{background:var(--btn-h)}
+.mn-btn.ghost{border-color:transparent;background:none;color:var(--t600)}
+.mn-btn.ghost:hover{background:var(--t50)}
+.mn-btn.dan{color:var(--red)}
+.mn-btn.dan:hover{background:var(--red-bg);border-color:var(--red)}
+.mn-btn.sm{height:32px;padding:0 11px;font-size:12.5px;border-radius:9px}
+.mn-btn svg,.mn-ib svg{flex-shrink:0}
+.mn-ib{width:32px;height:32px;display:inline-flex;align-items:center;justify-content:center;border-radius:9px;border:none;background:none;color:var(--g500);cursor:pointer}
+.mn-ib:hover{background:var(--g100);color:var(--g900)}
+.mn-tabs{display:flex;gap:2px;border-bottom:.5px solid var(--bdm);margin:0 0 24px;overflow-x:auto;scrollbar-width:none}
+.mn-tabs::-webkit-scrollbar{display:none}
+.mn-tab{position:relative;flex:0 0 auto;padding:11px 16px;background:none;border:none;font:600 14px var(--f);color:var(--g500);cursor:pointer;white-space:nowrap}
+.mn-tab:hover{color:var(--g900)}
+.mn-tab.on{color:var(--t600)}
+.mn-tab.on::after{content:'';position:absolute;left:12px;right:12px;bottom:-.5px;height:2px;border-radius:2px;background:var(--t400)}
+.mn-n{display:inline-flex;min-width:20px;height:20px;padding:0 6px;margin-left:6px;border-radius:10px;background:var(--g100);color:var(--g500);font:600 11.5px var(--f);align-items:center;justify-content:center}
+.mn-grid{display:grid;grid-template-columns:272px minmax(0,1fr);gap:24px;align-items:start}
+.mn-side{position:sticky;top:80px;display:flex;flex-direction:column;gap:16px;min-width:0}
+.mn-main{min-width:0}
+.mn-card{background:var(--sf);border:.5px solid var(--bd);border-radius:16px;padding:20px;box-shadow:var(--mn-sh);min-width:0}
+.mn-card+.mn-card{margin-top:16px}
+.mn-side .mn-card+.mn-card{margin-top:0}
+.mn-k{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--g400);margin:0 0 12px}
+.mn-k-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.mn-k-row .mn-k{margin:0}
+.mn-l{display:block;font-size:12px;font-weight:600;color:var(--g700);margin:0 0 6px}
+.mn-f{display:flex;flex-direction:column;min-width:0}
+.mn-card .inp,.mn-meal .inp,.mn-rec .inp,.mc .inp{height:40px;padding:0 12px;font-size:14px;border-radius:10px}
+.mn-card textarea.inp,.mn-meal textarea.inp{height:auto}
+.mn-nav{display:flex;flex-direction:column;gap:2px}
+.mn-nav-i{display:flex;justify-content:space-between;align-items:center;gap:8px;width:100%;padding:9px 12px;border-radius:10px;border:none;background:none;font:500 14px var(--f);color:var(--g700);text-align:left;cursor:pointer}
+.mn-nav-i:hover{background:var(--g100)}
+.mn-nav-i.on{background:var(--t50);color:var(--t800);font-weight:600}
+.mn-nav-i small{display:block;font-size:11.5px;font-weight:500;color:var(--g400);margin-top:1px}
+.mn-tag{font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:20px;background:var(--pill-g);color:var(--t900);white-space:nowrap}
+.mn-wk{margin-top:14px;padding-top:14px;border-top:.5px solid var(--bd);display:flex;flex-direction:column;gap:12px}
+.mn-chk{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--g700);cursor:pointer}
+.mn-chk input{width:16px;height:16px;accent-color:var(--t600)}
+.mn-fila{display:flex;gap:12px;flex-wrap:wrap}
+.mn-g2{display:grid;grid-template-columns:170px minmax(0,1fr);gap:12px}
+.mn-g3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.mn-dia-h{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
+.mn-dia-t{font-size:20px;font-weight:700;letter-spacing:-.02em}
+.mn-ayuda{font-size:12.5px;color:var(--g400);line-height:1.55}
+.mn-vacio{padding:36px 20px;text-align:center;border:.5px dashed var(--bdm);border-radius:16px;background:var(--sf);margin-bottom:16px}
+.mn-vacio b{display:block;font-size:15px;margin-bottom:4px}
+.mn-meal{background:var(--sf);border:.5px solid var(--bd);border-left:4px solid var(--mn-c,var(--g200));border-radius:16px;box-shadow:var(--mn-sh);margin-bottom:16px;overflow:hidden}
+.t-D{--mn-c:var(--gold)}.t-A{--mn-c:var(--t400)}.t-C{--mn-c:var(--t600)}.t-Me{--mn-c:#A9A79E}.t-Ce{--mn-c:var(--t800)}.t-O{--mn-c:var(--g200)}
+.mn-meal-h{display:grid;grid-template-columns:148px 112px minmax(0,1fr);gap:12px;align-items:end;padding:18px 20px 0}
+.mn-meal-b{padding:16px 20px 4px}
+.mn-cols{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:20px}
+.mn-ta{min-height:112px;line-height:1.55;resize:vertical}
+.mn-ings{display:flex;flex-wrap:wrap;gap:6px;align-content:flex-start;min-height:40px}
+.mn-ing{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;background:var(--g100);border:.5px solid var(--bd);border-radius:20px;padding:4px 11px;color:var(--g700);line-height:1.4}
+.mn-ing.sin{border-style:dashed;background:var(--sf)}
+.mn-ing i{font-style:normal;color:var(--g400)}
+.mn-ing-add{border:none;background:var(--t50);color:var(--t600);width:18px;height:18px;border-radius:50%;font-size:13px;line-height:1;cursor:pointer;padding:0}
+.mn-meal-ex{display:grid;grid-template-columns:minmax(0,1fr) 220px;gap:12px;margin-top:16px;align-items:end}
+.mn-plato{margin:12px 0 0;padding:8px 12px;background:var(--gold-50);border-radius:10px;color:var(--gold-dk);font-size:12.5px}
+.mn-meal-f{display:flex;gap:4px;flex-wrap:wrap;align-items:center;padding:12px 16px 14px;margin-top:12px;border-top:.5px solid var(--bd)}
+.mn-meal-f .mn-chk{margin-left:auto}
+.mn-add{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:4px 0 8px}
+.mn-add select.inp{width:auto;min-width:220px;height:38px;padding:0 12px;font-size:13.5px;font-weight:600}
+.mn-checks{display:flex;flex-wrap:wrap;gap:4px 14px}
+.mn-chk2{display:inline-flex;align-items:center;gap:6px;font-size:13px;cursor:pointer}
+.mn-rec{background:var(--sf);border:.5px solid var(--bd);border-radius:16px;margin-bottom:12px;overflow:hidden;box-shadow:var(--mn-sh)}
+.mn-rec-h{display:flex;align-items:center;gap:14px;width:100%;padding:14px 16px;background:none;border:none;text-align:left;font-family:var(--f);color:var(--g900);cursor:pointer}
+.mn-rec-h:hover{background:var(--t50)}
+.mn-rec-th{width:56px;height:56px;border-radius:12px;object-fit:cover;background:var(--g100);flex-shrink:0}
+.mn-rec-th.vacio{display:flex;align-items:center;justify-content:center;color:var(--g400)}
+.mn-rec-t{flex:1;min-width:0}
+.mn-rec-t b{display:block;font-size:15px;font-weight:700}
+.mn-rec-t span{font-size:12.5px;color:var(--g500)}
+.mn-rec-b{padding:6px 20px 20px;border-top:.5px solid var(--bd)}
+.mn-sec{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gold-dk);margin:22px 0 10px}
+.mn-g4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.mn-foto{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.mn-foto img{width:160px;height:96px;object-fit:cover;border-radius:12px}
+.mn-drop{display:flex;flex-direction:column;align-items:center;gap:6px;padding:22px 16px;border:1px dashed var(--bdm);border-radius:16px;background:var(--sf);text-align:center;cursor:pointer;margin-bottom:16px;transition:background .15s,border-color .15s}
+.mn-drop:hover,.mn-drop.over{background:var(--t50);border-color:var(--t400)}
+.mn-drop b{font-size:14px}
+.mn-cat-l{margin:14px 0}
+.mn-cat-i,.mn-plato-f{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:.5px solid var(--bd)}
+.mn-ext-i{display:flex;flex-direction:column;align-items:flex-start;width:100%;gap:2px;padding:9px 12px;margin-bottom:4px;background:var(--g100);border:none;border-radius:10px;cursor:pointer;text-align:left;font-family:var(--f)}
+.mn-ext-i:hover{background:var(--t50)}
+.mn-ext-n{font-size:13px;font-weight:600;color:var(--g900)}
+.mn-nutri{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.mn-auto-t{width:100%;border-collapse:collapse;font-size:13px;margin:12px 0}
+.mn-auto-t th{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--g400);text-align:left;padding:0 6px 8px}
+.mn-auto-t td{padding:6px;border-top:.5px solid var(--bd);vertical-align:middle}
+.mn-auto-t .inp{height:34px;padding:0 8px;font-size:13px}
+.mn-auto-t .num{width:64px}
+.mn-auto-t td:nth-child(2){min-width:230px}
+.mn-auto-t td:nth-child(3) .inp{min-width:176px}
+.mn-auto-t select.inp{min-width:126px}
+.mn-auto-t td{vertical-align:top}
+.mn-auto-t td:first-child{padding-top:14px}
+.mn-fuente{font-size:11.5px;color:var(--g400)}
+.oi-f{display:flex;gap:10px;align-items:flex-start;margin-bottom:10px}
+.oi-c{flex:0 0 104px;width:104px}
+.oi-t{flex:1;min-height:64px}
+.lab-lista{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+.lab-fila{display:flex;align-items:center;gap:14px;width:100%;text-align:left;padding:16px 18px;background:var(--sf);border:.5px solid var(--bd);border-radius:16px;box-shadow:var(--mn-sh);font-family:var(--f);color:var(--g900);cursor:pointer;transition:border-color .15s,transform .15s}
+.lab-fila:hover{border-color:var(--t400)}
+.lab-av{width:44px;height:44px;border-radius:50%;background:var(--pill-g);color:var(--t800);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;flex-shrink:0}
+.lab-fila .sup-item-n{display:block;font-size:15px;font-weight:700}
+.lab-fila .sup-item-d{display:block;font-size:12.5px;color:var(--g500)}
+.lab-est{margin-left:auto;font-size:11.5px;font-weight:700;padding:4px 10px;border-radius:20px;background:var(--g100);color:var(--g500);white-space:nowrap}
+.lab-est.pub{background:var(--pill-g);color:var(--t900)}
+.lab-est.warn{background:var(--pill-au);color:var(--gold-dk)}
+.mnv-frame{max-width:420px;margin:0 auto 2rem;border:.5px solid var(--bdm);border-radius:28px;padding:16px;background:var(--bg);box-shadow:var(--mn-sh)}
+.mnv-bar{font-size:12px;font-weight:700;color:var(--t800);text-align:center;margin-bottom:14px}
 .mnv-frame .card{background:var(--sf);border:.5px solid var(--bdm);border-radius:14px;padding:1.05rem 1.15rem}
 .mnv-frame .vacio{display:flex;flex-direction:column;align-items:center;text-align:center;padding:1.6rem 1rem;gap:4px}
+.mnv-meta{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 0}
+.mnv-meta span{font-size:12px;background:var(--g100);border:.5px solid var(--bd);border-radius:20px;padding:4px 11px;color:var(--g700)}
+.mnv-meta b{color:var(--g400);font-weight:600;margin-right:4px}
+.mnv-nu{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:8px}
+.mnv-nu div{background:var(--g100);border-radius:12px;padding:10px 4px;text-align:center}
+.mnv-nu div:first-child{background:var(--t900);color:#fff}
+.mnv-nu b{display:block;font-size:17px;font-weight:700}
+.mnv-nu span{font-size:11px;opacity:.75}
+.mnv-nu-n{font-size:11px;color:var(--g400);margin:6px 2px 0}
 :root{--pill-g-bd:rgba(15,110,86,.30);--pill-au-bd:rgba(122,90,56,.30)}
-
+@media(max-width:900px){
+  .page{padding:20px 16px 56px}
+  .lab-top{padding:0 16px}
+  .lab-brand span{display:none}
+  .mn-bar{flex-wrap:wrap}
+  .mn-grid{grid-template-columns:minmax(0,1fr);gap:16px}
+  .mn-side{position:static}
+  .mn-nav{flex-direction:row;overflow-x:auto;gap:6px;padding-bottom:4px;scrollbar-width:none}
+  .mn-nav::-webkit-scrollbar{display:none}
+  .mn-nav-i{flex:0 0 auto;width:auto;border:.5px solid var(--bdm);border-radius:20px;padding:7px 14px}
+  .mn-nav-i small{display:none}
+  .mn-nav-i.on{background:var(--btn);border-color:var(--btn);color:#fff}
+  .mn-nav-i.on .mn-n{background:rgba(255,255,255,.25);color:#fff}
+  .mn-h1{font-size:23px}
+  .mn-meal-h{grid-template-columns:1fr 1fr;padding:16px 16px 0}
+  .mn-meal-h .mn-f.grow{grid-column:1/-1}
+  .mn-meal-b{padding:14px 16px 4px}
+  .mn-cols{grid-template-columns:1fr;gap:12px}
+  .mn-meal-ex{grid-template-columns:1fr}
+  .mn-g2,.mn-g3{grid-template-columns:1fr}
+  .mn-g4{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .mn-nutri{grid-template-columns:repeat(3,1fr)}
+  .oi-c{flex-basis:88px;width:88px}
+  .mn-meal-f .mn-chk{margin-left:0;width:100%}
+  .mn-auto-t th:nth-child(n+5),.mn-auto-t td:nth-child(n+5){display:none}
+}
 </style>
 </head>
 <body>
 
 <div id="toasts" aria-live="polite"></div>
-<header class="lab-top"><div><strong>NutriLogos</strong> · Menú semanal</div><span class="lab-badge">Versión de pruebas</span></header>
+<header class="lab-top"><div class="lab-brand"><img src="icon-rounded-192.png" alt="">NutriLogos <span>Menú semanal</span></div><span class="lab-badge">Versión de pruebas</span></header>
 
 <div id="vsin" class="view" role="main"></div>
 
 <div id="vlista" class="view" role="main">
   <div class="page">
     <div class="page-header"><div><p class="page-title" role="heading" aria-level="1">Menú semanal</p><p class="page-sub">Página de pruebas: nada de esto aparece todavía en el panel ni en el área de clientes. Misma base de datos y misma sesión que el panel.</p></div></div>
-    <input class="inp" id="listaQ" placeholder="Buscar cliente…" aria-label="Buscar cliente" oninput="pintarLista()" style="margin-bottom:12px">
-    <div class="med-box" id="lista"></div>
+    <input class="inp" id="listaQ" placeholder="Buscar cliente…" aria-label="Buscar cliente" oninput="pintarLista()" style="margin-bottom:18px;max-width:420px">
+    <div id="lista"></div>
   </div>
 </div>
 
@@ -251,6 +370,9 @@ body.dark-mode :focus-visible{outline-color:#5CC8A6}
 </div>
 <div class="mbg" id="mMnCopiar" style="display:none;z-index:310" role="dialog" aria-modal="true" aria-labelledby="mnCopTit" onclick="if(event.target===this)mnCopiarCerrar()">
   <div class="mc" style="max-width:420px;max-height:calc(100dvh - 2rem);overflow-y:auto" id="mnCopCuerpo"></div>
+</div>
+<div class="mbg" id="mMnAuto" style="display:none;z-index:320" role="dialog" aria-modal="true" aria-labelledby="mnAutoTit" onclick="if(event.target===this)mnAutoCerrar()">
+  <div class="mc" style="max-width:940px;max-height:calc(100dvh - 2rem);overflow-y:auto" id="mnAutoCuerpo"></div>
 </div>
 <input type="file" id="mnFoto" accept="image/*" style="display:none" aria-hidden="true" tabindex="-1" onchange="mnFotoSubida(this)">
 
@@ -424,7 +546,7 @@ const mnFecha = iso => new Date(iso).toLocaleDateString('es-ES', { day: 'numeric
 // ── Texto → ingredientes ──
 const MN_UG = { g:'g', gr:'g', grs:'g', gramo:'g', gramos:'g', kg:'kg', ml:'ml', l:'l', lt:'l', litro:'l', litros:'l' };
 const MN_UU = ['ud', 'uds', 'u', 'unidad', 'unidades'];
-const MN_UC = /^(cdas?|cdtas?|cucharad[ao]s?|cucharitas?|vasos?|vasitos?|lonchas?|rebanadas?|puñados?|latas?|botes?|tarros?|rodajas?|dientes?|ramas?|tazas?|platos?|piezas?|sobres?|barras?|paquetes?|tortitas?|filetes?|hojas?|trozos?|chorritos?)$/i;
+const MN_UC = /^(cditas?|cdas?|cdtas?|cucharad[ao]s?|cucharitas?|vasos?|vasitos?|lonchas?|rebanadas?|puñados?|latas?|botes?|tarros?|rodajas?|dientes?|ramas?|tazas?|platos?|piezas?|sobres?|barras?|paquetes?|tortitas?|filetes?|hojas?|trozos?|chorritos?)$/i;
 const MN_RE_N = '(\\d+(?:[.,]\\d+)?(?:\\/\\d+)?|[¼½¾])';
 function mnNum(s) {
   s = String(s).replace(',', '.');
@@ -521,14 +643,6 @@ function mnRelinkTodo() {
 }
 
 // ── Guardado ──
-function mnEstadoTxt() {
-  const r = MN.row, pub = r.publicado_en;
-  const sinPub = pub && new Date(r.actualizado) - new Date(pub) > 1500;
-  const partes = [MN.dirty ? 'Sin guardar…' : '✓ Guardado'];
-  partes.push(pub ? ('Publicado el ' + mnFecha(pub) + (sinPub || MN.dirty ? ' · hay cambios sin publicar' : '')) : 'Sin publicar: el cliente aún no lo ve');
-  return partes.join(' · ');
-}
-function mnMarca() { const e = document.getElementById('mnEstado'); if (e) e.textContent = mnEstadoTxt(); }
 function mnCambio() { if (!MN) return; MN.dirty = true; mnMarca(); clearTimeout(_mnT); _mnT = setTimeout(() => mnGuardarYa(), 1200); }
 async function mnGuardarYa(oculta) {
   if (!MN || !MN.dirty) return;
@@ -595,69 +709,10 @@ function mnAplicarIng(entId, txt) {
 function mnIngInput(entId, txt) { clearTimeout(_mnIT[entId]); _mnIT[entId] = setTimeout(() => { delete _mnIT[entId]; mnAplicarIng(entId, txt); }, 350); }
 function mnSyncTextos() { Object.keys(_mnIT).forEach(k => { clearTimeout(_mnIT[k]); delete _mnIT[k]; const t = document.getElementById('mnIng_' + k); if (t) mnAplicarIng(k, t.value); }); }
 
-function mnPintar() {
-  const c = MN.c, s = mnSem();
-  const tabs = [['menu', 'Menú'], ['recetas', 'Recetas' + (c.recetas.length ? ' (' + c.recetas.length + ')' : '')], ['platos', 'Comidas guardadas' + (c.platos.length ? ' (' + c.platos.length + ')' : '')], ['objetivo', 'Objetivo e impresiones'], ['cliente', 'Vista del cliente']];
-  const toca = c.semanas.length > 1 ? `<label class="mfl" for="mnToca" style="margin:0 0 4px">Esta semana toca</label><select class="inp" id="mnToca" style="max-width:240px;margin-bottom:10px" onchange="mnTocaSemana(this.value)">${c.semanas.map(x => `<option value="${sudEsc(x.id)}"${(MN.row.semana_actual || c.semanas[0].id) === x.id ? ' selected' : ''}>${sudEsc(x.nombre)}</option>`).join('')}</select>` : '';
-  document.getElementById('mnPage').innerHTML = `
-    <button class="det-back" onclick="mnSalir()"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Volver a la lista</button>
-    <div class="page-header" style="margin-bottom:1rem">
-      <div><p class="page-title" role="heading" aria-level="1">Menú semanal · ${sudEsc(MN.nombre)}</p><p class="page-sub" id="mnEstado">${sudEsc(mnEstadoTxt())}</p></div>
-      <div class="row-actions">${btnSoft('Catálogo de alimentos', 'mnCatAbrir()', 'doc')}${btnSoft(MN.row.publicado_en ? 'Publicar cambios' : 'Publicar', 'mnPublicar()', 'plus')}${MN.row.publicado_en ? btnSoft('Retirar', 'mnRetirar()', 'trash') : ''}</div>
-    </div>
-    ${toca}
-    <div class="depd-tabs mn-tabs" role="tablist" aria-label="Secciones del menú">${tabs.map(t => `<button type="button" role="tab" class="depd-tab${MN.tab === t[0] ? ' on' : ''}" aria-selected="${MN.tab === t[0]}" onclick="mnTab('${t[0]}')">${t[1]}</button>`).join('')}</div>
-    <div id="mnCuerpo">${MN.tab === 'menu' ? mnMenuHtml() : MN.tab === 'recetas' ? mnRecetasHtml() : MN.tab === 'platos' ? mnPlatosHtml() : MN.tab === 'objetivo' ? mnObjetivoHtml() : mnClienteHtml()}</div>`;
-  cargarFotosCli(document.getElementById('mnPage'));
-  if (MN.tab === 'cliente') mnvPrev(MN.prev || 'borrador');
-}
 
-function mnMenuHtml() {
-  const c = MN.c, s = mnSem(), d = mnDia();
-  const chipsS = c.semanas.map(x => `<button type="button" class="mn-chip${x.id === s.id ? ' on' : ''}" onclick="mnElegirSemana('${x.id}')">${sudEsc(x.nombre)}</button>`).join('') + `<button type="button" class="mn-chip mn-chip-add" onclick="mnNuevaSemana()">+ Semana</button>`;
-  const chipsD = s.dias.map((x, i) => `<button type="button" class="mn-chip${i === MN.dia ? ' on' : ''}" onclick="mnElegirDia(${i})">${sudEsc(x.n)}${x.comidas.length ? `<span class="mn-dot" aria-label="${x.comidas.length} comidas"></span>` : ''}</button>`).join('');
-  const ctx = d.ctx || {};
-  return `<div class="mn-box">
-      <label class="mn-lbl" for="mnTitulo">Título del plan</label>
-      <input class="inp" id="mnTitulo" maxlength="120" value="${sudEsc(c.titulo || '')}" oninput="MN.c.titulo=this.value;mnCambio()">
-    </div>
-    <div class="mn-chips" role="group" aria-label="Semanas">${chipsS}</div>
-    <div class="mn-box mn-sem">
-      <div class="mn-fila"><div style="flex:1;min-width:180px"><label class="mn-lbl" for="mnSemNom">Nombre de la semana</label><input class="inp" id="mnSemNom" maxlength="40" value="${sudEsc(s.nombre)}" oninput="mnSemSet('nombre',this.value)"></div>
-        <div style="flex:2;min-width:220px"><label class="mn-lbl" for="mnSemNota">Cuándo toca <span class="hd-opt">(opcional)</span></label><input class="inp" id="mnSemNota" maxlength="200" value="${sudEsc(s.nota || '')}" placeholder="Ej. Entreno L, X, J a las 19 h + partido el domingo" oninput="mnSemSet('nota',this.value)"></div></div>
-      <div class="row-actions" style="margin-top:8px">${btnSoft('Duplicar semana', 'mnDuplicarSemana()', 'plus', true)}${c.semanas.length > 1 ? btnSoft('Eliminar semana', 'mnEliminarSemana()', 'trash', true) : ''}</div>
-    </div>
-    <div class="mn-chips" role="group" aria-label="Días">${chipsD}</div>
-    <div class="mn-box">
-      <div class="mn-fila"><div style="flex:0 0 150px"><label class="mn-lbl" for="mnCtxT">Tipo de día</label><select class="inp" id="mnCtxT" onchange="mnCtxSet('tipo',this.value)">${MN_CTX.map(o => `<option value="${o[0]}"${(ctx.tipo || '') === o[0] ? ' selected' : ''}>${o[1]}</option>`).join('')}</select></div>
-        <div style="flex:1;min-width:180px"><label class="mn-lbl" for="mnCtxX">Etiqueta del día</label><input class="inp" id="mnCtxX" maxlength="60" value="${sudEsc(ctx.texto || '')}" placeholder="Ej. Entreno 19 h" oninput="mnCtxSet('texto',this.value)"></div></div>
-      <label class="mn-lbl" for="mnCtxA" style="margin-top:8px">Aviso del día <span class="hd-opt">(lo ve el cliente arriba, opcional)</span></label>
-      <input class="inp" id="mnCtxA" maxlength="300" value="${sudEsc(ctx.aviso || '')}" placeholder="Ej. La comida de las 14:00 es la carga previa al entreno" oninput="mnCtxSet('aviso',this.value)">
-    </div>
-    <div id="mnComidas">${d.comidas.map((m, i) => mnComidaHtml(m, i, d.comidas.length)).join('') || '<p class="mn-ayuda" style="margin:8px 2px 12px">Este día no tiene comidas todavía. Añade las que necesite este cliente: pueden ser 3, 4, 5 o las que haga falta.</p>'}</div>
-    <div class="row-actions mn-add">${btnSoft('Añadir comida', 'mnNuevaComida()', 'plus')}${MN.c.platos.length ? `<select class="inp" style="max-width:240px" aria-label="Usar una comida guardada" onchange="mnUsarPlato(this.value);this.value=''"><option value="">Usar una comida guardada…</option>${MN.c.platos.map(p => `<option value="${p.id}">${sudEsc(p.nombre || 'Sin nombre')}</option>`).join('')}</select>` : ''}${btnSoft('Copiar este día a…', 'mnCopiarAbrir()', 'doc')}${d.comidas.length ? btnSoft('Vaciar día', 'mnVaciarDia()', 'trash') : ''}</div>`;
-}
-function mnComidaHtml(m, i, n) {
-  const s = mnSrc(m), id = m.id;
-  const usos = m.plato ? mnTodasComidas().filter(x => x.plato === m.plato).length : 0;
-  const recs = MN.c.recetas.length ? `<div style="flex:1 1 200px"><label class="mn-lbl" for="mnRec_${id}">Receta</label><select class="inp" id="mnRec_${id}" onchange="mnSetM('${id}','receta',this.value||null)"><option value="">Sin receta</option>${MN.c.recetas.map(r => `<option value="${r.id}"${m.receta === r.id ? ' selected' : ''}>${sudEsc(r.nombre || 'Receta sin nombre')}</option>`).join('')}</select></div>` : '';
-  return `<div class="mn-meal" id="mnM_${id}">
-    <div class="mn-fila">
-      <div style="flex:0 0 130px"><label class="mn-lbl" for="mnT_${id}">Tipo</label><select class="inp" id="mnT_${id}" onchange="mnSetM('${id}','tipo',this.value)">${MN_TIPOS.map(o => `<option value="${o[0]}"${m.tipo === o[0] ? ' selected' : ''}>${o[1]}</option>`).join('')}</select></div>
-      <div style="flex:0 0 130px"><label class="mn-lbl" for="mnH_${id}">Hora</label><input class="inp" id="mnH_${id}" maxlength="40" value="${sudEsc(m.hora || '')}" placeholder="9:00" oninput="mnSetM('${id}','hora',this.value)"></div>
-      <div style="flex:1 1 200px"><label class="mn-lbl" for="mnN_${id}">Nombre del plato</label><input class="inp" id="mnN_${id}" maxlength="100" value="${sudEsc(s.nombre || '')}" placeholder="Ej. Pre-entreno, Ensalada de garbanzos…" oninput="mnSetS('${id}','nombre',this.value)"></div>
-    </div>
-    ${m.plato ? `<p class="mn-ayuda mn-plato">Comida guardada: se usa en ${usos} ${usos === 1 ? 'sitio' : 'sitios'}; si la editas aquí cambia en todos.</p>` : ''}
-    <label class="mn-chk"><input type="checkbox"${m.libre ? ' checked' : ''} onchange="mnSetM('${id}','libre',this.checked,true)"> Comida libre <span class="hd-opt">(los ingredientes son ideas, no una pauta)</span></label>
-    ${mnIngBloque(id, s.ing || [])}
-    <div class="mn-fila" style="margin-top:8px"><div style="flex:2 1 280px"><label class="mn-lbl" for="mnNo_${id}">Adaptación <span class="hd-opt">(el porqué, lo ve el cliente)</span></label><input class="inp" id="mnNo_${id}" maxlength="400" value="${sudEsc(s.nota || '')}" oninput="mnSetS('${id}','nota',this.value)"></div>${recs}</div>
-    <div class="row-actions mn-macc">${i > 0 ? btnSoft('Subir', `mnMover('${id}',-1)`, 'plus', true) : ''}${i < n - 1 ? btnSoft('Bajar', `mnMover('${id}',1)`, 'plus', true) : ''}${m.plato ? btnSoft('Desvincular', `mnDesvincular('${id}')`, 'doc', true) : btnSoft('Guardar como comida guardada', `mnGuardarPlato('${id}')`, 'doc', true)}${btnSoft('Duplicar', `mnDuplicarComida('${id}')`, 'plus', true)}${btnSoft('Eliminar', `mnEliminarComida('${id}')`, 'trash', true)}</div>
-  </div>`;
-}
 function mnBuscaComida(id) { for (const s of MN.c.semanas) for (const d of s.dias) { const i = d.comidas.findIndex(m => m.id === id); if (i >= 0) return { d, i, m: d.comidas[i] }; } return null; }
 function mnSetM(id, k, v, repintar) { const r = mnBuscaComida(id); if (!r) return; r.m[k] = v; mnCambio(); if (repintar) mnPintar(); }
 function mnSetS(id, k, v) { const r = mnBuscaComida(id); if (!r) return; mnSrc(r.m)[k] = v; mnCambio(); }
-function mnSemSet(k, v) { mnSem()[k] = v; mnCambio(); if (k === 'nombre') document.querySelectorAll('.mn-chips')[0].querySelectorAll('.mn-chip.on').forEach(b => { b.textContent = v || 'Semana'; }); }
 function mnCtxSet(k, v) { mnDia().ctx[k] = v; mnCambio(); }
 function mnElegirSemana(id) { MN.sem = id; mnPintar(); }
 function mnElegirDia(i) { MN.dia = i; mnPintar(); }
@@ -699,14 +754,6 @@ function mnUsarPlato(pid) {
   const usados = d.comidas.map(m => m.tipo), tipo = ['D', 'A', 'C', 'Me', 'Ce'].find(t => usados.indexOf(t) < 0) || 'O';
   d.comidas.push({ id: mnId('m'), tipo, hora: '', nombre: '', nota: '', libre: false, receta: null, plato: pid, ing: [] }); mnCambio(); mnPintar();
 }
-function mnPlatosHtml() {
-  const ps = MN.c.platos;
-  if (!ps.length) return vacioHtml('file', 'Sin comidas guardadas', 'En cualquier comida, «Guardar como comida guardada» la deja aquí para reutilizarla en otros días sin volver a escribirla.', null, true);
-  return `<div class="mn-box"><p class="mn-ayuda" style="margin:0 0 8px">Se editan desde la comida donde se usan. Eliminar una comida guardada deja una copia en cada sitio donde se usaba.</p>${ps.map(p => {
-    const usos = mnTodasComidas().filter(m => m.plato === p.id).length;
-    return `<div class="mn-fila mn-plato-f"><div style="flex:1"><div class="sup-item-n">${sudEsc(p.nombre || 'Sin nombre')}</div><div class="sup-item-d">${(p.ing || []).length} ingredientes · ${usos} ${usos === 1 ? 'uso' : 'usos'}</div></div>${btnSoft('Eliminar', `mnEliminarPlato('${p.id}')`, 'trash', true)}</div>`;
-  }).join('')}</div>`;
-}
 function mnEliminarPlato(pid) {
   const p = MN.c.platos.find(x => x.id === pid); if (!p) return;
   mnTodasComidas().filter(m => m.plato === pid).forEach(m => { m.nombre = p.nombre; m.nota = p.nota; m.ing = mnClonar(p.ing || []); m.plato = null; });
@@ -729,29 +776,9 @@ function mnCopiarHacer() {
 }
 
 // ── Recetas ──
-function mnRecetasHtml() {
-  const rs = MN.c.recetas;
-  const lista = rs.map(r => {
-    const ab = MN.rec === r.id;
-    return `<div class="mn-rec${ab ? ' open' : ''}"><button type="button" class="mn-rec-h" aria-expanded="${ab}" onclick="mnRecAbrir('${r.id}')"><span>${sudEsc(r.nombre || 'Receta sin nombre')}</span><span class="hd-opt">${(r.ing || []).length} ingredientes · ${(r.pasos || []).length} pasos</span></button>
-      ${ab ? `<div class="mn-rec-b">
-        <div class="mn-fila"><div style="flex:2 1 220px"><label class="mn-lbl" for="mnRN_${r.id}">Nombre</label><input class="inp" id="mnRN_${r.id}" maxlength="100" value="${sudEsc(r.nombre || '')}" oninput="mnRecSet('${r.id}','nombre',this.value)"></div>
-          <div style="flex:1 1 120px"><label class="mn-lbl" for="mnRT_${r.id}">Tiempo</label><input class="inp" id="mnRT_${r.id}" maxlength="40" value="${sudEsc(r.tiempo || '')}" placeholder="20 min" oninput="mnRecSet('${r.id}','tiempo',this.value)"></div>
-          <div style="flex:1 1 120px"><label class="mn-lbl" for="mnRR_${r.id}">Raciones</label><input class="inp" id="mnRR_${r.id}" maxlength="40" value="${sudEsc(r.raciones || '')}" placeholder="2" oninput="mnRecSet('${r.id}','raciones',this.value)"></div></div>
-        ${mnIngBloque(r.id, r.ing || [])}
-        <label class="mn-lbl" for="mnRP_${r.id}" style="margin-top:8px">Pasos <span class="hd-opt">· uno por línea</span></label>
-        <textarea class="notes-ta mn-ta" id="mnRP_${r.id}" rows="4" oninput="mnRecPasos('${r.id}',this.value)">${sudEsc((r.pasos || []).join('\n'))}</textarea>
-        <label class="mn-lbl" for="mnRC_${r.id}" style="margin-top:8px">Consejo <span class="hd-opt">(opcional)</span></label>
-        <input class="inp" id="mnRC_${r.id}" maxlength="300" value="${sudEsc(r.consejo || '')}" oninput="mnRecSet('${r.id}','consejo',this.value)">
-        <div class="mn-foto">${r.foto ? `<img data-p="${sudEsc(r.foto)}" alt="Foto de la receta">` : ''}<div class="row-actions">${btnSoft(r.foto ? 'Cambiar foto' : 'Añadir foto', `mnFotoElegir('${r.id}')`, 'plus', true)}${r.foto ? btnSoft('Quitar foto', `mnFotoQuitar('${r.id}')`, 'trash', true) : ''}</div></div>
-        <div class="row-actions mn-macc">${btnSoft('Eliminar receta', `mnEliminarReceta('${r.id}')`, 'trash', true)}</div></div>` : ''}</div>`;
-  }).join('');
-  return `<div class="mn-box">${rs.length ? lista : '<p class="mn-ayuda" style="margin:0">Aún no hay recetas. Añade las que quieras que el cliente tenga a mano: ingredientes, pasos, un consejo y, si quieres, una foto. Luego las enlazas desde cada comida.</p>'}</div><div class="row-actions mn-add">${btnSoft('Añadir receta', 'mnNuevaReceta()', 'plus')}</div>`;
-}
 function mnRecAbrir(id) { MN.rec = MN.rec === id ? null : id; mnPintar(); }
 function mnRecSet(id, k, v) { const r = MN.c.recetas.find(x => x.id === id); if (r) { r[k] = v; mnCambio(); } }
 function mnRecPasos(id, v) { const r = MN.c.recetas.find(x => x.id === id); if (r) { r.pasos = v.split('\n').map(x => x.trim()).filter(Boolean); mnCambio(); } }
-function mnNuevaReceta() { const r = { id: mnId('r'), nombre: '', tiempo: '', raciones: '', ing: [], pasos: [], consejo: '', foto: null }; MN.c.recetas.push(r); MN.rec = r.id; mnCambio(); mnPintar(); const e = document.getElementById('mnRN_' + r.id); if (e) e.focus(); }
 function mnEliminarReceta(id) {
   const r = MN.c.recetas.find(x => x.id === id); if (!r) return; const ix = MN.c.recetas.indexOf(r);
   const usos = mnTodasComidas().filter(m => m.receta === id); usos.forEach(m => { m.receta = null; });
@@ -870,24 +897,8 @@ function mnCatBorrar(id) {
   });
 }
 // «+» en un ingrediente que no está en el catálogo: se abre el formulario con su nombre y, al guardar, se enlaza.
-function mnVincularChip(entId, ix) {
-  const e = mnEnt(entId); if (!e || !e.ing[ix]) return; const nombre = e.ing[ix].n;
-  _mnCatEd = { id: null, nombre, categoria: '', estado: '', medidas: [], nutri: {}, fuente: 'manual', fuente_ref: '' };
-  _mnCatCb = nuevo => { const x = mnNorm(nombre); [].concat(MN.c.recetas, MN.c.platos, mnTodasComidas()).forEach(en => (en.ing || []).forEach(i => { if (mnNorm(i.n) === x) i.a = nuevo.id; })); };
-  _mnCatCbCerrar = true; mnCatPintar(); document.getElementById('mMnCat').style.display = 'flex';
-}
 
 // ── Publicar ──
-function mnSnapshot() {
-  const c = MN.c, d = deportistas.find(x => x.id == MN.depId) || {}, oi = d.objetivo_impresiones || {};
-  const ing = l => (l || []).map(i => ({ t: mnIngTxt(i), n: i.n, a: i.a || null, cant: i.cant, nota: i.nota || '' }));
-  const resolver = m => { const s = mnSrc(m); return { tipo: m.tipo, hora: m.hora || '', nombre: s.nombre || '', nota: s.nota || '', libre: !!m.libre, receta: m.receta || null, ing: ing(s.ing) }; };
-  return {
-    v: 1, titulo: c.titulo || '', objetivo: oi.objetivo || '', impresiones: (oi.impresiones || []).filter(x => x && x.t),
-    semanas: c.semanas.map(s => ({ id: s.id, nombre: s.nombre || 'Semana', nota: s.nota || '', dias: s.dias.map(d2 => ({ n: d2.n, dow: d2.dow || null, ctx: d2.ctx || {}, comidas: d2.comidas.map(resolver) })) })),
-    recetas: c.recetas.map(r => ({ id: r.id, nombre: r.nombre || '', tiempo: r.tiempo || '', raciones: r.raciones || '', ing: ing(r.ing), pasos: r.pasos || [], consejo: r.consejo || '', foto: r.foto || null }))
-  };
-}
 async function mnPublicar() {
   if (!MN) return;
   mnSyncTextos();
@@ -925,23 +936,422 @@ async function oiGuardar(depId) {
 }
 
 
-// ── Funciones propias de la página de pruebas ──
-function mnObjetivoHtml() { const d = deportistas.find(x => x.id == MN.depId) || { id: MN.depId }; return `<div class="mn-box"><p class="mn-ayuda" style="margin:0 0 10px">En la app definitiva esto vive en la ficha del cliente (pestaña Plan). Se copia dentro del menú al publicar.</p>${objImpHtml(d)}</div>`; }
-function mnClienteHtml() {
-  const b = (k, t) => `<button type="button" class="mn-chip${(MN.prev || 'borrador') === k ? ' on' : ''}" onclick="mnPrevSet('${k}')">${t}</button>`;
-  return `<div class="mn-box"><div class="mn-chips" style="margin:0 0 8px">${b('borrador', 'Borrador (lo que verá al publicar)')}${b('publicado', 'Publicado (lo que ve ahora)')}</div><p class="mn-ayuda" style="margin:0">Así se ve en el área de clientes. Aquí no hace falta una cuenta de cliente: es la misma vista.</p></div><div class="mnv-frame"><div class="mnv-bar">Área de clientes · Mi menú semanal</div><div id="menuBody"></div></div>`;
+// ── Iconos y botones de la página ──
+const MN_ICO = {
+  plus: '<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>',
+  trash: '<polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/>',
+  doc: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>',
+  up: '<line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/>',
+  down: '<line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/>',
+  copy: '<rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>',
+  book: '<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>',
+  upload: '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>',
+  image: '<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>',
+  send: '<line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>',
+  undo: '<polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>',
+  wand: '<path d="m3 21 9-9"/><path d="M15 4V2"/><path d="M15 16v-2"/><path d="M8 9h2"/><path d="M20 9h2"/><path d="M17.8 11.8 19 13"/><path d="M17.8 6.2 19 5"/><path d="M12.2 6.2 11 5"/>',
+  back: '<polyline points="15 18 9 12 15 6"/>'
+};
+const mnI = k => `<svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">${MN_ICO[k]}</svg>`;
+const mnBtn = (label, onclick, o = {}) => `<button type="button" class="mn-btn${o.pri ? ' pri' : ''}${o.ghost ? ' ghost' : ''}${o.sm ? ' sm' : ''}${o.dan ? ' dan' : ''}" onclick="${onclick}"${o.title ? ` title="${o.title}" aria-label="${o.title}"` : ''}>${o.icon ? mnI(o.icon) : ''}${label ? `<span>${label}</span>` : ''}</button>`;
+const mnIB = (label, onclick, icon) => `<button type="button" class="mn-ib" onclick="${onclick}" aria-label="${label}" title="${label}">${mnI(icon)}</button>`;
+
+function mnEstadoHtml() {
+  const r = MN.row, pub = r.publicado_en, sinPub = pub && (new Date(r.actualizado) - new Date(pub) > 1500 || MN.dirty);
+  const cls = MN.dirty ? 'warn' : pub && !sinPub ? 'ok' : pub ? 'warn' : '';
+  const txt = [MN.dirty ? 'Guardando…' : 'Guardado', pub ? ('Publicado el ' + mnFecha(pub) + (sinPub ? ' · hay cambios sin publicar' : '')) : 'Sin publicar: el cliente aún no lo ve'].join(' · ');
+  return `<span class="mn-estado ${cls}" role="status"><i></i><span id="mnEstadoT">${sudEsc(txt)}</span></span>`;
 }
+function mnMarca() { const e = document.getElementById('mnEstado'); if (e) e.innerHTML = mnEstadoHtml(); }
+
+function mnPintar() {
+  const c = MN.c, pub = MN.row.publicado_en, faltan = mnSinEnlazar().length;
+  const tabs = [['menu', 'Menú'], ['recetas', 'Recetas', c.recetas.length], ['platos', 'Comidas guardadas', c.platos.length], ['objetivo', 'Objetivo e impresiones'], ['cliente', 'Vista del cliente']];
+  document.getElementById('mnPage').innerHTML = `
+    <div class="mn-bar"><button type="button" class="mn-back" onclick="mnSalir()">${mnI('back')}Clientes</button><div id="mnEstado">${mnEstadoHtml()}</div></div>
+    <div class="mn-head"><div><h1 class="mn-h1">Menú semanal</h1><p class="mn-cli">${sudEsc(MN.nombre)}</p></div>
+      <div class="mn-acc">${faltan ? mnBtn('Completar catálogo (' + faltan + ')', 'mnAutoAbrir()', { icon: 'wand' }) : ''}${mnBtn('Catálogo', 'mnCatAbrir()', { icon: 'book' })}${pub ? mnBtn('Retirar', 'mnRetirar()', { icon: 'undo' }) : ''}${mnBtn(pub ? 'Publicar cambios' : 'Publicar', 'mnPublicar()', { pri: true, icon: 'send' })}</div></div>
+    <div class="mn-tabs" role="tablist" aria-label="Secciones del menú">${tabs.map(t => `<button type="button" role="tab" class="mn-tab${MN.tab === t[0] ? ' on' : ''}" aria-selected="${MN.tab === t[0]}" onclick="mnTab('${t[0]}')">${t[1]}${t[2] ? `<span class="mn-n">${t[2]}</span>` : ''}</button>`).join('')}</div>
+    <div id="mnCuerpo">${MN.tab === 'menu' ? mnMenuHtml() : MN.tab === 'recetas' ? mnRecetasHtml() : MN.tab === 'platos' ? mnPlatosHtml() : MN.tab === 'objetivo' ? mnObjetivoHtml() : mnClienteHtml()}</div>`;
+  cargarFotosCli(document.getElementById('mnPage'));
+  if (MN.tab === 'cliente') mnvPrev(MN.prev || 'borrador');
+}
+
+function mnMenuHtml() {
+  const c = MN.c, s = mnSem(), d = mnDia(), toca = MN.row.semana_actual || c.semanas[0].id, ctx = d.ctx || {};
+  const navSem = c.semanas.map(x => `<button type="button" class="mn-nav-i${x.id === s.id ? ' on' : ''}" onclick="mnElegirSemana('${x.id}')"><span>${sudEsc(x.nombre)}</span>${c.semanas.length > 1 && x.id === toca ? '<span class="mn-tag">Esta semana</span>' : ''}</button>`).join('');
+  const navDias = s.dias.map((x, i) => `<button type="button" class="mn-nav-i${i === MN.dia ? ' on' : ''}" onclick="mnElegirDia(${i})"><span>${sudEsc(x.n)}${x.ctx && x.ctx.texto ? `<small>${sudEsc(x.ctx.texto)}</small>` : ''}</span>${x.comidas.length ? `<span class="mn-n" aria-label="${x.comidas.length} comidas">${x.comidas.length}</span>` : ''}</button>`).join('');
+  const comidas = d.comidas.length ? d.comidas.map((m, i) => mnComidaHtml(m, i, d.comidas.length)).join('') : `<div class="mn-vacio"><b>Este día no tiene comidas todavía</b><span class="mn-ayuda">Añade las que necesite este cliente: pueden ser 3, 4, 5 o las que haga falta.</span></div>`;
+  return `<div class="mn-grid">
+    <aside class="mn-side">
+      <section class="mn-card"><p class="mn-k">Plan</p><label class="mn-l" for="mnTitulo">Título</label><input class="inp" id="mnTitulo" maxlength="120" value="${sudEsc(c.titulo || '')}" oninput="MN.c.titulo=this.value;mnCambio()"></section>
+      <section class="mn-card"><div class="mn-k-row"><p class="mn-k">Semanas</p>${mnBtn('', 'mnNuevaSemana()', { icon: 'plus', sm: true, ghost: true, title: 'Añadir semana' })}</div>
+        <div class="mn-nav" role="group" aria-label="Semanas">${navSem}</div>
+        <div class="mn-wk">
+          <div class="mn-f"><label class="mn-l" for="mnSemNom">Nombre</label><input class="inp" id="mnSemNom" maxlength="40" value="${sudEsc(s.nombre)}" oninput="mnSemSet('nombre',this.value)"></div>
+          <div class="mn-f"><label class="mn-l" for="mnSemNota">Cuándo toca <span class="hd-opt">(opcional)</span></label><input class="inp" id="mnSemNota" maxlength="200" value="${sudEsc(s.nota || '')}" placeholder="Ej. Entreno L, X, J + partido el domingo" oninput="mnSemSet('nota',this.value)"></div>
+          ${c.semanas.length > 1 ? `<label class="mn-chk"><input type="checkbox" id="mnToca"${s.id === toca ? ' checked' : ''} onchange="mnTocaSemana('${s.id}')"> Es la semana que toca ahora</label>` : ''}
+          <div class="mn-add" style="margin:0">${mnBtn('Duplicar', 'mnDuplicarSemana()', { icon: 'copy', sm: true })}${c.semanas.length > 1 ? mnBtn('Eliminar', 'mnEliminarSemana()', { icon: 'trash', sm: true, dan: true }) : ''}</div>
+        </div></section>
+      <section class="mn-card"><p class="mn-k">Días</p><div class="mn-nav mn-dias" role="group" aria-label="Días">${navDias}</div></section>
+    </aside>
+    <div class="mn-main">
+      <section class="mn-card"><div class="mn-dia-h"><h2 class="mn-dia-t">${sudEsc(d.n)}</h2><span class="mn-ayuda">${d.comidas.length} ${d.comidas.length === 1 ? 'comida' : 'comidas'}</span></div>
+        <div class="mn-g2"><div class="mn-f"><label class="mn-l" for="mnCtxT">Tipo de día</label><select class="inp" id="mnCtxT" onchange="mnCtxSet('tipo',this.value)">${MN_CTX.map(o => `<option value="${o[0]}"${(ctx.tipo || '') === o[0] ? ' selected' : ''}>${o[1]}</option>`).join('')}</select></div>
+          <div class="mn-f"><label class="mn-l" for="mnCtxX">Etiqueta</label><input class="inp" id="mnCtxX" maxlength="60" value="${sudEsc(ctx.texto || '')}" placeholder="Ej. Entreno 19 h" oninput="mnCtxSet('texto',this.value)"></div></div>
+        <div class="mn-f" style="margin-top:12px"><label class="mn-l" for="mnCtxA">Aviso para el cliente <span class="hd-opt">(opcional)</span></label><input class="inp" id="mnCtxA" maxlength="300" value="${sudEsc(ctx.aviso || '')}" placeholder="Ej. La comida de las 14:00 es la carga previa al entreno" oninput="mnCtxSet('aviso',this.value)"></div>
+      </section>
+      <div style="height:16px"></div>
+      <div id="mnComidas">${comidas}</div>
+      <div class="mn-add">${mnBtn('Añadir comida', 'mnNuevaComida()', { icon: 'plus', pri: true })}${c.platos.length ? `<select class="inp" aria-label="Usar una comida guardada" onchange="mnUsarPlato(this.value);this.value=''"><option value="">Usar una comida guardada…</option>${c.platos.map(p => `<option value="${p.id}">${sudEsc(p.nombre || 'Sin nombre')}</option>`).join('')}</select>` : ''}${mnBtn('Copiar este día a…', 'mnCopiarAbrir()', { icon: 'copy' })}${d.comidas.length ? mnBtn('Vaciar día', 'mnVaciarDia()', { icon: 'trash', ghost: true, dan: true }) : ''}</div>
+    </div></div>`;
+}
+
+function mnComidaHtml(m, i, n) {
+  const s = mnSrc(m), id = m.id, usos = m.plato ? mnTodasComidas().filter(x => x.plato === m.plato).length : 0;
+  const recs = MN.c.recetas.length ? `<div class="mn-f"><label class="mn-l" for="mnRec_${id}">Receta</label><select class="inp" id="mnRec_${id}" onchange="mnSetM('${id}','receta',this.value||null)"><option value="">Sin receta</option>${MN.c.recetas.map(r => `<option value="${r.id}"${m.receta === r.id ? ' selected' : ''}>${sudEsc(r.nombre || 'Receta sin nombre')}</option>`).join('')}</select></div>` : '<div></div>';
+  return `<article class="mn-meal t-${m.tipo}" id="mnM_${id}">
+    <div class="mn-meal-h">
+      <div class="mn-f"><label class="mn-l" for="mnT_${id}">Tipo</label><select class="inp" id="mnT_${id}" onchange="mnSetM('${id}','tipo',this.value,true)">${MN_TIPOS.map(o => `<option value="${o[0]}"${m.tipo === o[0] ? ' selected' : ''}>${o[1]}</option>`).join('')}</select></div>
+      <div class="mn-f"><label class="mn-l" for="mnH_${id}">Hora</label><input class="inp" id="mnH_${id}" maxlength="40" value="${sudEsc(m.hora || '')}" placeholder="9:00" oninput="mnSetM('${id}','hora',this.value)"></div>
+      <div class="mn-f grow"><label class="mn-l" for="mnN_${id}">Nombre del plato</label><input class="inp" id="mnN_${id}" maxlength="100" value="${sudEsc(s.nombre || '')}" placeholder="Ej. Pre-entreno, Ensalada de garbanzos…" oninput="mnSetS('${id}','nombre',this.value)"></div>
+    </div>
+    <div class="mn-meal-b">
+      ${m.plato ? `<p class="mn-plato" style="margin:0 0 14px">Comida guardada: se usa en ${usos} ${usos === 1 ? 'sitio' : 'sitios'}; si la editas aquí cambia en todos.</p>` : ''}
+      <div class="mn-cols">
+        <div class="mn-f"><label class="mn-l" for="mnIng_${id}">Ingredientes <span class="hd-opt">· uno por línea</span></label><textarea class="inp notes-ta mn-ta" id="mnIng_${id}" rows="4" placeholder="${sudEsc('80 g avena\n1 plátano\n200 ml bebida de soja\nTomate, pepino')}" oninput="mnIngInput('${id}',this.value)">${sudEsc(mnTextoIng(s.ing))}</textarea></div>
+        <div class="mn-f"><span class="mn-l">Así lo entiende la app</span><div class="mn-ings" id="mnCh_${id}">${mnIngChips(s.ing, id)}</div></div>
+      </div>
+      <div class="mn-meal-ex"><div class="mn-f"><label class="mn-l" for="mnNo_${id}">Adaptación <span class="hd-opt">(el porqué; lo ve el cliente)</span></label><input class="inp" id="mnNo_${id}" maxlength="400" value="${sudEsc(s.nota || '')}" oninput="mnSetS('${id}','nota',this.value)"></div>${recs}</div>
+    </div>
+    <footer class="mn-meal-f">${i > 0 ? mnIB('Subir', `mnMover('${id}',-1)`, 'up') : ''}${i < n - 1 ? mnIB('Bajar', `mnMover('${id}',1)`, 'down') : ''}
+      ${m.plato ? mnBtn('Desvincular', `mnDesvincular('${id}')`, { sm: true, ghost: true }) : mnBtn('Guardar como comida guardada', `mnGuardarPlato('${id}')`, { sm: true, ghost: true, icon: 'book' })}${mnBtn('Duplicar', `mnDuplicarComida('${id}')`, { sm: true, ghost: true, icon: 'copy' })}${mnBtn('Eliminar', `mnEliminarComida('${id}')`, { sm: true, ghost: true, dan: true, icon: 'trash' })}
+      <label class="mn-chk"><input type="checkbox"${m.libre ? ' checked' : ''} onchange="mnSetM('${id}','libre',this.checked,true)"> Comida libre</label></footer>
+  </article>`;
+}
+function mnSemSet(k, v) { mnSem()[k] = v; mnCambio(); if (k === 'nombre') document.querySelectorAll('.mn-side .mn-nav')[0].querySelectorAll('.mn-nav-i.on > span:first-child').forEach(b => { b.textContent = v || 'Semana'; }); }
+
+function mnPlatosHtml() {
+  const ps = MN.c.platos;
+  if (!ps.length) return `<div class="mn-vacio"><b>Sin comidas guardadas</b><span class="mn-ayuda">En cualquier comida, «Guardar como comida guardada» la deja aquí para reutilizarla en otros días sin volver a escribirla.</span></div>`;
+  return `<div class="mn-card"><p class="mn-ayuda" style="margin:0 0 6px">Se editan desde la comida donde se usan. Eliminar una comida guardada deja una copia en cada sitio donde se usaba.</p>${ps.map(p => {
+    const usos = mnTodasComidas().filter(m => m.plato === p.id).length;
+    return `<div class="mn-plato-f"><div style="flex:1"><div class="sup-item-n">${sudEsc(p.nombre || 'Sin nombre')}</div><div class="sup-item-d">${(p.ing || []).length} ingredientes · ${usos} ${usos === 1 ? 'uso' : 'usos'}</div></div>${mnBtn('Eliminar', `mnEliminarPlato('${p.id}')`, { sm: true, ghost: true, dan: true, icon: 'trash' })}</div>`;
+  }).join('')}</div>`;
+}
+function mnObjetivoHtml() { const d = deportistas.find(x => x.id == MN.depId) || { id: MN.depId }; return `<div class="mn-card" style="max-width:760px"><p class="mn-k">Objetivo e impresiones</p><p class="mn-ayuda" style="margin:0 0 14px">En la app definitiva esto vive en la ficha del cliente (pestaña Plan). Se copia dentro del menú al publicar.</p>${objImpHtml(d)}</div>`; }
+function mnClienteHtml() {
+  const b = (k, t) => `<button type="button" class="mn-btn sm${(MN.prev || 'borrador') === k ? ' pri' : ''}" onclick="mnPrevSet('${k}')">${t}</button>`;
+  return `<div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:6px">${b('borrador', 'Borrador (lo que verá al publicar)')}${b('publicado', 'Publicado (lo que ve ahora)')}</div><p class="mn-ayuda" style="text-align:center;margin:0 0 16px">Así se ve en el área de clientes. No hace falta una cuenta de cliente: es la misma vista.</p><div class="mnv-frame"><div class="mnv-bar">Área de clientes · Mi menú semanal</div><div id="menuBody"></div></div>`;
+}
+async function mnTocaSemana(semId) {
+  const chk = document.getElementById('mnToca'), on = chk ? chk.checked : true;
+  const nuevo = on ? semId : (MN.c.semanas.find(x => x.id !== semId) || MN.c.semanas[0]).id;
+  const r = await sb(`menus_cliente?id=eq.${MN.row.id}`, { method: 'PATCH', headers: { 'Prefer': 'return=minimal' }, body: JSON.stringify({ semana_actual: nuevo }) });
+  if (esErrorSb(r)) { toast('No se pudo cambiar. Inténtalo de nuevo.', { tipo: 'error' }); return; }
+  MN.row.semana_actual = nuevo; toast('Semana actualizada: el cliente ya ve «' + (MN.c.semanas.find(x => x.id === nuevo) || {}).nombre + '»'); mnPintar();
+}
+
+// ── Recetas ──
+const MN_RECETA_NUEVA = () => ({ id: mnId('r'), nombre: '', tiempo: '', raciones: '', momento: '', objetivo: '', dificultad: '', nutri: null, ing: [], pasos: [], consejo: '', nota: '', foto: null });
+function mnRecetasHtml() {
+  const rs = MN.c.recetas;
+  const lista = rs.map(r => {
+    const ab = MN.rec === r.id, nu = r.nutri || {};
+    const meta = [r.momento, r.tiempo, nu.kcal ? Math.round(nu.kcal) + ' kcal' : '', (r.ing || []).length ? (r.ing.length + ' ingredientes') : ''].filter(Boolean).map(sudEsc).join(' · ');
+    const f = (id, k, lbl, ph, max) => `<div class="mn-f"><label class="mn-l" for="${id}_${r.id}">${lbl}</label><input class="inp" id="${id}_${r.id}" maxlength="${max || 60}" value="${sudEsc(r[k] || '')}" placeholder="${ph || ''}" oninput="mnRecSet('${r.id}','${k}',this.value)"></div>`;
+    const nf = (k, lbl) => `<div class="mn-f"><label class="mn-l" for="mnRn_${k}_${r.id}">${lbl}</label><input class="inp" id="mnRn_${k}_${r.id}" inputmode="decimal" value="${nu[k] === undefined || nu[k] === null ? '' : String(nu[k]).replace('.', ',')}" oninput="mnRecNutri('${r.id}','${k}',this.value)"></div>`;
+    return `<div class="mn-rec"><button type="button" class="mn-rec-h" aria-expanded="${ab}" onclick="mnRecAbrir('${r.id}')">${r.foto ? `<img class="mn-rec-th" data-p="${sudEsc(r.foto)}" alt="">` : `<span class="mn-rec-th vacio">${mnI('image')}</span>`}<span class="mn-rec-t"><b>${sudEsc(r.nombre || 'Receta sin nombre')}</b><span>${meta || 'Sin datos todavía'}</span></span></button>
+      ${ab ? `<div class="mn-rec-b" id="mnR_${r.id}">
+        <p class="mn-sec">Datos</p>
+        <div class="mn-g3">${f('mnRN', 'nombre', 'Nombre', '', 100)}${f('mnRT', 'tiempo', 'Tiempo', '20 min')}${f('mnRR', 'raciones', 'Raciones', '1')}</div>
+        <div class="mn-g3" style="margin-top:12px">${f('mnRM', 'momento', 'Momento', 'Comida / Cena')}${f('mnRO', 'objetivo', 'Objetivo', 'Saciante y equilibrada', 80)}${f('mnRD', 'dificultad', 'Dificultad', 'Fácil')}</div>
+        <p class="mn-sec">Ingredientes</p>
+        <div class="mn-cols"><div class="mn-f"><label class="mn-l" for="mnIng_${r.id}">Uno por línea</label><textarea class="inp notes-ta mn-ta" id="mnIng_${r.id}" rows="5" oninput="mnIngInput('${r.id}',this.value)">${sudEsc(mnTextoIng(r.ing))}</textarea></div><div class="mn-f"><span class="mn-l">Así lo entiende la app</span><div class="mn-ings" id="mnCh_${r.id}">${mnIngChips(r.ing, r.id)}</div></div></div>
+        <p class="mn-sec">Información nutricional <span class="hd-opt" style="text-transform:none;letter-spacing:0">(por ración, estimada)</span></p>
+        <div class="mn-g4">${nf('kcal', 'kcal')}${nf('prot', 'Proteína (g)')}${nf('hc', 'Hidratos (g)')}${nf('grasa', 'Grasa (g)')}</div>
+        <p class="mn-sec">Preparación</p>
+        <div class="mn-f"><label class="mn-l" for="mnRP_${r.id}">Un paso por línea</label><textarea class="inp notes-ta mn-ta" id="mnRP_${r.id}" rows="5" oninput="mnRecPasos('${r.id}',this.value)">${sudEsc((r.pasos || []).join('\n'))}</textarea></div>
+        <div class="mn-f" style="margin-top:12px"><label class="mn-l" for="mnRNo_${r.id}">Nota nutricional <span class="hd-opt">(opcional)</span></label><textarea class="inp notes-ta mn-ta" id="mnRNo_${r.id}" rows="3" style="min-height:80px" oninput="mnRecSet('${r.id}','nota',this.value)">${sudEsc(r.nota || '')}</textarea></div>
+        <div class="mn-f" style="margin-top:12px"><label class="mn-l" for="mnRC_${r.id}">Consejo <span class="hd-opt">(opcional)</span></label><input class="inp" id="mnRC_${r.id}" maxlength="300" value="${sudEsc(r.consejo || '')}" oninput="mnRecSet('${r.id}','consejo',this.value)"></div>
+        <p class="mn-sec">Foto</p>
+        <div class="mn-foto">${r.foto ? `<img data-p="${sudEsc(r.foto)}" alt="Foto de la receta">` : ''}<div class="mn-add" style="margin:0">${mnBtn(r.foto ? 'Cambiar foto' : 'Añadir foto', `mnFotoElegir('${r.id}')`, { icon: 'image', sm: true })}${r.foto ? mnBtn('Quitar foto', `mnFotoQuitar('${r.id}')`, { sm: true, ghost: true, dan: true, icon: 'trash' }) : ''}</div></div>
+        <div class="mn-add" style="margin:22px 0 0;padding-top:16px;border-top:.5px solid var(--bd)">${mnBtn('Eliminar receta', `mnEliminarReceta('${r.id}')`, { sm: true, ghost: true, dan: true, icon: 'trash' })}</div></div>` : ''}</div>`;
+  }).join('');
+  return `<div class="mn-drop" id="mnDrop" onclick="document.getElementById('mnPdf').click()" ondragover="event.preventDefault();this.classList.add('over')" ondragleave="this.classList.remove('over')" ondrop="mnSoltarPdfs(event)" role="button" tabindex="0" onkeydown="if(event.key==='Enter')document.getElementById('mnPdf').click()">
+      <span style="color:var(--t600)">${mnI('upload')}</span><b>Importar recetas desde PDF</b><span class="mn-ayuda">Arrastra aquí los PDF de tu plantilla NutriLogos o pulsa para elegirlos. Se leen en tu navegador: título, ingredientes con cantidades, nutrición, pasos, nota y la foto.</span></div>
+    <input type="file" id="mnPdf" accept="application/pdf,.pdf" multiple style="display:none" aria-hidden="true" tabindex="-1" onchange="mnImportarPdfs(this.files);this.value=''">
+    ${rs.length ? lista : '<div class="mn-vacio"><b>Aún no hay recetas</b><span class="mn-ayuda">Importa tus PDF o crea una a mano. Luego las enlazas desde cada comida y el cliente las abre con un toque.</span></div>'}
+    <div class="mn-add">${mnBtn('Nueva receta', 'mnNuevaReceta()', { icon: 'plus' })}</div>`;
+}
+function mnRecNutri(id, k, v) { const r = MN.c.recetas.find(x => x.id === id); if (!r) return; const x = parseFloat(String(v).replace(',', '.')); r.nutri = r.nutri || {}; if (isFinite(x) && x >= 0) r.nutri[k] = x; else delete r.nutri[k]; if (!Object.keys(r.nutri).length) r.nutri = null; mnCambio(); }
+function mnNuevaReceta() { const r = MN_RECETA_NUEVA(); MN.c.recetas.push(r); MN.rec = r.id; mnCambio(); mnPintar(); const e = document.getElementById('mnRN_' + r.id); if (e) e.focus(); }
+function mnSoltarPdfs(ev) { ev.preventDefault(); document.getElementById('mnDrop').classList.remove('over'); mnImportarPdfs(ev.dataTransfer.files); }
+async function mnImportarPdfs(files) {
+  const pdfs = [...files].filter(f => /pdf$/i.test(f.type) || /\.pdf$/i.test(f.name)); if (!pdfs.length) { toast('Elige archivos PDF.', { tipo: 'aviso' }); return; }
+  let ok = 0; const mal = [];
+  for (const f of pdfs) {
+    const aviso = toast('Leyendo ' + f.name + '…', { ms: 20000 });
+    try {
+      const r = await mnLeerPdfReceta(f);
+      if (!r || !r.nombre || !r.ing.length) { mal.push(f.name); aviso.cerrar(); continue; }
+      const rec = { ...MN_RECETA_NUEVA(), ...r }; delete rec.fotoBlob;
+      if (r.fotoBlob) {
+        const path = `${MN.depId}/menu/${rec.id}-${Date.now()}.jpg`;
+        try { const up = await authFetch(`${SURL}/storage/v1/object/${FOTO_BUCKET}/${path.split('/').map(encodeURIComponent).join('/')}`, { method: 'POST', headers: { 'Content-Type': 'image/jpeg' }, body: r.fotoBlob }); if (up.ok) rec.foto = path; } catch (e) {}
+      }
+      rec.ing.forEach(i => { i.a = mnLink(i.n); });
+      const dup = MN.c.recetas.some(x => mnNorm(x.nombre) === mnNorm(rec.nombre));
+      MN.c.recetas.push(rec); MN.rec = rec.id; ok++; if (dup) toast('«' + rec.nombre + '» ya existía: se ha añadido otra copia.', { tipo: 'aviso' });
+    } catch (e) { mal.push(f.name); }
+    aviso.cerrar();
+  }
+  if (ok) { mnCambio(); MN.tab = 'recetas'; mnPintar(); toast(ok === 1 ? 'Receta importada: revisa los datos' : ok + ' recetas importadas: revisa los datos'); }
+  if (mal.length) toast('No he podido leer: ' + mal.join(', ') + '. Solo reconozco los PDF de la plantilla NutriLogos.', { tipo: 'error', ms: 7000 });
+}
+
+// ── Catálogo automático: categoría, estado y nutrición a partir del nombre ──
+const MN_CATEGORIAS = ['Proteínas', 'Legumbres', 'Hidratos', 'Verduras', 'Frutas', 'Lácteos y vegetales', 'Frutos secos y semillas', 'Grasas y aceites', 'Condimentos y otros', 'Bebidas'];
+const MN_CATKW = [
+  ['Condimentos y otros', /\btomate frito\b|\bsal\b|pimienta|especia|mostaza|vinagre|salsa|pesto|oregano|comino|pimenton|curcuma|canela|levadura|\bmiel\b|mermelada|azucar|chocolate|cacao|sirope|caldo|ketchup|mayonesa|hierbas/],
+  ['Frutos secos y semillas', /\bnuez|nueces|almendra|anacardo|pistacho|avellana|cacahuete|semilla|\bchia\b|\blino\b|sesamo|girasol|pipas|tahini/],
+  ['Grasas y aceites', /aceite|\baove\b|aguacate|mantequilla|margarina|\bcoco\b/],
+  ['Lácteos y vegetales', /yogur|leche|queso|kefir|bebida (vegetal|de )|requeson|\bnata\b|cuajada|skyr|batido/],
+  ['Bebidas', /isotonic|\bagua\b|zumo|refresco|\bcafe\b|\bte\b|infusion|cerveza|\bvino\b|energetica/],
+  ['Legumbres', /garbanzo|alubia|lenteja|judia seca|edamame|guisante seco|soja texturizada|habas secas|hummus/],
+  ['Proteínas', /pollo|pavo|ternera|cerdo|jamon|lomo|atun|salmon|merluza|bacalao|caballa|sardina|lubina|dorada|pescado|gamba|langostino|huevo|\bclara|tofu|tempeh|seitan|proteina|fiambre|conejo|cordero|anchoa|calamar|pulpo|mejillon|sepia|\bcarne|solomillo|filete|hamburguesa|salchicha|bonito/],
+  ['Hidratos', /arroz|pasta|macarron|espagueti|fideo|cuscus|quinoa|avena|copos|\bpan\b|tostada|patata|boniato|noquis|tortita|galleta|cereal|harina|\bwrap|tortilla de trigo|cebada|\bmijo|centeno|bulgur|\bmaiz|barrita|granola|muesli|panecillo|bagel|crepe|pizza|lasana/],
+  ['Frutas', /manzana|platano|naranja|mandarina|\bpera\b|fresa|frambuesa|arandano|\buva|kiwi|melon|sandia|\bpina\b|mango|limon|\blima\b|fruta|guayaba|pasas|datil|higo|melocoton|albaricoque|cereza|ciruela|papaya|granada|pomelo|nectarina|\bmora/],
+  ['Verduras', /tomate|lechuga|pepino|pimiento|zanahoria|cebolla|\bajo\b|espinaca|brocoli|coliflor|calabacin|berenjena|champi|\bseta|judia verde|judias verdes|esparrago|\bapio\b|puerro|\bcol\b|repollo|rucula|canonigo|remolacha|calabaza|alcachofa|acelga|verdura|ensalada|rabano|\bnabo|guisante|perejil|cilantro|albahaca|\bmenta\b|hortaliza|brotes|\bkale|cebollino|jengibre/]
+];
+function mnCategoria(n) { const t = mnNorm(n); for (const [c, re] of MN_CATKW) if (re.test(t)) return c; return ''; }
+function mnEstadoInfer(n, nota) {
+  const t = mnNorm((n || '') + ' ' + (nota || ''));
+  if (/precocin/.test(t)) return 'precocinado';
+  if (/cocid|cocin|\bbote\b|hervid|al vapor|a la plancha|asad|frit/.test(t)) return 'cocinado';
+  if (/en seco|\bseco|crudo|cruda|fresc/.test(t)) return 'crudo';
+  return '';
+}
+// Nombres en inglés de los alimentos más comunes, para buscar su composición genérica en USDA
+const MN_ES_EN = [['pechuga de pollo', 'chicken breast raw'], ['pollo', 'chicken meat raw'], ['pavo', 'turkey breast raw'], ['ternera', 'beef lean raw'], ['cerdo', 'pork lean raw'], ['jamon serrano', 'ham cured'], ['atun', 'tuna canned in water'], ['salmon', 'salmon atlantic raw'], ['merluza', 'cod atlantic raw'], ['bacalao', 'cod atlantic raw'], ['caballa', 'mackerel atlantic raw'], ['sardina', 'sardine canned'], ['lubina', 'sea bass raw'], ['dorada', 'sea bream raw'], ['gamba', 'shrimp raw'], ['huevo', 'egg whole raw'], ['tofu', 'tofu firm'], ['tempeh', 'tempeh'], ['arroz integral', 'brown rice cooked'], ['arroz', 'white rice cooked'], ['pasta integral', 'whole wheat pasta cooked'], ['pasta', 'pasta cooked enriched'], ['noquis', 'potato gnocchi'], ['cuscus', 'couscous cooked'], ['quinoa', 'quinoa cooked'], ['avena', 'oats rolled'], ['pan integral', 'whole wheat bread'], ['pan', 'white bread'], ['patata', 'potato raw'], ['boniato', 'sweet potato raw'], ['garbanzo', 'chickpeas cooked'], ['alubia', 'white beans cooked'], ['lenteja', 'lentils cooked'], ['hummus', 'hummus'], ['platano', 'banana raw'], ['manzana', 'apple raw'], ['naranja', 'orange raw'], ['fresa', 'strawberries raw'], ['aguacate', 'avocado raw'], ['tomate', 'tomato raw'], ['pepino', 'cucumber raw'], ['zanahoria', 'carrot raw'], ['espinaca', 'spinach raw'], ['brocoli', 'broccoli raw'], ['lechuga', 'lettuce raw'], ['pimiento', 'bell pepper raw'], ['cebolla', 'onion raw'], ['calabacin', 'zucchini raw'], ['champi', 'mushrooms white raw'], ['berenjena', 'eggplant raw'], ['coliflor', 'cauliflower raw'], ['judia verde', 'green beans raw'], ['nuez', 'walnuts'], ['almendra', 'almonds'], ['anacardo', 'cashews'], ['cacahuete', 'peanuts'], ['chia', 'chia seeds'], ['semilla', 'mixed seeds'], ['aceite de oliva', 'olive oil'], ['aove', 'olive oil'], ['miel', 'honey'], ['yogur', 'yogurt plain'], ['leche', 'milk whole'], ['bebida de soja', 'soy milk'], ['queso', 'cheese'], ['mantequilla de cacahuete', 'peanut butter'], ['ajo', 'garlic raw'], ['limon', 'lemon raw'], ['mostaza', 'mustard prepared']].sort((a, b) => b[0].length - a[0].length);
+function mnEn(n) { const t = ' ' + mnNorm(n) + ' '; for (const [es, en] of MN_ES_EN) if (t.indexOf(' ' + es) >= 0 || t.indexOf(es) >= 0) return en; return ''; }
+const MN_STOP = /^(de|del|la|el|los|las|con|al|en|y|para|un|una|cocid[oa]s?|bote|fresc[oa]s?|crud[oa]s?|seco|seca|entero|entera)$/;
+const mnMediana = a => { const s = a.slice().sort((x, y) => x - y), m = s.length >> 1; return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; };
+async function mnFetchJson(url, ms) { const ac = new AbortController(), t = setTimeout(() => ac.abort(), ms || 7000); try { const r = await fetch(url, { signal: ac.signal }); return await r.json(); } finally { clearTimeout(t); } }
+// Mediana de los productos de supermercado de España que coinciden con el nombre; si hay pocos, USDA con el nombre en inglés
+async function mnBuscarNutri(nombre) {
+  const toks = mnNorm(nombre).split(/[^a-z0-9ñ]+/).filter(t => t.length > 2 && !MN_STOP.test(t)).slice(0, 4);
+  try {
+    if (toks.length) {
+      const d = await mnFetchJson(`https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(toks.join(' '))}&search_simple=1&action=process&json=1&page_size=20&lc=es&tagtype_0=countries&tag_contains_0=contains&tag_0=spain&fields=product_name,nutriments`);
+      const ok = (d.products || []).filter(p => { const t = mnNorm(p.product_name || ''), n = p.nutriments || {}; return t && toks.every(k => t.indexOf(k) >= 0) && [n['energy-kcal_100g'], n['proteins_100g'], n['carbohydrates_100g'], n['fat_100g']].every(x => typeof x === 'number'); }).slice(0, 7);
+      if (ok.length >= 2) {
+        const g = k => mnMediana(ok.map(p => p.nutriments[k])), fib = ok.map(p => p.nutriments['fiber_100g']).filter(x => typeof x === 'number');
+        return { nutri: { kcal: g('energy-kcal_100g'), prot: g('proteins_100g'), hc: g('carbohydrates_100g'), grasa: g('fat_100g'), ...(fib.length ? { fibra: mnMediana(fib) } : {}) }, fuente: 'off', ref: 'Mediana de ' + ok.length + ' productos de supermercado de España' };
+      }
+    }
+  } catch (e) {}
+  try {
+    const en = mnEn(nombre);
+    if (en) {
+      const d = await mnFetchJson(`https://api.nal.usda.gov/fdc/v1/foods/search?api_key=${USDA_KEY}&query=${encodeURIComponent(en)}&pageSize=3&dataType=Foundation,SR%20Legacy`);
+      const f = (d.foods || [])[0];
+      if (f) { const n = compNormalize(f, 'usda'); if (typeof n.kcal === 'number') return { nutri: { kcal: n.kcal, prot: n.protein, hc: n.carbs, grasa: n.fat, ...(typeof n.fiber === 'number' ? { fibra: n.fiber } : {}) }, fuente: 'usda', ref: 'USDA: ' + n.name }; }
+    }
+  } catch (e) {}
+  return null;
+}
+function mnSinEnlazar() {
+  const m = {};
+  [].concat(MN.c.recetas, MN.c.platos, mnTodasComidas()).forEach(e => (e.ing || []).forEach(i => { if (i.a) return; const k = mnNorm(i.n); if (k && !m[k]) m[k] = { n: i.n, nota: i.nota || '' }; }));
+  return Object.keys(m).map(k => m[k]);
+}
+let _mnAuto = null;
+async function mnAutoAbrir() {
+  const faltan = mnSinEnlazar(); if (!faltan.length) { toast('Todo está en el catálogo.'); return; }
+  _mnAuto = { filas: faltan.map(f => ({ n: f.n, cat: mnCategoria(f.n), est: mnEstadoInfer(f.n, f.nota), nutri: null, fuente: 'manual', ref: '', sel: true })), cargando: true, hecho: 0 };
+  document.getElementById('mMnAuto').style.display = 'flex'; mnAutoPintar();
+  const cola = _mnAuto.filas.slice(), run = async () => { while (cola.length && _mnAuto) { const f = cola.shift(), r = await mnBuscarNutri(f.n); if (!_mnAuto) return; if (r) { f.nutri = r.nutri; f.fuente = r.fuente; f.ref = r.ref; } _mnAuto.hecho++; mnAutoPintar(); } };
+  await Promise.all([run(), run(), run()]);
+  if (_mnAuto) { _mnAuto.cargando = false; mnAutoPintar(); }
+}
+function mnAutoCerrar() { _mnAuto = null; document.getElementById('mMnAuto').style.display = 'none'; }
+function mnAutoPintar() {
+  const a = _mnAuto, el = document.getElementById('mnAutoCuerpo'); if (!a) return;
+  const foco = document.activeElement && document.activeElement.closest && document.activeElement.closest('#mnAutoCuerpo') ? document.activeElement.id : null;
+  const cats = [...new Set(MN_CATEGORIAS.concat(MN.cat.map(x => x.categoria).filter(Boolean)))];
+  const nv = (f, k) => f.nutri && typeof f.nutri[k] === 'number' ? String(Math.round(f.nutri[k] * 10) / 10).replace('.', ',') : '';
+  const prog = a.cargando ? `<p class="mn-ayuda" role="status">Buscando datos: ${a.hecho} de ${a.filas.length}…</p>` : `<p class="mn-ayuda">Revisa lo que ha encontrado la app y quita lo que no quieras guardar. Los valores son por 100 g y puedes corregirlos.</p>`;
+  el.innerHTML = `<p class="mt" id="mnAutoTit">Completar el catálogo</p><p class="ms">${a.filas.length} ${a.filas.length === 1 ? 'alimento' : 'alimentos'} de este menú todavía no están en tu catálogo. La app propone categoría, estado y nutrición.</p>${prog}
+    <div style="overflow-x:auto"><table class="mn-auto-t"><thead><tr><th></th><th>Alimento</th><th>Categoría</th><th>Estado</th><th>kcal</th><th>Prot.</th><th>HC</th><th>Grasa</th></tr></thead><tbody>${a.filas.map((f, i) => `<tr>
+      <td><input type="checkbox" aria-label="Guardar ${sudEsc(f.n)}"${f.sel ? ' checked' : ''} onchange="_mnAuto.filas[${i}].sel=this.checked;mnAutoPintar()"></td>
+      <td><input class="inp" id="mnAu_n${i}" value="${sudEsc(f.n)}" maxlength="80" aria-label="Nombre" oninput="_mnAuto.filas[${i}].n=this.value">${f.fuente !== 'manual' ? `<div class="mn-fuente">${sudEsc(f.ref)}</div>` : ''}</td>
+      <td><input class="inp" id="mnAu_c${i}" list="mnAuCL" value="${sudEsc(f.cat)}" maxlength="40" aria-label="Categoría" oninput="_mnAuto.filas[${i}].cat=this.value"></td>
+      <td><select class="inp" id="mnAu_e${i}" aria-label="Estado" onchange="_mnAuto.filas[${i}].est=this.value">${[['', '—'], ['crudo', 'Crudo'], ['cocinado', 'Cocinado'], ['precocinado', 'Precocinado']].map(o => `<option value="${o[0]}"${f.est === o[0] ? ' selected' : ''}>${o[1]}</option>`).join('')}</select></td>
+      ${['kcal', 'prot', 'hc', 'grasa'].map(k => `<td><input class="inp num" id="mnAu_${k}${i}" inputmode="decimal" value="${nv(f, k)}" aria-label="${k}" oninput="mnAutoNutri(${i},'${k}',this.value)"></td>`).join('')}</tr>`).join('')}</tbody></table></div><datalist id="mnAuCL">${cats.map(c => `<option value="${sudEsc(c)}">`).join('')}</datalist>
+    <div class="mbtns" style="margin-top:14px"><button type="button" class="btn-cancel" onclick="mnAutoCerrar()">Cancelar</button><button type="button" class="btn-ok" id="mnAutoOk" onclick="mnAutoGuardar()"${a.cargando ? ' disabled' : ''}>Guardar ${a.filas.filter(f => f.sel).length} en el catálogo</button></div>`;
+  if (foco) { const e = document.getElementById(foco); if (e) { e.focus(); try { e.setSelectionRange(e.value.length, e.value.length); } catch (x) {} } }
+}
+function mnAutoNutri(i, k, v) { const f = _mnAuto.filas[i], x = parseFloat(String(v).replace(',', '.')); f.nutri = f.nutri || {}; if (isFinite(x) && x >= 0) f.nutri[k] = x; else delete f.nutri[k]; }
+async function mnAutoGuardar() {
+  const a = _mnAuto; if (!a) return; const sel = a.filas.filter(f => f.sel && f.n.trim()); let n = 0, dup = 0;
+  const btn = document.getElementById('mnAutoOk'); btn.disabled = true; btn.textContent = 'Guardando…';
+  for (const f of sel) {
+    const nutri = f.nutri && Object.keys(f.nutri).length ? f.nutri : null;
+    const r = await sb('alimentos', { method: 'POST', body: JSON.stringify({ nombre: f.n.trim(), categoria: f.cat.trim() || null, estado: f.est || null, medidas: [], nutri, fuente: nutri ? f.fuente : 'manual', fuente_ref: nutri && f.ref ? f.ref.slice(0, 120) : null }) });
+    if (esErrorSb(r)) { if (r.code === '23505') dup++; continue; }
+    if (Array.isArray(r) && r[0]) { MN.cat.push(r[0]); n++; }
+  }
+  MN.cat.sort((x, y) => x.nombre.localeCompare(y.nombre, 'es')); mnRelinkTodo(); mnAutoCerrar(); mnCambio(); mnPintar();
+  toast(n ? n + (n === 1 ? ' alimento añadido' : ' alimentos añadidos') + ' al catálogo' + (dup ? ' (' + dup + ' ya existían)' : '') : 'No se ha añadido ninguno' + (dup ? ': ya existían' : ''), { tipo: n ? undefined : 'aviso' });
+}
+// «+» de un ingrediente sin enlazar: el formulario ya trae la categoría y el estado propuestos
+function mnVincularChip(entId, ix) {
+  const e = mnEnt(entId); if (!e || !e.ing[ix]) return; const i = e.ing[ix], nombre = i.n;
+  _mnCatEd = { id: null, nombre, categoria: mnCategoria(nombre), estado: mnEstadoInfer(nombre, i.nota), medidas: [], nutri: {}, fuente: 'manual', fuente_ref: '' };
+  _mnCatCb = nuevo => { const x = mnNorm(nombre); [].concat(MN.c.recetas, MN.c.platos, mnTodasComidas()).forEach(en => (en.ing || []).forEach(k => { if (mnNorm(k.n) === x) k.a = nuevo.id; })); };
+  _mnCatCbCerrar = true; mnCatPintar(); document.getElementById('mMnCat').style.display = 'flex';
+}
+
+// ── Lista de clientes ──
+function pintarLista() {
+  const q = mnNorm(document.getElementById('listaQ').value), el = document.getElementById('lista');
+  const aviso = window._sinSql ? '<p class="mn-ayuda" style="margin:0 0 14px;color:var(--red)">Falta ejecutar <b>supabase_menu_semanal.sql</b> en Supabase: sin él no se puede guardar ni publicar.</p>' : '';
+  const rows = deportistas.filter(x => !q || mnNorm(x.nombre).indexOf(q) >= 0).map(x => {
+    const m = _menus[x.id], pub = m && m.publicado_en, sinPub = pub && new Date(m.actualizado) - new Date(pub) > 1500;
+    const est = !m ? 'Sin menú' : !pub ? 'Borrador' : sinPub ? 'Cambios sin publicar' : 'Publicado';
+    const ini = String(x.nombre || '?').trim().split(/\s+/).slice(0, 2).map(p => p.charAt(0).toUpperCase()).join('');
+    return `<button type="button" class="lab-fila" onclick="mnAbrir(${x.id})"><span class="lab-av" aria-hidden="true">${sudEsc(ini)}</span><span><span class="sup-item-n">${sudEsc(x.nombre)}</span><span class="sup-item-d">${sudEsc(x.deporte || 'Modalidad sin especificar')}</span></span><span class="lab-est${pub ? (sinPub ? ' warn' : ' pub') : ''}">${est}</span></button>`;
+  }).join('');
+  el.innerHTML = aviso + (rows ? `<div class="lab-lista">${rows}</div>` : '<p class="mn-ayuda">Ningún cliente con ese nombre.</p>');
+}
+
+// ── Copia que ve el cliente ──
+function mnSnapshot() {
+  const c = MN.c, d = deportistas.find(x => x.id == MN.depId) || {}, oi = d.objetivo_impresiones || {};
+  const ing = l => (l || []).map(i => ({ t: mnIngTxt(i), n: i.n, a: i.a || null, cant: i.cant, nota: i.nota || '' }));
+  const resolver = m => { const s = mnSrc(m); return { tipo: m.tipo, hora: m.hora || '', nombre: s.nombre || '', nota: s.nota || '', libre: !!m.libre, receta: m.receta || null, ing: ing(s.ing) }; };
+  return {
+    v: 1, titulo: c.titulo || '', objetivo: oi.objetivo || '', impresiones: (oi.impresiones || []).filter(x => x && x.t),
+    semanas: c.semanas.map(s => ({ id: s.id, nombre: s.nombre || 'Semana', nota: s.nota || '', dias: s.dias.map(d2 => ({ n: d2.n, dow: d2.dow || null, ctx: d2.ctx || {}, comidas: d2.comidas.map(resolver) })) })),
+    recetas: c.recetas.map(r => ({ id: r.id, nombre: r.nombre || '', tiempo: r.tiempo || '', raciones: r.raciones || '', momento: r.momento || '', objetivo: r.objetivo || '', dificultad: r.dificultad || '', nutri: r.nutri || null, ing: ing(r.ing), pasos: r.pasos || [], consejo: r.consejo || '', nota: r.nota || '', foto: r.foto || null }))
+  };
+}
+// ── Receta en la vista del cliente ──
+function mnvRecetas() {
+  return (MENU.menu.recetas || []).map(r => {
+    const ab = MNV.rec === r.id, nu = r.nutri || {};
+    const meta = [['Momento', r.momento], ['Objetivo', r.objetivo], ['Dificultad', r.dificultad], ['Tiempo', r.tiempo], ['Raciones', r.raciones]].filter(x => x[1]).map(x => `<span><b>${x[0]}</b>${esc(x[1])}</span>`).join('');
+    const tiles = nu.kcal || nu.prot || nu.hc || nu.grasa ? `<p class="mnv-sh">Información nutricional</p><div class="mnv-nu">${[['kcal', 'kcal', ''], ['prot', 'proteína', ' g'], ['hc', 'hidratos', ' g'], ['grasa', 'grasa', ' g']].map(x => `<div><b>${nu[x[0]] !== undefined ? Math.round(nu[x[0]]) + x[2] : '—'}</b><span>${x[1]}</span></div>`).join('')}</div><p class="mnv-nu-n">Valores estimados por ración</p>` : '';
+    return `<div class="card mnv-rec"><button type="button" class="mnv-rec-h" aria-expanded="${ab}" onclick="MNV.rec=${ab ? 'null' : `'${esc(r.id)}'`};pintarMenu()">${esc(r.nombre || 'Receta')}<span>${[r.tiempo, r.raciones ? r.raciones + ' rac.' : ''].filter(Boolean).map(esc).join(' · ')}</span></button>
+      ${ab ? `<div class="mnv-rec-b" id="mnvR_${esc(r.id)}">${r.foto ? `<img data-p="${esc(r.foto)}" alt="">` : ''}${meta ? `<div class="mnv-meta">${meta}</div>` : ''}
+        ${(r.ing || []).length ? `<p class="mnv-sh">Ingredientes</p><div class="mnv-ing">${r.ing.map(i => `<span class="mnv-i">${esc(i.t)}${i.nota ? ` <i>(${esc(i.nota)})</i>` : ''}</span>`).join('')}</div>` : ''}
+        ${tiles}
+        ${(r.pasos || []).length ? `<p class="mnv-sh">Preparación</p><ol class="mnv-pasos">${r.pasos.map((p, i) => `<li><span class="mnv-pn">${i + 1}</span><span>${esc(p)}</span></li>`).join('')}</ol>` : ''}
+        ${r.nota ? `<p class="mnv-sh">Nota nutricional</p><p class="mnv-nota" style="margin-top:0">${esc(r.nota)}</p>` : ''}
+        ${r.consejo ? `<p class="mnv-nota" style="margin-top:12px">${esc(r.consejo)}</p>` : ''}</div>` : ''}</div>`;
+  }).join('');
+}
+
+// ── Lector de recetas en PDF (la plantilla de NutriLogos) ──
+// Se lee en el navegador con pdf.js (sin enviar el archivo a ningún servidor): título, momento, objetivo, dificultad, tiempo, raciones,
+// ingredientes con cantidad, información nutricional por ración, preparación, nota nutricional y la foto de cabecera.
+const MN_PDFJS = { js: 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js', worker: 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js' };
+function mnCargarScript(src) { return new Promise((ok, ko) => { const s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = () => ko(new Error('script')); document.head.appendChild(s); }); }
+async function mnPdfJs() { if (!window.pdfjsLib) await mnCargarScript(MN_PDFJS.js); window.pdfjsLib.GlobalWorkerOptions.workerSrc = MN_PDFJS.worker; return window.pdfjsLib; }
+const mnSinAcentos = s => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '');
+const MN_ESPACIADO = /^([A-ZÁÉÍÓÚÑ·]{1,3} )+[A-ZÁÉÍÓÚÑ·]{1,3}$/; // «I N G R E D I E N T E S»
+// Une los trozos de una misma línea que son un rótulo con letras espaciadas
+function mnPdfSegs(items) {
+  const its = items.filter(i => i.s.trim()).sort((a, b) => a.y - b.y || a.x - b.x), segs = [];
+  for (const i of its) {
+    const p = segs[segs.length - 1];
+    if (p && p.esp && MN_ESPACIADO.test(i.s) && Math.abs(p.y - i.y) <= 2 && i.x - (p.x + p.w) < 14) { p.s += ' ' + i.s; p.w = i.x + i.w - p.x; continue; }
+    segs.push({ ...i, esp: MN_ESPACIADO.test(i.s) });
+  }
+  return segs;
+}
+function mnPdfFilas(items, tol) { // agrupa por línea (misma y) y ordena por x
+  const filas = []; items.slice().sort((a, b) => a.y - b.y || a.x - b.x).forEach(i => { const f = filas[filas.length - 1]; if (f && Math.abs(f.y - i.y) <= (tol || 3)) f.its.push(i); else filas.push({ y: i.y, its: [i] }); });
+  filas.forEach(f => f.its.sort((a, b) => a.x - b.x)); return filas;
+}
+// items: [{s,x,y,w,h}] con y hacia abajo. Devuelve la receta o null si no es la plantilla.
+function mnPdfParse(items) {
+  const segs = mnPdfSegs(items), H = {};
+  segs.filter(s => s.esp).forEach(s => { const k = mnSinAcentos(s.s.replace(/ /g, '')); if (!H[k]) H[k] = s; });
+  const ING = H.INGREDIENTES, PRE = H.PREPARACION; if (!ING || !PRE) return null;
+  const INF = H.INFORMACIONNUTRICIONAL, NOTA = H.NOTANUTRICIONAL, PIE = H.NUTRILOGOS;
+  const enY = (a, b, f) => items.filter(i => i.s.trim() && i.y > a && i.y < b && (!f || f(i)));
+  const r = { nombre: '', tiempo: '', raciones: '', momento: '', objetivo: '', dificultad: '', nutri: null, ing: [], pasos: [], consejo: '', nota: '', foto: null };
+  // título: el texto grande de la cabecera
+  r.nombre = items.filter(i => i.y < ING.y - 50 && i.h >= 15 && i.s.trim()).sort((a, b) => a.y - b.y || a.x - b.x).map(i => i.s.trim()).join(' ').replace(/\s+/g, ' ');
+  // chips de datos: etiqueta espaciada y su valor justo debajo
+  const META = { MOMENTO: 'momento', OBJETIVO: 'objetivo', DIFICULTAD: 'dificultad', TIEMPO: 'tiempo', RACIONES: 'raciones' };
+  segs.filter(s => s.esp && META[mnSinAcentos(s.s.replace(/ /g, ''))] && s.y < ING.y).forEach(l => {
+    const cx = l.x + l.w / 2, cand = items.filter(i => i.y > l.y + 4 && i.y < l.y + 26 && i.s.trim() && !MN_ESPACIADO.test(i.s)).map(i => ({ i, d: Math.abs(i.x + i.w / 2 - cx) })).sort((a, b) => a.d - b.d)[0];
+    if (cand && cand.d < 70) r[META[mnSinAcentos(l.s.replace(/ /g, ''))]] = cand.i.s.trim();
+  });
+  // ingredientes (columna izquierda): nombre a la izquierda y cantidad a la derecha en la misma línea
+  const xMax = INF ? INF.x - 8 : 9999;
+  mnPdfFilas(enY(ING.y + 4, PRE.y - 4, i => i.x < xMax)).forEach(f => {
+    const nombre = f.its[0].s.trim(); let qty = f.its.slice(1).map(i => i.s.trim()).join(' ').trim();
+    if (!nombre) return;
+    const ing = mnParseLinea(nombre); if (!ing) return;
+    if (qty) {
+      const q = mnQty(qty);
+      if (q) { ing.cant = q.cant; if (q.rest) ing.nota = [ing.nota, q.rest].filter(Boolean).join('; '); }
+      else if (mnNorm(ing.n).indexOf(mnNorm(qty)) < 0) ing.nota = [ing.nota, qty].filter(Boolean).join('; ');
+      else { ing.n = ing.n.replace(new RegExp('\\s*' + qty.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\s*$', 'i'), '').trim() || ing.n; ing.nota = [ing.nota, qty].filter(Boolean).join('; '); }
+    }
+    r.ing.push(ing);
+  });
+  // información nutricional por ración
+  if (INF) {
+    const zona = enY(INF.y + 4, PRE.y - 4, i => i.x >= INF.x - 40), nu = {};
+    const etq = { kcal: 'kcal', proteina: 'prot', carbohidratos: 'hc', grasa: 'grasa' };
+    zona.forEach(l => { const k = etq[mnSinAcentos(l.s).toLowerCase().trim()]; if (!k) return; const cx = l.x + l.w / 2;
+      const n = zona.filter(i => i.y < l.y && i.y > l.y - 30 && /^\d+(?:[.,]\d+)?\s*(g|kcal)?$/i.test(i.s.trim())).map(i => ({ i, d: Math.abs(i.x + i.w / 2 - cx) })).sort((a, b) => a.d - b.d)[0];
+      if (n && n.d < 50) nu[k] = parseFloat(n.i.s.replace(',', '.')); });
+    if (Object.keys(nu).length) r.nutri = nu;
+  }
+  // preparación: un número y su texto (que puede seguir en líneas siguientes)
+  mnPdfFilas(enY(PRE.y + 4, NOTA ? NOTA.y - 4 : (PIE ? PIE.y - 4 : 99999))).forEach(f => {
+    const a = f.its[0], resto = f.its.slice(1).map(i => i.s.trim()).join(' ').trim();
+    if (/^\d+$/.test(a.s.trim()) && a.x < 70) r.pasos.push(resto); else if (r.pasos.length) r.pasos[r.pasos.length - 1] = (r.pasos[r.pasos.length - 1] + ' ' + f.its.map(i => i.s.trim()).join(' ')).trim();
+  });
+  const limpia = t => t.replace(/\s+/g, ' ').replace(/\s+([.,;:!?])/g, '$1').trim();
+  r.pasos = r.pasos.map(limpia).filter(Boolean);
+  // nota nutricional
+  if (NOTA) r.nota = limpia(mnPdfFilas(enY(NOTA.y + 4, PIE ? PIE.y - 4 : 99999)).map(f => f.its.map(i => i.s.trim()).join(' ')).join(' '));
+  return r;
+}
+// Lee el PDF entero: texto (con posiciones) y la foto grande de cabecera
+async function mnLeerPdfReceta(file) {
+  const lib = await mnPdfJs(), pdf = await lib.getDocument({ data: await file.arrayBuffer() }).promise, page = await pdf.getPage(1), vp = page.getViewport({ scale: 1 });
+  const tc = await page.getTextContent();
+  const items = tc.items.filter(i => i.str && i.str.trim()).map(i => ({ s: i.str, x: i.transform[4], y: vp.height - i.transform[5], w: i.width, h: Math.hypot(i.transform[2], i.transform[3]) }));
+  const r = mnPdfParse(items); if (!r) return null;
+  try { // la foto: la imagen más grande que no sea cuadrada (el logo lo es)
+    const ops = await page.getOperatorList(), nombres = [];
+    for (let k = 0; k < ops.fnArray.length; k++) if (ops.fnArray[k] === lib.OPS.paintImageXObject) nombres.push(ops.argsArray[k][0]);
+    let mejor = null;
+    for (const n of nombres) { const o = await new Promise(ok => page.objs.get(n, ok)); if (o && o.bitmap && o.width >= 500 && Math.abs(o.width / o.height - 1) > 0.15 && (!mejor || o.width * o.height > mejor.width * mejor.height)) mejor = o; }
+    if (mejor) {
+      const k = Math.min(1, 1280 / Math.max(mejor.width, mejor.height)), cv = document.createElement('canvas'); cv.width = Math.round(mejor.width * k); cv.height = Math.round(mejor.height * k);
+      cv.getContext('2d').drawImage(mejor.bitmap, 0, 0, cv.width, cv.height);
+      r.fotoBlob = await new Promise(ok => cv.toBlob(ok, 'image/jpeg', 0.85));
+    }
+  } catch (e) {}
+  return r;
+}
+
+// ── Funciones propias de la página de pruebas ──
 function mnPrevSet(o) { mnSyncTextos(); MN.prev = o; mnPintar(); }
 function mnvPrev(origen) {
   const m = origen === 'borrador' ? mnSnapshot() : MN.row.publicado, box = document.getElementById('menuBody');
   if (!m) { box.innerHTML = vacioHtml('file', 'Todavía no hay menú publicado', 'Pulsa «Publicar» para que el cliente lo vea; hasta entonces puedes mirar el borrador.', null, true); return; }
   MENU = { menu: m, semana_actual: MN.row.semana_actual && m.semanas.some(s => s.id === MN.row.semana_actual) ? MN.row.semana_actual : m.semanas[0].id };
   const s = MENU.menu.semanas.find(x => x.id === MENU.semana_actual); MNV.sem = s.id; MNV.dia = mnvIdxHoy(s); MNV.tab = 'hoy'; MNV.rec = null; pintarMenu();
-}
-async function mnTocaSemana(semId) {
-  const r = await sb(`menus_cliente?id=eq.${MN.row.id}`, { method: 'PATCH', headers: { 'Prefer': 'return=minimal' }, body: JSON.stringify({ semana_actual: semId }) });
-  if (esErrorSb(r)) { toast('No se pudo cambiar. Inténtalo de nuevo.', { tipo: 'error' }); return; }
-  MN.row.semana_actual = semId; toast('Semana actualizada: el cliente ya ve esta semana');
 }
 async function mnRetirar() {
   const r = await sb(`menus_cliente?id=eq.${MN.row.id}`, { method: 'PATCH', headers: { 'Prefer': 'return=minimal' }, body: JSON.stringify({ publicado: null, publicado_en: null }) });
@@ -992,16 +1402,6 @@ function mnvSemana(s){
     return `<button type="button" class="mnv-dia" onclick="MNV.dia=${i};mnvSet('tab','hoy')"><div class="mnv-dia-h">${esc(d.n)}<span>${esc(c.texto||'')}</span></div>${filas||'<p>Sin comidas</p>'}</button>`;
   }).join('');
 }
-function mnvRecetas(){
-  return (MENU.menu.recetas||[]).map(r=>{
-    const ab=MNV.rec===r.id;
-    return `<div class="card mnv-rec"><button type="button" class="mnv-rec-h" aria-expanded="${ab}" onclick="MNV.rec=${ab?'null':`'${esc(r.id)}'`};pintarMenu()">${esc(r.nombre||'Receta')}<span>${[r.tiempo,r.raciones?r.raciones+' rac.':''].filter(Boolean).map(esc).join(' · ')}</span></button>
-      ${ab?`<div class="mnv-rec-b" id="mnvR_${esc(r.id)}">${r.foto?`<img data-p="${esc(r.foto)}" alt="">`:''}
-        ${(r.ing||[]).length?`<p class="mnv-sh">Ingredientes</p><div class="mnv-ing">${r.ing.map(i=>`<span class="mnv-i">${esc(i.t)}${i.nota?` <i>(${esc(i.nota)})</i>`:''}</span>`).join('')}</div>`:''}
-        ${(r.pasos||[]).length?`<p class="mnv-sh">Preparación</p><ol class="mnv-pasos">${r.pasos.map((p,i)=>`<li><span class="mnv-pn">${i+1}</span><span>${esc(p)}</span></li>`).join('')}</ol>`:''}
-        ${r.consejo?`<p class="mnv-nota" style="margin-top:12px">${esc(r.consejo)}</p>`:''}</div>`:''}</div>`;
-  }).join('');
-}
 function mnvVerReceta(id){ MNV.tab='recetas'; MNV.rec=id; pintarMenu(); const e=$('mnvR_'+id); if(e) e.scrollIntoView({block:'start'}); }
 function mnvPlan(){
   const m=MENU.menu, imp=(m.impresiones||[]);
@@ -1024,16 +1424,6 @@ async function cargarLista() {
   deportistas = d; _menus = {}; if (Array.isArray(m)) m.forEach(x => { _menus[x.deportista_id] = x; });
   window._sinSql = !Array.isArray(m);
   pintarLista();
-}
-function pintarLista() {
-  const q = mnNorm(document.getElementById('listaQ').value), el = document.getElementById('lista');
-  const aviso = window._sinSql ? '<p class="mn-ayuda" style="margin:0 0 10px;color:var(--red)">Falta ejecutar <b>supabase_menu_semanal.sql</b> en Supabase: sin él no se puede guardar ni publicar.</p>' : '';
-  const rows = deportistas.filter(x => !q || mnNorm(x.nombre).indexOf(q) >= 0).map(x => {
-    const m = _menus[x.id], pub = m && m.publicado_en, sinPub = pub && new Date(m.actualizado) - new Date(pub) > 1500;
-    const est = !m ? 'Sin menú' : !pub ? 'Borrador' : sinPub ? 'Publicado · cambios sin publicar' : 'Publicado';
-    return `<button type="button" class="lab-fila" onclick="mnAbrir(${x.id})"><span><span class="sup-item-n">${sudEsc(x.nombre)}</span><span class="sup-item-d">${sudEsc(x.deporte || 'Modalidad sin especificar')}</span></span><span class="lab-est${pub ? ' pub' : ''}">${est}</span></button>`;
-  }).join('');
-  el.innerHTML = aviso + (rows || '<p class="med-empty">Ningún cliente con ese nombre.</p>');
 }
 (async function arrancar() {
   if (localStorage.getItem('nutrilogos_dark') === '1') document.body.classList.add('dark-mode');
