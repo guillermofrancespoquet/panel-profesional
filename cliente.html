@@ -1190,7 +1190,7 @@ function cerrarInstTip(){ try{ localStorage.setItem('nl_cliente_inst','1'); }cat
 
 // ═══ Aviso del lunes en el móvil (notificación push; supabase_notificaciones.sql + Edge Function avisos-seguimiento) ═══
 // Clave pública VAPID (no es secreta). Mientras esté vacía, la función no se ofrece.
-const VAPID_PUBLICA='';
+const VAPID_PUBLICA='BMlFDqDpvNaUiEllEp06SjPmSFaE_LMOQo1-Iks0qsQbS-9wbD_oUX0ll_wCWQui6YqPn0OZ20qiebzrndzljak';
 function pushSoportado(){ return !!VAPID_PUBLICA&&'serviceWorker' in navigator&&'PushManager' in window&&'Notification' in window; }
 function pushClave(){ const b=VAPID_PUBLICA.replace(/-/g,'+').replace(/_/g,'/'), t=atob(b+'='.repeat((4-b.length%4)%4)); return Uint8Array.from(t,c=>c.charCodeAt(0)); }
 async function pushSub(){
