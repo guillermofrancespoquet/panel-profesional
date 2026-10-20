@@ -3,7 +3,7 @@
 -- Ejecutar en Supabase → SQL Editor. Requiere haber ejecutado antes `supabase_clientes_acceso.sql` (usa es_profesional()).
 --
 --  · `platos_biblioteca`: los platos propios del profesional (nombre, momento, ingredientes línea a línea, tipos de día
---    en que se usan y nota). Los usa la pestaña «Biblioteca» y el generador de semana de `menu-semanal.html`.
+--    en que se usan y nota). Los usa la pestaña «Biblioteca» y el generador de semana de `planificador-nutricional.html`.
 --    Solo el profesional puede leerla y escribirla (RLS); el cliente no recibe nada de aquí.
 --  · No toca ninguna tabla ni función existente. Sin esta tabla la página sigue funcionando con los 92 platos de partida
 --    que lleva en el código (solo lectura).
