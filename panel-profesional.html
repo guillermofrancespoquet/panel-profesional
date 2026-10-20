@@ -182,7 +182,10 @@ body.dark-mode .btn-ok.danger,body.dark-mode .sb-badge{background:#B83232}
 
 @media(max-width:600px){
   .page{padding:1.25rem}
-  .stats{grid-template-columns:1fr 1fr}
+  .stats{grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1.5rem}
+  .stat{padding:.95rem .7rem}
+  .stat-n{font-size:26px}
+  .stat-l{font-size:11.5px}
   .det-hero-in{flex-direction:column}
   .det-actions{align-items:flex-start}
   .nav{padding:0 1.25rem}
@@ -421,8 +424,8 @@ body.dark-mode .btn-soft{color:var(--t100);border-color:rgba(159,225,203,.22)}
 .row-actions .file-btn{width:28px;height:28px;border-radius:8px}
 
 @media(max-width:560px){.med-stats{grid-template-columns:1fr 1fr 1fr;gap:6px}.med-stat{padding:8px 9px}.med-stat-v{font-size:17px}}
-.dep-obj-badge{font-size:9.5px;font-weight:600;color:var(--t600);background:var(--t50);padding:2px 8px;border-radius:20px;margin-top:6px;display:inline-block}
-.rev-badge{font-size:10px;font-weight:600;padding:3px 8px;border-radius:20px;margin-top:6px;display:inline-block}
+.dep-obj-badge{font-size:9.5px;font-weight:600;line-height:1.5;color:var(--t600);background:var(--t50);padding:2px 9px;border-radius:20px;margin-top:6px;display:inline-block;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;vertical-align:top;box-sizing:border-box}
+.rev-badge{font-size:10px;font-weight:600;line-height:1.5;padding:2px 9px;border-radius:20px;margin-top:6px;display:inline-block;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;vertical-align:top;box-sizing:border-box}
 .rev-badge.urgent{background:#FEF2F2;color:var(--red)}
 .rev-badge.soon{background:var(--gold-50);color:var(--gold-dk)}
 .rev-badge.ok{background:var(--t50);color:var(--t600)}
@@ -683,7 +686,7 @@ body.dark-mode .cmp-cell.b .cmp-track i{background:var(--t400)}
 .agenda-toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:1rem}
 .agenda-chips{display:flex;gap:6px;flex-wrap:wrap}
 .agenda-tabs{display:flex;gap:6px;margin-bottom:1.25rem;background:var(--g100);border-radius:10px;padding:3px;width:fit-content}
-.agenda-tab{background:transparent;border:none;border-radius:8px;padding:7px 18px;font-size:12.5px;font-weight:600;color:var(--g500);cursor:pointer;font-family:var(--f);transition:all .15s}
+.agenda-tab{white-space:nowrap;text-align:center;background:transparent;border:none;border-radius:8px;padding:7px 18px;font-size:12.5px;font-weight:600;color:var(--g500);cursor:pointer;font-family:var(--f);transition:all .15s}
 .agenda-tab.on{background:#fff;color:var(--t800);box-shadow:0 1px 4px rgba(0,0,0,.08)}
 .week-nav{display:flex;align-items:center;gap:14px;margin-bottom:1rem}
 .week-nav-btn{background:var(--sf);border:.5px solid var(--bd);border-radius:8px;width:30px;height:30px;cursor:pointer;font-size:14px;color:var(--g500);font-family:var(--f)}
@@ -799,6 +802,7 @@ body.dark-mode .cmp-cell.b .cmp-track i{background:var(--t400)}
 .accion-badge:hover{color:var(--gold)}
 .accion-badge::before{content:'';flex-shrink:0;width:12px;height:12px;background-color:currentColor;-webkit-mask:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2.2"><path d="M4 22V4a1 1 0 0 1 1-1h13.5a1 1 0 0 1 .8 1.6l-3 4a1 1 0 0 0 0 1.2l3 4a1 1 0 0 1-.8 1.6H5"/></svg>') center/contain no-repeat;mask:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2.2"><path d="M4 22V4a1 1 0 0 1 1-1h13.5a1 1 0 0 1 .8 1.6l-3 4a1 1 0 0 0 0 1.2l3 4a1 1 0 0 1-.8 1.6H5"/></svg>') center/contain no-repeat}
 .accion-badge.empty{color:var(--g400);font-weight:500;font-style:italic}
+.accion-badge.empty{padding:8px 0 0;min-height:0;text-align:left}  /* la clase .empty de las pantallas vacías le metía 64 px de relleno */
 /* Variante discreta, solo para las tarjetas de Nutrición Deportiva: mismo comportamiento,
    pero sin el color dorado llamativo — gris neutro, texto más corto y letra algo más pequeña. */
 .accion-badge.subtle{display:inline-flex;margin-top:9px;padding:3px 10px;border-top:none;border-radius:20px;background:var(--g100);max-width:100%;font-size:10px;font-weight:500;color:var(--g500)}
@@ -1060,6 +1064,21 @@ body.has-sidebar #offlineBar{left:248px}
 .skel{display:block;height:14px;border-radius:7px;margin:9px 0;background:linear-gradient(90deg,var(--g100) 25%,var(--g200) 50%,var(--g100) 75%);background-size:200% 100%;animation:skel 1.3s infinite linear}
 .skel.w40{width:40%}.skel.w60{width:60%}.skel.w80{width:80%}
 @keyframes skel{to{background-position:-200% 0}}
+/* Pulido: píldoras de una línea, segmentados a todo el ancho en móvil y respuesta táctil */
+.acc-pill,.est-pill,.cbadge,.sup-badge,.dash-card-count{white-space:nowrap;line-height:1.45}
+@media(max-width:860px){
+  .dep-card{padding:1.15rem .55rem}
+  .dep-card .dep-obj-badge,.dep-card .rev-badge{display:block;width:fit-content;margin-left:auto;margin-right:auto}
+  .dep-card .accion-badge.subtle{display:flex;width:fit-content;margin-left:auto;margin-right:auto}
+  .dep-obj-badge,.rev-badge{letter-spacing:-.01em}
+  .fact-period-tabs{display:flex;width:100%;box-sizing:border-box}
+  .agenda-tabs{width:100%;box-sizing:border-box}
+  .agenda-tabs .agenda-tab{flex:1 1 0;padding:8px 6px;min-width:0}
+}
+button,a,[role=button],select,summary,label.btn{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+@media (hover:none){
+  .btn:active,.btn-soft:active,.dep-card:active,.sb-item:active,.agenda-tab:active,.dep-chip:active,.tl-chip:active{transform:scale(.97);transition:transform .08s ease-out}
+}
 @media(prefers-reduced-motion:reduce){.skel{animation:none}.toast{animation:none}}
 .save-ok.err{color:var(--red);opacity:1}
 .agenda-swipe{position:relative;margin-bottom:10px;border-radius:12px;background:var(--red-bg)}
@@ -1076,6 +1095,8 @@ body.has-sidebar #offlineBar{left:248px}
 .depd-tabbar{position:sticky;top:0;z-index:20;background:var(--bg);padding:6px 0 10px;margin:0 0 1rem}
 .depd-tabs{display:flex;gap:4px;overflow-x:auto;padding:4px;background:var(--g100);border-radius:12px;scrollbar-width:none}
 .depd-tabs::-webkit-scrollbar{display:none}
+.depd-tabbar{position:sticky}
+.depd-tabbar.mas::after{content:'';position:absolute;right:0;top:6px;bottom:10px;width:36px;border-radius:0 12px 12px 0;background:linear-gradient(90deg,transparent,var(--g100) 85%);pointer-events:none}
 .depd-tab{flex:1 0 auto;display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:9px 15px;border:none;background:none;border-radius:9px;font:600 13px var(--f);color:var(--g500);cursor:pointer;white-space:nowrap;min-height:38px}
 .depd-tab:hover{color:var(--g900)}
 .depd-tab.on{background:var(--sf);color:var(--t600);box-shadow:0 1px 3px rgba(0,0,0,.1)}
@@ -4234,7 +4255,7 @@ function abrirAntropometria(depId){
 // El menú semanal (otra app del repo) también va dentro del panel en un iframe con ?embed=1; &c=<id> abre el menú de ese cliente.
 let menuSrc = '';
 function cargarMenuSemanal(depId){
-  const base = window.location.origin + window.location.pathname.replace('panel-profesional.html', 'menu-semanal.html');
+  const base = window.location.origin + window.location.pathname.replace('panel-profesional.html', 'planificador-nutricional.html');
   const src = base + '?embed=1' + (depId ? '&c=' + encodeURIComponent(depId) : '');
   const f = document.getElementById('menuFrame');
   if(depId || !menuSrc){ f.src = src; menuSrc = src; }
@@ -5542,6 +5563,13 @@ async function createDeportista() {
 }
 
 const DEP_TABS=[['resumen','Resumen'],['seguimiento','Seguimiento'],['mediciones','Mediciones'],['plan','Plan'],['archivos','Archivos'],['actividad','Actividad']];
+// Difuminado a la derecha de las pestañas de la ficha cuando hay más por deslizar (móvil)
+function depTabsFade(){
+  const t=document.querySelector('.depd-tabs'); if(!t||!t.parentNode) return;
+  const f=()=>t.parentNode.classList.toggle('mas',t.scrollLeft+t.clientWidth<t.scrollWidth-4);
+  if(!t._fade){ t._fade=1; t.addEventListener('scroll',f,{passive:true}); }
+  requestAnimationFrame(f);
+}
 let _depTab='resumen', _depTabDep=null;
 function depTab(k){
   _depTab=k;
@@ -5747,6 +5775,7 @@ function openDepDet(id) {
   loadHistorial(d.id);
   loadAccesoCliente(d.id);
   loadSeguimientos(d.id);
+  depTabsFade();
   loadRegCliente(d.id);
   loadDiario(d.id);
   loadMediciones(d.id);
@@ -7228,7 +7257,7 @@ function planEstadoCliente(r){
     ? '<span class="acc-pill" style="margin-top:4px;display:inline-block">Compartido · ya no lo ve el cliente</span>'
     : '<span class="acc-pill on" style="margin-top:4px;display:inline-block">Compartido con el cliente</span>';
 }
-// Plan nutricional en la ficha: mientras no haya un plan publicado en la app nueva (menu-semanal.html) sigue el enlace de siempre;
+// Plan nutricional en la ficha: mientras no haya un plan publicado en la app nueva (planificador-nutricional.html) sigue el enlace de siempre;
 // al publicarlo, el enlace anterior deja de mostrarse (el dato plan_url no se toca) y la ficha lleva al plan nuevo.
 async function loadMenuBox(depId){
   const el = document.getElementById('menuBox'); if(!el) return;

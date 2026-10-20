@@ -269,6 +269,7 @@ table.hist td.n{font-weight:600;white-space:nowrap}
 .push-line{font-size:12.5px;color:var(--g400);text-align:center;margin:14px 0 0;line-height:1.5}
 .push-line button{background:none;border:0;padding:6px 4px;font:inherit;font-weight:600;color:var(--t600);text-decoration:underline;cursor:pointer;min-height:32px}
 .inst-tip .btn{margin-right:6px}
+.inst-tip .btn.soft{font-size:14px;padding:12px 16px;border-radius:12px}
 .btn.soft{background:var(--pill-g);color:var(--t800);box-shadow:inset 0 0 0 .5px var(--pill-g-bd);font-size:12.5px;padding:8px 13px;border-radius:9px}
 .empty{font-size:13.5px;color:var(--g500);line-height:1.6}
 .center{text-align:center;padding:3rem 1rem}
@@ -1393,7 +1394,7 @@ function evolucionSeg(){
 // ═══ Plan de competición (copia ya calculada por el profesional; solo hasta el día siguiente a la competición) ═══
 let PLANES=[], SUPL=[];
 // ═══ Mi menú semanal: copia ya publicada por el profesional (nunca el borrador ni el catálogo) ═══
-// El bloque mnv*/mnImpr* es el mismo de menu-semanal.html (vista del cliente): si cambia allí, copiarlo aquí.
+// El bloque mnv*/mnImpr* es el mismo de planificador-nutricional.html (vista del cliente): si cambia allí, copiarlo aquí.
 let MENU=null, MENU_DATA=null; const MNV={sem:null,dia:0,tab:'hoy',rec:null,f:1};
 const mnRng = c => { const f = x => ({ 0.25: '¼', 0.5: '½', 0.75: '¾' })[+x] || String(+(+x).toFixed(2)).replace('.', ','); return c.max ? f(c.min) + '-' + f(c.max) : f(c.min); };
 const mnQtyTxt = c => (!c || c.modo === 'libre') ? '' : (c.modo === 'ud' ? mnRng(c) : mnRng(c) + ' ' + c.u);
