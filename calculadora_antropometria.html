@@ -113,6 +113,9 @@ input.field-warn:focus{border-color:var(--red);}
 .btn.sm{padding:7px 14px;font-size:12px;}
 .btn.icon-only{padding:8px 10px;}
 .btn:disabled{opacity:.45;cursor:not-allowed;}
+input[type=file]{width:100%;font-family:var(--f);font-size:13px;color:var(--g500);}
+input[type=file]::file-selector-button{margin-right:12px;padding:9px 16px;min-height:40px;border:none;border-radius:10px;background:var(--g100);color:var(--g700);font-family:var(--f);font-size:13px;font-weight:500;cursor:pointer;transition:background .15s}
+input[type=file]::file-selector-button:hover{background:var(--g200)}
 .btnbar{display:flex;gap:12px;margin-top:16px;flex-wrap:wrap;}
 .btn-group{display:flex;gap:10px;flex-wrap:wrap;}
 table{width:100%;border-collapse:collapse;font-size:13px;}
@@ -125,6 +128,8 @@ tr:hover td{background:var(--bg);}
 .pill.neutral{background:var(--g100);color:var(--g400);}
 .clientrow{cursor:pointer;}
 .clientrow .chev{display:inline-block;width:16px;color:var(--g400);font-size:11px;}
+.clientrow .cl-av{display:none;}
+button,a,[role=button],select,summary{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 .clientrow.open td{background:var(--t50);border-bottom-color:transparent;}
 .detailrow:hover td{background:transparent;}
 .detailrow>td{padding:0 0 10px;border-bottom:.5px solid var(--bd);}
@@ -139,6 +144,7 @@ tr:hover td{background:var(--bg);}
 .measure-block-head{display:flex;align-items:center;gap:9px;margin-bottom:10px;}
 .measure-block-head .mi{width:30px;height:30px;border-radius:9px;background:var(--t50);color:var(--t600);display:flex;align-items:center;justify-content:center;font-size:16px;flex:0 0 30px;}
 .measure-block-head h3{margin:0;border:none;padding:0;font-size:14px;}
+.unit-tag{display:inline-block;font-size:10px;font-weight:600;line-height:1.5;padding:2px 9px;border-radius:20px;vertical-align:middle;white-space:nowrap}
 .measure-block-head .unit-tag{font-size:10px;font-weight:600;color:var(--t600);background:var(--t50);padding:2px 9px;border-radius:20px;margin-left:2px;}
 .measure-rows{border:.5px solid var(--bd);border-radius:12px;overflow:hidden;}
 .measure-row{
@@ -348,16 +354,26 @@ body.dark-mode canvas{background:#fff;border-radius:10px;}
 
   /* Lista de clientes: tarjetas separadas (antes solo una línea fina entre filas) */
   #clientTable tbody{display:flex;flex-direction:column;gap:10px;}
-  #clientTable tr.clientrow{padding:12px 14px;background:var(--sf);border:1px solid rgba(0,0,0,.24);border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.06);}
-  body.dark-mode #clientTable tr.clientrow{border-color:rgba(255,255,255,.24);}
+  #clientTable tr.clientrow{position:relative;padding:14px 14px 14px 18px;background:var(--sf);border:.5px solid rgba(0,0,0,.14);border-radius:16px;overflow:hidden;box-shadow:0 1px 2px rgba(4,52,44,.06),0 6px 18px rgba(4,52,44,.10);}
+  #clientTable tr.clientrow::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--t400);}
+  body.dark-mode #clientTable tr.clientrow{border-color:rgba(255,255,255,.14);box-shadow:0 1px 2px rgba(0,0,0,.35),0 6px 18px rgba(0,0,0,.35);}
   #clientTable tr.clientrow.open{background:var(--t50);border-color:var(--t400);}
+  #clientTable tr.clientrow.open::before{background:var(--t600);}
+  #clientTable tr.clientrow:active{transform:scale(.985);transition:transform .08s ease-out;}
+  #clientTable td:nth-child(1){display:flex;align-items:center;gap:10px;}
+  #clientTable td:nth-child(1) .chev{display:none;}
+  #clientTable td:nth-child(1) .cl-av{display:inline-flex;align-items:center;justify-content:center;flex:none;width:36px;height:36px;border-radius:50%;background:var(--t50);color:var(--t600);font-size:13px;font-weight:700;letter-spacing:.02em;box-shadow:inset 0 0 0 .5px rgba(15,110,86,.28);}
+  #clientTable tr.clientrow.open td:nth-child(1) .cl-av{background:var(--t400);color:#fff;box-shadow:none;}
+  #clientTable td:nth-child(6) .btn-group{grid-template-columns:1.35fr 1fr 44px;}
+  #clientTable td:nth-child(6) .btn-group .btn.danger{padding-left:0;padding-right:0;}
   #clientTable tr.clientrow.open td{background:transparent;}
   #clientTable tr.detailrow{display:block;margin:-4px 0 4px;}
   #clientTable tr.detailrow>td{display:block;padding:0;border:none;}
   .client-detail{padding:12px;}
   .client-head{flex-direction:column;align-items:stretch;gap:10px;}
   .client-head .btn-group{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
-  .client-head .btn-group .btn{justify-content:center;white-space:normal;}
+  .field[style*="max-width:220px"]{max-width:none !important;}
+  .client-head .btn-group .btn{justify-content:center;white-space:nowrap;padding-left:8px;padding-right:8px;gap:5px;}
   /* Historial de valoraciones: cada valoración es una tarjeta con fecha, 4 datos rotulados y acciones */
   .client-detail{overflow-x:visible;}
   #clientTable table.hist-table{min-width:0;width:100%;background:transparent;}
@@ -1290,7 +1306,7 @@ function viewClientes(){
     const last = lastValoracion(c);
     const abierto = CURRENT_CLIENT_ID==c.id;
     return `<tr class="clientrow${abierto?" open":""}" data-id="${c.id}">
-      <td><span class="chev" aria-hidden="true">${abierto?"▾":"▸"}</span><strong>${esc(c.nombre)} ${esc(c.apellidos||"")}</strong></td>
+      <td><span class="cl-av" aria-hidden="true">${esc(((c.nombre||"?").trim()[0]||"?")+((c.apellidos||"").trim()[0]||""))}</span><span class="chev" aria-hidden="true">${abierto?"▾":"▸"}</span><strong>${esc(c.nombre)} ${esc(c.apellidos||"")}</strong></td>
       <td>${esc(c.deporte||"—")}</td>
       <td>${c.sexo?esc(c.sexo):"—"}</td>
       <td>${nVal} <span class="small-note">${nVal===1?"valoración":"valoraciones"}</span></td>

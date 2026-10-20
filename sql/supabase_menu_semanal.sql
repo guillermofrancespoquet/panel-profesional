@@ -4,7 +4,7 @@
 -- Ejecutar en Supabase → SQL Editor → New query → Run. Es seguro ejecutarlo más de una vez.
 -- Requiere haber ejecutado antes `supabase_clientes_acceso.sql` (usa es_profesional() y cliente_deportista_id()).
 --
--- El profesional escribe el menú de cada cliente en la página de pruebas `menu-semanal.html` (más adelante, desde la ficha del
+-- El profesional escribe el menú de cada cliente en la página de pruebas `planificador-nutricional.html` (más adelante, desde la ficha del
 -- cliente) y lo PUBLICA; el cliente solo verá la copia publicada en «Mi menú semanal» cuando se integre en su área. Cada plan empieza en blanco: la estructura (días, comidas, horas,
 -- nombres) vive en un jsonb libre.
 --  · `alimentos`: catálogo propio del profesional, compartido entre clientes y que crece con el uso (se alimenta desde
