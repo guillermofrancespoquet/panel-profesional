@@ -5910,6 +5910,7 @@ function cerrarFoto(){ document.getElementById('mFoto').style.display = 'none'; 
 
 const SEG_CORTO = {adherencia:'Adh.', energia:'Ene.', sueno:'Sue.', digestion:'Dig.', animo:'Áni.'};   // cabeceras cortas para que la tabla quepa en el móvil
 async function loadSeguimientos(depId){
+  loadPushDev(depId);
   const el=document.getElementById('segBox'); let r=null;
   try{ r=await sb(`seguimientos?deportista_id=eq.${depId}&order=semana.asc&select=semana,respuestas`); }catch(e){}
   if(!el||currentDepId!=depId) return;
@@ -5940,6 +5941,17 @@ async function loadSeguimientos(depId){
 const FRM_LISTA=[{k:'inicial',t:'Cuestionario inicial'},{k:'anamnesis',t:'Anamnesis nutricional'}];
 function frmFecha(f){ return f?new Date(f+'T00:00:00').toLocaleDateString('es-ES',{day:'numeric',month:'short',year:'numeric'}):''; }
 function frmHoy(){ return localISO(new Date()); }
+// Aviso del lunes en el móvil del cliente (supabase_notificaciones.sql): cuántos dispositivos lo tienen activado. Sin el SQL no se muestra nada.
+const PUSH_N={};
+function pushTxt(depId){
+  const n=PUSH_N[depId]; if(n==null) return '';
+  return n?`Aviso del lunes en el móvil: activado (${n} dispositivo${n!==1?'s':''}). Si no envía el seguimiento, le llega a las 9:00.`:'Aviso del lunes en el móvil: aún no lo ha activado (se le ofrece en su área cuando el seguimiento está activo).';
+}
+async function loadPushDev(depId){
+  let r=null; try{ r=await sb(`push_suscripciones?deportista_id=eq.${depId}&select=id`); }catch(e){}
+  PUSH_N[depId]=Array.isArray(r)?r.length:null;
+  const el=document.getElementById('frmPush'); if(el&&currentDepId==depId) el.textContent=pushTxt(depId);
+}
 function frmHtml(d){
   const f=(d.formularios&&typeof d.formularios==='object')?d.formularios:{}, seg=f.seguimiento||{};
   const fila=(t,on,txt,btn)=>`<div class="acc-row" style="justify-content:space-between;margin-bottom:8px"><span style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><span class="acc-pill${on?' on':''}">${txt}</span><b style="font-size:13px">${t}</b></span>${btn}</div>`;
@@ -5951,7 +5963,7 @@ function frmHtml(d){
   const u=d._segUltimo||seg.ultimo;
   const segRow=fila('Seguimiento semanal',!!seg.activo,seg.activo?'Activo'+(u?' · último '+frmFecha(u):' · sin enviar'):'No activo',
     btnSoft(seg.activo?'Desactivar':'Activar cada semana',`frmSeguimiento(${d.id})`,seg.activo?'trash':'plus',false));
-  return main+segRow+'<p class="med-note">El cliente los ve en su área («Mis formularios») y marca cada uno cuando lo envía. El seguimiento solo le aparece si lo activas, y vuelve a quedar pendiente cada lunes.</p>';
+  return main+segRow+'<p class="med-note">El cliente los ve en su área («Mis formularios») y marca cada uno cuando lo envía. El seguimiento solo le aparece si lo activas, y vuelve a quedar pendiente cada lunes.</p>'+(seg.activo?`<p class="med-note" id="frmPush">${pushTxt(d.id)}</p>`:'');
 }
 async function frmGuardar(depId,nuevo){
   const d=deportistas.find(x=>x.id==depId); if(!d) return;

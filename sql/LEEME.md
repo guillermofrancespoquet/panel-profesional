@@ -19,6 +19,7 @@ Todos se ejecutan a mano en Supabase → SQL Editor → New query → Run. Son s
    - `supabase_citas_hecha.sql`
    - `supabase_menu_semanal.sql` (menú semanal: catálogo de alimentos, menús, publicar)
    - `supabase_biblioteca_platos.sql` (menú semanal: biblioteca de platos ampliable desde la app; requiere solo `supabase_clientes_acceso.sql`)
+   - `supabase_notificaciones.sql` (avisos al móvil del cliente: seguimiento semanal; requiere `supabase_seguimiento.sql`; **además hay que crear la Edge Function y programarla**, ver «Avisos al móvil» más abajo)
 7. `supabase_seguridad_2_cerrar.sql`, **el último**, solo cuando se cumplan las condiciones de su cabecera.
 
 ## Ojo
@@ -29,6 +30,24 @@ Todos se ejecutan a mano en Supabase → SQL Editor → New query → Run. Son s
 ## No es SQL
 
 - `supabase_funcion_invitar_cliente.ts` es la Edge Function `invitar-cliente`: se pega en Supabase → Edge Functions → Via Editor.
+
+## Avisos al móvil (notificaciones del seguimiento semanal)
+
+Pasos, una sola vez y en este orden (hasta el paso 5 el cliente no ve nada nuevo):
+
+1. Ejecutar `supabase_notificaciones.sql`.
+2. **Generar las claves VAPID** (las crea tu navegador; la privada no sale de ahí). En cualquier pestaña, consola de desarrollador, pega esto:
+   ```js
+   (async()=>{const k=await crypto.subtle.generateKey({name:'ECDSA',namedCurve:'P-256'},true,['sign','verify']);
+   const b=a=>btoa(String.fromCharCode(...new Uint8Array(a))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+   console.log('PUBLICA:',b(await crypto.subtle.exportKey('raw',k.publicKey)));
+   console.log('PRIVADA_JWK:',JSON.stringify(await crypto.subtle.exportKey('jwk',k.privateKey)));})()
+   ```
+   La **pública** se pega en la constante `VAPID_PUBLICA` de `cliente.html` (no es secreta). La **privada** (JWK) solo va a los secretos de Supabase; no la pegues en chats ni en el repo.
+3. Supabase → Edge Functions → nueva función `avisos-seguimiento` → «Via Editor» → pegar `supabase_funcion_avisos_seguimiento.ts` → **desactivar «Verify JWT»** → Deploy.
+4. Edge Functions → Secrets: `AVISOS_SECRET` (una clave larga cualquiera), `VAPID_PRIVADA_JWK` (el JSON de la privada), `VAPID_PUBLICA` (la pública) y `VAPID_CONTACTO` (`mailto:tu@correo`).
+5. Database → Extensions: activar `pg_cron` y `pg_net`; después ejecutar en el SQL Editor el bloque «PROGRAMACIÓN» del final de `supabase_notificaciones.sql` (con tu `AVISOS_SECRET`).
+6. Prueba: con un cliente de pruebas con el seguimiento activo y el aviso activado, llamar a la función con `?forzar=1` (salta la comprobación de lunes) y la cabecera `x-cron-secret`; debe llegar el aviso al móvil.
 
 ## Convención
 
