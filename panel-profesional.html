@@ -172,8 +172,9 @@ body.dark-mode .login-btn:hover{background:var(--t600)}
 .save-ok.show{opacity:1}
 
 /* MODALS */
-.mbg{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:100;padding:1rem}
-.mc{background:var(--sf);border-radius:16px;padding:2rem;width:100%;max-width:400px}
+:root{--sat:env(safe-area-inset-top,0px);--sab:env(safe-area-inset-bottom,0px);--mvh:calc(100dvh - 2rem - var(--sat) - var(--sab))}
+.mbg{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:100;padding:calc(1rem + var(--sat)) 1rem calc(1rem + var(--sab))}
+.mc{background:var(--sf);border-radius:16px;padding:2rem;width:100%;max-width:400px;max-height:var(--mvh);overflow-y:auto;overscroll-behavior:contain}
 .mt{font-size:18px;font-weight:700;margin-bottom:5px;letter-spacing:-.02em}
 .ms{font-size:13px;color:var(--g400);margin-bottom:1.5rem;line-height:1.5}
 .mfl{font-size:12px;font-weight:500;color:var(--g500);margin-bottom:6px;display:block}
@@ -513,6 +514,7 @@ body.dark-mode img{opacity:.92}
 .sb-nav{display:flex;flex-direction:column;gap:2px;padding:0 .75rem;flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:none}
 .sb-nav::-webkit-scrollbar{display:none}
 .sb-brand,.sb-search-wrap{flex:none}
+.sb-nav>*{flex-shrink:0}
 .sb-divider{padding:14px 1.25rem 6px;font-size:10px;font-weight:700;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.6px;margin:0}
 .sb-item{
   display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:10px;
@@ -554,7 +556,7 @@ body.dark-mode img{opacity:.92}
 .sb-search-results .gsearch-item-sub{color:rgba(255,255,255,.5);font-size:11px}
 .sb-search-results .gsearch-avatar{width:28px;height:28px;font-size:11px}
 .sb-search-results .gsearch-empty{padding:.9rem .5rem;color:rgba(255,255,255,.5);font-size:12.5px}
-.gsearch-modal{background:#fff;border-radius:16px;width:100%;max-width:520px;max-height:70vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+.gsearch-modal{background:#fff;border-radius:16px;width:100%;max-width:520px;max-height:min(70dvh,var(--mvh));display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.25)}
 .gsearch-input-wrap{display:flex;align-items:center;gap:10px;padding:1rem 1.25rem;border-bottom:.5px solid var(--bd)}
 .gsearch-input-wrap svg{color:var(--g400);flex-shrink:0}
 .gsearch-input{flex:1;border:none;outline:none;font-size:15px;font-family:var(--f);background:transparent}
@@ -1181,7 +1183,7 @@ body.dark-mode .tl-ico.plan{background:#33253a;color:#d3a6d0}
 .tl-vacio{font-size:13px;color:var(--g400);padding:14px 0}
 
 /* ── Informe de progreso (PDF) ── */
-.inf-modal{background:var(--sf);border-radius:16px;width:min(1080px,100%);max-height:calc(100vh - 2rem);display:flex;flex-direction:column;overflow:hidden}
+.inf-modal{background:var(--sf);border-radius:16px;width:min(1080px,100%);max-height:var(--mvh);display:flex;flex-direction:column;overflow:hidden}
 .inf-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 12px;border-bottom:.5px solid var(--bd)}
 .inf-head .mt{margin:0}
 .inf-x{background:none;border:none;font-size:26px;line-height:1;color:var(--g500);cursor:pointer;padding:4px 10px;border-radius:8px;min-width:40px;min-height:40px}
@@ -1252,7 +1254,7 @@ body.dark-mode .sup-card .sup-badge.mid,body.dark-mode .dep-chip.active{color:#D
 .sb-logout:hover{color:#FFB4B2!important;background:rgba(255,120,120,.14)!important}
 body.dark-mode .ref-src,body.dark-mode .sup-badge,body.dark-mode .depd-avatar-fallback{color:#D9B88C}
 /* ── Bioimpedancia: pantalla de revisión ── */
-.foto-modal{background:var(--sf);border-radius:16px;width:min(760px,100%);max-height:min(88vh,calc(100dvh - 2rem));display:flex;flex-direction:column;overflow:hidden}
+.foto-modal{background:var(--sf);border-radius:16px;width:min(760px,100%);max-height:min(88dvh,var(--mvh));display:flex;flex-direction:column;overflow:hidden}
 .foto-body{padding:14px 18px 18px;overflow:auto}
 .foto-grande{width:100%;max-height:calc(88vh - 140px);object-fit:contain;border-radius:10px;background:var(--g100);display:block}
 .foto-par{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
@@ -1262,7 +1264,7 @@ body.dark-mode .ref-src,body.dark-mode .sup-badge,body.dark-mode .depd-avatar-fa
 .fth{position:relative;border:0;padding:0;background:var(--g100);border-radius:10px;overflow:hidden;aspect-ratio:3/4;cursor:pointer}
 .fth img{width:100%;height:100%;object-fit:cover;display:block}
 .fth span{position:absolute;left:0;right:0;bottom:0;padding:14px 6px 5px;font-size:10.5px;font-weight:600;color:#fff;background:linear-gradient(transparent,rgba(0,0,0,.65));text-align:left}
-.bio-modal{background:var(--sf);border-radius:16px;width:min(1000px,100%);max-height:calc(100vh - 2rem);display:flex;flex-direction:column;overflow:hidden}
+.bio-modal{background:var(--sf);border-radius:16px;width:min(1000px,100%);max-height:var(--mvh);display:flex;flex-direction:column;overflow:hidden}
 .bio-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 12px;border-bottom:.5px solid var(--bd)}
 .bio-head .mt{margin:0}
 .bio-body{display:grid;grid-template-columns:minmax(0,300px) minmax(0,1fr);min-height:0;flex:1;overflow:hidden}
@@ -1912,7 +1914,7 @@ body.dark-mode .ref-src,body.dark-mode .sup-badge,body.dark-mode .depd-avatar-fa
 
 <!-- MODAL: ELIMINAR DEPORTISTA -->
 <div class="mbg" id="mAjustes" style="display:none" role="dialog" aria-modal="true" aria-labelledby="ajTit" onclick="if(event.target===this)cerrarAjustes()">
-  <div class="mc" style="max-width:520px;max-height:calc(100dvh - 2rem);overflow-y:auto" id="ajCuerpo"></div>
+  <div class="mc" style="max-width:520px" id="ajCuerpo"></div>
 </div>
 <div class="mbg" id="mHuerf" style="display:none">
   <div class="mc">
@@ -2024,7 +2026,7 @@ body.dark-mode .ref-src,body.dark-mode .sup-badge,body.dark-mode .depd-avatar-fa
 
 <!-- MODAL: SUPLEMENTO DEL CLIENTE -->
 <div class="mbg" id="mSupl" style="display:none;z-index:300" role="dialog" aria-modal="true" aria-labelledby="supTit" onclick="if(event.target===this)supCerrar()">
-  <div class="mc" style="max-width:520px;max-height:calc(100dvh - 2rem);overflow-y:auto">
+  <div class="mc" style="max-width:520px">
     <p class="mt" id="supTit">Añadir suplemento</p>
     <p class="ms" id="supSub"></p>
     <label class="mfl" for="supSel">Suplemento</label>
@@ -2054,7 +2056,7 @@ body.dark-mode .ref-src,body.dark-mode .sup-badge,body.dark-mode .depd-avatar-fa
 
 <!-- MODAL: REGISTRAR CONSULTA -->
 <div class="mbg" id="mConsulta" style="display:none;z-index:300" role="dialog" aria-modal="true" aria-labelledby="consTit" onclick="if(event.target===this)cerrarConsulta()">
-  <div class="mc" style="max-width:460px;max-height:calc(100dvh - 2rem);overflow-y:auto">
+  <div class="mc" style="max-width:460px">
     <p class="mt" id="consTit">Registrar consulta</p>
     <p class="ms" id="consSub"></p>
     <div id="consCampos">
