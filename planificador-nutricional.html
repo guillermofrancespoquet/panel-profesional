@@ -217,6 +217,11 @@ body.dark-mode :focus-visible{outline-color:#5CC8A6}
 .mnv-dia-h span{font-size:12px;font-weight:600;color:var(--g500)}
 .mnv-dia p{font-size:13px;color:var(--g700);margin:3px 0;line-height:1.45}
 .mnv-dia p b{font-weight:700;color:var(--g900)}
+.mnv-sw{display:grid;grid-template-columns:92px 1fr;gap:10px;align-items:baseline;padding:6px 0;border-top:.5px solid var(--bd)}
+.mnv-sw:first-of-type{border-top:0}
+.mnv-sw-t b{display:block;font-size:12px;font-weight:700;color:var(--g500);text-transform:uppercase;letter-spacing:.04em}
+.mnv-sw-t small{font-size:11px;color:var(--g400)}
+.mnv-sw-n{font-size:13.5px;color:var(--g900);line-height:1.4;overflow-wrap:anywhere}
 .mnv-rec{margin-bottom:10px;padding:0;overflow:hidden}
 .mnv-rec-h{display:flex;justify-content:space-between;align-items:center;gap:10px;width:100%;padding:13px 16px;background:none;border:none;text-align:left;font-family:var(--f);font-size:15px;font-weight:700;color:var(--g900)}
 .mnv-rec-h span{font-size:12px;font-weight:600;color:var(--g500)}
@@ -290,6 +295,13 @@ button,a,[role=button],select,summary{-webkit-tap-highlight-color:transparent;to
 .mn-f{display:flex;flex-direction:column;min-width:0}
 .mn-card .inp,.mn-meal .inp,.mn-rec .inp,.mc .inp{height:40px;padding:0 12px;font-size:14px;border-radius:10px}
 .mn-card textarea.inp,.mn-meal textarea.inp{height:auto}
+/* Cajas de texto largas (aviso, suplementación, notas): mismo relleno que los campos de una línea para que el texto quede centrado y con aire */
+.mn-scan-v{position:relative;border-radius:14px;overflow:hidden;background:#000;aspect-ratio:4/3;margin-top:6px}
+.mn-scan-v video{width:100%;height:100%;object-fit:cover;display:block}
+.mn-scan-guia{position:absolute;left:10%;right:10%;top:32%;bottom:32%;border:2px solid rgba(255,255,255,.9);border-radius:10px;box-shadow:0 0 0 9999px rgba(0,0,0,.3);pointer-events:none}
+.mn-aviso{background:var(--pill-au);color:var(--gold-dk);border-radius:12px;padding:9px 12px;margin:8px 0 4px;font-size:13px;line-height:1.45}
+.mn-aviso p{margin:2px 0}
+textarea.inp{padding:12px 14px;line-height:1.45;min-height:72px;resize:vertical;box-sizing:border-box;display:block}
 .mn-nav{display:flex;flex-direction:column;gap:2px}
 .mn-nav-i{display:flex;justify-content:space-between;align-items:center;gap:8px;width:100%;padding:9px 12px;border-radius:10px;border:none;background:none;font:500 14px var(--f);color:var(--g700);text-align:left;cursor:pointer}
 .mn-nav-i:hover{background:var(--g100)}
@@ -524,6 +536,12 @@ body.dark-mode .mn-bib-b.veg{color:var(--t800)}
 <div class="mbg" id="mMnCopiar" style="display:none;z-index:310" role="dialog" aria-modal="true" aria-labelledby="mnCopTit" onclick="if(event.target===this)mnCopiarCerrar()">
   <div class="mc" style="max-width:420px;max-height:calc(100dvh - 2rem);overflow-y:auto" id="mnCopCuerpo"></div>
 </div>
+<div class="mbg" id="mMnScan" style="display:none;z-index:330" role="dialog" aria-modal="true" aria-labelledby="mnScanTit" onclick="if(event.target===this)mnScanCerrar()">
+  <div class="mc" style="max-width:460px;max-height:calc(100dvh - 2rem);overflow-y:auto" id="mnScanCuerpo"></div>
+</div>
+<div class="mbg" id="mMnUsda" style="display:none;z-index:340" role="dialog" aria-modal="true" aria-labelledby="mnUsdaTit" onclick="if(event.target===this)mnUsdaCerrar()">
+  <div class="mc" style="max-width:460px" id="mnUsdaCuerpo"></div>
+</div>
 <div class="mbg" id="mMnAuto" style="display:none;z-index:320" role="dialog" aria-modal="true" aria-labelledby="mnAutoTit" onclick="if(event.target===this)mnAutoCerrar()">
   <div class="mc" style="max-width:940px;max-height:calc(100dvh - 2rem);overflow-y:auto" id="mnAutoCuerpo"></div>
 </div>
@@ -659,7 +677,8 @@ function vacioHtml(ico,titulo,texto,cta,peq){
 function skel(n=3){ return Array.from({length:n},(_,i)=>`<span class="skel ${['w80','w60','w40'][i%3]}"></span>`).join(''); }
 const sudEsc = s => String(s==null?'':s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const patchDep = (id, d, x={}) => sb(`clientes_deportivos?id=eq.${id}`, {method:'PATCH', headers:{'Prefer':'return=minimal'}, body: JSON.stringify(d), ...x});
-const USDA_KEY = 'DEMO_KEY'; // funciona sin registro (límite bajo). Guille puede pegar su propia clave gratuita de fdc.nal.usda.gov aquí para más límite.
+// Clave de USDA: sin clave propia se usa DEMO_KEY (≈ 30 consultas por hora: se agota enseguida al completar el catálogo). Una clave gratuita de fdc.nal.usda.gov/api-key-signup da 1.000 por hora y se guarda solo en este navegador.
+function mnUsdaKey() { try { return localStorage.getItem('nl_usda_key') || 'DEMO_KEY'; } catch (e) { return 'DEMO_KEY'; } }
 
 function setCompSource(src){
   compSource = src;
@@ -1001,7 +1020,8 @@ function mnCatPintar() {
   if (_mnCatEd) { el.innerHTML = mnCatFormHtml(); return; }
   const q = mnNorm(_mnCatQ), lista = MN.cat.filter(a => !q || mnNorm(a.nombre).indexOf(q) >= 0 || mnNorm(a.categoria || '').indexOf(q) >= 0);
   el.innerHTML = `<p class="mt" id="mnCatTit">Catálogo de alimentos</p><p class="ms">Tus alimentos, compartidos entre todos los clientes. Crece con el uso: añade lo que te haga falta desde aquí o desde el «+» de un ingrediente.</p>
-    <div class="mn-fila" style="align-items:center"><input class="inp" id="mnCatQ" style="flex:1" placeholder="Buscar en tu catálogo, en supermercados de España o en USDA…" value="${sudEsc(_mnCatQ)}" oninput="mnCatBuscar(this.value)" aria-label="Buscar alimento"><button type="button" class="btn-soft" onclick="mnCatNuevo()">Nuevo</button></div>
+    <div class="mn-fila" style="align-items:center"><input class="inp" id="mnCatQ" style="flex:1" placeholder="Buscar en tu catálogo, en supermercados de España o en USDA…" value="${sudEsc(_mnCatQ)}" oninput="mnCatBuscar(this.value)" aria-label="Buscar alimento"><button type="button" class="btn-soft" onclick="mnScanAbrir()" aria-label="Escanear código de barras"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" viewBox="0 0 24 24" aria-hidden="true" style="vertical-align:-3px;margin-right:4px"><path d="M3 5v14M7 5v14M11 5v14M15 5v14M19 5v14M21 5v14" stroke-width="1.6"/></svg>Escanear</button><button type="button" class="btn-soft" onclick="mnCatNuevo()">Nuevo</button></div>
+    <p class="mn-ayuda" style="margin:6px 2px 0"><button type="button" class="btn-link" onclick="mnUsdaAbrir()" style="background:none;border:0;padding:6px 0;font:inherit;color:var(--t600);text-decoration:underline;cursor:pointer">Clave de USDA</button> · para que «Completar catálogo» no se quede sin consultas</p>
     <div class="mn-cat-l">${lista.length ? lista.map(a => `<div class="mn-cat-i"><div style="flex:1;min-width:0"><div class="sup-item-n">${sudEsc(a.nombre)}${a.estado ? ` <span class="hd-opt">· ${sudEsc(a.estado)}</span>` : ''}</div><div class="sup-item-d">${sudEsc(a.categoria || 'Sin categoría')}${(a.medidas || []).length ? ' · ' + a.medidas.map(x => sudEsc(x.n) + ' ' + x.g + ' g').join(', ') : ''}</div></div>${btnSoft('Editar', `mnCatEditar(${a.id})`, 'doc', true)}${btnDel('Eliminar ' + sudEsc(a.nombre), `mnCatBorrar(${a.id})`)}</div>`).join('') : `<p class="mn-ayuda" style="margin:10px 2px">${q ? 'Nada con ese nombre en tu catálogo.' : 'Tu catálogo está vacío. Búscalo arriba (USDA / Open Food Facts) o pulsa «Nuevo».'}</p>`}</div>
     <div id="mnCatExt">${_mnCatExt ? mnCatExtHtml() : ''}</div>
     <div class="mbtns" style="margin-top:12px"><button type="button" class="btn-cancel" onclick="mnCatCerrar()">Cerrar</button></div>`;
@@ -1015,7 +1035,7 @@ function mnCatBuscar(q) {
     _mnCatExt = { cargando: true }; const e = document.getElementById('mnCatExt'); if (e) e.innerHTML = mnCatExtHtml();
     const [off, usda] = await Promise.all([
       fetch(`https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(q)}&search_simple=1&action=process&json=1&page_size=8&lc=es&tagtype_0=countries&tag_contains_0=contains&tag_0=spain`).then(r => r.json()).then(d => (d.products || []).filter(p => p.product_name || p.generic_name)).catch(() => null),
-      fetch(`https://api.nal.usda.gov/fdc/v1/foods/search?api_key=${USDA_KEY}&query=${encodeURIComponent(q)}&pageSize=6`).then(r => r.json()).then(d => d.foods || []).catch(() => null)]);
+      fetch(`https://api.nal.usda.gov/fdc/v1/foods/search?api_key=${mnUsdaKey()}&query=${encodeURIComponent(q)}&pageSize=6`).then(r => r.json()).then(d => d.foods || []).catch(() => null)]);
     if (_mnCatQ !== q) return;
     _mnCatExt = { off, usda }; const e2 = document.getElementById('mnCatExt'); if (e2) e2.innerHTML = mnCatExtHtml();
   }, 500);
@@ -1029,8 +1049,99 @@ function mnCatExtHtml() {
 }
 function mnCatDesdeExt(fuente, i) {
   const it = (fuente === 'off' ? _mnCatExt.off : _mnCatExt.usda)[i], n = compNormalize(it, fuente);
-  _mnCatEd = { id: null, nombre: n.name, categoria: '', estado: '', medidas: [], nutri: { kcal: n.kcal, prot: n.protein, hc: n.carbs, grasa: n.fat, fibra: n.fiber }, fuente, fuente_ref: String(fuente === 'off' ? (it.code || it._id || '') : (it.fdcId || '')).slice(0, 120) };
+  _mnCatEd = { id: null, nombre: n.name, categoria: mnCategoria(n.name), estado: mnEstadoInfer(n.name, ''), medidas: [], nutri: { kcal: n.kcal, prot: n.protein, hc: n.carbs, grasa: n.fat, fibra: n.fiber }, fuente, fuente_ref: String(fuente === 'off' ? (it.code || it._id || '') : (it.fdcId || '')).slice(0, 120) };
   mnCatPintar();
+}
+// ═══ Escáner de códigos de barras: cámara (detector del navegador o ZXing bajo demanda) o número escrito → Open Food Facts ═══
+const MN_ZXING = 'https://cdn.jsdelivr.net/npm/@zxing/library@0.21.3/umd/index.min.js';
+let _mnScan = null;
+function mnCargarScript(url) { return new Promise((ok, ko) => { if (document.querySelector(`script[src="${url}"]`) && window.ZXing) return ok(); const sc = document.createElement('script'); sc.src = url; sc.onload = ok; sc.onerror = () => ko(new Error('script')); document.head.appendChild(sc); }); }
+// Dígito de control de EAN-8, UPC-A, EAN-13 y GTIN-14: descarta lecturas mal hechas
+function mnGtinOk(c) {
+  if (!/^\d+$/.test(c) || ![8, 12, 13, 14].includes(c.length)) return false;
+  const d = c.split('').map(Number), ctl = d.pop(); let suma = 0;
+  d.reverse().forEach((x, i) => { suma += x * (i % 2 === 0 ? 3 : 1); });
+  return (10 - suma % 10) % 10 === ctl;
+}
+function mnScanMsg(t) { const m = document.getElementById('mnScanMsg'); if (m) m.textContent = t; }
+function mnScanAbrir() {
+  mnScanParar(); _mnScan = { stream: null, parar: false, hecho: false, t: null, reader: null };
+  document.getElementById('mnScanCuerpo').innerHTML = `<p class="mt" id="mnScanTit">Escanear código de barras</p><p class="ms" id="mnScanMsg" role="status">Apunta al código de barras del producto: se lee solo.</p>
+    <div class="mn-scan-v" id="mnScanV"><video id="mnScanVid" playsinline muted autoplay></video><div class="mn-scan-guia" aria-hidden="true"></div></div>
+    <div class="mn-fila" style="margin-top:10px;align-items:center"><input class="inp" id="mnScanNum" inputmode="numeric" maxlength="14" autocomplete="off" placeholder="…o escribe el número (8 a 14 cifras)" aria-label="Número del código de barras" style="flex:1;margin:0" onkeydown="if(event.key==='Enter')mnScanManual()"><button type="button" class="btn-ok" onclick="mnScanManual()">Buscar</button></div>
+    <div class="mbtns" style="margin-top:12px"><button type="button" class="btn-cancel" onclick="mnScanCerrar()">Cerrar</button></div>`;
+  document.getElementById('mMnScan').style.display = 'flex'; mnScanCamara();
+}
+function mnScanParar() {
+  const sc = _mnScan; if (!sc) return; sc.parar = true; clearTimeout(sc.t);
+  try { if (sc.reader) sc.reader.reset(); } catch (e) {}
+  try { if (sc.stream) sc.stream.getTracks().forEach(t => t.stop()); } catch (e) {}
+  const v = document.getElementById('mnScanVid'); if (v) v.srcObject = null;
+}
+function mnScanCerrar() { mnScanParar(); _mnScan = null; document.getElementById('mMnScan').style.display = 'none'; }
+function mnScanSinCamara(t) { mnScanMsg(t); const v = document.getElementById('mnScanV'); if (v) v.style.display = 'none'; const n = document.getElementById('mnScanNum'); if (n) n.focus(); }
+async function mnScanCamara() {
+  const sc = _mnScan;
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { mnScanSinCamara('Aquí no se puede usar la cámara. Escribe el número del código.'); return; }
+  let stream;
+  try { stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'environment' }, width: { ideal: 1280 } }, audio: false }); }
+  catch (e) { mnScanSinCamara(e && e.name === 'NotAllowedError' ? 'No has dado permiso para usar la cámara. Puedes escribir el número del código.' : 'No se pudo abrir la cámara. Escribe el número del código.'); return; }
+  if (!sc || sc.parar || _mnScan !== sc) { stream.getTracks().forEach(t => t.stop()); return; }
+  sc.stream = stream; const vid = document.getElementById('mnScanVid'); vid.srcObject = stream; try { await vid.play(); } catch (e) {}
+  let det = null;
+  if ('BarcodeDetector' in window) { try { const f = await BarcodeDetector.getSupportedFormats(), usar = ['ean_13', 'ean_8', 'upc_a', 'upc_e'].filter(x => f.includes(x)); if (usar.length) det = new BarcodeDetector({ formats: usar }); } catch (e) {} }
+  if (det) {
+    const bucle = async () => { if (_mnScan !== sc || sc.parar) return; try { const r = await det.detect(vid); for (const x of r) if (mnScanLeido(x.rawValue)) return; } catch (e) {} sc.t = setTimeout(bucle, 220); };
+    bucle(); return;
+  }
+  mnScanMsg('Preparando el lector (solo la primera vez)…');
+  try { await mnCargarScript(MN_ZXING); } catch (e) { mnScanSinCamara('No se pudo cargar el lector. Escribe el número del código.'); return; }
+  if (_mnScan !== sc || sc.parar) return;
+  mnScanMsg('Apunta al código de barras del producto: se lee solo.');
+  const Z = window.ZXing, hints = new Map([[Z.DecodeHintType.POSSIBLE_FORMATS, [Z.BarcodeFormat.EAN_13, Z.BarcodeFormat.EAN_8, Z.BarcodeFormat.UPC_A, Z.BarcodeFormat.UPC_E]], [Z.DecodeHintType.TRY_HARDER, true]]);
+  const rd = sc.reader = new Z.BrowserMultiFormatReader(hints), lienzo = document.createElement('canvas');
+  // Se lee un fotograma cada 250 ms (más fiable que dejar que la librería gestione la cámara)
+  const bucle = () => {
+    if (_mnScan !== sc || sc.parar) return;
+    try { if (vid.videoWidth) { const w = Math.min(960, vid.videoWidth), h = Math.round(vid.videoHeight * w / vid.videoWidth); lienzo.width = w; lienzo.height = h; lienzo.getContext('2d', { willReadFrequently: true }).drawImage(vid, 0, 0, w, h); const r = rd.decodeBitmap(new Z.BinaryBitmap(new Z.HybridBinarizer(new Z.HTMLCanvasElementLuminanceSource(lienzo)))); if (r && mnScanLeido(r.getText())) return; } } catch (e) { /* sin código en este fotograma */ }
+    sc.t = setTimeout(bucle, 250);
+  };
+  bucle();
+}
+function mnScanLeido(code) {
+  const sc = _mnScan; if (!sc || sc.hecho || !mnGtinOk(String(code || ''))) return false;
+  sc.hecho = true; mnScanParar(); mnScanBuscar(String(code)); return true;
+}
+function mnScanManual() {
+  const c = (document.getElementById('mnScanNum').value || '').replace(/\s+/g, '');
+  if (!mnGtinOk(c)) { mnScanMsg('Ese número no parece un código de barras válido: revisa las cifras (suelen ser 13 o 8).'); return; }
+  if (_mnScan) { _mnScan.hecho = true; mnScanParar(); } mnScanBuscar(c);
+}
+async function mnScanBuscar(code) {
+  mnScanMsg('Buscando ' + code + ' en Open Food Facts…'); const v = document.getElementById('mnScanV'); if (v) v.style.display = 'none';
+  const ya = MN.cat.find(a => String(a.fuente_ref || '') === code);
+  if (ya) { mnScanCerrar(); mnCatEditar(ya.id); document.getElementById('mMnCat').style.display = 'flex'; toast('Ya lo tenías en el catálogo: «' + ya.nombre + '».'); return; }
+  let d;
+  try { d = await mnFetchReintento(`https://world.openfoodfacts.org/api/v2/product/${code}.json?fields=code,product_name,product_name_es,generic_name,brands,nutriments,serving_size`); }
+  catch (e) { mnScanFin('No se pudo consultar Open Food Facts. Comprueba tu conexión.', code, false); return; }
+  const pr = d && d.status === 1 && d.product; if (!pr) { mnScanFin('Ese producto no está en Open Food Facts. Puedes crearlo a mano.', code, true); return; }
+  const n = pr.nutriments || {}, kcal = mnKcalOff(n), g = k => typeof n[k] === 'number' ? n[k] : undefined;
+  const nombre = String(pr.product_name_es || pr.product_name || pr.generic_name || '').trim().slice(0, 80), marca = String(pr.brands || '').split(',')[0].trim();
+  const nutri = {}; [['kcal', kcal], ['prot', g('proteins_100g')], ['hc', g('carbohydrates_100g')], ['grasa', g('fat_100g')], ['fibra', g('fiber_100g')]].forEach(([k, x]) => { if (typeof x === 'number' && isFinite(x)) nutri[k] = Math.round(x * 10) / 10; });
+  const avisos = ['Valores por 100 g según Open Food Facts' + (marca ? ' (' + marca + ')' : '') + ': compáralos con la etiqueta antes de guardar.'];
+  const faltan = ['kcal', 'prot', 'hc', 'grasa'].filter(k => nutri[k] === undefined);
+  if (faltan.length) avisos.push('Faltan valores en la base de datos (' + faltan.map(k => ({ kcal: 'kcal', prot: 'proteína', hc: 'hidratos', grasa: 'grasa' }[k])).join(', ') + '): complétalos mirando la etiqueta.');
+  else if (!mnCoherente(nutri.kcal, nutri.prot, nutri.hc, nutri.grasa)) avisos.push('Ojo: las kcal no cuadran con proteína, hidratos y grasa. Revisa los valores con la etiqueta.');
+  if (!nombre) avisos.push('El producto no trae nombre: ponle uno.');
+  const igual = nombre && MN.cat.find(a => mnNorm(a.nombre) === mnNorm(nombre)); if (igual) avisos.push('Ya tienes un alimento llamado «' + igual.nombre + '»: si es el mismo, edítalo en vez de duplicarlo.');
+  mnScanCerrar();
+  _mnCatEd = { id: null, nombre, categoria: mnCategoria(nombre), estado: mnEstadoInfer(nombre, ''), medidas: [], nutri, fuente: 'off', fuente_ref: code, avisos };
+  document.getElementById('mMnCat').style.display = 'flex'; mnCatPintar();
+}
+function mnScanFin(texto, code, crear) {
+  mnScanMsg(texto);
+  const c = document.getElementById('mnScanCuerpo'); if (!c || c.querySelector('.mn-scan-fin')) return;
+  c.querySelector('.mbtns').insertAdjacentHTML('afterbegin', `<span class="mn-scan-fin" style="display:contents"><button type="button" class="btn-soft" onclick="mnScanAbrir()">Escanear otro</button>${crear ? `<button type="button" class="btn-soft" onclick="mnScanCerrar();_mnCatEd={id:null,nombre:'',categoria:'',estado:'',medidas:[],nutri:{},fuente:'manual',fuente_ref:'${sudEsc(code)}',avisos:['Código ${sudEsc(code)}: rellena los valores con la etiqueta.']};document.getElementById('mMnCat').style.display='flex';mnCatPintar()">Crear a mano</button>` : ''}</span>`);
 }
 function mnCatNuevo(nombre) { _mnCatEd = { id: null, nombre: nombre || _mnCatQ.trim(), categoria: '', estado: '', medidas: [], nutri: {}, fuente: 'manual', fuente_ref: '' }; mnCatPintar(); }
 function mnCatEditar(id) { const a = MN.cat.find(x => x.id == id); if (!a) return; _mnCatEd = { ...a, nutri: a.nutri || {}, medidas: a.medidas || [] }; mnCatPintar(); }
@@ -1038,6 +1149,7 @@ function mnCatFormHtml() {
   const a = _mnCatEd, nu = a.nutri || {}, cats = [...new Set(MN.cat.map(x => x.categoria).filter(Boolean))];
   const nv = k => nu[k] === undefined || nu[k] === null || isNaN(nu[k]) ? '' : String(Math.round(nu[k] * 10) / 10).replace('.', ',');
   return `<p class="mt" id="mnCatTit">${a.id ? 'Editar alimento' : 'Nuevo alimento'}</p><p class="ms">${a.fuente === 'usda' ? 'Viene de USDA: ponle el nombre en español con el que lo vas a usar.' : a.fuente === 'off' ? 'Viene de Open Food Facts: revisa el nombre para que sea el genérico que usarás.' : 'Los datos nutricionales son opcionales.'}</p>
+    ${(a.avisos || []).length ? `<div class="mn-aviso" role="note">${a.avisos.map(x => `<p>${sudEsc(x)}</p>`).join('')}</div>` : ''}
     <label class="mfl" for="mnCfN">Nombre</label><input class="inp" id="mnCfN" maxlength="80" value="${sudEsc(a.nombre)}">
     <div class="mn-fila" style="margin-top:8px"><div style="flex:1 1 180px"><label class="mfl" for="mnCfC">Categoría <span class="hd-opt">(la tuya)</span></label><input class="inp" id="mnCfC" list="mnCfCL" maxlength="40" value="${sudEsc(a.categoria || '')}" placeholder="Proteínas, Hidratos, Grasas…"><datalist id="mnCfCL">${cats.map(c => `<option value="${sudEsc(c)}">`).join('')}</datalist></div>
       <div style="flex:0 0 160px"><label class="mfl" for="mnCfE">Estado</label><select class="inp" id="mnCfE">${[['', 'Sin especificar'], ['crudo', 'Crudo'], ['cocinado', 'Cocinado'], ['precocinado', 'Precocinado']].map(o => `<option value="${o[0]}"${(a.estado || '') === o[0] ? ' selected' : ''}>${o[1]}</option>`).join('')}</select></div></div>
@@ -1323,33 +1435,62 @@ function mnEstadoInfer(n, nota) {
   return '';
 }
 // Nombres en inglés de los alimentos más comunes, para buscar su composición genérica en USDA
-const MN_ES_EN = [['pechuga de pollo', 'chicken breast raw'], ['pollo', 'chicken meat raw'], ['pavo', 'turkey breast raw'], ['ternera', 'beef lean raw'], ['cerdo', 'pork lean raw'], ['jamon serrano', 'ham cured'], ['atun', 'tuna canned in water'], ['salmon', 'salmon atlantic raw'], ['merluza', 'cod atlantic raw'], ['bacalao', 'cod atlantic raw'], ['caballa', 'mackerel atlantic raw'], ['sardina', 'sardine canned'], ['lubina', 'sea bass raw'], ['dorada', 'sea bream raw'], ['gamba', 'shrimp raw'], ['huevo', 'egg whole raw'], ['tofu', 'tofu firm'], ['tempeh', 'tempeh'], ['arroz integral', 'brown rice cooked'], ['arroz', 'white rice cooked'], ['pasta integral', 'whole wheat pasta cooked'], ['pasta', 'pasta cooked enriched'], ['noquis', 'potato gnocchi'], ['cuscus', 'couscous cooked'], ['quinoa', 'quinoa cooked'], ['avena', 'oats rolled'], ['pan integral', 'whole wheat bread'], ['pan', 'white bread'], ['patata', 'potato raw'], ['boniato', 'sweet potato raw'], ['garbanzo', 'chickpeas cooked'], ['alubia', 'white beans cooked'], ['lenteja', 'lentils cooked'], ['hummus', 'hummus'], ['platano', 'banana raw'], ['manzana', 'apple raw'], ['naranja', 'orange raw'], ['fresa', 'strawberries raw'], ['aguacate', 'avocado raw'], ['tomate', 'tomato raw'], ['pepino', 'cucumber raw'], ['zanahoria', 'carrot raw'], ['espinaca', 'spinach raw'], ['brocoli', 'broccoli raw'], ['lechuga', 'lettuce raw'], ['pimiento', 'bell pepper raw'], ['cebolla', 'onion raw'], ['calabacin', 'zucchini raw'], ['champi', 'mushrooms white raw'], ['berenjena', 'eggplant raw'], ['coliflor', 'cauliflower raw'], ['judia verde', 'green beans raw'], ['nuez', 'walnuts'], ['almendra', 'almonds'], ['anacardo', 'cashews'], ['cacahuete', 'peanuts'], ['chia', 'chia seeds'], ['semilla', 'mixed seeds'], ['aceite de oliva', 'olive oil'], ['aove', 'olive oil'], ['miel', 'honey'], ['yogur', 'yogurt plain'], ['leche', 'milk whole'], ['bebida de soja', 'soy milk'], ['queso', 'cheese'], ['mantequilla de cacahuete', 'peanut butter'], ['ajo', 'garlic raw'], ['limon', 'lemon raw'], ['mostaza', 'mustard prepared']].sort((a, b) => b[0].length - a[0].length);
-function mnEn(n) { const t = ' ' + mnNorm(n) + ' '; for (const [es, en] of MN_ES_EN) if (t.indexOf(' ' + es) >= 0 || t.indexOf(es) >= 0) return en; return ''; }
+const MN_ES_EN = [['pechuga de pollo', 'chicken breast raw'], ['pollo', 'chicken meat raw'], ['pavo', 'turkey breast raw'], ['ternera', 'beef lean raw'], ['cerdo', 'pork lean raw'], ['jamon serrano', 'ham cured'], ['atun', 'tuna canned in water'], ['salmon', 'salmon atlantic raw'], ['merluza', 'cod atlantic raw'], ['bacalao', 'cod atlantic raw'], ['caballa', 'mackerel atlantic raw'], ['sardina', 'sardine canned'], ['lubina', 'sea bass raw'], ['dorada', 'sea bream raw'], ['gamba', 'shrimp raw'], ['huevo', 'egg whole raw'], ['tofu', 'tofu firm'], ['tempeh', 'tempeh'], ['arroz integral', 'brown rice cooked'], ['arroz', 'white rice cooked'], ['pasta integral', 'whole wheat pasta cooked'], ['pasta', 'pasta cooked enriched'], ['noquis', 'potato gnocchi'], ['cuscus', 'couscous cooked'], ['quinoa', 'quinoa cooked'], ['avena', 'oats rolled'], ['pan integral', 'whole wheat bread'], ['pan', 'white bread'], ['patata', 'potato raw'], ['boniato', 'sweet potato raw'], ['garbanzo', 'chickpeas cooked'], ['alubia', 'white beans cooked'], ['lenteja', 'lentils cooked'], ['hummus', 'hummus'], ['platano', 'banana raw'], ['manzana', 'apple raw'], ['naranja', 'orange raw'], ['fresa', 'strawberries raw'], ['aguacate', 'avocado raw'], ['tomate', 'tomato raw'], ['pepino', 'cucumber raw'], ['zanahoria', 'carrot raw'], ['espinaca', 'spinach raw'], ['brocoli', 'broccoli raw'], ['lechuga', 'lettuce raw'], ['pimiento', 'bell pepper raw'], ['cebolla', 'onion raw'], ['calabacin', 'zucchini raw'], ['champi', 'mushrooms white raw'], ['berenjena', 'eggplant raw'], ['coliflor', 'cauliflower raw'], ['judia verde', 'green beans raw'], ['nuez', 'walnuts'], ['almendra', 'almonds'], ['anacardo', 'cashews'], ['cacahuete', 'peanuts'], ['chia', 'chia seeds'], ['semilla', 'mixed seeds'], ['aceite de oliva', 'olive oil'], ['aove', 'olive oil'], ['miel', 'honey'], ['yogur', 'yogurt plain'], ['leche', 'milk whole'], ['bebida de soja', 'soy milk'], ['queso', 'cheese'], ['mantequilla de cacahuete', 'peanut butter'], ['ajo', 'garlic raw'], ['limon', 'lemon raw'], ['mostaza', 'mustard prepared'], ['pechuga de pavo','turkey breast raw'], ['solomillo de cerdo','pork tenderloin raw'], ['lomo','pork loin raw'], ['jamon cocido','ham cooked'], ['pollo cocido','chicken breast cooked'], ['merluza','cod atlantic raw'], ['trucha','trout rainbow raw'], ['atun fresco','tuna fresh bluefin raw'], ['langostino','shrimp raw'], ['mejillon','mussels blue raw'], ['calamar','squid raw'], ['pulpo','octopus raw'], ['clara de huevo','egg white raw'], ['ternera picada','beef ground lean raw'], ['seitan','seitan'], ['soja texturizada','soy protein textured dry'], ['edamame','edamame frozen prepared'], ['judia pinta','pinto beans cooked'], ['alubia negra','black beans cooked'], ['guisante','peas green raw'], ['haba','broad beans raw'], ['arroz basmati','rice basmati raw'], ['arroz bomba','rice white short-grain raw'], ['espagueti','pasta dry enriched'], ['macarron','pasta dry enriched'], ['fideo','pasta dry enriched'], ['pan de centeno','rye bread'], ['tortita de arroz','rice cakes'], ['tortilla de trigo','flour tortilla'], ['copos de maiz','corn flakes'], ['harina de avena','oat flour'], ['harina de trigo','wheat flour white'], ['harina de garbanzo','chickpea flour'], ['mijo','millet raw'], ['bulgur','bulgur dry'], ['cebada','barley pearled raw'], ['maiz','corn sweet raw'], ['palomitas','popcorn air-popped'], ['pera','pears raw'], ['melocoton','peaches raw'], ['kiwi','kiwifruit raw'], ['uva','grapes raw'], ['sandia','watermelon raw'], ['melon','cantaloupe raw'], ['pina','pineapple raw'], ['mango','mangos raw'], ['arandano','blueberries raw'], ['frambuesa','raspberries raw'], ['mandarina','tangerines raw'], ['pomelo','grapefruit raw'], ['cereza','cherries sweet raw'], ['ciruela','plums raw'], ['datil','dates medjool'], ['pasas','raisins'], ['higo','figs raw'], ['granada','pomegranate raw'], ['limon','lemon raw'], ['coco rallado','coconut dried'], ['esparrago','asparagus raw'], ['alcachofa','artichokes raw'], ['acelga','chard raw'], ['col rizada','kale raw'], ['repollo','cabbage raw'], ['rucula','arugula raw'], ['canonigo','lambs lettuce raw'], ['remolacha','beets raw'], ['calabaza','pumpkin raw'], ['puerro','leeks raw'], ['apio','celery raw'], ['rabano','radishes raw'], ['pimiento rojo','red bell pepper raw'], ['tomate triturado','tomatoes crushed canned'], ['tomate frito','tomato sauce'], ['maiz dulce','corn sweet canned'], ['champinon','mushrooms white raw'], ['seta','oyster mushrooms raw'], ['jengibre','ginger root raw'], ['avellana','hazelnuts'], ['pistacho','pistachios'], ['nuez de brasil','brazil nuts'], ['pipas de girasol','sunflower seeds'], ['semillas de calabaza','pumpkin seeds'], ['sesamo','sesame seeds'], ['lino','flax seeds'], ['linaza','flax seeds'], ['tahini','tahini'], ['crema de cacahuete','peanut butter'], ['crema de almendra','almond butter'], ['mantequilla','butter salted'], ['aceite de coco','coconut oil'], ['aceite de girasol','sunflower oil'], ['yogur natural','yogurt plain whole milk'], ['yogur griego','yogurt greek plain'], ['yogur de soja','soy yogurt'], ['skyr','skyr'], ['queso fresco','cottage cheese'], ['requeson','ricotta'], ['queso rallado','parmesan grated'], ['mozzarella','mozzarella'], ['leche de almendra','almond milk unsweetened'], ['bebida de almendra','almond milk unsweetened'], ['bebida de avena','oat milk'], ['leche de avena','oat milk'], ['bebida de arroz','rice milk'], ['leche desnatada','milk nonfat'], ['leche entera','milk whole'], ['cacao','cocoa powder unsweetened'], ['chocolate negro','chocolate dark 70-85%'], ['miel','honey'], ['azucar','sugar granulated'], ['levadura nutricional','nutritional yeast'], ['proteina en polvo','whey protein powder'], ['garbanzo','chickpeas cooked']].sort((a, b) => b[0].length - a[0].length);
+// Solo coincide al empezar una palabra («pina» ya no coincide con «espinaca»)
+function mnEn(n) { const t = ' ' + mnNorm(n) + ' '; for (const [es, en] of MN_ES_EN) if (t.indexOf(' ' + es) >= 0) return en; return ''; }
 const MN_STOP = /^(de|del|la|el|los|las|con|al|en|y|para|un|una|cocid[oa]s?|bote|fresc[oa]s?|crud[oa]s?|seco|seca|entero|entera)$/;
 const mnMediana = a => { const s = a.slice().sort((x, y) => x - y), m = s.length >> 1; return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; };
-async function mnFetchJson(url, ms) { const ac = new AbortController(), t = setTimeout(() => ac.abort(), ms || 7000); try { const r = await fetch(url, { signal: ac.signal }); return await r.json(); } finally { clearTimeout(t); } }
-// Mediana de los productos de supermercado de España que coinciden con el nombre; si hay pocos, USDA con el nombre en inglés
-async function mnBuscarNutri(nombre) {
+async function mnFetchJson(url, ms) { const ac = new AbortController(), t = setTimeout(() => ac.abort(), ms || 9000); try { const r = await fetch(url, { signal: ac.signal }); if (r.status === 429) { const e = new Error('limite'); e.limite = true; throw e; } if (!r.ok) throw new Error('http ' + r.status); return await r.json(); } finally { clearTimeout(t); } }
+// Una consulta con un reintento (Open Food Facts se cae o tarda de vez en cuando)
+async function mnFetchReintento(url, ms) { try { return await mnFetchJson(url, ms); } catch (e) { if (e.limite) throw e; await new Promise(r => setTimeout(r, 700)); return await mnFetchJson(url, ms); } }
+const mnSing = t => t.length > 4 ? t.replace(/(es|s)$/, '') : t;   // lentejas → lentej, huevos → huev
+// Las kcal deben cuadrar con proteína, hidratos y grasa (±30 %): si no, el dato está mal cargado en la base de datos
+function mnCoherente(kcal, p, hc, g) { const calc = 4 * p + 4 * hc + 9 * g; return Math.abs(kcal - calc) <= Math.max(25, 0.3 * Math.max(kcal, calc)); }
+const mnKcalOff = n => typeof n['energy-kcal_100g'] === 'number' ? n['energy-kcal_100g'] : (typeof n['energy_100g'] === 'number' ? n['energy_100g'] / 4.184 : undefined);
+// Cereales y pasta sin más dato: se entienden en seco (así se pesan al cocinar); con «cocido/bote» se buscan cocinados
+const MN_EN_SECO = { 'white rice cooked': 'rice white long-grain raw', 'brown rice cooked': 'rice brown long-grain raw', 'whole wheat pasta cooked': 'pasta whole-wheat dry', 'pasta cooked enriched': 'pasta dry enriched', 'couscous cooked': 'couscous dry', 'quinoa cooked': 'quinoa uncooked' };
+function mnEnEstado(nombre) {
+  const en = mnEn(nombre); if (!en) return ''; const t = mnNorm(nombre);
+  if (MN_EN_SECO[en] && !/cocid|bote|hervid|precocin|cocin/.test(t)) return MN_EN_SECO[en];
+  return en;
+}
+// Qué se espera de cada alimento: genérico (USDA, composición de laboratorio) o de marca (Open Food Facts, supermercados de España)
+const mnEsGenerico = n => { const t = mnNorm(n); return !!mnEn(n) && !/lata|conserva|preparad|salsa|crema|batido|barrita|galleta|snack|cereal|refresco|zumo|embutid|fiambre|loncha|precocin/.test(t); };
+async function mnOffNutri(nombre) {
   const toks = mnNorm(nombre).split(/[^a-z0-9ñ]+/).filter(t => t.length > 2 && !MN_STOP.test(t)).slice(0, 4);
+  if (!toks.length) return { err: 'sin_resultados' };
+  const probar = async ts => {
+    const d = await mnFetchReintento(`https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(ts.join(' '))}&search_simple=1&action=process&json=1&page_size=24&lc=es&tagtype_0=countries&tag_contains_0=contains&tag_0=spain&fields=product_name,nutriments`);
+    return (d.products || []).filter(p => {
+      const t = mnNorm(p.product_name || ''), n = p.nutriments || {}, kcal = mnKcalOff(n);
+      return t && ts.every(k => t.indexOf(mnSing(k)) >= 0) && typeof kcal === 'number' && [n['proteins_100g'], n['carbohydrates_100g'], n['fat_100g']].every(x => typeof x === 'number') && mnCoherente(kcal, n['proteins_100g'], n['carbohydrates_100g'], n['fat_100g']);
+    }).slice(0, 9);
+  };
   try {
-    if (toks.length) {
-      const d = await mnFetchJson(`https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(toks.join(' '))}&search_simple=1&action=process&json=1&page_size=20&lc=es&tagtype_0=countries&tag_contains_0=contains&tag_0=spain&fields=product_name,nutriments`);
-      const ok = (d.products || []).filter(p => { const t = mnNorm(p.product_name || ''), n = p.nutriments || {}; return t && toks.every(k => t.indexOf(k) >= 0) && [n['energy-kcal_100g'], n['proteins_100g'], n['carbohydrates_100g'], n['fat_100g']].every(x => typeof x === 'number'); }).slice(0, 7);
-      if (ok.length >= 2) {
-        const g = k => mnMediana(ok.map(p => p.nutriments[k])), fib = ok.map(p => p.nutriments['fiber_100g']).filter(x => typeof x === 'number');
-        return { nutri: { kcal: g('energy-kcal_100g'), prot: g('proteins_100g'), hc: g('carbohydrates_100g'), grasa: g('fat_100g'), ...(fib.length ? { fibra: mnMediana(fib) } : {}) }, fuente: 'off', ref: 'Mediana de ' + ok.length + ' productos de supermercado de España' };
-      }
-    }
-  } catch (e) {}
+    let ok = await probar(toks);
+    if (ok.length < 2 && toks.length > 2) ok = await probar(toks.slice(0, 2));
+    if (ok.length < 2) return { err: 'sin_resultados' };
+    const g = f => mnMediana(ok.map(f)), fib = ok.map(p => p.nutriments['fiber_100g']).filter(x => typeof x === 'number');
+    return { nutri: { kcal: g(p => mnKcalOff(p.nutriments)), prot: g(p => p.nutriments['proteins_100g']), hc: g(p => p.nutriments['carbohydrates_100g']), grasa: g(p => p.nutriments['fat_100g']), ...(fib.length ? { fibra: mnMediana(fib) } : {}) }, fuente: 'off', ref: 'Mediana de ' + ok.length + ' productos de supermercado de España' };
+  } catch (e) { return { err: 'red' }; }
+}
+let _mnUsdaAgotada = false;
+async function mnUsdaNutri(nombre) {
+  const en = mnEnEstado(nombre); if (!en) return { err: 'sin_resultados' };
+  if (_mnUsdaAgotada) return { err: 'limite_usda' };
   try {
-    const en = mnEn(nombre);
-    if (en) {
-      const d = await mnFetchJson(`https://api.nal.usda.gov/fdc/v1/foods/search?api_key=${USDA_KEY}&query=${encodeURIComponent(en)}&pageSize=3&dataType=Foundation,SR%20Legacy`);
-      const f = (d.foods || [])[0];
-      if (f) { const n = compNormalize(f, 'usda'); if (typeof n.kcal === 'number') return { nutri: { kcal: n.kcal, prot: n.protein, hc: n.carbs, grasa: n.fat, ...(typeof n.fiber === 'number' ? { fibra: n.fiber } : {}) }, fuente: 'usda', ref: 'USDA: ' + n.name }; }
-    }
-  } catch (e) {}
-  return null;
+    const d = await mnFetchReintento(`https://api.nal.usda.gov/fdc/v1/foods/search?api_key=${mnUsdaKey()}&query=${encodeURIComponent(en)}&pageSize=3&dataType=Foundation,SR%20Legacy`);
+    const f = (d.foods || [])[0];
+    if (f) { const n = compNormalize(f, 'usda'); if (typeof n.kcal === 'number') return { nutri: { kcal: n.kcal, prot: n.protein, hc: n.carbs, grasa: n.fat, ...(typeof n.fiber === 'number' ? { fibra: n.fiber } : {}) }, fuente: 'usda', ref: 'USDA: ' + n.name }; }
+    return { err: 'sin_resultados' };
+  } catch (e) { if (e.limite) { _mnUsdaAgotada = true; return { err: 'limite_usda' }; } return { err: 'red' }; }
+}
+// Alimentos genéricos (pollo, verduras, fruta, cereales…): primero USDA; de marca o sin equivalente: primero supermercados de España. Si falla uno, se prueba el otro.
+async function mnBuscarNutri(nombre) {
+  const orden = mnEsGenerico(nombre) ? [mnUsdaNutri, mnOffNutri] : [mnOffNutri, mnUsdaNutri];
+  let err = 'sin_resultados';
+  for (const f of orden) { const r = await f(nombre); if (r.nutri) return r; if (r.err === 'limite_usda' || (r.err === 'red' && err !== 'limite_usda')) err = r.err; }
+  return { err };
 }
 function mnSinEnlazar() {
   const m = {};
@@ -1359,11 +1500,38 @@ function mnSinEnlazar() {
 let _mnAuto = null;
 async function mnAutoAbrir() {
   const faltan = mnSinEnlazar(); if (!faltan.length) { toast('Todo está en el catálogo.'); return; }
-  _mnAuto = { filas: faltan.map(f => ({ n: f.n, cat: mnCategoria(f.n), est: mnEstadoInfer(f.n, f.nota), nutri: null, fuente: 'manual', ref: '', sel: true })), cargando: true, hecho: 0 };
+  _mnAuto = { filas: faltan.map(f => ({ n: f.n, cat: mnCategoria(f.n), est: mnEstadoInfer(f.n, f.nota), nutri: null, fuente: 'manual', ref: '', sel: true, err: '' })), cargando: true, hecho: 0 };
   document.getElementById('mMnAuto').style.display = 'flex'; mnAutoPintar();
-  const cola = _mnAuto.filas.slice(), run = async () => { while (cola.length && _mnAuto) { const f = cola.shift(), r = await mnBuscarNutri(f.n); if (!_mnAuto) return; if (r) { f.nutri = r.nutri; f.fuente = r.fuente; f.ref = r.ref; } _mnAuto.hecho++; mnAutoPintar(); } };
+  _mnUsdaAgotada = false;
+  await mnAutoBuscar(_mnAuto.filas);
+}
+// Busca la nutrición de las filas dadas (3 a la vez); anota el motivo si alguna falla
+async function mnAutoBuscar(filas) {
+  const a = _mnAuto; if (!a) return; a.cargando = true; a.hecho = 0; a.total = filas.length; mnAutoPintar();
+  const cola = filas.slice(), run = async () => { while (cola.length && _mnAuto === a) {
+    const f = cola.shift(), r = await mnBuscarNutri(f.n); if (_mnAuto !== a) return;
+    if (r.nutri) { f.nutri = r.nutri; f.fuente = r.fuente; f.ref = r.ref; f.err = ''; if (!f.est) { const rl = r.ref.toLowerCase(); if (/ raw|uncooked| dry|dry /.test(' ' + rl + ' ') || /crudo|seco/.test(mnNorm(f.n))) f.est = 'crudo'; else if (/cooked/.test(rl)) f.est = 'cocinado'; } }
+    else f.err = r.err || 'sin_resultados';
+    a.hecho++; mnAutoPintar(); } };
   await Promise.all([run(), run(), run()]);
-  if (_mnAuto) { _mnAuto.cargando = false; mnAutoPintar(); }
+  if (_mnAuto === a) { a.cargando = false; mnAutoPintar(); }
+}
+function mnAutoReintentar() { if (!_mnAuto) return; _mnUsdaAgotada = false; mnAutoBuscar(_mnAuto.filas.filter(f => !f.nutri && f.err)); }
+const MN_ERR_TXT = { sin_resultados: 'No encontrado: escribe los valores a mano.', red: 'No se pudo consultar (conexión): vuelve a intentarlo o escríbelos a mano.', limite_usda: 'USDA ha llegado a su límite gratuito: usa tu propia clave o escríbelos a mano.' };
+// Clave gratuita de USDA (1.000 consultas/hora en vez de ~30): se guarda solo en este navegador
+function mnUsdaAbrir() {
+  let v = ''; try { v = localStorage.getItem('nl_usda_key') || ''; } catch (e) {}
+  document.getElementById('mnUsdaCuerpo').innerHTML = `<p class="mt" id="mnUsdaTit">Clave de USDA</p><p class="ms">Sin clave propia, USDA solo deja unas 30 consultas por hora y «Completar catálogo» las gasta enseguida. Pide una gratis en <a href="https://fdc.nal.usda.gov/api-key-signup" target="_blank" rel="noopener">fdc.nal.usda.gov/api-key-signup</a> (te llega por correo) y pégala aquí. Se guarda solo en este navegador.</p>
+    <label class="mfl" for="mnUsdaK">Tu clave</label><input class="inp" id="mnUsdaK" maxlength="80" autocomplete="off" spellcheck="false" value="${sudEsc(v)}" placeholder="Pega aquí tu clave">
+    <div class="mbtns" style="margin-top:12px"><button type="button" class="btn-cancel" onclick="mnUsdaCerrar()">Cancelar</button><button type="button" class="btn-ok" onclick="mnUsdaGuardar()">Guardar</button></div>`;
+  document.getElementById('mMnUsda').style.display = 'flex';
+}
+function mnUsdaCerrar() { document.getElementById('mMnUsda').style.display = 'none'; }
+function mnUsdaGuardar() {
+  const v = document.getElementById('mnUsdaK').value.trim();
+  if (v && !/^[A-Za-z0-9]{20,60}$/.test(v)) { toast('Esa clave no parece válida: son letras y números, sin espacios.', { tipo: 'error' }); return; }
+  try { if (v) localStorage.setItem('nl_usda_key', v); else localStorage.removeItem('nl_usda_key'); } catch (e) {}
+  _mnUsdaAgotada = false; mnUsdaCerrar(); toast(v ? 'Clave guardada.' : 'Clave quitada: se usará la gratuita limitada.');
 }
 function mnAutoCerrar() { _mnAuto = null; document.getElementById('mMnAuto').style.display = 'none'; }
 function mnAutoPintar() {
@@ -1371,11 +1539,13 @@ function mnAutoPintar() {
   const foco = document.activeElement && document.activeElement.closest && document.activeElement.closest('#mnAutoCuerpo') ? document.activeElement.id : null;
   const cats = [...new Set(MN_CATEGORIAS.concat(MN.cat.map(x => x.categoria).filter(Boolean)))];
   const nv = (f, k) => f.nutri && typeof f.nutri[k] === 'number' ? String(Math.round(f.nutri[k] * 10) / 10).replace('.', ',') : '';
-  const prog = a.cargando ? `<p class="mn-ayuda" role="status">Buscando datos: ${a.hecho} de ${a.filas.length}…</p>` : `<p class="mn-ayuda">Revisa lo que ha encontrado la app y quita lo que no quieras guardar. Los valores son por 100 g y puedes corregirlos.</p>`;
+  const prog = a.cargando ? `<p class="mn-ayuda" role="status">Buscando datos: ${a.hecho} de ${a.total || a.filas.length}…</p>` : `<p class="mn-ayuda">Revisa lo que ha encontrado la app y quita lo que no quieras guardar. Los valores son por 100 g y puedes corregirlos.</p>`;
   el.innerHTML = `<p class="mt" id="mnAutoTit">Completar el catálogo</p><p class="ms">${a.filas.length} ${a.filas.length === 1 ? 'alimento' : 'alimentos'} de este menú todavía no están en tu catálogo. La app propone categoría, estado y nutrición.</p>${prog}
+    ${a.filas.some(f => f.err === 'limite_usda') ? `<p class="mn-ayuda" role="alert">USDA ha llegado a su límite gratuito. <button type="button" class="btn-soft" onclick="mnUsdaAbrir()">Usar mi clave de USDA</button></p>` : ''}
+    ${!a.cargando && a.filas.some(f => !f.nutri && f.err && f.err !== 'sin_resultados') ? `<p class="mn-ayuda"><button type="button" class="btn-soft" onclick="mnAutoReintentar()">Reintentar los que faltan</button></p>` : ''}
     <div style="overflow-x:auto"><table class="mn-auto-t"><thead><tr><th></th><th>Alimento</th><th>Categoría</th><th>Estado</th><th>kcal</th><th>Prot.</th><th>HC</th><th>Grasa</th></tr></thead><tbody>${a.filas.map((f, i) => `<tr>
       <td><input type="checkbox" aria-label="Guardar ${sudEsc(f.n)}"${f.sel ? ' checked' : ''} onchange="_mnAuto.filas[${i}].sel=this.checked;mnAutoPintar()"></td>
-      <td><input class="inp" id="mnAu_n${i}" value="${sudEsc(f.n)}" maxlength="80" aria-label="Nombre" oninput="_mnAuto.filas[${i}].n=this.value">${f.fuente !== 'manual' ? `<div class="mn-fuente">${sudEsc(f.ref)}</div>` : ''}</td>
+      <td><input class="inp" id="mnAu_n${i}" value="${sudEsc(f.n)}" maxlength="80" aria-label="Nombre" oninput="_mnAuto.filas[${i}].n=this.value">${f.fuente !== 'manual' ? `<div class="mn-fuente">${sudEsc(f.ref)}</div>` : (f.err && !a.cargando ? `<div class="mn-fuente" style="color:var(--gold-dk)">${sudEsc(MN_ERR_TXT[f.err] || '')}</div>` : '')}</td>
       <td><input class="inp" id="mnAu_c${i}" list="mnAuCL" value="${sudEsc(f.cat)}" maxlength="40" aria-label="Categoría" oninput="_mnAuto.filas[${i}].cat=this.value"></td>
       <td><select class="inp" id="mnAu_e${i}" aria-label="Estado" onchange="_mnAuto.filas[${i}].est=this.value">${[['', '—'], ['crudo', 'Crudo'], ['cocinado', 'Cocinado'], ['precocinado', 'Precocinado']].map(o => `<option value="${o[0]}"${f.est === o[0] ? ' selected' : ''}>${o[1]}</option>`).join('')}</select></td>
       ${['kcal', 'prot', 'hc', 'grasa'].map(k => `<td><input class="inp num" id="mnAu_${k}${i}" inputmode="decimal" value="${nv(f, k)}" aria-label="${k}" oninput="mnAutoNutri(${i},'${k}',this.value)"></td>`).join('')}</tr>`).join('')}</tbody></table></div><datalist id="mnAuCL">${cats.map(c => `<option value="${sudEsc(c)}">`).join('')}</datalist>
@@ -2436,9 +2606,17 @@ function mnvHoy(s){
   const cuerpo=d.comidas.length?d.comidas.map(mnvComida).join(''):vacioC('<path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/>','Nada planificado este día','Tu nutricionista no ha añadido comidas a este día.');
   return chips+ctx+cuerpo;
 }
+// Nombre que se ve en «Semana»: el de la comida; si no lo tiene, el de su receta enlazada o sus primeros ingredientes (nunca solo «Comida»)
+function mnvNombre(m){
+  if(m.libre) return m.nombre||'Libre';
+  if(m.nombre) return m.nombre;
+  const rec=(MENU.menu.recetas||[]).find(r=>r.id===m.receta); if(rec&&rec.nombre) return rec.nombre;
+  const ing=(m.ing||[]).map(x=>x.n||x.t).filter(Boolean);
+  return ing.length?ing.slice(0,3).join(', ')+(ing.length>3?'…':''):'Sin detallar';
+}
 function mnvSemana(s){
   return s.dias.map((d,i)=>{
-    const c=d.ctx||{}, filas=d.comidas.map(m=>{ const t=MNV_TIPO[m.tipo]||MNV_TIPO.O; return `<p><b>${t[0]}${m.hora?' · '+esc(m.hora):''}:</b> ${m.libre?'Libre':esc(m.nombre||(m.ing||[]).map(x=>x.n).join(', ')||'—')}</p>`; }).join('');
+    const c=d.ctx||{}, filas=d.comidas.map(m=>{ const t=MNV_TIPO[m.tipo]||MNV_TIPO.O; return `<div class="mnv-sw"><span class="mnv-sw-t"><b>${t[0]}</b>${m.hora?`<small>${esc(m.hora)}</small>`:''}</span><span class="mnv-sw-n">${esc(mnvNombre(m))}</span></div>`; }).join('');
     return `<button type="button" class="mnv-dia" onclick="MNV.dia=${i};mnvSet('tab','hoy')"><div class="mnv-dia-h">${esc(d.n)}<span>${esc(c.texto||'')}</span></div>${filas||'<p>Sin comidas</p>'}</button>`;
   }).join('');
 }
