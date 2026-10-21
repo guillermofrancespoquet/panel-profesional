@@ -536,6 +536,9 @@ body.dark-mode .mn-bib-b.veg{color:var(--t800)}
 <div class="mbg" id="mMnCopiar" style="display:none;z-index:310" role="dialog" aria-modal="true" aria-labelledby="mnCopTit" onclick="if(event.target===this)mnCopiarCerrar()">
   <div class="mc" style="max-width:420px;max-height:calc(100dvh - 2rem);overflow-y:auto" id="mnCopCuerpo"></div>
 </div>
+<div class="mbg" id="mMnBanco" style="display:none;z-index:315" role="dialog" aria-modal="true" aria-labelledby="mnBancoTit" onclick="if(event.target===this)mnBancoCerrar()">
+  <div class="mc" style="max-width:640px;max-height:calc(100dvh - 2rem);overflow-y:auto" id="mnBancoCuerpo"></div>
+</div>
 <div class="mbg" id="mMnScan" style="display:none;z-index:330" role="dialog" aria-modal="true" aria-labelledby="mnScanTit" onclick="if(event.target===this)mnScanCerrar()">
   <div class="mc" style="max-width:460px;max-height:calc(100dvh - 2rem);overflow-y:auto" id="mnScanCuerpo"></div>
 </div>
@@ -1335,11 +1338,12 @@ function mnSemSet(k, v) { mnSem()[k] = v; mnCambio(); if (k === 'nombre') docume
 
 function mnPlatosHtml() {
   const ps = MN.c.platos;
-  if (!ps.length) return `<div class="mn-vacio"><b>Sin comidas guardadas</b><span class="mn-ayuda">En cualquier comida, «Guardar como comida guardada» la deja aquí para reutilizarla en otros días sin volver a escribirla.</span></div>`;
+  const bancoBtn = `<div class="mn-add">${mnBtn('Añadir del banco', "mnBancoAbrir('c')", { icon: 'book' })}</div>`;
+  if (!ps.length) return `<div class="mn-vacio"><b>Sin comidas guardadas</b><span class="mn-ayuda">En cualquier comida, «Guardar como comida guardada» la deja aquí para reutilizarla en otros días sin volver a escribirla. También puedes traerlas del banco compartido.</span></div>${bancoBtn}`;
   return `<div class="mn-card"><p class="mn-ayuda" style="margin:0 0 6px">Se editan desde la comida donde se usan. Eliminar una comida guardada deja una copia en cada sitio donde se usaba.</p>${ps.map(p => {
     const usos = mnTodasComidas().filter(m => m.plato === p.id).length;
-    return `<div class="mn-plato-f"><div style="flex:1"><div class="sup-item-n">${sudEsc(p.nombre || 'Sin nombre')}</div><div class="sup-item-d">${(p.ing || []).length} ingredientes · ${usos} ${usos === 1 ? 'uso' : 'usos'}</div></div>${mnBtn('Eliminar', `mnEliminarPlato('${p.id}')`, { sm: true, ghost: true, dan: true, icon: 'trash' })}</div>`;
-  }).join('')}</div>`;
+    return `<div class="mn-plato-f"><div style="flex:1"><div class="sup-item-n">${sudEsc(p.nombre || 'Sin nombre')}</div><div class="sup-item-d">${(p.ing || []).length} ingredientes · ${usos} ${usos === 1 ? 'uso' : 'usos'}</div></div>${mnBtn('Guardar en el banco', `mnBancoGuardar('c','${p.id}')`, { sm: true, ghost: true, icon: 'book' })}${mnBtn('Eliminar', `mnEliminarPlato('${p.id}')`, { sm: true, ghost: true, dan: true, icon: 'trash' })}</div>`;
+  }).join('')}</div>${bancoBtn}`;
 }
 function mnObjetivoHtml() { const d = deportistas.find(x => x.id == MN.depId) || { id: MN.depId }; return `<div class="mn-card" style="max-width:760px"><p class="mn-k">Objetivo e impresiones</p><p class="mn-ayuda" style="margin:0 0 14px">En la app definitiva esto vive en la ficha del cliente (pestaña Plan). Se copia dentro del menú al publicar.</p>${objImpHtml(d)}</div>`; }
 function mnClienteHtml() {
@@ -1378,13 +1382,13 @@ function mnRecetasHtml() {
         <div class="mn-f" style="margin-top:12px"><label class="mn-l" for="mnRC_${r.id}">Consejo <span class="hd-opt">(opcional)</span></label><input class="inp" id="mnRC_${r.id}" maxlength="300" value="${sudEsc(r.consejo || '')}" oninput="mnRecSet('${r.id}','consejo',this.value)"></div>
         <p class="mn-sec">Foto</p>
         <div class="mn-foto">${r.foto ? `<img data-p="${sudEsc(r.foto)}" alt="Foto de la receta">` : ''}<div class="mn-add" style="margin:0">${mnBtn(r.foto ? 'Cambiar foto' : 'Añadir foto', `mnFotoElegir('${r.id}')`, { icon: 'image', sm: true })}${r.foto ? mnBtn('Quitar foto', `mnFotoQuitar('${r.id}')`, { sm: true, ghost: true, dan: true, icon: 'trash' }) : ''}</div></div>
-        <div class="mn-add" style="margin:22px 0 0;padding-top:16px;border-top:.5px solid var(--bd)">${mnBtn('Eliminar receta', `mnEliminarReceta('${r.id}')`, { sm: true, ghost: true, dan: true, icon: 'trash' })}</div></div>` : ''}</div>`;
+        <div class="mn-add" style="margin:22px 0 0;padding-top:16px;border-top:.5px solid var(--bd)">${mnBtn('Guardar en el banco', `mnBancoGuardar('r','${r.id}')`, { sm: true, ghost: true, icon: 'book' })}${mnBtn('Eliminar receta', `mnEliminarReceta('${r.id}')`, { sm: true, ghost: true, dan: true, icon: 'trash' })}</div></div>` : ''}</div>`;
   }).join('');
   return `<div class="mn-drop" id="mnDrop" onclick="document.getElementById('mnPdf').click()" ondragover="event.preventDefault();this.classList.add('over')" ondragleave="this.classList.remove('over')" ondrop="mnSoltarPdfs(event)" role="button" tabindex="0" onkeydown="if(event.key==='Enter')document.getElementById('mnPdf').click()">
       <span style="color:var(--t600)">${mnI('upload')}</span><b>Importar recetas desde PDF</b><span class="mn-ayuda">Arrastra aquí los PDF de tu plantilla NutriLogos o pulsa para elegirlos. Se leen en tu navegador: título, ingredientes con cantidades, nutrición, pasos, nota y la foto.</span></div>
     <input type="file" id="mnPdf" accept="application/pdf,.pdf" multiple style="display:none" aria-hidden="true" tabindex="-1" onchange="mnImportarPdfs(this.files);this.value=''">
     ${rs.length ? lista : '<div class="mn-vacio"><b>Aún no hay recetas</b><span class="mn-ayuda">Importa tus PDF o crea una a mano. Luego las enlazas desde cada comida y el cliente las abre con un toque.</span></div>'}
-    <div class="mn-add">${mnBtn('Nueva receta', 'mnNuevaReceta()', { icon: 'plus' })}</div>`;
+    <div class="mn-add">${mnBtn('Nueva receta', 'mnNuevaReceta()', { icon: 'plus' })}${mnBtn('Añadir del banco', "mnBancoAbrir('r')", { ghost: true, icon: 'book' })}</div>`;
 }
 function mnRecNutri(id, k, v) { const r = MN.c.recetas.find(x => x.id === id); if (!r) return; const x = parseFloat(String(v).replace(',', '.')); r.nutri = r.nutri || {}; if (isFinite(x) && x >= 0) r.nutri[k] = x; else delete r.nutri[k]; if (!Object.keys(r.nutri).length) r.nutri = null; mnCambio(); }
 function mnNuevaReceta() { const r = MN_RECETA_NUEVA(); MN.c.recetas.push(r); MN.rec = r.id; mnCambio(); mnPintar(); const e = document.getElementById('mnRN_' + r.id); if (e) e.focus(); }
@@ -2513,6 +2517,151 @@ async function mnCopCHacer() {
   if (vacia) MN.c.semanas = []; MN.c.semanas = MN.c.semanas.concat(semanas); MN.c.recetas = MN.c.recetas.concat(recetas); MN.c.platos = MN.c.platos.concat(platos); MN.sem = semanas[0].id; MN.dia = 0;
   mnRelinkTodo(); mnCambio(); mnCopCCerrar(); mnPintar();
   toast('Copiado el menú de ' + (d.nombre || 'otro cliente') + ' (' + semanas.length + (semanas.length === 1 ? ' semana' : ' semanas') + ')', { accion: { texto: 'Deshacer', fn: () => { MN.c.semanas = antS; MN.c.recetas = antR; MN.c.platos = antP; MN.sem = antSem; mnCambio(); mnPintar(); } } });
+}
+
+// ═══ Banco compartido de recetas y comidas guardadas (supabase_banco_recetas.sql) ═══
+// El banco es de todos los clientes; cada cliente tiene sus copias independientes dentro de su menú. Al añadir una, se eligen las kcal o los macros.
+const MN_BANCO = { r: { tabla: 'recetas_banco', tit: 'Banco de recetas', una: 'receta', plural: 'recetas' }, c: { tabla: 'comidas_banco', tit: 'Banco de comidas', una: 'comida', plural: 'comidas' } };
+let _mnB = null;
+const mnRutaSt = p => String(p).split('/').map(encodeURIComponent).join('/');
+async function mnFotoCopiar(origen, destino) {
+  try { const r = await authFetch(`${SURL}/storage/v1/object/copy`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ bucketId: FOTO_BUCKET, sourceKey: origen, destinationKey: destino }) }); return r.ok; } catch (e) { return false; }
+}
+// Valores por ración (receta: los suyos o, si no hay, los del catálogo) o de la comida entera
+function mnBaseMacros(tipo, c) {
+  if (tipo === 'r' && c.nutri && typeof c.nutri.kcal === 'number') return { kcal: c.nutri.kcal, prot: c.nutri.prot || 0, hc: c.nutri.hc || 0, grasa: c.nutri.grasa || 0, de: 'receta' };
+  const t = { kcal: 0, prot: 0, hc: 0, grasa: 0, calc: 0, fuera: 0, aviso: 0 };
+  (c.ing || []).forEach(i => { const a = i.a && MN.cat.some(x => x.id == i.a) ? i.a : mnLink(i.n); mnSumar(t, mnMacrosIng({ ...i, a })); });
+  if (!t.calc) return null;
+  const rac = tipo === 'r' ? (parseFloat(String(c.raciones || '').replace(',', '.')) || 1) : 1;
+  return { kcal: t.kcal / rac, prot: t.prot / rac, hc: t.hc / rac, grasa: t.grasa / rac, de: 'catalogo', fuera: t.fuera };
+}
+async function mnBancoAbrir(tipo) {
+  _mnB = { tipo, lista: null, q: '', sel: null, obj: 'kcal', val: '', fase: 'lista', msg: '' };
+  document.getElementById('mMnBanco').style.display = 'flex'; mnBancoPintar();
+  let r; try { r = await sb(`${MN_BANCO[tipo].tabla}?select=id,nombre,contenido&order=nombre.asc`); } catch (e) { r = null; }
+  if (!_mnB || _mnB.tipo !== tipo) return;
+  _mnB.lista = Array.isArray(r) ? r : false; mnBancoPintar();
+}
+function mnBancoCerrar() { _mnB = null; document.getElementById('mMnBanco').style.display = 'none'; }
+function mnBancoQ(v) { if (!_mnB) return; _mnB.q = v; const pos = document.getElementById('mnBancoQ'); const c = pos ? pos.selectionStart : null; mnBancoPintar(); const n = document.getElementById('mnBancoQ'); if (n) { n.focus(); try { n.setSelectionRange(c, c); } catch (e) {} } }
+function mnBancoMeta(tipo, c) {
+  const b = mnBaseMacros(tipo, c);
+  return [tipo === 'r' ? c.momento : '', b ? Math.round(b.kcal) + ' kcal' + (tipo === 'r' ? '/ración' : '') : '', (c.ing || []).length ? c.ing.length + ' ingredientes' : ''].filter(Boolean).map(sudEsc).join(' · ');
+}
+function mnBancoPintar() {
+  const b = _mnB; if (!b) return; const cfg = MN_BANCO[b.tipo], el = document.getElementById('mnBancoCuerpo');
+  if (b.fase === 'ajuste') { el.innerHTML = mnBancoAjusteHtml(); return; }
+  if (b.fase === 'migrar') { el.innerHTML = mnBancoMigrarHtml(); return; }
+  const q = mnNorm(b.q), lista = Array.isArray(b.lista) ? b.lista.filter(x => !q || mnNorm(x.nombre).indexOf(q) >= 0) : [];
+  el.innerHTML = `<p class="mt" id="mnBancoTit">${cfg.tit}</p><p class="ms">Ideas compartidas entre todos tus clientes. Al añadir una a ${sudEsc(MN.nombre || 'este cliente')} se hace una copia suya (independiente) y eliges las kcal o los macros.</p>
+    <div class="mn-fila" style="align-items:center"><input class="inp" id="mnBancoQ" style="flex:1" placeholder="Buscar en el banco…" value="${sudEsc(b.q)}" oninput="mnBancoQ(this.value)" aria-label="Buscar en el banco"></div>
+    <div class="mn-cat-l">${b.lista === null ? '<p class="mn-ayuda" role="status">Cargando…</p>' : b.lista === false ? '<p class="mn-ayuda" role="alert">No se pudo leer el banco. ¿Has ejecutado supabase_banco_recetas.sql en Supabase?</p>' : lista.length ? lista.map(x => `<div class="mn-cat-i">${b.tipo === 'r' && x.contenido && x.contenido.foto ? `<img class="mn-rec-th" data-p="${sudEsc(x.contenido.foto)}" alt="" style="width:44px;height:44px;border-radius:10px;object-fit:cover;flex:none">` : ''}<div style="flex:1;min-width:0"><div class="sup-item-n">${sudEsc(x.nombre)}</div><div class="sup-item-d">${mnBancoMeta(b.tipo, x.contenido || {})}</div></div>${btnSoft('Añadir', `mnBancoElegir(${x.id})`, 'plus', true)}${btnDel('Quitar ' + sudEsc(x.nombre) + ' del banco', `mnBancoQuitar(${x.id})`)}</div>`).join('') : `<div class="mn-vacio"><b>${b.lista.length ? 'Sin resultados' : 'El banco está vacío'}</b><span class="mn-ayuda">${b.lista.length ? 'Prueba con otra palabra.' : 'Guarda ' + cfg.plural + ' con «Guardar en el banco» o pasa todas las de tus clientes con el botón de abajo.'}</span></div>`}</div>
+    <div class="mbtns" style="margin-top:12px"><button type="button" class="btn-soft" onclick="mnBancoMigrarAbrir()">Pasar todo al banco</button><button type="button" class="btn-cancel" onclick="mnBancoCerrar()">Cerrar</button></div>`;
+  cargarFotos(el);
+}
+function mnBancoElegir(id) {
+  const b = _mnB, it = (b.lista || []).find(x => x.id == id); if (!it) return;
+  b.sel = it; b.fase = 'ajuste'; b.obj = 'kcal'; b.val = ''; b.msg = ''; mnBancoPintar();
+}
+function mnBancoFactor() {
+  const b = _mnB, base = mnBaseMacros(b.tipo, b.sel.contenido || {}), v = parseFloat(String(b.val).replace(',', '.'));
+  if (!base || b.obj === 'ninguno' || !isFinite(v) || v <= 0 || !(base[b.obj] > 0)) return { base, f: 1, ok: b.obj === 'ninguno' || !String(b.val).trim() };
+  const f = v / base[b.obj]; return { base, f, ok: f >= 0.25 && f <= 4, fuera: f < 0.25 || f > 4 };
+}
+function mnBancoAjusteHtml() {
+  const b = _mnB, it = b.sel, c = it.contenido || {}, { base, f, ok, fuera } = mnBancoFactor();
+  const OBJ = [['ninguno', 'Sin ajustar'], ['kcal', 'kcal'], ['prot', 'Proteína (g)'], ['hc', 'Hidratos (g)'], ['grasa', 'Grasa (g)']];
+  const val = (k) => base ? mnF(base[k] * f, k === 'kcal' ? 0 : 1) : '—';
+  const orig = (k) => base ? mnF(base[k], k === 'kcal' ? 0 : 1) : '—';
+  const ing = (c.ing || []).slice(0, 8).map(i => sudEsc(mnIngTxt(mnEscala({ ...i }, f)))).join(' · ');
+  return `<p class="mt" id="mnBancoTit">Añadir «${sudEsc(it.nombre)}»</p><p class="ms">A ${sudEsc(MN.nombre || 'este cliente')}, como copia suya. Elige a qué valor quieres ajustarla; los ingredientes se escalan en proporción.</p>
+    ${base ? '' : '<div class="mn-aviso" role="note"><p>No hay datos de nutrición para calcular (faltan ingredientes en el catálogo): se añade tal cual y puedes ajustar las cantidades a mano.</p></div>'}
+    <div class="mn-g3" style="margin-top:8px"><div class="mn-f"><label class="mn-l" for="mnBaObj">Ajustar a</label><select class="inp" id="mnBaObj" style="width:100%" onchange="_mnB.obj=this.value;mnBancoPintar()"${base ? '' : ' disabled'}>${OBJ.map(o => `<option value="${o[0]}"${b.obj === o[0] ? ' selected' : ''}>${o[1]}</option>`).join('')}</select></div>
+      <div class="mn-f"><label class="mn-l" for="mnBaVal">Valor ${b.obj === 'ninguno' || !base ? '' : `<span class="hd-opt">(ahora ${orig(b.obj)})</span>`}</label><input class="inp" id="mnBaVal" inputmode="decimal" style="width:100%" value="${sudEsc(b.val)}" oninput="_mnB.val=this.value;mnBancoPrev()"${base && b.obj !== 'ninguno' ? '' : ' disabled'}></div></div>
+    <div id="mnBaPrev">${mnBancoPrevHtml(base, f, ok, fuera, ing, orig, val)}</div>
+    <div class="mbtns" style="margin-top:14px"><button type="button" class="btn-cancel" onclick="_mnB.fase='lista';_mnB.sel=null;mnBancoPintar()">Volver</button><button type="button" class="btn-ok" id="mnBaOk" onclick="mnBancoAnadir()"${ok ? '' : ' disabled'}>Añadir a ${sudEsc((MN.nombre || 'este cliente').split(' ')[0])}</button></div>`;
+}
+function mnBancoPrevHtml(base, f, ok, fuera, ing, orig, val) {
+  const fila = [['kcal', 'kcal'], ['prot', 'Prot.'], ['hc', 'HC'], ['grasa', 'Grasa']];
+  return `${fuera ? '<p class="mn-ayuda" role="alert" style="color:var(--gold-dk)">Ese valor queda muy lejos del original (entre ×0,25 y ×4): revisa el número.</p>' : ''}
+    ${base ? `<table class="mn-auto-t" style="margin-top:6px"><thead><tr><th></th>${fila.map(x => `<th>${x[1]}</th>`).join('')}</tr></thead><tbody><tr><td>Original</td>${fila.map(x => `<td>${orig(x[0])}</td>`).join('')}</tr><tr><td><b>Para este cliente</b></td>${fila.map(x => `<td><b>${val(x[0])}</b></td>`).join('')}</tr></tbody></table><p class="mn-ayuda" style="margin:4px 2px 0">Aproximado: las cantidades se redondean (5 g, media unidad).${base.de === 'catalogo' ? ' Calculado con tu catálogo' + (base.fuera ? ' (hay ' + base.fuera + ' ingredientes sin datos)' : '') + '.' : ''}</p>` : ''}
+    ${ing ? `<p class="mn-ayuda" style="margin:8px 2px 0"><b>Ingredientes:</b> ${ing}${f === 1 ? '' : ' · ×' + mnF(f, 2)}</p>` : ''}`;
+}
+function mnBancoPrev() {
+  const b = _mnB, c = b.sel.contenido || {}, { base, f, ok, fuera } = mnBancoFactor();
+  const val = k => base ? mnF(base[k] * f, k === 'kcal' ? 0 : 1) : '—', orig = k => base ? mnF(base[k], k === 'kcal' ? 0 : 1) : '—';
+  const ing = (c.ing || []).slice(0, 8).map(i => sudEsc(mnIngTxt(mnEscala({ ...i }, f)))).join(' · ');
+  document.getElementById('mnBaPrev').innerHTML = mnBancoPrevHtml(base, f, ok, fuera, ing, orig, val);
+  const o = document.getElementById('mnBaOk'); if (o) o.disabled = !ok;
+}
+async function mnBancoAnadir() {
+  const b = _mnB; if (!b || !MN) return; const it = b.sel, c = mnClonar(it.contenido || {}), { f, ok } = mnBancoFactor(); if (!ok) return;
+  const btn = document.getElementById('mnBaOk'); if (btn) { btn.disabled = true; btn.textContent = 'Añadiendo…'; }
+  const ing = (c.ing || []).map(i => { const n = { ...mnEscala({ ...i }, f) }; n.id = mnId('i'); n.a = null; return n; });
+  const ant = { r: MN.c.recetas.slice(), p: MN.c.platos.slice() };
+  if (b.tipo === 'r') {
+    const r = { ...MN_RECETA_NUEVA(), ...c, id: mnId('r'), nombre: c.nombre || it.nombre, ing, banco: it.id, factor: f !== 1 ? +f.toFixed(3) : null };
+    if (c.nutri && f !== 1) r.nutri = Object.fromEntries(Object.entries(c.nutri).map(([k, v]) => [k, typeof v === 'number' ? Math.round(v * f * 10) / 10 : v]));
+    let sinFoto = false;
+    if (c.foto) { const dest = `${MN.depId}/menu/${r.id}-${Date.now()}.jpg`; if (await mnFotoCopiar(c.foto, dest)) r.foto = dest; else { r.foto = null; sinFoto = true; } }
+    MN.c.recetas.push(r); MN.rec = r.id; if (sinFoto) toast('Se añadió la receta, pero no se pudo copiar su foto.', { tipo: 'aviso' });
+  } else {
+    MN.c.platos.push({ id: mnId('p'), nombre: c.nombre || it.nombre, nota: c.nota || '', ing, banco: it.id, factor: f !== 1 ? +f.toFixed(3) : null });
+  }
+  mnRelinkTodo(); mnCambio(); mnBancoCerrar(); mnPintar();
+  toast('«' + it.nombre + '» añadida a ' + (MN.nombre || 'este cliente') + (f !== 1 ? ' (×' + mnF(f, 2) + ')' : ''), { accion: { texto: 'Deshacer', fn: () => { MN.c.recetas = ant.r; MN.c.platos = ant.p; mnCambio(); mnPintar(); } } });
+}
+function mnBancoQuitar(id) {
+  const b = _mnB; if (!b) return; const it = (b.lista || []).find(x => x.id == id); if (!it) return;
+  const idx = b.lista.indexOf(it); b.lista.splice(idx, 1); mnBancoPintar();
+  let hecho = false;
+  const real = async () => { if (hecho) return; hecho = true; const r = await sb(`${MN_BANCO[b.tipo].tabla}?id=eq.${id}`, { method: 'DELETE', headers: { 'Prefer': 'return=minimal' } }); if (esErrorSb(r)) { toast('No se pudo quitar del banco.', { tipo: 'error' }); if (_mnB && _mnB.lista) { _mnB.lista.splice(idx, 0, it); mnBancoPintar(); } return; } const f = it.contenido && it.contenido.foto; if (f && /^banco\//.test(f)) authFetch(`${SURL}/storage/v1/object/${FOTO_BUCKET}/${mnRutaSt(f)}`, { method: 'DELETE' }).catch(() => {}); };
+  const tm = setTimeout(real, 6000);
+  toast('«' + it.nombre + '» quitada del banco', { ms: 6000, accion: { texto: 'Deshacer', fn: () => { hecho = true; clearTimeout(tm); if (_mnB && _mnB.lista) { _mnB.lista.splice(idx, 0, it); mnBancoPintar(); } } } });
+}
+// Guardar una receta o comida del cliente en el banco (si ya hay una con el mismo nombre, la actualiza)
+async function mnBancoGuardar(tipo, id) {
+  const src = (tipo === 'r' ? MN.c.recetas : MN.c.platos).find(x => x.id === id); if (!src) return;
+  const nombre = String(src.nombre || '').trim(); if (!nombre) { toast('Ponle nombre primero para poder guardarla.', { tipo: 'aviso' }); return; }
+  const cfg = MN_BANCO[tipo]; let ex; try { ex = await sb(`${cfg.tabla}?select=id,nombre,contenido`); } catch (e) { ex = null; }
+  if (!Array.isArray(ex)) { toast('Falta ejecutar supabase_banco_recetas.sql en Supabase.', { tipo: 'error', ms: 6000 }); return; }
+  const prev = ex.find(x => mnNorm(x.nombre) === mnNorm(nombre)), cont = mnClonar(src); ['id', 'banco', 'factor'].forEach(k => { delete cont[k]; }); (cont.ing || []).forEach(i => { delete i.id; i.a = null; });
+  if (tipo === 'r' && src.foto) { const dest = `banco/${mnId('f')}.jpg`; cont.foto = (await mnFotoCopiar(src.foto, dest)) ? dest : null; }
+  const r = prev ? await sb(`${cfg.tabla}?id=eq.${prev.id}`, { method: 'PATCH', body: JSON.stringify({ nombre, contenido: cont, actualizado: new Date().toISOString() }) }) : await sb(cfg.tabla, { method: 'POST', body: JSON.stringify({ nombre, contenido: cont }) });
+  if (esErrorSb(r)) { toast('No se pudo guardar en el banco.', { tipo: 'error' }); return; }
+  const vieja = prev && prev.contenido && prev.contenido.foto; if (vieja && vieja !== cont.foto && /^banco\//.test(vieja)) authFetch(`${SURL}/storage/v1/object/${FOTO_BUCKET}/${mnRutaSt(vieja)}`, { method: 'DELETE' }).catch(() => {});
+  toast(prev ? '«' + nombre + '» actualizada en el banco' : '«' + nombre + '» guardada en el banco');
+}
+// Pasar al banco todo lo que ya hay en los menús de tus clientes (las del mismo nombre se unen: se queda la primera)
+async function mnBancoMigrarAbrir() {
+  const b = _mnB; if (!b) return; b.fase = 'migrar'; b.msg = 'Buscando en los menús de tus clientes…'; b.plan = null; mnBancoPintar();
+  try { await mnGuardarYa(); } catch (e) {}
+  let filas, banco; try { filas = await sb('menus_cliente?select=deportista_id,contenido'); banco = await sb(`${MN_BANCO[b.tipo].tabla}?select=nombre`); } catch (e) { filas = null; }
+  if (!_mnB) return; if (!Array.isArray(filas) || !Array.isArray(banco)) { b.msg = 'No se pudo leer. Comprueba tu conexión y que has ejecutado supabase_banco_recetas.sql.'; b.plan = false; mnBancoPintar(); return; }
+  const ya = new Set(banco.map(x => mnNorm(x.nombre))), vistos = new Map(); let total = 0;
+  filas.forEach(fl => { const c = fl.contenido || {}, lista = b.tipo === 'r' ? c.recetas : c.platos; (lista || []).forEach(x => { const k = mnNorm(x.nombre); if (!k) return; total++; if (ya.has(k) || vistos.has(k)) return; vistos.set(k, { dep: fl.deportista_id, x }); }); });
+  b.plan = { nuevos: [...vistos.values()], total, ya: total - vistos.size }; b.msg = ''; mnBancoPintar();
+}
+function mnBancoMigrarHtml() {
+  const b = _mnB, p = b.plan, cfg = MN_BANCO[b.tipo];
+  const cuerpo = p === null ? `<p class="mn-ayuda" role="status">${sudEsc(b.msg)}</p>` : p === false ? `<p class="mn-ayuda" role="alert">${sudEsc(b.msg)}</p>`
+    : p.nuevos.length ? `<p class="ms">${p.nuevos.length === 1 ? 'Hay <b>1</b> ' + cfg.una + ' distinta' : 'Hay <b>' + p.nuevos.length + '</b> ' + cfg.plural + ' distintas'} en los menús de tus clientes que aún no ${p.nuevos.length === 1 ? 'está' : 'están'} en el banco${p.ya ? ' (' + p.ya + (p.ya === 1 ? ' repetida o ya guardada se une' : ' repetidas o ya guardadas se unen') + ')' : ''}. Se guardan tal como están en el primer menú donde aparecen, sin ajustar a ningún cliente en concreto.</p><p class="mn-ayuda">${p.nuevos.slice(0, 12).map(n => sudEsc(n.x.nombre)).join(' · ')}${p.nuevos.length > 12 ? '…' : ''}</p>`
+    : `<p class="ms">No hay nada nuevo que pasar: todo lo de tus clientes ya está en el banco.</p>`;
+  return `<p class="mt" id="mnBancoTit">Pasar ${cfg.plural} al banco</p>${cuerpo}
+    <div class="mbtns" style="margin-top:14px"><button type="button" class="btn-cancel" onclick="_mnB.fase='lista';mnBancoPintar()">Volver</button>${p && p.nuevos && p.nuevos.length ? `<button type="button" class="btn-ok" id="mnBmOk" onclick="mnBancoMigrar()">Pasar ${p.nuevos.length} al banco</button>` : ''}</div>`;
+}
+async function mnBancoMigrar() {
+  const b = _mnB; if (!b || !b.plan) return; const cfg = MN_BANCO[b.tipo], btn = document.getElementById('mnBmOk'); let n = 0, sinFoto = 0, mal = 0;
+  for (const nu of b.plan.nuevos) {
+    if (btn) btn.textContent = `Pasando ${n + 1} de ${b.plan.nuevos.length}…`; btn && (btn.disabled = true);
+    const cont = mnClonar(nu.x); ['id', 'banco', 'factor'].forEach(k => { delete cont[k]; }); (cont.ing || []).forEach(i => { delete i.id; i.a = null; });
+    if (b.tipo === 'r' && cont.foto) { const dest = `banco/${mnId('f')}.jpg`; if (await mnFotoCopiar(cont.foto, dest)) cont.foto = dest; else { cont.foto = null; sinFoto++; } }
+    const r = await sb(cfg.tabla, { method: 'POST', body: JSON.stringify({ nombre: String(nu.x.nombre).trim().slice(0, 120), contenido: cont }) });
+    if (esErrorSb(r)) mal++; else n++;
+  }
+  mnBancoCerrar();
+  toast(`Pasadas al banco: ${n}${mal ? ' · fallaron ' + mal : ''}${sinFoto ? ' · ' + sinFoto + ' sin foto' : ''}`, { ms: 8000 });
 }
 
 // ── PDF del menú (imprimir → «Guardar como PDF»; texto real, varias páginas) ──
