@@ -120,6 +120,9 @@ body.in-plan .topbar{display:none}
 #vreg .reg-row .btn,#vdia .reg-row .btn{grid-column:1/-1;width:100%}
 #vreg .seg-inp,#vdia .seg-inp{display:block;box-sizing:border-box;width:100%;max-width:100%;min-width:0;height:46px;padding:0 12px;text-align:left;-webkit-appearance:none;appearance:none}
 #vreg select.seg-inp,#vdia select.seg-inp{padding-right:30px;background:var(--sf) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236A6963' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") no-repeat right 12px center}
+/* Táctil: selector nativo (la flecha de fondo se repetía en cada opción en algunos navegadores) */
+#vreg select.seg-inp option,#vdia select.seg-inp option{background-image:none}
+@media (pointer:coarse){#vreg select.seg-inp,#vdia select.seg-inp{-webkit-appearance:menulist;appearance:auto;background-image:none;padding-right:12px}}
 #vreg .card .note{margin:12px 2px 0}
 .dia-add{padding:14px 16px}
 .dia-l{font-size:12px;font-weight:600;color:var(--g500);margin:0 0 6px}
@@ -377,6 +380,11 @@ body.dark-mode input,body.dark-mode select,body.dark-mode textarea{background:va
 .mnv-dia-h span{font-size:12px;font-weight:600;color:var(--g500)}
 .mnv-dia p{font-size:13px;color:var(--g700);margin:3px 0;line-height:1.45}
 .mnv-dia p b{font-weight:700;color:var(--g900)}
+.mnv-sw{display:grid;grid-template-columns:92px 1fr;gap:10px;align-items:baseline;padding:6px 0;border-top:.5px solid var(--bd)}
+.mnv-sw:first-of-type{border-top:0}
+.mnv-sw-t b{display:block;font-size:12px;font-weight:700;color:var(--g500);text-transform:uppercase;letter-spacing:.04em}
+.mnv-sw-t small{font-size:11px;color:var(--g400)}
+.mnv-sw-n{font-size:13.5px;color:var(--g900);line-height:1.4;overflow-wrap:anywhere}
 .mnv-rec{margin-bottom:10px;padding:0;overflow:hidden}
 .mnv-rec-h{display:flex;justify-content:space-between;align-items:center;gap:10px;width:100%;padding:13px 16px;background:none;border:none;text-align:left;font-family:var(--f);font-size:15px;font-weight:700;color:var(--g900)}
 .mnv-rec-h span{font-size:12px;font-weight:600;color:var(--g500)}
@@ -1520,9 +1528,17 @@ function mnvHoy(s){
   const cuerpo=d.comidas.length?d.comidas.map(mnvComida).join(''):vacioC('<path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/>','Nada planificado este día','Tu nutricionista no ha añadido comidas a este día.');
   return chips+ctx+cuerpo;
 }
+// Nombre que se ve en «Semana»: el de la comida; si no lo tiene, el de su receta enlazada o sus primeros ingredientes (nunca solo «Comida»)
+function mnvNombre(m){
+  if(m.libre) return m.nombre||'Libre';
+  if(m.nombre) return m.nombre;
+  const rec=(MENU.menu.recetas||[]).find(r=>r.id===m.receta); if(rec&&rec.nombre) return rec.nombre;
+  const ing=(m.ing||[]).map(x=>x.n||x.t).filter(Boolean);
+  return ing.length?ing.slice(0,3).join(', ')+(ing.length>3?'…':''):'Sin detallar';
+}
 function mnvSemana(s){
   return s.dias.map((d,i)=>{
-    const c=d.ctx||{}, filas=d.comidas.map(m=>{ const t=MNV_TIPO[m.tipo]||MNV_TIPO.O; return `<p><b>${t[0]}${m.hora?' · '+esc(m.hora):''}:</b> ${m.libre?'Libre':esc(m.nombre||(m.ing||[]).map(x=>x.n).join(', ')||'—')}</p>`; }).join('');
+    const c=d.ctx||{}, filas=d.comidas.map(m=>{ const t=MNV_TIPO[m.tipo]||MNV_TIPO.O; return `<div class="mnv-sw"><span class="mnv-sw-t"><b>${t[0]}</b>${m.hora?`<small>${esc(m.hora)}</small>`:''}</span><span class="mnv-sw-n">${esc(mnvNombre(m))}</span></div>`; }).join('');
     return `<button type="button" class="mnv-dia" onclick="MNV.dia=${i};mnvSet('tab','hoy')"><div class="mnv-dia-h">${esc(d.n)}<span>${esc(c.texto||'')}</span></div>${filas||'<p>Sin comidas</p>'}</button>`;
   }).join('');
 }

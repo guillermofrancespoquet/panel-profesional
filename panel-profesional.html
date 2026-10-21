@@ -900,6 +900,11 @@ body.dark-mode .frm .inp,body.dark-mode .frm .notes-ta{color-scheme:dark}
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%230F6E56' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
   background-repeat:no-repeat;background-position:right 15px center;background-size:14px}
 body.dark-mode .frm select.inp{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%239FE1CB' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E")}
+/* Tablet y móvil: el desplegable usa el selector nativo. Con la flecha dibujada como fondo, algunos navegadores táctiles la repetían en cada opción de la lista. */
+.frm select.inp option{background-image:none}
+@media (pointer:coarse){
+  .frm select.inp,body.dark-mode .frm select.inp{-webkit-appearance:menulist;appearance:auto;background-image:none;padding-right:14px}
+}
 .frm input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .frm input[type=number]::-webkit-outer-spin-button,.frm input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
 .frm input[type=date]::-webkit-calendar-picker-indicator,.frm input[type=time]::-webkit-calendar-picker-indicator{cursor:pointer;opacity:.55}
@@ -1658,7 +1663,7 @@ body.dark-mode .ref-src,body.dark-mode .sup-badge,body.dark-mode .depd-avatar-fa
 
 <!-- ANTROPOMETRÍA (calculadora incrustada) -->
 <div id="vmenusem" class="view" role="main">
-  <iframe id="menuFrame" class="antro-frame" title="Plan nutricional" onload="window.syncMenuDark && syncMenuDark()"></iframe>
+  <iframe id="menuFrame" class="antro-frame" allow="camera" title="Plan nutricional" onload="window.syncMenuDark && syncMenuDark()"></iframe>
 </div>
 <div id="vantro" class="view" role="main">
   <iframe id="antroFrame" class="antro-frame" title="Calculadora de antropometría" onload="window.syncAntroDark && syncAntroDark()"></iframe>
