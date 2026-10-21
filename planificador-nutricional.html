@@ -414,6 +414,8 @@ body.dark-mode .mn-tag{color:var(--t800)}
 .mn-bib-a{display:flex;gap:4px;align-items:center}
 .mn-bib-r{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;margin-bottom:12px}
 .mn-bib-ch{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.mn-bib-sub{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;max-width:520px;margin:0 0 10px}
+.mn-bib-sub .mn-fch{padding:8px 4px;text-align:center;white-space:nowrap}
 .mn-fch{font:600 12.5px var(--f);padding:6px 13px;border-radius:20px;border:.5px solid var(--bdm);background:var(--sf);color:var(--g700);cursor:pointer}
 .mn-fch:hover{border-color:var(--t400)}
 .mn-fch.on{background:var(--t600);border-color:var(--t600);color:#fff}
@@ -1017,7 +1019,7 @@ function mnFotoQuitar(rid) {
 // ── Catálogo de alimentos ──
 let _mnCatQ = '', _mnCatExt = null, _mnCatEd = null, _mnCatTm = null, _mnCatCb = null;
 function mnCatAbrir() { _mnCatEd = null; _mnCatExt = null; _mnCatQ = ''; _mnCatCb = null; mnCatPintar(); document.getElementById('mMnCat').style.display = 'flex'; }
-function mnCatCerrar() { document.getElementById('mMnCat').style.display = 'none'; _mnCatEd = null; _mnCatCb = null; _mnCatCbCerrar = false; }
+function mnCatCerrar() { document.getElementById('mMnCat').style.display = 'none'; _mnCatEd = null; _mnCatCb = null; _mnCatCbCerrar = false; if (MN && MN.tab === 'biblioteca' && MN_BIB.sub === 'a') mnBibSubPintar(); }
 function mnCatPintar() {
   const el = document.getElementById('mnCatCuerpo');
   if (_mnCatEd) { el.innerHTML = mnCatFormHtml(); return; }
@@ -2133,7 +2135,7 @@ const MN_BASE_RE = [['carne', /\b(pollo|pavo|ternera|cerdo|jam[oó]n|solomillo|l
   ['huevo', /\b(huevos?|tortilla de huevo|clara)\b/i], ['lácteo', /\b(queso|filadelfia|k[eé]fir|nata|mantequilla|yogur(?! (de )?(soja|vegetal|coco|avena|almendra))|leche(?! (de )?(soja|avena|almendra|coco)))/i]];
 function mnBase(p) { const t = (p.i || []).join(' ') + ' ' + p.n; return MN_BASE_RE.filter(x => x[1].test(t)).map(x => x[0]); }
 const MN_BIB_DIAS = [['entreno', 'Entreno'], ['descanso', 'Descanso'], ['partido', 'Partido / prueba'], ['libre', 'Libre']];
-const MN_BIB = { q: '', m: '', t: '', veg: false, dia: null };
+const MN_BIB = { q: '', m: '', t: '', veg: false, dia: null, sub: 'p', aq: '' };
 function mnBibLista() {
   const q = mnNorm(MN_BIB.q);
   return MN_BIBLIOTECA.map((p, ix) => ({ p, ix })).filter(({ p }) => (!MN_BIB.m || p.m === MN_BIB.m) && (!MN_BIB.t || p.d.indexOf(MN_BIB.t) >= 0) && (!MN_BIB.veg || !mnBase(p).length) && (!q || mnNorm(p.n + ' ' + p.i.join(' ')).indexOf(q) >= 0));
@@ -2145,7 +2147,7 @@ function mnBibTarjeta({ p, ix }) {
     <div class="mn-bib-f"><span class="mn-bib-b ${base.length ? '' : 'veg'}">${base.length ? sudEsc(base.join(' · ')) : 'Vegetal'}</span>${p.d.map(x => `<span class="mn-bib-t">${sudEsc((MN_BIB_DIAS.find(y => y[0] === x) || [0, x])[1])}</span>`).join('')}<span class="mn-bib-o">${sudEsc(p.o.join(', '))}</span>
     <span class="mn-bib-a"><button type="button" class="mn-btn sm" onclick="mnBibUsar(${ix})">${mnI('plus')}Añadir</button>${p.id ? `<button type="button" class="mn-ib" aria-label="Editar «${sudEsc(p.n)}»" title="Editar" onclick="mnBibEditar(${ix})">${mnI('edit')}</button><button type="button" class="mn-ib" aria-label="Eliminar «${sudEsc(p.n)}»" title="Eliminar" onclick="mnBibBorrar(${ix})">${mnI('trash')}</button>` : `<button type="button" class="mn-ib" aria-label="Copiar «${sudEsc(p.n)}» a mi biblioteca para editarlo" title="Copiar para editar" onclick="mnBibEditar(${ix})">${mnI('copy')}</button>`}</span></div></article>`;
 }
-function mnBibHtml() {
+function mnBibHtmlP() {
   const s = mnSem(); if (MN_BIB.dia === null || MN_BIB.dia >= s.dias.length) MN_BIB.dia = MN.dia || 0;
   const chip = (k, v, l) => `<button type="button" class="mn-fch${MN_BIB[k] === v ? ' on' : ''}" aria-pressed="${MN_BIB[k] === v}" onclick="mnBibSet('${k}','${v}')">${l}</button>`;
   return `${mnBibAviso()}<section class="mn-card mn-bib-bar"><div class="mn-bib-r"><div class="mn-f" style="flex:1 1 220px"><label class="mn-l" for="mnBibQ">Buscar</label><input class="inp" id="mnBibQ" type="search" value="${sudEsc(MN_BIB.q)}" placeholder="Ej. lentejas, tofu, porridge…" oninput="MN_BIB.q=this.value;mnBibPintar()"></div>
@@ -2154,16 +2156,82 @@ function mnBibHtml() {
     <div class="mn-bib-ch" role="group" aria-label="Tipo de día">${chip('t', '', 'Cualquier día')}${MN_BIB_DIAS.map(t => chip('t', t[0], t[1])).join('')}<button type="button" class="mn-fch${MN_BIB.veg ? ' on' : ''}" aria-pressed="${MN_BIB.veg}" onclick="MN_BIB.veg=!MN_BIB.veg;mnBibPintar(true)">Solo vegetal</button></div></section>
     <p class="mn-ayuda" id="mnBibN" style="margin:12px 2px"></p><div class="mn-bib-g" id="mnBibG"></div>`;
 }
+function mnBibSubBar() {
+  const S = [['p', 'Platos'], ['r', 'Recetas'], ['c', 'Comidas'], ['a', 'Alimentos']];
+  return `<div class="mn-bib-sub" role="group" aria-label="Qué guardas en la biblioteca">${S.map(x => `<button type="button" class="mn-fch${MN_BIB.sub === x[0] ? ' on' : ''}" aria-pressed="${MN_BIB.sub === x[0]}" onclick="mnBibSub('${x[0]}')">${x[1]}</button>`).join('')}</div>
+    <p class="mn-ayuda" style="margin:0 2px 12px">Tu biblioteca general, compartida entre todos los clientes. Aquí guardas lo suelto y desde aquí lo añades a ${sudEsc(MN.nombre || 'este cliente')}, como copia suya.</p>`;
+}
+function mnBibHtml() {
+  const k = MN_BIB.sub;
+  if (k === 'r' || k === 'c') { mnBibBancoAsegurar(k); return mnBibSubBar() + mnBibBancoHtml(); }
+  if (k === 'a') return mnBibSubBar() + mnBibAlimHtml();
+  return mnBibSubBar() + mnBibHtmlP();
+}
+function mnBibSub(k) { MN_BIB.sub = k; mnBibSubPintar(); }
+function mnBibSubPintar() {
+  const t = document.getElementById('mnCuerpo'); if (!t || !MN || MN.tab !== 'biblioteca') return;
+  const q = document.querySelector('#mnCuerpo [data-bq]'), f = q && document.activeElement === q, id = q && q.id; t.innerHTML = mnBibHtml(); cargarFotos(t);
+  if (MN_BIB.sub === 'p') mnBibPintar();
+  if (f) { const n = document.getElementById(id); if (n) { n.focus(); try { n.setSelectionRange(n.value.length, n.value.length); } catch (e) {} } }
+}
+// Recetas y comidas del banco, dentro de la biblioteca (el estado es el mismo _mnB que usa la ventana)
+function mnBibBancoAsegurar(tipo) {
+  if (!_mnB || _mnB.tipo !== tipo) _mnB = { tipo, lista: null, q: '', sel: null, obj: 'kcal', val: '', fase: 'lista', msg: '' };
+  const b = _mnB; if (b.lista !== null || b.cargando) return; b.cargando = true;
+  (async () => {
+    let r; try { r = await sb(`${MN_BANCO[tipo].tabla}?select=id,nombre,contenido&order=nombre.asc`); } catch (e) { r = null; }
+    if (_mnB !== b) return; b.cargando = false; b.lista = Array.isArray(r) ? r : false; mnBibSubPintar();
+  })();
+}
+function mnBibBancoHtml() {
+  const b = _mnB, cfg = MN_BANCO[b.tipo], q = mnNorm(b.q), lista = Array.isArray(b.lista) ? b.lista.filter(x => !q || mnNorm(x.nombre).indexOf(q) >= 0) : [];
+  const drop = b.tipo === 'r' ? `<div class="mn-drop" onclick="document.getElementById('mnBibPdf').click()" role="button" tabindex="0" onkeydown="if(event.key==='Enter')document.getElementById('mnBibPdf').click()" ondragover="event.preventDefault();this.classList.add('over')" ondragleave="this.classList.remove('over')" ondrop="event.preventDefault();this.classList.remove('over');mnBibImportarPdfs(event.dataTransfer.files)"><span style="color:var(--t600)">${mnI('upload')}</span><b>Importar recetas desde PDF al banco</b><span class="mn-ayuda">Los PDF de tu plantilla NutriLogos, uno o varios. Se leen en tu navegador y quedan en la biblioteca, sin tocar a ningún cliente.</span></div><input type="file" id="mnBibPdf" accept="application/pdf,.pdf" multiple style="display:none" aria-hidden="true" tabindex="-1" onchange="mnBibImportarPdfs(this.files);this.value=''">` : '';
+  return `${drop}<section class="mn-card"><div class="mn-fila" style="align-items:center"><input class="inp" id="mnBibBQ" data-bq style="flex:1" placeholder="Buscar en ${cfg.plural}…" value="${sudEsc(b.q)}" oninput="_mnB.q=this.value;mnBibSubPintar()" aria-label="Buscar en ${cfg.plural}"></div>
+    <div class="mn-cat-l">${b.lista === null ? '<p class="mn-ayuda" role="status">Cargando…</p>' : b.lista === false ? '<p class="mn-ayuda" role="alert">No se pudo leer. ¿Has ejecutado supabase_banco_recetas.sql en Supabase?</p>' : lista.length ? lista.map(x => `<div class="mn-cat-i">${b.tipo === 'r' && x.contenido && x.contenido.foto ? `<img class="mn-rec-th" data-p="${sudEsc(x.contenido.foto)}" alt="" style="width:44px;height:44px;border-radius:10px;object-fit:cover;flex:none">` : ''}<div style="flex:1;min-width:0"><div class="sup-item-n">${sudEsc(x.nombre)}</div><div class="sup-item-d">${mnBancoMeta(b.tipo, x.contenido || {})}</div></div>${btnSoft('Añadir', `mnBibAnadir(${x.id})`, 'plus', true)}${btnDel('Quitar ' + sudEsc(x.nombre) + ' de la biblioteca', `mnBancoQuitar(${x.id})`)}</div>`).join('') : `<div class="mn-vacio"><b>${b.lista.length ? 'Sin resultados' : 'Aún no hay ' + cfg.plural}</b><span class="mn-ayuda">${b.lista.length ? 'Prueba con otra palabra.' : 'Guarda ' + cfg.plural + ' desde un cliente con «Guardar en el banco»' + (b.tipo === 'r' ? ', importa PDF' : '') + ' o pasa todas las de tus clientes.'}</span></div>`}</div>
+    <div class="mn-add" style="margin-top:6px">${mnBtn('Pasar todo a la biblioteca', 'mnBibMigrar()', { ghost: true, sm: true, icon: 'copy' })}</div></section>`;
+}
+function mnBibAnadir(id) { document.getElementById('mMnBanco').style.display = 'flex'; _mnB.desdeBib = true; mnBancoElegir(id); }
+function mnBibMigrar() { document.getElementById('mMnBanco').style.display = 'flex'; _mnB.desdeBib = true; mnBancoMigrarAbrir(); }
+async function mnBibImportarPdfs(files) {
+  const pdfs = [...files].filter(f => /pdf$/i.test(f.type) || /\.pdf$/i.test(f.name)); if (!pdfs.length) { toast('Elige archivos PDF.', { tipo: 'aviso' }); return; }
+  let ok = 0; const mal = [], dup = [];
+  for (const f of pdfs) {
+    const aviso = toast('Leyendo ' + f.name + '…', { ms: 20000 });
+    try {
+      const r = await mnLeerPdfReceta(f);
+      if (!r || !r.nombre || !r.ing.length) { mal.push(f.name); aviso.cerrar(); continue; }
+      const cont = { ...MN_RECETA_NUEVA(), ...r }; delete cont.fotoBlob; delete cont.id; cont.ing.forEach(i => { delete i.id; i.a = null; });
+      let dest = null;
+      if (r.fotoBlob) { const path = `banco/${mnId('f')}.jpg`; try { const up = await authFetch(`${SURL}/storage/v1/object/${FOTO_BUCKET}/${path.split('/').map(encodeURIComponent).join('/')}`, { method: 'POST', headers: { 'Content-Type': 'image/jpeg' }, body: r.fotoBlob }); if (up.ok) dest = path; } catch (e) {} }
+      cont.foto = dest;
+      const res = await sb('recetas_banco', { method: 'POST', body: JSON.stringify({ nombre: String(cont.nombre).trim().slice(0, 120), contenido: cont }) });
+      if (esErrorSb(res)) { dup.push(cont.nombre); if (dest) authFetch(`${SURL}/storage/v1/object/${FOTO_BUCKET}/${mnRutaSt(dest)}`, { method: 'DELETE' }).catch(() => {}); } else ok++;
+    } catch (e) { mal.push(f.name); }
+    aviso.cerrar();
+  }
+  if (ok) toast(ok === 1 ? 'Receta guardada en la biblioteca' : ok + ' recetas guardadas en la biblioteca');
+  if (dup.length) toast('Ya estaban (o no se pudieron guardar): ' + dup.join(', '), { tipo: 'aviso', ms: 7000 });
+  if (mal.length) toast('No he podido leer: ' + mal.join(', ') + '. Solo reconozco los PDF de la plantilla NutriLogos.', { tipo: 'error', ms: 7000 });
+  if (_mnB && _mnB.tipo === 'r') _mnB.lista = null; mnBibSubPintar();
+}
+// Alimentos: el catálogo, también desde la biblioteca
+function mnBibAlimHtml() {
+  const q = mnNorm(MN_BIB.aq), l = MN.cat.filter(a => !q || mnNorm(a.nombre + ' ' + (a.categoria || '')).indexOf(q) >= 0);
+    return `<section class="mn-card"><div class="mn-fila" style="align-items:center"><input class="inp" id="mnBibAQ" data-bq style="flex:1" placeholder="Buscar en tus ${MN.cat.length} alimentos…" value="${sudEsc(MN_BIB.aq)}" oninput="MN_BIB.aq=this.value;mnBibSubPintar()" aria-label="Buscar alimento"></div>
+    <div class="mn-add" style="margin:10px 0 0">${mnBtn('Añadir alimento', 'mnCatAbrir()', { icon: 'plus' })}${mnBtn('Escanear código', 'mnScanAbrir()', { ghost: true, icon: 'search' })}</div>
+    <div class="mn-cat-l">${l.length ? l.slice(0, 200).map(a => `<div class="mn-cat-i"><div style="flex:1;min-width:0"><div class="sup-item-n">${sudEsc(a.nombre)}${a.estado ? ` <span class="hd-opt">· ${sudEsc(a.estado)}</span>` : ''}</div><div class="sup-item-d">${sudEsc(a.categoria || 'Sin categoría')}${a.nutri && typeof a.nutri.kcal === 'number' ? ' · ' + Math.round(a.nutri.kcal) + ' kcal/100 g' : ''}</div></div>${btnSoft('Editar', `mnCatAbrir();mnCatEditar(${a.id})`, 'doc', true)}</div>`).join('') + (l.length > 200 ? `<p class="mn-ayuda">Se muestran 200; afina la búsqueda.</p>` : '') : `<div class="mn-vacio"><b>${MN.cat.length ? 'Sin resultados' : 'Aún no hay alimentos'}</b><span class="mn-ayuda">Añade alimentos a mano, con el escáner o buscándolos en supermercados de España y USDA.</span></div>`}</div></section>`;
+}
 function mnBibPintar(chips) {
+  if (MN_BIB.sub !== 'p') { mnBibSubPintar(); return; }
   if (chips) { const t = document.getElementById('mnCuerpo'), q = document.getElementById('mnBibQ'), f = q && document.activeElement === q; t.innerHTML = mnBibHtml(); if (f) { const n = document.getElementById('mnBibQ'); n.focus(); n.setSelectionRange(n.value.length, n.value.length); } }
   const l = mnBibLista(); document.getElementById('mnBibN').textContent = l.length + (l.length === 1 ? ' plato' : ' platos') + ' · de tus planificaciones, con sus ingredientes tal cual';
   document.getElementById('mnBibG').innerHTML = l.length ? l.map(mnBibTarjeta).join('') : `<div class="mn-vacio"><b>Ningún plato con esos filtros</b><span class="mn-ayuda">Prueba con otra búsqueda o quita algún filtro.</span></div>`;
 }
 function mnBibSet(k, v) { MN_BIB[k] = MN_BIB[k] === v ? '' : v; mnBibPintar(true); }
-function mnBibUsar(ix) {
+function mnBibUsar(ix) { // abre el ajuste de kcal; «Sin ajustar» lo añade tal cual
   const p = MN_BIBLIOTECA[ix], s = mnSem(), d = s.dias[MN_BIB.dia] || s.dias[0]; if (!p || !d) return;
-  d.comidas.push({ id: mnId('m'), tipo: p.m, hora: '', nombre: p.n, nota: '', libre: false, receta: null, plato: null, ing: mnParseTexto(p.i.join('\n')) });
-  mnRelinkTodo(); mnCambio(); toast('Añadido a ' + d.n + ': «' + p.n + '»', { accion: { texto: 'Deshacer', fn: () => { const j = d.comidas.length - 1; if (j >= 0 && d.comidas[j].nombre === p.n) { d.comidas.pop(); mnCambio(); } } } });
+  _mnB = { tipo: 'p', lista: [], q: '', sel: { id: ix, nombre: p.n, contenido: { ing: mnParseTexto(p.i.join('\n')), nota: p.nt || '' } }, obj: 'kcal', val: '', fase: 'ajuste', msg: '', desdeBib: true, ix, dia: d.n };
+  document.getElementById('mMnBanco').style.display = 'flex'; mnBancoPintar();
 }
 
 // ── Generador de semana (borrador) ──
@@ -2543,14 +2611,22 @@ async function mnBancoAbrir(tipo) {
   if (!_mnB || _mnB.tipo !== tipo) return;
   _mnB.lista = Array.isArray(r) ? r : false; mnBancoPintar();
 }
-function mnBancoCerrar() { _mnB = null; document.getElementById('mMnBanco').style.display = 'none'; }
+function mnBancoCerrar() {
+  document.getElementById('mMnBanco').style.display = 'none';
+  const b = _mnB, dentro = b && MN && MN.tab === 'biblioteca' && b.tipo === MN_BIB.sub && (b.tipo === 'r' || b.tipo === 'c');
+  if (!dentro) { _mnB = null; return; }
+  if (b.fase === 'migrar') b.lista = null;
+  b.fase = 'lista'; b.sel = null; b.plan = null; b.desdeBib = false; mnBibSubPintar();
+}
+function mnBancoVolver() { if (_mnB.desdeBib) mnBancoCerrar(); else { _mnB.fase = 'lista'; _mnB.sel = null; mnBancoPintar(); } }
 function mnBancoQ(v) { if (!_mnB) return; _mnB.q = v; const pos = document.getElementById('mnBancoQ'); const c = pos ? pos.selectionStart : null; mnBancoPintar(); const n = document.getElementById('mnBancoQ'); if (n) { n.focus(); try { n.setSelectionRange(c, c); } catch (e) {} } }
 function mnBancoMeta(tipo, c) {
   const b = mnBaseMacros(tipo, c);
   return [tipo === 'r' ? c.momento : '', b ? Math.round(b.kcal) + ' kcal' + (tipo === 'r' ? '/ración' : '') : '', (c.ing || []).length ? c.ing.length + ' ingredientes' : ''].filter(Boolean).map(sudEsc).join(' · ');
 }
 function mnBancoPintar() {
-  const b = _mnB; if (!b) return; const cfg = MN_BANCO[b.tipo], el = document.getElementById('mnBancoCuerpo');
+  const b = _mnB; if (!b) return; const cfg = MN_BANCO[b.tipo] || {}, el = document.getElementById('mnBancoCuerpo');
+  if (document.getElementById('mMnBanco').style.display === 'none') { if (MN && MN.tab === 'biblioteca') mnBibSubPintar(); return; }
   if (b.fase === 'ajuste') { el.innerHTML = mnBancoAjusteHtml(); return; }
   if (b.fase === 'migrar') { el.innerHTML = mnBancoMigrarHtml(); return; }
   const q = mnNorm(b.q), lista = Array.isArray(b.lista) ? b.lista.filter(x => !q || mnNorm(x.nombre).indexOf(q) >= 0) : [];
@@ -2575,12 +2651,12 @@ function mnBancoAjusteHtml() {
   const val = (k) => base ? mnF(base[k] * f, k === 'kcal' ? 0 : 1) : '—';
   const orig = (k) => base ? mnF(base[k], k === 'kcal' ? 0 : 1) : '—';
   const ing = (c.ing || []).slice(0, 8).map(i => sudEsc(mnIngTxt(mnEscala({ ...i }, f)))).join(' · ');
-  return `<p class="mt" id="mnBancoTit">Añadir «${sudEsc(it.nombre)}»</p><p class="ms">A ${sudEsc(MN.nombre || 'este cliente')}, como copia suya. Elige a qué valor quieres ajustarla; los ingredientes se escalan en proporción.</p>
+  return `<p class="mt" id="mnBancoTit">Añadir «${sudEsc(it.nombre)}»</p><p class="ms">${b.tipo === 'p' ? 'Se añade a ' + sudEsc(b.dia || 'este día') + ' de ' + sudEsc(MN.nombre || 'este cliente') : 'A ' + sudEsc(MN.nombre || 'este cliente') + ', como copia suya'}. Elige a qué valor quieres ajustarlo; los ingredientes se escalan en proporción.</p>
     ${base ? '' : '<div class="mn-aviso" role="note"><p>No hay datos de nutrición para calcular (faltan ingredientes en el catálogo): se añade tal cual y puedes ajustar las cantidades a mano.</p></div>'}
     <div class="mn-g3" style="margin-top:8px"><div class="mn-f"><label class="mn-l" for="mnBaObj">Ajustar a</label><select class="inp" id="mnBaObj" style="width:100%" onchange="_mnB.obj=this.value;mnBancoPintar()"${base ? '' : ' disabled'}>${OBJ.map(o => `<option value="${o[0]}"${b.obj === o[0] ? ' selected' : ''}>${o[1]}</option>`).join('')}</select></div>
       <div class="mn-f"><label class="mn-l" for="mnBaVal">Valor ${b.obj === 'ninguno' || !base ? '' : `<span class="hd-opt">(ahora ${orig(b.obj)})</span>`}</label><input class="inp" id="mnBaVal" inputmode="decimal" style="width:100%" value="${sudEsc(b.val)}" oninput="_mnB.val=this.value;mnBancoPrev()"${base && b.obj !== 'ninguno' ? '' : ' disabled'}></div></div>
     <div id="mnBaPrev">${mnBancoPrevHtml(base, f, ok, fuera, ing, orig, val)}</div>
-    <div class="mbtns" style="margin-top:14px"><button type="button" class="btn-cancel" onclick="_mnB.fase='lista';_mnB.sel=null;mnBancoPintar()">Volver</button><button type="button" class="btn-ok" id="mnBaOk" onclick="mnBancoAnadir()"${ok ? '' : ' disabled'}>Añadir a ${sudEsc((MN.nombre || 'este cliente').split(' ')[0])}</button></div>`;
+    <div class="mbtns" style="margin-top:14px"><button type="button" class="btn-cancel" onclick="mnBancoVolver()">${_mnB.tipo === 'p' ? 'Cancelar' : 'Volver'}</button><button type="button" class="btn-ok" id="mnBaOk" onclick="mnBancoAnadir()"${ok ? '' : ' disabled'}>Añadir a ${b.tipo === 'p' ? sudEsc(b.dia || 'este día') : sudEsc((MN.nombre || 'este cliente').split(' ')[0])}</button></div>`;
 }
 function mnBancoPrevHtml(base, f, ok, fuera, ing, orig, val) {
   const fila = [['kcal', 'kcal'], ['prot', 'Prot.'], ['hc', 'HC'], ['grasa', 'Grasa']];
@@ -2599,6 +2675,13 @@ async function mnBancoAnadir() {
   const b = _mnB; if (!b || !MN) return; const it = b.sel, c = mnClonar(it.contenido || {}), { f, ok } = mnBancoFactor(); if (!ok) return;
   const btn = document.getElementById('mnBaOk'); if (btn) { btn.disabled = true; btn.textContent = 'Añadiendo…'; }
   const ing = (c.ing || []).map(i => { const n = { ...mnEscala({ ...i }, f) }; n.id = mnId('i'); n.a = null; return n; });
+  if (b.tipo === 'p') {
+    const pl = MN_BIBLIOTECA[b.ix], s = mnSem(), d = s.dias[MN_BIB.dia] || s.dias[0]; if (!pl || !d) { mnBancoCerrar(); return; }
+    d.comidas.push({ id: mnId('m'), tipo: pl.m, hora: '', nombre: pl.n, nota: '', libre: false, receta: null, plato: null, bib: b.ix, ing });
+    mnRelinkTodo(); mnCambio(); mnBancoCerrar(); mnPintar();
+    toast('Añadido a ' + d.n + ': «' + pl.n + '»' + (f !== 1 ? ' (×' + mnF(f, 2) + ')' : ''), { accion: { texto: 'Deshacer', fn: () => { const j = d.comidas.length - 1; if (j >= 0 && d.comidas[j].nombre === pl.n) { d.comidas.pop(); mnCambio(); mnPintar(); } } } });
+    return;
+  }
   const ant = { r: MN.c.recetas.slice(), p: MN.c.platos.slice() };
   if (b.tipo === 'r') {
     const r = { ...MN_RECETA_NUEVA(), ...c, id: mnId('r'), nombre: c.nombre || it.nombre, ing, banco: it.id, factor: f !== 1 ? +f.toFixed(3) : null };
