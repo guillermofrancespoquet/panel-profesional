@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow">
-<title>Plan nutricional · NutriLogos</title>
+<title>Planificador nutricional · NutriLogos</title>
 <link rel="preconnect" href="https://knmucvrbxpzmrjwxyksj.supabase.co" crossorigin>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -267,6 +267,8 @@ button,a,[role=button],select,summary{-webkit-tap-highlight-color:transparent;to
 .mn-btn:hover{background:var(--t50);border-color:var(--t400)}
 .mn-btn.pri{background:var(--btn);border-color:var(--btn);color:#fff}
 .mn-btn.pri:hover{background:var(--btn-h)}
+.mn-btn.scan{background:var(--t50);border-color:var(--t400);color:var(--t800)}
+.mn-btn.scan:hover{box-shadow:0 2px 8px rgba(15,110,86,.16)}
 .mn-btn.ghost{border-color:transparent;background:none;color:var(--t600)}
 .mn-btn.ghost:hover{background:var(--t50)}
 .mn-btn.dan{color:var(--red)}
@@ -281,15 +283,21 @@ button,a,[role=button],select,summary{-webkit-tap-highlight-color:transparent;to
 .mn-tab:hover{color:var(--g900)}
 .mn-tab.on{color:var(--t600)}
 .mn-tabs{align-items:center}
-.mn-tab.main{padding:8px 18px;margin:0 8px 6px 0;border-radius:10px;background:var(--t50);color:var(--t800);border:.5px solid var(--bdm)}
-.mn-tab.main:hover{color:var(--t800);border-color:var(--t400)}
-.mn-tab.main.on{background:var(--btn);border-color:var(--btn);color:#fff}
+.mn-tab.main{display:inline-flex;align-items:center;gap:8px;padding:0 16px 0 13px;height:38px;margin:0 10px 6px 0;border-radius:10px;background:var(--t50);color:var(--t800);border:.5px solid var(--t400);font-weight:700;transition:background .15s,box-shadow .15s,transform .1s}
+.mn-tab.main svg{flex:none}
+.mn-tab.main:hover{color:var(--t800);box-shadow:0 2px 8px rgba(15,110,86,.16)}
+.mn-tab.main.on{background:linear-gradient(135deg,var(--t600),var(--btn));border-color:var(--btn);color:#fff;box-shadow:0 3px 10px rgba(15,110,86,.28)}
 .mn-tab.main.on::after{display:none}
+.mn-tab.main:active{transform:translateY(1px)}
 .mn-tab.on::after{content:'';position:absolute;left:12px;right:12px;bottom:-.5px;height:2px;border-radius:2px;background:var(--t400)}
 .mn-n{display:inline-flex;min-width:20px;height:20px;padding:0 6px;margin-left:6px;border-radius:10px;background:var(--g100);color:var(--g500);font:600 11.5px var(--f);align-items:center;justify-content:center}
 .mn-grid{display:grid;grid-template-columns:272px minmax(0,1fr);gap:24px;align-items:start}
 .mn-side{position:sticky;top:80px;display:flex;flex-direction:column;gap:16px;min-width:0}
 .mn-main{min-width:0}
+@media (min-width:861px){
+  .mn-side{max-height:calc(100vh - 96px);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;padding-right:2px}
+  .embed .mn-side{max-height:calc(100vh - 32px)}
+}
 .mn-card{background:var(--sf);border:.5px solid var(--bd);border-radius:16px;padding:20px;box-shadow:var(--mn-sh);min-width:0}
 .mn-card+.mn-card{margin-top:16px}
 .mn-side .mn-card+.mn-card{margin-top:0}
@@ -423,7 +431,7 @@ body.dark-mode .mn-tag{color:var(--t800)}
 .mn-bib-r .mn-btn{height:var(--h-field,42px)}
 .mn-bib-ch{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
 .mn-bib-sub{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;max-width:520px;margin:0 0 10px}
-.mn-bib-sub .mn-fch{padding:8px 4px;text-align:center;white-space:nowrap}
+.mn-bib-sub .mn-fch{padding:0 4px;height:38px;border-radius:10px;text-align:center;white-space:nowrap}
 .mn-fch{font:600 12.5px var(--f);padding:6px 13px;border-radius:20px;border:.5px solid var(--bdm);background:var(--sf);color:var(--g700);cursor:pointer}
 .mn-fch:hover{border-color:var(--t400)}
 .mn-fch.on{background:var(--t600);border-color:var(--t600);color:#fff}
@@ -526,13 +534,13 @@ body.dark-mode .mn-bib-b.veg{color:var(--t800)}
 <body>
 
 <div id="toasts" aria-live="polite"></div>
-<header class="lab-top"><div class="lab-brand"><img src="icon-rounded-192.png" alt="">NutriLogos <span>Plan nutricional</span></div></header>
+<header class="lab-top"><div class="lab-brand"><img src="icon-rounded-192.png" alt="">NutriLogos <span>Planificador nutricional</span></div></header>
 
 <div id="vsin" class="view" role="main"></div>
 
 <div id="vlista" class="view" role="main">
   <div class="page">
-    <div class="page-header"><div><p class="page-title" role="heading" aria-level="1">Plan nutricional</p><p class="page-sub">Planificación semanal de cada cliente: se publica cuando tú lo decides y el cliente la ve en su área.</p></div><button type="button" class="mn-btn" onclick="mnBibGeneralAbrir()"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>Biblioteca</button></div>
+    <div class="page-header"><div><p class="page-title" role="heading" aria-level="1">Planificador nutricional</p><p class="page-sub">Planificación semanal de cada cliente: se publica cuando tú lo decides y el cliente la ve en su área.</p></div><button type="button" class="mn-btn" onclick="mnBibGeneralAbrir()"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>Biblioteca</button></div>
     <input class="inp" id="listaQ" placeholder="Buscar cliente…" aria-label="Buscar cliente" oninput="pintarLista()" style="margin-bottom:18px;max-width:420px">
     <div id="lista"></div>
   </div>
@@ -878,22 +886,35 @@ function mnAsegurar() { // deja el contenido con todas las listas
   c.semanas.forEach(s => { s.dias = Array.isArray(s.dias) && s.dias.length ? s.dias : mnDiasNuevos(); s.dias.forEach(d => { d.comidas = d.comidas || []; d.ctx = d.ctx || { tipo: '', texto: '', aviso: '' }; }); });
   if (!MN.sem || !c.semanas.some(s => s.id === MN.sem)) MN.sem = c.semanas[0].id;
 }
+// Catálogo y biblioteca se piden al abrir la lista (en segundo plano): al entrar a un cliente ya están
+let _mnCatC = null, _mnPre = null, _mnAbriendo = false;
+function mnPrecargar() {
+  if (_mnPre) return _mnPre;
+  _mnPre = Promise.all([sb('alimentos?select=*&order=nombre.asc&limit=2000').catch(() => null), mnBibCargar().catch(() => {})])
+    .then(([r]) => { if (Array.isArray(r)) _mnCatC = r; }).finally(() => { _mnPre = null; });
+  return _mnPre;
+}
 async function mnAbrir(depId) {
-  let row = await mnCargarFila(depId);
-  if (row === undefined) { toast('Falta ejecutar supabase_menu_semanal.sql en Supabase.', { tipo: 'error' }); return; }
-  const d = deportistas.find(x => x.id == depId) || {};
-  if (!row) {
-    const c = mnContenidoNuevo(d.nombre);
-    const r = await sb('menus_cliente', { method: 'POST', body: JSON.stringify({ deportista_id: depId, titulo: c.titulo, contenido: c }) });
-    if (esErrorSb(r) || !Array.isArray(r) || !r[0]) { toast('No se pudo crear el menú. Inténtalo de nuevo.', { tipo: 'error' }); return; }
-    row = r[0];
-  }
-  let cat = []; try { const r = await sb('alimentos?select=*&order=nombre.asc&limit=2000'); if (Array.isArray(r)) cat = r; } catch (e) {}
-  await mnBibCargar();
-  const hoy = (new Date().getDay() + 6) % 7;
-  MN = { depId, nombre: d.nombre || '', row, c: row.contenido || {}, cat, sem: null, dia: hoy, tab: 'menu', dirty: false, rec: null, perfil: await mnCargarPerfil(depId) };
-  mnAsegurar(); mnRelinkTodo(); _mnFila = row;
-  show('vmenuc'); mnPintar(); window.scrollTo(0, 0);
+  if (_mnAbriendo) return; _mnAbriendo = true;
+  try {
+    show('vmenuc'); document.getElementById('mnPage').innerHTML = `<div class="mn-bar"><button type="button" class="mn-back" onclick="mnSalir()">${mnI('back')}Clientes</button></div><div class="mn-card" style="margin-top:18px" role="status" aria-label="Cargando">${skel(3)}</div>`;
+    const d = deportistas.find(x => x.id == depId) || {};
+    const primera = _mnCatC === null;
+    const [row0, perfil] = await Promise.all([mnCargarFila(depId), mnCargarPerfil(depId), primera ? mnPrecargar() : null]);
+    let row = row0;
+    if (row === undefined) { toast('Falta ejecutar supabase_menu_semanal.sql en Supabase.', { tipo: 'error' }); show('vlista'); return; }
+    if (!row) {
+      const c = mnContenidoNuevo(d.nombre);
+      const r = await sb('menus_cliente', { method: 'POST', body: JSON.stringify({ deportista_id: depId, titulo: c.titulo, contenido: c }) });
+      if (esErrorSb(r) || !Array.isArray(r) || !r[0]) { toast('No se pudo crear el menú. Inténtalo de nuevo.', { tipo: 'error' }); show('vlista'); return; }
+      row = r[0];
+    }
+    const cat = _mnCatC || []; if (!primera) mnPrecargar(); // la próxima vez, con datos al día
+    const hoy = (new Date().getDay() + 6) % 7;
+    MN = { depId, nombre: d.nombre || '', row, c: row.contenido || {}, cat, sem: null, dia: hoy, tab: 'menu', dirty: false, rec: null, perfil };
+    mnAsegurar(); mnRelinkTodo(); _mnFila = row;
+    mnPintar(); window.scrollTo(0, 0);
+  } finally { _mnAbriendo = false; }
 }
 // Biblioteca general (sin cliente): platos, recetas, comidas y alimentos compartidos, para editarlos y ordenarlos
 async function mnBibGeneralAbrir() {
@@ -1257,6 +1278,8 @@ async function oiGuardar(depId) {
 
 // ── Iconos y botones de la página ──
 const MN_ICO = {
+  cal: '<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>',
+  scan: '<path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2"/><line x1="7" y1="9" x2="7" y2="15"/><line x1="10.5" y1="9" x2="10.5" y2="15"/><line x1="14" y1="9" x2="14" y2="15"/><line x1="17" y1="9" x2="17" y2="15"/>',
   plus: '<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>',
   trash: '<polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/>',
   doc: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>',
@@ -1273,7 +1296,7 @@ const MN_ICO = {
   back: '<polyline points="15 18 9 12 15 6"/>'
 };
 const mnI = k => `<svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">${MN_ICO[k]}</svg>`;
-const mnBtn = (label, onclick, o = {}) => `<button type="button" class="mn-btn${o.pri ? ' pri' : ''}${o.ghost ? ' ghost' : ''}${o.sm ? ' sm' : ''}${o.dan ? ' dan' : ''}" onclick="${onclick}"${o.title ? ` title="${o.title}" aria-label="${o.title}"` : ''}>${o.icon ? mnI(o.icon) : ''}${label ? `<span>${label}</span>` : ''}</button>`;
+const mnBtn = (label, onclick, o = {}) => `<button type="button" class="mn-btn${o.scan ? ' scan' : ''}${o.pri ? ' pri' : ''}${o.ghost ? ' ghost' : ''}${o.sm ? ' sm' : ''}${o.dan ? ' dan' : ''}" onclick="${onclick}"${o.title ? ` title="${o.title}" aria-label="${o.title}"` : ''}>${o.icon ? mnI(o.icon) : ''}${label ? `<span>${label}</span>` : ''}</button>`;
 const mnIB = (label, onclick, icon) => `<button type="button" class="mn-ib" onclick="${onclick}" aria-label="${label}" title="${label}">${mnI(icon)}</button>`;
 
 function mnEstadoHtml() {
@@ -1290,9 +1313,9 @@ function mnPintar() {
   const tabs = [['menu', 'Menú'], ['compra', 'Lista de la compra'], ['recetas', 'Recetas', c.recetas.length], ['platos', 'Comidas guardadas', c.platos.length], ['biblioteca', 'Biblioteca', MN_BIBLIOTECA.length], ['objetivo', 'Objetivo e impresiones'], ['cliente', 'Vista del cliente']];
   document.getElementById('mnPage').innerHTML = `
     <div class="mn-bar"><button type="button" class="mn-back" onclick="mnSalir()">${mnI('back')}Clientes</button><div id="mnEstado">${mnEstadoHtml()}</div></div>
-    <div class="mn-head"><div><h1 class="mn-h1">Plan nutricional</h1><p class="mn-cli">${sudEsc(MN.nombre)}</p></div>
+    <div class="mn-head"><div><h1 class="mn-h1">Planificador nutricional</h1><p class="mn-cli">${sudEsc(MN.nombre)}</p></div>
       <div class="mn-acc">${faltan ? mnBtn('Completar catálogo (' + faltan + ')', 'mnAutoAbrir()', { icon: 'wand' }) : ''}${mnBtn('Generar semana', 'mnGenAbrir()', { icon: 'wand' })}${mnBtn('Catálogo', 'mnCatAbrir()', { icon: 'book' })}${pub ? mnBtn('Retirar', 'mnRetirar()', { icon: 'undo' }) : ''}${mnBtn(pub ? 'Publicar cambios' : 'Publicar', 'mnPublicar()', { pri: true, icon: 'send' })}</div></div>
-    <div class="mn-tabs" role="tablist" aria-label="Secciones del menú">${tabs.map(t => `<button type="button" role="tab" class="mn-tab${t[0] === 'menu' ? ' main' : ''}${MN.tab === t[0] ? ' on' : ''}" aria-selected="${MN.tab === t[0]}" onclick="mnTab('${t[0]}')">${t[1]}${t[2] ? `<span class="mn-n">${t[2]}</span>` : ''}</button>`).join('')}</div>
+    <div class="mn-tabs" role="tablist" aria-label="Secciones del menú">${tabs.map(t => `<button type="button" role="tab" class="mn-tab${t[0] === 'menu' ? ' main' : ''}${MN.tab === t[0] ? ' on' : ''}" aria-selected="${MN.tab === t[0]}" onclick="mnTab('${t[0]}')">${t[0] === 'menu' ? mnI('cal') : ''}${t[1]}${t[2] ? `<span class="mn-n">${t[2]}</span>` : ''}</button>`).join('')}</div>
     <div id="mnCuerpo">${MN.tab === 'menu' ? mnMenuHtml() : MN.tab === 'recetas' ? mnRecetasHtml() : MN.tab === 'platos' ? mnPlatosHtml() : MN.tab === 'compra' ? mnCompraHtml() : MN.tab === 'biblioteca' ? mnBibHtml() : MN.tab === 'objetivo' ? mnObjetivoHtml() : mnClienteHtml()}</div>`;
   if (MN.tab === 'biblioteca') mnBibPintar();
   if (MN.tab === 'compra') mnCompraPintar();
@@ -1826,8 +1849,9 @@ function mnDiaPie(x) { const t = mnTotDia(x); return [x.ctx && x.ctx.texto, t.ca
 // ── Ventana «Objetivos nutricionales» ──
 async function mnCargarPerfil(depId) {
   const out = { sexo: '', nac: '', talla: null, peso: null, pesoFecha: '' };
-  try { const r = await sb(`antropometria_perfil?deportista_id=eq.${depId}&select=*`); if (Array.isArray(r) && r[0]) { out.sexo = /^m/i.test(r[0].sexo || '') ? 'M' : 'H'; out.nac = r[0].fecha_nacimiento || ''; out.talla = r[0].talla ? +r[0].talla : null; } } catch (e) {}
-  try { const r = await sb(`antropometria_valoraciones?deportista_id=eq.${depId}&order=fecha.desc&limit=1&select=fecha,resumen,medidas`); if (Array.isArray(r) && r[0]) { const v = r[0], p = (v.resumen && v.resumen.peso) || (v.medidas && v.medidas.peso); if (p) { out.peso = +p; out.pesoFecha = v.fecha; } if (!out.talla && v.medidas && v.medidas.talla) out.talla = +v.medidas.talla; } } catch (e) {}
+  const [pr, va] = await Promise.all([sb(`antropometria_perfil?deportista_id=eq.${depId}&select=*`).catch(() => null), sb(`antropometria_valoraciones?deportista_id=eq.${depId}&order=fecha.desc&limit=1&select=fecha,resumen,medidas`).catch(() => null)]);
+  try { if (Array.isArray(pr) && pr[0]) { out.sexo = /^m/i.test(pr[0].sexo || '') ? 'M' : 'H'; out.nac = pr[0].fecha_nacimiento || ''; out.talla = pr[0].talla ? +pr[0].talla : null; } } catch (e) {}
+  try { if (Array.isArray(va) && va[0]) { const v = va[0], p = (v.resumen && v.resumen.peso) || (v.medidas && v.medidas.peso); if (p) { out.peso = +p; out.pesoFecha = v.fecha; } if (!out.talla && v.medidas && v.medidas.talla) out.talla = +v.medidas.talla; } } catch (e) {}
   return out;
 }
 const mnEdadDe = nac => { if (!nac) return null; const n = new Date(nac), h = new Date(); let e = h.getFullYear() - n.getFullYear(); if (h < new Date(h.getFullYear(), n.getMonth(), n.getDate())) e--; return e; };
@@ -2240,7 +2264,7 @@ async function mnBibImportarPdfs(files) {
 function mnBibAlimHtml() {
   const q = mnNorm(MN_BIB.aq), l = MN.cat.filter(a => !q || mnNorm(a.nombre + ' ' + (a.categoria || '')).indexOf(q) >= 0);
     return `<section class="mn-card"><div class="mn-fila" style="align-items:center"><input class="inp" id="mnBibAQ" data-bq style="flex:1" placeholder="Buscar en tus ${MN.cat.length} alimentos…" value="${sudEsc(MN_BIB.aq)}" oninput="MN_BIB.aq=this.value;mnBibSubPintar()" aria-label="Buscar alimento"></div>
-    <div class="mn-add" style="margin:10px 0 0">${mnBtn('Añadir alimento', 'mnCatAbrir()', { icon: 'plus' })}${mnBtn('Escanear código', 'mnScanAbrir()', { ghost: true, icon: 'search' })}</div>
+    <div class="mn-add" style="margin:10px 0 0">${mnBtn('Añadir alimento', 'mnCatAbrir()', { icon: 'plus' })}${mnBtn('Escanear código', 'mnScanAbrir()', { icon: 'scan', scan: true })}</div>
     <div class="mn-cat-l">${l.length ? l.slice(0, 200).map(a => `<div class="mn-cat-i"><div style="flex:1;min-width:0"><div class="sup-item-n">${sudEsc(a.nombre)}${a.estado ? ` <span class="hd-opt">· ${sudEsc(a.estado)}</span>` : ''}</div><div class="sup-item-d">${sudEsc(a.categoria || 'Sin categoría')}${a.nutri && typeof a.nutri.kcal === 'number' ? ' · ' + Math.round(a.nutri.kcal) + ' kcal/100 g' : ''}</div></div>${btnSoft('Editar', `mnCatAbrir();mnCatEditar(${a.id})`, 'doc', true)}</div>`).join('') + (l.length > 200 ? `<p class="mn-ayuda">Se muestran 200; afina la búsqueda.</p>` : '') : `<div class="mn-vacio"><b>${MN.cat.length ? 'Sin resultados' : 'Aún no hay alimentos'}</b><span class="mn-ayuda">Añade alimentos a mano, con el escáner o buscándolos en supermercados de España y USDA.</span></div>`}</div></section>`;
 }
 function mnBibPintar(chips) {
@@ -2895,7 +2919,7 @@ async function cargarLista() {
   if (!Array.isArray(d)) { el.innerHTML = '<p class="med-empty">No se pudo cargar la lista de clientes. Comprueba que has entrado en el panel con tu cuenta de profesional.</p>'; return; }
   deportistas = d; _menus = {}; if (Array.isArray(m)) m.forEach(x => { _menus[x.deportista_id] = x; });
   window._sinSql = !Array.isArray(m);
-  pintarLista();
+  pintarLista(); mnPrecargar();
 }
 // ?embed=1 → dentro del panel (sin cabecera propia); ?c=<id> → abre directamente el menú de ese cliente.
 (async function arrancar() {
