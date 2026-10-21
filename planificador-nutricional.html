@@ -280,6 +280,11 @@ button,a,[role=button],select,summary{-webkit-tap-highlight-color:transparent;to
 .mn-tab{position:relative;flex:0 0 auto;padding:11px 12px;background:none;border:none;font:600 14px var(--f);color:var(--g500);cursor:pointer;white-space:nowrap}
 .mn-tab:hover{color:var(--g900)}
 .mn-tab.on{color:var(--t600)}
+.mn-tabs{align-items:center}
+.mn-tab.main{padding:8px 18px;margin:0 8px 6px 0;border-radius:10px;background:var(--t50);color:var(--t800);border:.5px solid var(--bdm)}
+.mn-tab.main:hover{color:var(--t800);border-color:var(--t400)}
+.mn-tab.main.on{background:var(--btn);border-color:var(--btn);color:#fff}
+.mn-tab.main.on::after{display:none}
 .mn-tab.on::after{content:'';position:absolute;left:12px;right:12px;bottom:-.5px;height:2px;border-radius:2px;background:var(--t400)}
 .mn-n{display:inline-flex;min-width:20px;height:20px;padding:0 6px;margin-left:6px;border-radius:10px;background:var(--g100);color:var(--g500);font:600 11.5px var(--f);align-items:center;justify-content:center}
 .mn-grid{display:grid;grid-template-columns:272px minmax(0,1fr);gap:24px;align-items:start}
@@ -413,6 +418,9 @@ body.dark-mode .mn-tag{color:var(--t800)}
 .mn-bib-av.warn{background:var(--pill-r);color:var(--red)}
 .mn-bib-a{display:flex;gap:4px;align-items:center}
 .mn-bib-r{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;margin-bottom:12px}
+.mn-bib-r .mn-f{margin:0}
+.mn-bib-r .inp{margin-bottom:0}
+.mn-bib-r .mn-btn{height:var(--h-field,42px)}
 .mn-bib-ch{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
 .mn-bib-sub{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;max-width:520px;margin:0 0 10px}
 .mn-bib-sub .mn-fch{padding:8px 4px;text-align:center;white-space:nowrap}
@@ -524,7 +532,7 @@ body.dark-mode .mn-bib-b.veg{color:var(--t800)}
 
 <div id="vlista" class="view" role="main">
   <div class="page">
-    <div class="page-header"><div><p class="page-title" role="heading" aria-level="1">Plan nutricional</p><p class="page-sub">Planificación semanal de cada cliente: se publica cuando tú lo decides y el cliente la ve en su área.</p></div></div>
+    <div class="page-header"><div><p class="page-title" role="heading" aria-level="1">Plan nutricional</p><p class="page-sub">Planificación semanal de cada cliente: se publica cuando tú lo decides y el cliente la ve en su área.</p></div><button type="button" class="mn-btn" onclick="mnBibGeneralAbrir()">${'<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>'}Biblioteca</button></div>
     <input class="inp" id="listaQ" placeholder="Buscar cliente…" aria-label="Buscar cliente" oninput="pintarLista()" style="margin-bottom:18px;max-width:420px">
     <div id="lista"></div>
   </div>
@@ -845,7 +853,7 @@ function mnRelinkTodo() {
 }
 
 // ── Guardado ──
-function mnCambio() { if (!MN) return; MN.dirty = true; mnMarca(); clearTimeout(_mnT); _mnT = setTimeout(() => mnGuardarYa(), 1200); }
+function mnCambio() { if (!MN || MN.general) return; MN.dirty = true; mnMarca(); clearTimeout(_mnT); _mnT = setTimeout(() => mnGuardarYa(), 1200); }
 async function mnGuardarYa(oculta) {
   if (!MN || !MN.dirty) return;
   clearTimeout(_mnT);
@@ -886,6 +894,19 @@ async function mnAbrir(depId) {
   MN = { depId, nombre: d.nombre || '', row, c: row.contenido || {}, cat, sem: null, dia: hoy, tab: 'menu', dirty: false, rec: null, perfil: await mnCargarPerfil(depId) };
   mnAsegurar(); mnRelinkTodo(); _mnFila = row;
   show('vmenuc'); mnPintar(); window.scrollTo(0, 0);
+}
+// Biblioteca general (sin cliente): platos, recetas, comidas y alimentos compartidos, para editarlos y ordenarlos
+async function mnBibGeneralAbrir() {
+  let cat = []; try { const r = await sb('alimentos?select=*&order=nombre.asc&limit=2000'); if (Array.isArray(r)) cat = r; } catch (e) {}
+  await mnBibCargar(); _mnB = null;
+  MN = { general: true, depId: null, nombre: '', row: {}, c: { semanas: [], recetas: [], platos: [] }, cat, tab: 'biblioteca', dirty: false };
+  show('vmenuc'); mnBibGeneralPintar(); window.scrollTo(0, 0);
+}
+function mnBibGeneralPintar() {
+  document.getElementById('mnPage').innerHTML = `<div class="mn-bar"><button type="button" class="mn-back" onclick="mnSalir()">${mnI('back')}Clientes</button></div>
+    <div class="mn-head"><div><h1 class="mn-h1">Biblioteca</h1><p class="mn-cli">Platos, recetas, comidas y alimentos de todos tus clientes</p></div></div>
+    <div id="mnCuerpo">${mnBibHtml()}</div>`;
+  if (MN_BIB.sub === 'p') mnBibPintar(); cargarFotos(document.getElementById('mnPage'));
 }
 function mnSalir() { mnFlush(); MN = null; show('vlista'); cargarLista(); }
 function mnTab(k) { MN.tab = k; mnPintar(); }
@@ -1264,13 +1285,14 @@ function mnEstadoHtml() {
 function mnMarca() { const e = document.getElementById('mnEstado'); if (e) e.innerHTML = mnEstadoHtml(); }
 
 function mnPintar() {
+  if (MN.general) { mnBibGeneralPintar(); return; }
   const c = MN.c, pub = MN.row.publicado_en, faltan = mnSinEnlazar().length;
-  const tabs = [['menu', 'Menú'], ['recetas', 'Recetas', c.recetas.length], ['platos', 'Comidas guardadas', c.platos.length], ['compra', 'Lista de la compra'], ['biblioteca', 'Biblioteca', MN_BIBLIOTECA.length], ['objetivo', 'Objetivo e impresiones'], ['cliente', 'Vista del cliente']];
+  const tabs = [['menu', 'Menú'], ['compra', 'Lista de la compra'], ['recetas', 'Recetas', c.recetas.length], ['platos', 'Comidas guardadas', c.platos.length], ['biblioteca', 'Biblioteca', MN_BIBLIOTECA.length], ['objetivo', 'Objetivo e impresiones'], ['cliente', 'Vista del cliente']];
   document.getElementById('mnPage').innerHTML = `
     <div class="mn-bar"><button type="button" class="mn-back" onclick="mnSalir()">${mnI('back')}Clientes</button><div id="mnEstado">${mnEstadoHtml()}</div></div>
     <div class="mn-head"><div><h1 class="mn-h1">Plan nutricional</h1><p class="mn-cli">${sudEsc(MN.nombre)}</p></div>
       <div class="mn-acc">${faltan ? mnBtn('Completar catálogo (' + faltan + ')', 'mnAutoAbrir()', { icon: 'wand' }) : ''}${mnBtn('Generar semana', 'mnGenAbrir()', { icon: 'wand' })}${mnBtn('Catálogo', 'mnCatAbrir()', { icon: 'book' })}${pub ? mnBtn('Retirar', 'mnRetirar()', { icon: 'undo' }) : ''}${mnBtn(pub ? 'Publicar cambios' : 'Publicar', 'mnPublicar()', { pri: true, icon: 'send' })}</div></div>
-    <div class="mn-tabs" role="tablist" aria-label="Secciones del menú">${tabs.map(t => `<button type="button" role="tab" class="mn-tab${MN.tab === t[0] ? ' on' : ''}" aria-selected="${MN.tab === t[0]}" onclick="mnTab('${t[0]}')">${t[1]}${t[2] ? `<span class="mn-n">${t[2]}</span>` : ''}</button>`).join('')}</div>
+    <div class="mn-tabs" role="tablist" aria-label="Secciones del menú">${tabs.map(t => `<button type="button" role="tab" class="mn-tab${t[0] === 'menu' ? ' main' : ''}${MN.tab === t[0] ? ' on' : ''}" aria-selected="${MN.tab === t[0]}" onclick="mnTab('${t[0]}')">${t[1]}${t[2] ? `<span class="mn-n">${t[2]}</span>` : ''}</button>`).join('')}</div>
     <div id="mnCuerpo">${MN.tab === 'menu' ? mnMenuHtml() : MN.tab === 'recetas' ? mnRecetasHtml() : MN.tab === 'platos' ? mnPlatosHtml() : MN.tab === 'compra' ? mnCompraHtml() : MN.tab === 'biblioteca' ? mnBibHtml() : MN.tab === 'objetivo' ? mnObjetivoHtml() : mnClienteHtml()}</div>`;
   if (MN.tab === 'biblioteca') mnBibPintar();
   if (MN.tab === 'compra') mnCompraPintar();
@@ -1347,7 +1369,7 @@ function mnPlatosHtml() {
     return `<div class="mn-plato-f"><div style="flex:1"><div class="sup-item-n">${sudEsc(p.nombre || 'Sin nombre')}</div><div class="sup-item-d">${(p.ing || []).length} ingredientes · ${usos} ${usos === 1 ? 'uso' : 'usos'}</div></div>${mnBtn('Guardar en el banco', `mnBancoGuardar('c','${p.id}')`, { sm: true, ghost: true, icon: 'book' })}${mnBtn('Eliminar', `mnEliminarPlato('${p.id}')`, { sm: true, ghost: true, dan: true, icon: 'trash' })}</div>`;
   }).join('')}</div>${bancoBtn}`;
 }
-function mnObjetivoHtml() { const d = deportistas.find(x => x.id == MN.depId) || { id: MN.depId }; return `<div class="mn-card" style="max-width:760px"><p class="mn-k">Objetivo e impresiones</p><p class="mn-ayuda" style="margin:0 0 14px">En la app definitiva esto vive en la ficha del cliente (pestaña Plan). Se copia dentro del menú al publicar.</p>${objImpHtml(d)}</div>`; }
+function mnObjetivoHtml() { const d = deportistas.find(x => x.id == MN.depId) || { id: MN.depId }; return `<div class="mn-card"><p class="mn-k">Objetivo e impresiones</p><p class="mn-ayuda" style="margin:0 0 14px">En la app definitiva esto vive en la ficha del cliente (pestaña Plan). Se copia dentro del menú al publicar.</p>${objImpHtml(d)}</div>`; }
 function mnClienteHtml() {
   const b = (k, t) => `<button type="button" class="mn-btn sm${(MN.prev || 'borrador') === k ? ' pri' : ''}" onclick="mnPrevSet('${k}')">${t}</button>`;
   return `<div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:6px">${b('borrador', 'Borrador (lo que verá al publicar)')}${b('publicado', 'Publicado (lo que ve ahora)')}</div><p class="mn-ayuda" style="text-align:center;margin:0 0 16px">Así se ve en el área de clientes. No hace falta una cuenta de cliente: es la misma vista.</p><div class="mnv-frame"><div class="mnv-bar">Área de clientes · Mi menú semanal</div><div id="menuBody"></div></div>`;
@@ -2145,13 +2167,13 @@ function mnBibTarjeta({ p, ix }) {
   return `<article class="mn-bib-c" data-ix="${ix}"><div class="mn-bib-h"><span class="mn-bib-m t-${p.m}">${sudEsc(tipo ? tipo[1] : p.m)}</span><h3>${sudEsc(p.n)}</h3></div>
     <ul class="mn-bib-i">${p.i.slice(0, 6).map(l => `<li>${sudEsc(l)}</li>`).join('')}${p.i.length > 6 ? `<li class="mas">+${p.i.length - 6} más</li>` : ''}</ul>
     <div class="mn-bib-f"><span class="mn-bib-b ${base.length ? '' : 'veg'}">${base.length ? sudEsc(base.join(' · ')) : 'Vegetal'}</span>${p.d.map(x => `<span class="mn-bib-t">${sudEsc((MN_BIB_DIAS.find(y => y[0] === x) || [0, x])[1])}</span>`).join('')}<span class="mn-bib-o">${sudEsc(p.o.join(', '))}</span>
-    <span class="mn-bib-a"><button type="button" class="mn-btn sm" onclick="mnBibUsar(${ix})">${mnI('plus')}Añadir</button>${p.id ? `<button type="button" class="mn-ib" aria-label="Editar «${sudEsc(p.n)}»" title="Editar" onclick="mnBibEditar(${ix})">${mnI('edit')}</button><button type="button" class="mn-ib" aria-label="Eliminar «${sudEsc(p.n)}»" title="Eliminar" onclick="mnBibBorrar(${ix})">${mnI('trash')}</button>` : `<button type="button" class="mn-ib" aria-label="Copiar «${sudEsc(p.n)}» a mi biblioteca para editarlo" title="Copiar para editar" onclick="mnBibEditar(${ix})">${mnI('copy')}</button>`}</span></div></article>`;
+    <span class="mn-bib-a">${MN.general ? '' : `<button type="button" class="mn-btn sm" onclick="mnBibUsar(${ix})">${mnI('plus')}Añadir</button>`}${p.id ? `<button type="button" class="mn-ib" aria-label="Editar «${sudEsc(p.n)}»" title="Editar" onclick="mnBibEditar(${ix})">${mnI('edit')}</button><button type="button" class="mn-ib" aria-label="Eliminar «${sudEsc(p.n)}»" title="Eliminar" onclick="mnBibBorrar(${ix})">${mnI('trash')}</button>` : `<button type="button" class="mn-ib" aria-label="Copiar «${sudEsc(p.n)}» a mi biblioteca para editarlo" title="Copiar para editar" onclick="mnBibEditar(${ix})">${mnI('copy')}</button>`}</span></div></article>`;
 }
 function mnBibHtmlP() {
-  const s = mnSem(); if (MN_BIB.dia === null || MN_BIB.dia >= s.dias.length) MN_BIB.dia = MN.dia || 0;
+  const s = MN.general ? null : mnSem(); if (s && (MN_BIB.dia === null || MN_BIB.dia >= s.dias.length)) MN_BIB.dia = MN.dia || 0;
   const chip = (k, v, l) => `<button type="button" class="mn-fch${MN_BIB[k] === v ? ' on' : ''}" aria-pressed="${MN_BIB[k] === v}" onclick="mnBibSet('${k}','${v}')">${l}</button>`;
   return `${mnBibAviso()}<section class="mn-card mn-bib-bar"><div class="mn-bib-r"><div class="mn-f" style="flex:1 1 220px"><label class="mn-l" for="mnBibQ">Buscar</label><input class="inp" id="mnBibQ" type="search" value="${sudEsc(MN_BIB.q)}" placeholder="Ej. lentejas, tofu, porridge…" oninput="MN_BIB.q=this.value;mnBibPintar()"></div>
-      <div class="mn-f"><span class="mn-l">&nbsp;</span>${mnBtn('Plato nuevo', 'mnBibEditar(null)', { icon: 'plus' })}</div><div class="mn-f"><label class="mn-l" for="mnBibD">Añadir a</label><select class="inp" id="mnBibD" onchange="MN_BIB.dia=+this.value">${s.dias.map((d, i) => `<option value="${i}"${i === MN_BIB.dia ? ' selected' : ''}>${sudEsc(d.n)}</option>`).join('')}</select></div></div>
+      <div class="mn-f"><span class="mn-l">&nbsp;</span>${mnBtn('Plato nuevo', 'mnBibEditar(null)', { icon: 'plus' })}</div>${s ? `<div class="mn-f"><label class="mn-l" for="mnBibD">Añadir a</label><select class="inp" id="mnBibD" onchange="MN_BIB.dia=+this.value">${s.dias.map((d, i) => `<option value="${i}"${i === MN_BIB.dia ? ' selected' : ''}>${sudEsc(d.n)}</option>`).join('')}</select></div>` : ''}</div>
     <div class="mn-bib-ch" role="group" aria-label="Momento">${chip('m', '', 'Todos')}${MN_TIPOS.filter(t => t[0] !== 'O').map(t => chip('m', t[0], t[1])).join('')}</div>
     <div class="mn-bib-ch" role="group" aria-label="Tipo de día">${chip('t', '', 'Cualquier día')}${MN_BIB_DIAS.map(t => chip('t', t[0], t[1])).join('')}<button type="button" class="mn-fch${MN_BIB.veg ? ' on' : ''}" aria-pressed="${MN_BIB.veg}" onclick="MN_BIB.veg=!MN_BIB.veg;mnBibPintar(true)">Solo vegetal</button></div></section>
     <p class="mn-ayuda" id="mnBibN" style="margin:12px 2px"></p><div class="mn-bib-g" id="mnBibG"></div>`;
@@ -2159,7 +2181,7 @@ function mnBibHtmlP() {
 function mnBibSubBar() {
   const S = [['p', 'Platos'], ['r', 'Recetas'], ['c', 'Comidas'], ['a', 'Alimentos']];
   return `<div class="mn-bib-sub" role="group" aria-label="Qué guardas en la biblioteca">${S.map(x => `<button type="button" class="mn-fch${MN_BIB.sub === x[0] ? ' on' : ''}" aria-pressed="${MN_BIB.sub === x[0]}" onclick="mnBibSub('${x[0]}')">${x[1]}</button>`).join('')}</div>
-    <p class="mn-ayuda" style="margin:0 2px 12px">Tu biblioteca general, compartida entre todos los clientes. Aquí guardas lo suelto y desde aquí lo añades a ${sudEsc(MN.nombre || 'este cliente')}, como copia suya.</p>`;
+    <p class="mn-ayuda" style="margin:0 2px 12px">Tu biblioteca general, compartida entre todos los clientes. ${MN.general ? 'Aquí guardas y ordenas lo suelto; luego, dentro del plan de cada cliente, lo eliges y se añade como copia suya.' : 'Aquí guardas lo suelto y desde aquí lo añades a ' + sudEsc(MN.nombre || 'este cliente') + ', como copia suya.'}</p>`;
 }
 function mnBibHtml() {
   const k = MN_BIB.sub;
@@ -2187,7 +2209,7 @@ function mnBibBancoHtml() {
   const b = _mnB, cfg = MN_BANCO[b.tipo], q = mnNorm(b.q), lista = Array.isArray(b.lista) ? b.lista.filter(x => !q || mnNorm(x.nombre).indexOf(q) >= 0) : [];
   const drop = b.tipo === 'r' ? `<div class="mn-drop" onclick="document.getElementById('mnBibPdf').click()" role="button" tabindex="0" onkeydown="if(event.key==='Enter')document.getElementById('mnBibPdf').click()" ondragover="event.preventDefault();this.classList.add('over')" ondragleave="this.classList.remove('over')" ondrop="event.preventDefault();this.classList.remove('over');mnBibImportarPdfs(event.dataTransfer.files)"><span style="color:var(--t600)">${mnI('upload')}</span><b>Importar recetas desde PDF al banco</b><span class="mn-ayuda">Los PDF de tu plantilla NutriLogos, uno o varios. Se leen en tu navegador y quedan en la biblioteca, sin tocar a ningún cliente.</span></div><input type="file" id="mnBibPdf" accept="application/pdf,.pdf" multiple style="display:none" aria-hidden="true" tabindex="-1" onchange="mnBibImportarPdfs(this.files);this.value=''">` : '';
   return `${drop}<section class="mn-card"><div class="mn-fila" style="align-items:center"><input class="inp" id="mnBibBQ" data-bq style="flex:1" placeholder="Buscar en ${cfg.plural}…" value="${sudEsc(b.q)}" oninput="_mnB.q=this.value;mnBibSubPintar()" aria-label="Buscar en ${cfg.plural}"></div>
-    <div class="mn-cat-l">${b.lista === null ? '<p class="mn-ayuda" role="status">Cargando…</p>' : b.lista === false ? '<p class="mn-ayuda" role="alert">No se pudo leer. ¿Has ejecutado supabase_banco_recetas.sql en Supabase?</p>' : lista.length ? lista.map(x => `<div class="mn-cat-i">${b.tipo === 'r' && x.contenido && x.contenido.foto ? `<img class="mn-rec-th" data-p="${sudEsc(x.contenido.foto)}" alt="" style="width:44px;height:44px;border-radius:10px;object-fit:cover;flex:none">` : ''}<div style="flex:1;min-width:0"><div class="sup-item-n">${sudEsc(x.nombre)}</div><div class="sup-item-d">${mnBancoMeta(b.tipo, x.contenido || {})}</div></div>${btnSoft('Añadir', `mnBibAnadir(${x.id})`, 'plus', true)}${btnDel('Quitar ' + sudEsc(x.nombre) + ' de la biblioteca', `mnBancoQuitar(${x.id})`)}</div>`).join('') : `<div class="mn-vacio"><b>${b.lista.length ? 'Sin resultados' : 'Aún no hay ' + cfg.plural}</b><span class="mn-ayuda">${b.lista.length ? 'Prueba con otra palabra.' : 'Guarda ' + cfg.plural + ' desde un cliente con «Guardar en el banco»' + (b.tipo === 'r' ? ', importa PDF' : '') + ' o pasa todas las de tus clientes.'}</span></div>`}</div>
+    <div class="mn-cat-l">${b.lista === null ? '<p class="mn-ayuda" role="status">Cargando…</p>' : b.lista === false ? '<p class="mn-ayuda" role="alert">No se pudo leer. ¿Has ejecutado supabase_banco_recetas.sql en Supabase?</p>' : lista.length ? lista.map(x => `<div class="mn-cat-i">${b.tipo === 'r' && x.contenido && x.contenido.foto ? `<img class="mn-rec-th" data-p="${sudEsc(x.contenido.foto)}" alt="" style="width:44px;height:44px;border-radius:10px;object-fit:cover;flex:none">` : ''}<div style="flex:1;min-width:0"><div class="sup-item-n">${sudEsc(x.nombre)}</div><div class="sup-item-d">${mnBancoMeta(b.tipo, x.contenido || {})}</div></div>${MN.general ? '' : btnSoft('Añadir', `mnBibAnadir(${x.id})`, 'plus', true)}${btnDel('Quitar ' + sudEsc(x.nombre) + ' de la biblioteca', `mnBancoQuitar(${x.id})`)}</div>`).join('') : `<div class="mn-vacio"><b>${b.lista.length ? 'Sin resultados' : 'Aún no hay ' + cfg.plural}</b><span class="mn-ayuda">${b.lista.length ? 'Prueba con otra palabra.' : 'Guarda ' + cfg.plural + ' desde un cliente con «Guardar en el banco»' + (b.tipo === 'r' ? ', importa PDF' : '') + ' o pasa todas las de tus clientes.'}</span></div>`}</div>
     <div class="mn-add" style="margin-top:6px">${mnBtn('Pasar todo a la biblioteca', 'mnBibMigrar()', { ghost: true, sm: true, icon: 'copy' })}</div></section>`;
 }
 function mnBibAnadir(id) { document.getElementById('mMnBanco').style.display = 'flex'; _mnB.desdeBib = true; mnBancoElegir(id); }
