@@ -264,10 +264,34 @@ body.dark-mode canvas{background:#fff;border-radius:10px;}
    continuación del contenido: así no queda a mitad de hoja ni salta a una página nueva. */
 .rep-foot{position:absolute;left:14mm;right:14mm;bottom:3mm;margin:0;padding-top:4px;font-size:9.5px;line-height:1.3;color:var(--g500);text-align:center;border-top:.5px solid var(--bdm);}
 .footer-import-export{display:flex;gap:8px;}
-.modal-bg{position:fixed;inset:0;background:rgba(4,52,44,.5);display:none;align-items:center;justify-content:center;z-index:900;}
+.modal-bg{position:fixed;inset:0;background:rgba(4,52,44,.5);display:none;align-items:center;justify-content:center;z-index:900;padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px);}
 .modal-bg.show{display:flex;}
-.modal{background:var(--sf);color:var(--g900);border-radius:20px;padding:1.75rem;max-width:420px;width:90%;max-height:88vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.25);}
+.modal{background:var(--sf);color:var(--g900);border-radius:20px;padding:1.75rem;max-width:420px;width:90%;max-height:min(88vh,calc(100dvh - 1.5rem - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)));overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.25);}
 .modal.wide{max-width:640px;}
+.modal.ficha{max-width:640px;padding:0;display:flex;flex-direction:column;overflow:hidden;}
+.fi-scroll{overflow-y:auto;overscroll-behavior:contain;padding:1.5rem 1.75rem .5rem;flex:1 1 auto;min-height:0;}
+.fi-head{display:flex;align-items:center;gap:14px;margin-bottom:1.1rem;}
+.fi-av{flex:none;width:52px;height:52px;border-radius:16px;background:linear-gradient(135deg,var(--t600),var(--btn));color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;letter-spacing:.02em;box-shadow:0 4px 14px rgba(15,110,86,.28);}
+.fi-av svg{width:24px;height:24px;}
+.fi-head h3{margin:0;font-size:19px;letter-spacing:-.02em;border:none;padding:0;}
+.fi-head p{margin:2px 0 0;font-size:12.5px;color:var(--g400);line-height:1.4;}
+.fi-sec{background:var(--bg);border:.5px solid var(--bd);border-radius:16px;padding:1rem 1.1rem .4rem;margin-bottom:12px;}
+.fi-sec-h{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--t600);margin:0 0 .8rem;}
+.fi-sec-h svg{width:15px;height:15px;}
+.fi-sec .field label{display:block;font-size:12px;font-weight:600;color:var(--g700);margin-bottom:5px;text-transform:none;letter-spacing:0;}
+.fi-sec .field label .opt{font-weight:400;color:var(--g400);}
+.fi-sec input:not([type=hidden]),.fi-sec select,.fi-sec textarea{background:var(--sf);}
+.fi-sec ::placeholder{color:var(--g400);opacity:1;}
+.fi-seg{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:4px;padding:3px;border-radius:12px;background:var(--g100);border:.5px solid var(--bd);}
+.fi-seg button{height:34px;border-radius:9px;border:none;background:transparent;color:var(--g500);font:600 13px var(--f);cursor:pointer;transition:background .15s,color .15s,box-shadow .15s;}
+.fi-seg button:hover{color:var(--g900);}
+.fi-seg button[aria-pressed="true"]{background:var(--sf);color:var(--t600);box-shadow:0 1px 3px rgba(0,0,0,.12);}
+.fi-age{display:inline-flex;align-items:center;margin-left:8px;padding:1px 9px;border-radius:20px;background:var(--t50);color:var(--t600);font-size:11px;font-weight:700;vertical-align:1px;}
+.fi-age.warn{background:var(--gold-50);color:var(--gold-dk);}
+.fi-note{margin:2px 0 10px;font-size:11.5px;color:var(--g400);line-height:1.45;}
+.fi-err{display:none;margin:5px 0 0;font-size:12px;color:var(--red);font-weight:600;}
+.fi-foot{flex:none;display:flex;gap:10px;justify-content:flex-end;align-items:center;padding:.9rem 1.75rem calc(.9rem + env(safe-area-inset-bottom,0px));border-top:.5px solid var(--bd);background:var(--sf);}
+.fi-foot .btn{min-width:120px;justify-content:center;}
 .modal h3{margin-top:0;border:none;}
 .modal textarea{width:100%;}
 .modal.wide .mr-label{flex:0 0 170px;}
@@ -354,7 +378,11 @@ body.dark-mode canvas{background:#fff;border-radius:10px;}
   #clientTable td:nth-child(6){grid-column:1/-1;margin-top:8px;}
   #clientTable td:nth-child(6) .btn-group{display:grid;grid-template-columns:1fr 1fr;}
   #clientTable td:nth-child(6) .btn{justify-content:center;}
-  .modal{padding:16px;max-height:92vh;}
+  .modal{padding:16px;max-height:calc(100dvh - 1rem - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));}
+  .modal.ficha{padding:0;width:calc(100% - 16px);}
+  .fi-scroll{padding:1.1rem 1rem .25rem;}
+  .fi-foot{padding-left:1rem;padding-right:1rem;}
+  .fi-foot .btn{flex:1;}
 
   /* Lista de clientes: tarjetas separadas (antes solo una línea fina entre filas) */
   #clientTable tbody{display:flex;flex-direction:column;gap:10px;}
@@ -842,6 +870,7 @@ function openModal(html, opts){
   const modalBody = document.getElementById("modalBody");
   modalBody.innerHTML = html;
   modalBody.classList.toggle("wide", !!(opts && opts.wide));
+  modalBody.classList.toggle("ficha", !!(opts && opts.ficha));
   document.getElementById("modalBg").classList.add("show");
 }
 function closeModal(){ document.getElementById("modalBg").classList.remove("show"); }
@@ -1447,43 +1476,76 @@ function openClientForm(client, prefill){
   // (que no tiene "apellidos" separado). Si el cliente ya tenía apellidos guardados
   // de antes de este cambio, se combinan aquí para no perderlos de vista.
   const nombreCompletoActual = (c.nombre + (c.apellidos ? " "+c.apellidos : "")).trim();
+  const iniciales = isNew ? "" : esc(((nombreCompletoActual.split(/\s+/)[0]||"?")[0]||"?")+((nombreCompletoActual.split(/\s+/)[1]||"")[0]||"")).toUpperCase();
+  const seg = (id, valor, ops) => `<input type="hidden" id="${id}" value="${esc(valor)}"><div class="fi-seg" role="group" data-for="${id}">${ops.map(o=>`<button type="button" data-v="${esc(o)}" aria-pressed="${o===valor}">${esc(o)}</button>`).join("")}</div>`;
   openModal(`
-    <h3>${isNew?"Nuevo cliente":"Editar cliente"}</h3>
-    <div class="grid cols2">
-      <div class="field" style="grid-column:1/-1;"><label>Nombre completo</label><input id="f_nombre" value="${esc(nombreCompletoActual)}"></div>
-      <div class="field"><label>Sexo</label>
-        <select id="f_sexo"><option ${c.sexo==="Hombre"?"selected":""}>Hombre</option><option ${c.sexo==="Mujer"?"selected":""}>Mujer</option></select>
+    <div class="fi-scroll">
+      <div class="fi-head">
+        <div class="fi-av" aria-hidden="true">${isNew ? ic("plus") : iniciales}</div>
+        <div><h3>${isNew?"Nuevo cliente":"Editar ficha"}</h3>
+        <p>${isNew?"Se crea también en Nutrición Deportiva del panel: es el mismo cliente.":"Nombre y deporte se comparten con Nutrición Deportiva; el resto son datos de antropometría."}</p></div>
       </div>
-      <div class="field"><label>Fecha de nacimiento</label><input type="date" id="f_fnac" value="${c.fechaNacimiento||""}"></div>
-      <div class="field"><label>Nacionalidad</label><input id="f_nac" value="${esc(c.nacionalidad)}"></div>
-      <div class="field"><label>Raza (afecta a fórmulas)</label>
-        <select id="f_raza">
-          <option ${c.raza==="Caucásica"?"selected":""}>Caucásica</option>
-          <option ${c.raza==="Negra"?"selected":""}>Negra</option>
-          <option ${c.raza==="Asiática"?"selected":""}>Asiática</option>
-        </select>
+      <div class="fi-sec">
+        <p class="fi-sec-h">${ic("doc")} Datos personales</p>
+        <div class="grid cols2">
+          <div class="field" style="grid-column:1/-1;"><label for="f_nombre">Nombre completo</label><input type="text" id="f_nombre" value="${esc(nombreCompletoActual)}" autocomplete="off" placeholder="Nombre y apellidos"><p class="fi-err" id="f_nombre_err" role="alert">El nombre es obligatorio.</p></div>
+          <div class="field"><label>Sexo</label>${seg("f_sexo", c.sexo==="Mujer"?"Mujer":"Hombre", ["Hombre","Mujer"])}</div>
+          <div class="field"><label for="f_fnac">Fecha de nacimiento<span class="fi-age" id="f_edad" style="display:none"></span></label><input type="date" id="f_fnac" value="${c.fechaNacimiento||""}"></div>
+          <div class="field"><label for="f_nac">Nacionalidad <span class="opt">(opcional)</span></label><input type="text" id="f_nac" value="${esc(c.nacionalidad)}"></div>
+          <div class="field"><label for="f_raza">Raza <span class="opt">(afecta a fórmulas)</span></label>
+            <select id="f_raza">
+              <option ${c.raza==="Caucásica"?"selected":""}>Caucásica</option>
+              <option ${c.raza==="Negra"?"selected":""}>Negra</option>
+              <option ${c.raza==="Asiática"?"selected":""}>Asiática</option>
+            </select>
+          </div>
+        </div>
       </div>
-      <div class="field"><label>Actividad</label>
-        <select id="f_act"><option ${c.actividad==="Sedentario"?"selected":""}>Sedentario</option><option ${c.actividad==="Activo"?"selected":""}>Activo</option></select>
+      <div class="fi-sec">
+        <p class="fi-sec-h">${ic("chart")} Deporte y actividad</p>
+        <div class="grid cols2">
+          <div class="field"><label for="f_dep">Deporte</label><input type="text" id="f_dep" value="${esc(c.deporte)}" placeholder="Ej. Fútbol"></div>
+          <div class="field"><label for="f_pos">Posición / prueba</label><input type="text" id="f_pos" value="${esc(c.posicion)}"></div>
+          <div class="field"><label for="f_frec">Frecuencia semanal</label><input type="text" id="f_frec" value="${esc(c.frecuenciaSemanal)}" placeholder="Ej. 4 días"></div>
+          <div class="field"><label>¿Compite?</label>${seg("f_compite", c.compite==="Sí"?"Sí":"No", ["Sí","No"])}</div>
+          <div class="field" style="grid-column:1/-1;"><label>Actividad</label>${seg("f_act", c.actividad==="Sedentario"?"Sedentario":"Activo", ["Sedentario","Activo"])}</div>
+        </div>
       </div>
-      <div class="field"><label>Deporte</label><input id="f_dep" value="${esc(c.deporte)}"></div>
-      <div class="field"><label>Posición / prueba</label><input id="f_pos" value="${esc(c.posicion)}"></div>
-      <div class="field"><label>Frecuencia semanal</label><input id="f_frec" value="${esc(c.frecuenciaSemanal)}"></div>
-      <div class="field"><label>¿Compite?</label>
-        <select id="f_compite"><option ${c.compite==="Sí"?"selected":""}>Sí</option><option ${c.compite==="No"?"selected":""}>No</option></select>
+      <div class="fi-sec">
+        <p class="fi-sec-h">${ic("clip")} Salud y notas</p>
+        <div class="field"><label for="f_les">Lesiones <span class="opt">(opcional)</span></label><textarea id="f_les" rows="2" placeholder="Lesiones previas o actuales">${esc(c.lesiones)}</textarea></div>
+        <div class="field"><label for="f_notas">Notas internas <span class="opt">(solo de antropometría)</span></label><textarea id="f_notas" rows="2">${esc(c.notas)}</textarea></div>
       </div>
     </div>
-    <div class="field"><label>Lesiones</label><textarea id="f_les" rows="2">${esc(c.lesiones)}</textarea></div>
-    <div class="field"><label>Notas internas</label><textarea id="f_notas" rows="2">${esc(c.notas)}</textarea></div>
-    <div class="btnbar">
-      <button class="btn camel" id="btnSaveClient"><span class="ic">${ic("save")}</span> Guardar</button>
+    <div class="fi-foot">
       <button class="btn ghost" id="btnCancelClient"><span class="ic">${ic("x")}</span> Cancelar</button>
+      <button class="btn camel" id="btnSaveClient"><span class="ic">${ic("save")}</span> ${isNew?"Crear cliente":"Guardar cambios"}</button>
     </div>
-  `);
+  `, {ficha:true});
+  // Selectores segmentados: el valor vive en un input oculto con el mismo id que usaba el <select>
+  document.querySelectorAll("#modalBody .fi-seg").forEach(g=>{
+    g.addEventListener("click",(e)=>{
+      const b = e.target.closest("button[data-v]"); if(!b) return;
+      document.getElementById(g.dataset.for).value = b.dataset.v;
+      g.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed", String(x===b)));
+    });
+  });
+  // Edad en vivo junto a la fecha de nacimiento (aviso para menores de 18: cálculos orientativos)
+  const pintaEdad = ()=>{
+    const el = document.getElementById("f_edad"), v = document.getElementById("f_fnac").value;
+    if(!v){ el.style.display="none"; return; }
+    const n = new Date(v+"T00:00:00"), h = new Date(); let e = h.getFullYear()-n.getFullYear();
+    if(h < new Date(h.getFullYear(), n.getMonth(), n.getDate())) e--;
+    if(!isFinite(e) || e<0 || e>120){ el.style.display="none"; return; }
+    el.textContent = e+" años"+(e<18?" · menor":""); el.classList.toggle("warn", e<18); el.style.display="inline-flex";
+  };
+  document.getElementById("f_fnac").addEventListener("input", pintaEdad); pintaEdad();
+  document.getElementById("f_nombre").addEventListener("input", ()=>{ document.getElementById("f_nombre_err").style.display="none"; });
+  if(isNew) document.getElementById("f_nombre").focus();
   document.getElementById("btnCancelClient").addEventListener("click", ()=>{ PENDING_CLIENT_IMPORT = null; closeModal(); });
   document.getElementById("btnSaveClient").addEventListener("click", async ()=>{
     const nombreCompleto = document.getElementById("f_nombre").value.trim();
-    if(!nombreCompleto){ toast("El nombre es obligatorio"); return; }
+    if(!nombreCompleto){ const er=document.getElementById("f_nombre_err"); er.style.display="block"; document.getElementById("f_nombre").focus(); return; }
     const deporte = document.getElementById("f_dep").value.trim();
     const perfilData = {
       sexo: document.getElementById("f_sexo").value,
