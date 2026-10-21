@@ -295,7 +295,8 @@ button,a,[role=button],select,summary{-webkit-tap-highlight-color:transparent;to
 .mn-side{position:sticky;top:80px;display:flex;flex-direction:column;gap:16px;min-width:0}
 .mn-main{min-width:0}
 @media (min-width:861px){
-  .mn-side{max-height:calc(100vh - 96px);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;padding-right:2px}
+  .mn-side{max-height:calc(100vh - 96px);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:none}
+  .mn-side::-webkit-scrollbar{display:none}
   .embed .mn-side{max-height:calc(100vh - 32px)}
 }
 .mn-card{background:var(--sf);border:.5px solid var(--bd);border-radius:16px;padding:20px;box-shadow:var(--mn-sh);min-width:0}
