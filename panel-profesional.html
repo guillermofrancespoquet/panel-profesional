@@ -40,7 +40,7 @@
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:var(--f);background:var(--bg);color:var(--g900);min-height:100vh;font-size:15px;-webkit-font-smoothing:antialiased;line-height:1.6}
 .view{display:none}.view.active{display:block}
-.antro-frame{display:block;width:100%;height:100vh;border:0;background:var(--bg)}
+.antro-frame{display:block;width:100%;height:calc(100vh - env(safe-area-inset-top,0px));border:0;background:var(--bg)}
 @media(max-width:860px){.antro-frame{height:calc(100vh - 56px - env(safe-area-inset-top,0px))}}
 
 /* LOADING */
@@ -498,11 +498,13 @@ body.dark-mode img{opacity:.92}
 .sidebar-backdrop.show{display:block}
 
 /* ═══ SIDEBAR APP SHELL ═══ */
-@media (min-width:861px){ body.has-sidebar{padding-left:248px} }
+@media (min-width:861px){ body.has-sidebar{padding-left:248px;padding-top:env(safe-area-inset-top,0px)} }
+/* iOS (app instalada, barra de estado translúcida): la zona de la muesca se pinta del verde de marca y tapa lo que se desplaza por debajo */
+body::before{content:'';position:fixed;top:0;left:0;right:0;height:env(safe-area-inset-top,0px);background:var(--t900);z-index:8000;pointer-events:none}
 .sidebar{
   position:fixed;top:0;left:0;bottom:0;width:248px;
   background:var(--t900);display:none;flex-direction:column;
-  padding:1.5rem 0 1rem;z-index:200;overflow:hidden;
+  padding:calc(1.5rem + env(safe-area-inset-top,0px)) 0 1rem;z-index:200;overflow:hidden;
 }
 .sidebar::-webkit-scrollbar{display:none}
 .sidebar.show{display:flex}
@@ -1139,7 +1141,7 @@ button,a,[role=button],select,summary,label.btn{-webkit-tap-highlight-color:tran
 .gsearch-item.acc .gsearch-avatar{background:var(--gold-50);color:var(--gold-dk)}
 
 /* ── Ficha del deportista: pestañas y línea de tiempo ── */
-.depd-tabbar{position:sticky;top:0;z-index:20;background:var(--bg);padding:6px 0 10px;margin:0 0 1rem}
+.depd-tabbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg);padding:6px 0 10px;margin:0 0 1rem}
 .depd-tabs{display:flex;gap:4px;overflow-x:auto;padding:4px;background:var(--g100);border-radius:12px;scrollbar-width:none}
 .depd-tabs::-webkit-scrollbar{display:none}
 .depd-tabbar{position:sticky}
