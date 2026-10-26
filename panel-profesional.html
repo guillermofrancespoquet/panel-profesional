@@ -404,6 +404,37 @@ body:not(.dark-mode) .sup-av.rojo{color:#8F2323}
 .rev-msg:empty{display:none}
 @media(max-width:860px){.rev-in{font-size:16px;height:36px;padding:0 6px}.rev-in[type=date]{width:auto;flex:1 1 0;min-width:0}.rev-in[type=time]{width:92px;flex:0 0 auto}.rev-ok{height:36px;padding:0 12px}}
 @media(max-width:560px){.depd-rev-side{flex-basis:100%;margin-left:48px;flex-wrap:wrap}}
+.obj-card{min-width:0}
+.obj-vacio{margin:0 0 10px;font-size:13px;color:var(--g500);line-height:1.5}
+.obj-top{display:flex;gap:10px;align-items:flex-start;justify-content:space-between}
+.obj-t{font-size:15px;font-weight:700;color:var(--g900);line-height:1.3}
+.obj-sub{font-size:12.5px;color:var(--g500);margin-top:2px}
+.obj-pct{font-size:22px;font-weight:700;color:var(--t600);line-height:1;flex:none}
+.obj-bar{position:relative;height:10px;border-radius:6px;background:var(--pill-n);margin:12px 0 10px}
+.obj-bar>i{display:block;height:100%;border-radius:6px;background:linear-gradient(90deg,var(--t400),var(--t600))}
+.obj-bar>b{position:absolute;top:-3px;width:2px;height:16px;margin-left:-1px;background:var(--gold);border-radius:1px}
+.obj-vals{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.obj-vals div{min-width:0}
+.obj-vals span{display:block;font-size:10.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--g500)}
+.obj-vals b{font-size:15px;color:var(--g900)}
+.obj-est{margin:10px 0 0;font-size:12.5px;font-weight:600;color:var(--g700)}
+.obj-est.ok{color:var(--t600)}.obj-est.warn{color:var(--gold-dk)}
+.obj-meta{margin:6px 0 0;font-size:12px;color:var(--g500);line-height:1.45}
+.obj-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.obj-chip{display:inline-block;font-size:11px;font-weight:600;line-height:18px;height:20px;padding:0 8px;border-radius:20px;white-space:nowrap;background:var(--pill-n);color:var(--g700)}
+.obj-chip.ok{background:var(--pill-g);color:var(--t800)}
+.obj-act{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:12px}
+.obj-act .inp{height:34px}
+.obj-sug{border:.5px solid var(--bd);border-left:3px solid var(--gold);border-radius:10px;padding:10px 12px;margin:0 0 12px;background:var(--sf)}
+.obj-sug-t{margin:0 0 4px;font-size:13px;color:var(--g900)}
+.obj-hist{margin-top:10px;font-size:13px}
+.obj-hist summary{cursor:pointer;font-weight:600;color:var(--g700);padding:4px 0}
+.obj-hl{display:flex;flex-direction:column;gap:8px;margin-top:6px}
+.obj-hr{border:.5px solid var(--bd);border-radius:10px;padding:8px 12px;background:var(--sf)}
+.obj-hr-t{font-weight:700;color:var(--g900);font-size:13px}
+.obj-hr-d{font-size:12px;color:var(--g500);margin-top:2px;line-height:1.5}
+@media(max-width:560px){.obj-act .inp{font-size:16px;height:38px}}
+.obj-mgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .est-box{background:var(--bg);border:.5px solid var(--bd);border-radius:14px;padding:14px 16px}
 .est-head{display:flex;align-items:center;gap:8px;margin-bottom:10px;font-size:13px;font-weight:700}
 .est-pill{font-size:11.5px;font-weight:600;padding:3px 10px;border-radius:20px;background:var(--pill-g);color:var(--t800);box-shadow:inset 0 0 0 .5px var(--pill-g-bd)}
@@ -2065,6 +2096,35 @@ body.dark-mode .ref-src,body.dark-mode .sup-badge,body.dark-mode .depd-avatar-fa
     <div class="mbtns" style="margin-top:14px">
       <button type="button" class="btn-cancel" onclick="supCerrar()">Cancelar</button>
       <button type="button" class="btn-ok" id="supGuardar" onclick="supGuardar()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: OBJETIVO DEL CLIENTE -->
+<div class="mbg" id="mObj" style="display:none;z-index:300" role="dialog" aria-modal="true" aria-labelledby="objMTit" onclick="if(event.target===this)objCerrarModal()">
+  <div class="mc" style="max-width:480px">
+    <p class="mt" id="objMTit">Proponer objetivo</p>
+    <p class="ms" id="objSub"></p>
+    <label class="mfl" for="objTipo">Tipo</label>
+    <select class="inp" id="objTipo" onchange="objTipoCambio()"><option value="peso">Peso</option><option value="pct_grasa">% de grasa</option><option value="rendimiento">Rendimiento (lo anotas tú)</option></select>
+    <div id="objTituloBox"><label class="mfl" for="objTitulo" style="margin-top:10px">Título <span class="hd-opt">(opcional)</span></label><input type="text" class="inp" id="objTitulo" maxlength="80" placeholder="Ej. Bajar a 68 kg para la temporada"></div>
+    <div id="objUniBox" style="display:none"><label class="mfl" for="objUni" style="margin-top:10px">Unidad <span class="hd-opt">(opcional)</span></label><input type="text" class="inp" id="objUni" maxlength="16" placeholder="Ej. min, kg, W"></div>
+    <div class="obj-mgrid">
+      <div><label class="mfl" for="objIni" id="objIniL" style="margin-top:10px">Valor de partida</label><input type="text" inputmode="decimal" class="inp" id="objIni" oninput="_obj&&(_obj.iniTocado=true)"></div>
+      <div><label class="mfl" for="objObj" id="objObjL" style="margin-top:10px">Valor objetivo</label><input type="text" inputmode="decimal" class="inp" id="objObj"></div>
+    </div>
+    <p class="sup-calc-r" id="objIniSrc" style="margin:4px 0 0"></p>
+    <div id="objActBox" style="display:none"><label class="mfl" for="objAct" style="margin-top:10px">Valor actual <span class="hd-opt">(opcional)</span></label><input type="text" inputmode="decimal" class="inp" id="objAct" style="max-width:140px"></div>
+    <div id="objFuenteBox" style="display:none"><label class="mfl" for="objFuente" style="margin-top:10px">De dónde sale la medición</label><select class="inp" id="objFuente"><option value="cualquiera">Automático (antropometría si hay; si no, báscula)</option><option value="antropometria">Solo antropometría</option><option value="bascula">Solo báscula</option></select></div>
+    <label class="mfl" for="objFechaLim" style="margin-top:10px">Fecha límite <span class="hd-opt">(opcional)</span></label>
+    <input type="date" class="inp" id="objFechaLim" style="max-width:200px">
+    <label class="mfl" for="objNota" style="margin-top:10px">Nota privada <span class="hd-opt">(solo tú)</span></label>
+    <input type="text" class="inp" id="objNota" maxlength="300">
+    <label class="mfl" style="gap:8px;align-items:center;margin-top:12px;font-weight:600;display:flex"><input type="checkbox" id="objVisibleCk" checked> Visible para el cliente</label>
+    <p class="merr" id="objMsg" role="alert"></p>
+    <div class="mbtns" style="margin-top:14px">
+      <button type="button" class="btn-cancel" onclick="objCerrarModal()">Cancelar</button>
+      <button type="button" class="btn-ok" id="objBtnGuardar" onclick="objGuardar()">Guardar</button>
     </div>
   </div>
 </div>
@@ -3825,10 +3885,11 @@ async function pintarAvisosDash(deps, citasAll, todayISO){
   //    y clientes que antes anotaban su peso y llevan días sin hacerlo (si las tablas no existen, simplemente no se avisa)
   const conSeg = deps.filter(d => d.formularios && d.formularios.seguimiento && d.formularios.seguimiento.activo);
   const lunes = lunesMadridISO(), hace = n => { const x = new Date(lunes+'T00:00:00'); x.setDate(x.getDate()-n); return localISO(x); };
-  const [segs, pesos, comidas] = await Promise.all([
+  const [segs, pesos, comidas, objVenc] = await Promise.all([
     Promise.resolve(sb(`seguimientos?semana=gte.${hace(21)}&select=deportista_id,semana,respuestas&order=semana.desc`)).then(a=>Array.isArray(a)?a:null).catch(()=>null),
     Promise.resolve(sb(`pesos_cliente?fecha=gte.${hace(60)}&select=deportista_id,fecha&order=fecha.desc`)).then(a=>Array.isArray(a)?a:null).catch(()=>null),
-    Promise.resolve(sb(`comidas_cliente?fecha=gte.${localISO(new Date(Date.now() - 7*86400000))}&comentario=is.null&select=deportista_id`)).then(a=>Array.isArray(a)?a:null).catch(()=>null)
+    Promise.resolve(sb(`comidas_cliente?fecha=gte.${localISO(new Date(Date.now() - 7*86400000))}&comentario=is.null&select=deportista_id`)).then(a=>Array.isArray(a)?a:null).catch(()=>null),
+    Promise.resolve(sb(`objetivos_cliente?estado=eq.activo&fecha_limite=lt.${todayISO}&select=deportista_id`)).then(a=>Array.isArray(a)?a:null).catch(()=>null)
   ]);
   const aviso = (d, tag, cls) => avisos.push({id:d.id, n:d.nombre, sub:d.deporte||'', tag, cls});
   if(segs){
@@ -3853,6 +3914,7 @@ async function pintarAvisosDash(deps, citasAll, todayISO){
     const n = {}; comidas.forEach(x => { const k = String(x.deportista_id); n[k] = (n[k] || 0) + 1; });
     deps.forEach(d => { const c = n[String(d.id)]; if(c) aviso(d, `${c} comida${c!==1?'s':''} del diario sin comentar`, 'gold'); });
   }
+  if(objVenc) objVenc.forEach(x => { const d = deps.find(y => y.id == x.deportista_id); if(d) aviso(d, 'Objetivo con la fecha límite pasada', 'gold'); });
   // 2) Revisión sin cita en la agenda (fecha próxima) o con la fecha ya pasada y sin nueva
   deps.forEach(d=>{
     const f = d.proxima_revision ? String(d.proxima_revision).slice(0,10) : '';
@@ -5745,6 +5807,11 @@ function openDepDet(id) {
     </div>
 
     <div class="depd-section">
+      <p class="sec-title">Objetivo</p>
+      <div class="med-box" id="objBox">${skel(2)}</div>
+    </div>
+
+    <div class="depd-section">
       <p class="sec-title">Contexto</p>
       <div class="depd-desc-box">${d.descripcion || 'Sin descripción todavía. Añádela editando este deportista.'}</div>
     </div>
@@ -5872,6 +5939,7 @@ function openDepDet(id) {
   loadDiario(d.id);
   loadMediciones(d.id);
   loadEstado(d.id);
+  loadObjetivo(d.id);
   loadSudoracion(d.id);
   loadPlanes(d.id);
   loadMenuBox(d.id);
@@ -6274,12 +6342,13 @@ async function revGuardar(depId, quitar){
 // ── Estado del cliente: resumen calculado con lo que ya hay (mediciones, seguimiento, peso, consultas, revisión y formularios) ──
 async function loadEstado(depId){
   const seguro = p => Promise.resolve(p).then(v => Array.isArray(v) ? v : []).catch(() => []);
-  const [meds, bios, segs, pesos, hist, comidas] = await Promise.all([
+  const [meds, bios, segs, pesos, hist, comidas, objA] = await Promise.all([
     seguro(getMediciones(depId)), seguro(getBio(depId)),
     seguro(sb(`seguimientos?deportista_id=eq.${depId}&order=semana.desc&limit=6&select=semana,respuestas`)),
     seguro(sb(`pesos_cliente?deportista_id=eq.${depId}&order=fecha.desc&limit=1&select=fecha,peso`)),
     seguro(sb(`historial_deportista?deportista_id=eq.${depId}&order=fecha.desc&limit=1&select=fecha`)),
-    seguro(sb(`comidas_cliente?deportista_id=eq.${depId}&fecha=gte.${localISO(new Date(Date.now() - 7*86400000))}&select=id,comentario`))
+    seguro(sb(`comidas_cliente?deportista_id=eq.${depId}&fecha=gte.${localISO(new Date(Date.now() - 7*86400000))}&select=id,comentario`)),
+    Promise.resolve(sb('rpc/objetivo_progreso', { method:'POST', body:JSON.stringify({ p_dep:depId }) })).then(v => (v && typeof v === 'object' && !esErrorSb(v)) ? v : null).catch(() => null)
   ]);
   const el = document.getElementById('estBox'), d = deportistas.find(x => x.id == depId);
   if(!el || !d || currentDepId != depId) return;
@@ -6326,6 +6395,12 @@ async function loadEstado(depId){
   if(pesos.length){
     const n = dias(pesos[0].fecha);
     add('Peso del cliente', `${medNum(+pesos[0].peso, 1)} kg · ${hace(n)} (autodeclarado)`, n >= 14);
+  }
+
+  // Objetivo (solo si hay uno activo)
+  if(objA){
+    const e = objEstado(objA), p = Math.round(objA.progreso * 100);
+    add('Objetivo', `${objTit(objA.tipo, objA.titulo, objA.inicial, objA.objetivo, objA.unidad)} · ${p} %${objA.dias != null ? ' · ' + objDiasTxt(objA.dias) : ''}${e.t ? ' — ' + e.t : ''}`, e.aviso);
   }
 
   // Diario de comidas (últimos 7 días)
@@ -7590,6 +7665,214 @@ function supEliminar(id, depId, btn){
     restaurar: () => { if(fila) fila.style.display = ''; },
     ejecutar: async () => { const r = await sb(`suplementos_cliente?id=eq.${id}`, { method:'DELETE', headers:{ 'Prefer':'return=minimal' } }); if(!esErrorSb(r)) loadSuplementacion(depId); return r; }
   });
+}
+
+// ═══════════════ OBJETIVOS DEL CLIENTE (opcional; supabase_objetivos.sql) ═══════════════
+// Un objetivo activo por cliente (peso, % de grasa o rendimiento), con fecha límite y barra de avance. Es opcional: sin objetivo, el
+// cliente no ve nada. Lo propone el profesional o acepta una sugerencia de la app; el avance sale de las mediciones (RPC objetivo_progreso)
+// y los objetivos anteriores quedan como historial (cumplido, cancelado o sustituido). Nada llega al cliente sin que lo pongas tú.
+let _obj = null, _objAct = null;
+const _objSugNo = {};
+const OBJ_TIPOS = { peso:{ n:'Peso', u:'kg' }, pct_grasa:{ n:'% de grasa', u:'%' }, rendimiento:{ n:'Rendimiento', u:'' } };
+const objNum = v => { const x = parseFloat(String(v == null ? '' : v).replace(',', '.')); return isFinite(x) ? x : null; };
+const objFmt = (n, u) => medNum(+n, Math.abs(n - Math.round(n)) < 0.05 ? 0 : 1) + (u ? (u === '%' ? ' %' : ' ' + u) : '');
+const objFecha = f => f ? new Date(String(f).slice(0, 10) + 'T00:00:00').toLocaleDateString('es-ES', { day:'numeric', month:'short', year:'numeric' }) : '';
+function objTit(tipo, titulo, ini, obj, u){
+  if(titulo) return titulo;
+  if(tipo === 'peso') return `${obj < ini ? 'Bajar' : 'Subir'} a ${objFmt(obj, 'kg')}`;
+  if(tipo === 'pct_grasa') return `${obj < ini ? 'Bajar' : 'Subir'} al ${objFmt(obj, '%')} de grasa`;
+  return `Llegar a ${objFmt(obj, u)}`;
+}
+// Sugerencia prudente a partir del objetivo escrito en la ficha: solo peso, nunca en menores de 18 ni si el texto no deja clara la dirección.
+// Bajar: ≈ 0,5 % del peso por semana durante 8 semanas, el extremo prudente del 0,5-1 %/sem. que recomiendan Helms 2014 (doi 10.1186/1550-2783-11-20; pensado para
+// preparación de competición con culturismo natural) para conservar masa muscular. Subir: ≈ 0,25 %/sem. como cifra ORIENTATIVA decidida con el usuario, SIN respaldo
+// (Slater 2019, doi 10.3389/fnut.2019.00131: el superávit necesario no está validado); la tarjeta de sugerencia lo avisa.
+function objSugerencia(texto, peso, edad){
+  if(!peso || (edad != null && edad < 18)) return null;
+  const t = String(texto || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/manten\w*\s+(la\s+)?masa(\s+muscular)?/g, ' ');
+  const baja = /\b(perd|bajar|bajada|adelgaz|defin|reduc|deficit|quemar)/.test(t), sube = /\b(gan|volumen|aument|hipertrof|subir|masa muscular)/.test(t);
+  if(baja === sube) return null;
+  const sem = 8, ritmo = baja ? 0.5 : 0.25, obj = Math.round(peso * (1 + (baja ? -1 : 1) * ritmo / 100 * sem) * 2) / 2, ini = Math.round(peso * 10) / 10;
+  if(obj === ini) return null;
+  return { dir: baja ? 'bajar' : 'subir', inicial: ini, objetivo: obj, semanas: sem, ritmo };
+}
+// Cómo va un objetivo activo: texto y tono (ok / warn / '').
+function objEstado(a){
+  const b = a.progreso_bruto, e = a.esperado, dias = a.dias;
+  if(b >= 1) return { t:'Alcanzado: puedes marcarlo como cumplido.', c:'ok', aviso:true };
+  if(dias != null && dias < 0) return { t:'La fecha límite ya pasó: cúmplelo, renuévalo o cancélalo.', c:'warn', aviso:true };
+  if(b < 0) return { t:'Va en dirección contraria a la del objetivo.', c:'warn', aviso:true };
+  if(e != null) return b >= e - 0.1 ? { t:'Va a tiempo.', c:'ok' } : { t:`Va con retraso: por fecha debería llevar un ${Math.round(e * 100)} %.`, c:'warn', aviso:true };
+  return { t:'', c:'' };
+}
+function objDiasTxt(dias){ return dias == null ? '' : dias > 1 ? `quedan ${dias} días` : dias === 1 ? 'queda 1 día' : dias === 0 ? 'es hoy' : dias === -1 ? 'hace 1 día' : `hace ${-dias} días`; }
+
+async function loadObjetivo(depId){
+  const el = document.getElementById('objBox'); if(!el) return;
+  const [act, hist] = await Promise.all([
+    Promise.resolve(sb('rpc/objetivo_progreso', { method:'POST', body:JSON.stringify({ p_dep:depId }) })).catch(() => undefined),
+    Promise.resolve(sb(`objetivos_cliente?deportista_id=eq.${depId}&estado=neq.activo&order=creado.desc,id.desc&select=*`)).catch(() => null)
+  ]);
+  if(!document.getElementById('objBox') || currentDepId != depId) return;
+  if(!Array.isArray(hist) || esErrorSb(act)){ _objAct = null; el.innerHTML = '<p class="med-empty">Esta función necesita el SQL <b>supabase_objetivos.sql</b> ejecutado en Supabase.</p>'; return; }
+  const a = (act && typeof act === 'object') ? act : null;
+  _objAct = a;
+  const histHtml = hist.length ? `<details class="obj-hist"><summary>Historial (${hist.length})</summary><div class="obj-hl">${hist.map(r => {
+    const tit = objTit(r.tipo, r.titulo, +r.valor_inicial, +r.valor_objetivo, r.unidad);
+    const est = { cumplido:'Cumplido', cancelado:'Cancelado', sustituido:'Sustituido por otro' }[r.estado] || r.estado;
+    const fin = r.valor_final != null ? ` → ${objFmt(+r.valor_final, r.unidad)}` : '';
+    return `<div class="obj-hr"><div class="obj-hr-t">${sudEsc(tit)}</div><div class="obj-hr-d">${objFmt(+r.valor_inicial, r.unidad)}${fin} (objetivo ${objFmt(+r.valor_objetivo, r.unidad)})</div><div class="obj-hr-d"><span class="obj-chip${r.estado === 'cumplido' ? ' ok' : ''}">${est}</span> ${objFecha(r.fecha_inicio)} – ${objFecha(r.cerrado_en)}${r.origen === 'sugerido' ? ' · sugerido por la app' : ''}${r.nota ? ' · ' + sudEsc(r.nota) : ''}</div></div>`;
+  }).join('')}</div></details>` : '';
+  if(!a){
+    el.innerHTML = `<div class="obj-card"><p class="obj-vacio">Sin objetivo. Es opcional: mientras no haya uno, el cliente no ve nada.</p><div id="objSug"></div><div class="med-actions">${btnSoft('Proponer objetivo', `objAbrir(${depId})`, 'plus')}</div></div>${histHtml}`;
+    objSugerir(depId);
+    return;
+  }
+  const tit = objTit(a.tipo, a.titulo, a.inicial, a.objetivo, a.unidad), pct = Math.round(a.progreso * 100), est = objEstado(a);
+  const dia = a.fecha_limite ? `${objFecha(a.fecha_limite)} · ${objDiasTxt(a.dias)}` : 'Sin fecha límite';
+  const rend = a.tipo === 'rendimiento';
+  el.innerHTML = `<div class="obj-card">
+    <div class="obj-top"><div><div class="obj-t">${sudEsc(tit)}</div><div class="obj-sub">${sudEsc(dia)}</div></div><div class="obj-pct">${pct} %</div></div>
+    <div class="obj-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct}" aria-label="Avance del objetivo"><i style="width:${pct}%"></i>${a.esperado != null ? `<b style="left:${Math.round(a.esperado * 100)}%" title="Dónde debería ir por fecha"></b>` : ''}</div>
+    <div class="obj-vals"><div><span>Inicio</span><b>${objFmt(a.inicial, a.unidad)}</b></div><div><span>Ahora</span><b>${objFmt(a.actual, a.unidad)}</b></div><div><span>Objetivo</span><b>${objFmt(a.objetivo, a.unidad)}</b></div></div>
+    ${est.t ? `<p class="obj-est ${est.c}">${sudEsc(est.t)}</p>` : ''}
+    <p class="obj-meta">${a.sin_datos && !rend ? 'Aún no hay mediciones desde que se puso el objetivo.' : (rend ? 'Valor que anotas tú.' : `Según ${sudEsc(a.actual_origen || '')}${a.actual_fecha ? ' · ' + objFecha(a.actual_fecha) : ''}.`)}</p>
+    <div class="obj-chips"><span class="obj-chip">${a.visible_cliente ? 'Visible para el cliente' : 'Oculto para el cliente'}</span>${a.origen === 'sugerido' ? '<span class="obj-chip">Sugerido por la app</span>' : ''}</div>
+    ${a.nota ? `<p class="obj-meta">Nota privada: ${sudEsc(a.nota)}</p>` : ''}
+    ${rend ? `<div class="obj-act"><label class="mfl" for="objValAct" style="margin:0">Valor actual</label><input type="text" inputmode="decimal" class="inp" id="objValAct" value="${a.sin_datos ? '' : String(a.actual).replace('.', ',')}" style="max-width:110px"><button type="button" class="btn-soft sm" onclick="objSetActual(${a.id},${depId})">Actualizar</button></div>` : ''}
+    <div class="med-actions">${btnSoft('Marcar cumplido', `objCerrar(${depId},'cumplido')`, 'doc')}${btnSoft('Editar', `objAbrir(${depId},'editar')`, 'doc')}${btnSoft(a.visible_cliente ? 'Ocultar al cliente' : 'Mostrar al cliente', `objVisible(${a.id},${depId},${!a.visible_cliente})`, 'doc')}${btnSoft('Cancelar objetivo', `objCerrar(${depId},'cancelado')`, 'trash')}</div>
+  </div>${histHtml}`;
+}
+// Sugerencia de la app (solo cuando no hay objetivo): se calcula aparte para no retrasar la ficha.
+async function objSugerir(depId){
+  const d = deportistas.find(x => x.id == depId); if(!d || _objSugNo[depId]) return;
+  const ctx = await supContexto(depId);
+  const box = document.getElementById('objSug'); if(!box || currentDepId != depId) return;
+  const s = objSugerencia(d.objetivo, ctx.peso, ctx.edad); if(!s) return;
+  s.peso = ctx.peso;
+  box.innerHTML = `<div class="obj-sug"><p class="obj-sug-t">La app sugiere: <b>${s.dir === 'bajar' ? 'Bajar' : 'Subir'} de ${objFmt(s.inicial, 'kg')} a ${objFmt(s.objetivo, 'kg')} en ${s.semanas} semanas</b></p><p class="obj-meta" style="margin:0 0 8px">Sale del objetivo de su ficha («${sudEsc(d.objetivo)}») y de un ritmo prudente de ≈ ${String(s.ritmo).replace('.', ',')} % del peso por semana. ${s.dir === 'subir' ? 'Para subir no hay una cifra validada: es solo orientativa. ' : ''}Revísalo y ajústalo: nada llega al cliente hasta que lo aceptes.</p>
+    <div class="med-actions">${btnSoft('Revisar y aceptar', `objAbrir(${depId},'sugerido')`, 'plus')}<button type="button" class="btn-soft sm" onclick="_objSugNo[${depId}]=1;document.getElementById('objSug').innerHTML=''">Ahora no</button></div></div>`;
+  box.dataset.s = JSON.stringify(s);
+}
+
+// Valor actual del cliente según el tipo, para rellenar el «inicio».
+async function objValorInicio(depId, tipo){
+  if(tipo === 'peso'){ const c = await supContexto(depId); return c.peso ? { v:c.peso, o:c.fuente } : null; }
+  if(tipo === 'pct_grasa'){
+    const seguro = p => Promise.resolve(p).then(v => Array.isArray(v) ? v : []).catch(() => []);
+    const [meds, bios] = await Promise.all([seguro(getMediciones(depId)), seguro(getBio(depId))]);
+    const pm = meds.map(medPunto).filter(m => m.grasa != null).sort((a, b) => String(a.fecha).localeCompare(String(b.fecha)));
+    if(pm.length) return { v:pm[pm.length - 1].grasa, o:'antropometría', f:'antropometria' };
+    const pb = bios.map(bioPunto).filter(m => m.pct_grasa != null).sort((a, b) => a.fecha.localeCompare(b.fecha));
+    if(pb.length) return { v:pb[pb.length - 1].pct_grasa, o:'báscula', f:'bascula' };
+  }
+  return null;
+}
+async function objAbrir(depId, modo){
+  const d = deportistas.find(x => x.id == depId); if(!d) return;
+  const a = modo === 'editar' ? _objAct : null;
+  let sug = null;
+  if(modo === 'sugerido'){ try{ sug = JSON.parse(document.getElementById('objSug').dataset.s); }catch(e){} }
+  _obj = { depId, editId: a ? a.id : null, origen: sug ? 'sugerido' : (a ? a.origen : 'profesional'), iniTocado: !!(a || sug), inicioInfo: {} };
+  const tipo = a ? a.tipo : 'peso';
+  document.getElementById('objMTit').textContent = a ? 'Editar objetivo' : 'Proponer objetivo';
+  document.getElementById('objSub').textContent = d.nombre;
+  document.getElementById('objMsg').textContent = '';
+  const sel = document.getElementById('objTipo'); sel.value = tipo; sel.disabled = !!a;
+  document.getElementById('objTitulo').value = a ? (a.titulo || '') : '';
+  document.getElementById('objIni').value = a ? String(a.inicial).replace('.', ',') : (sug ? String(sug.inicial).replace('.', ',') : '');
+  document.getElementById('objObj').value = a ? String(a.objetivo).replace('.', ',') : (sug ? String(sug.objetivo).replace('.', ',') : '');
+  document.getElementById('objUni').value = a && a.tipo === 'rendimiento' ? a.unidad : '';
+  document.getElementById('objAct').value = a && a.tipo === 'rendimiento' && !a.sin_datos ? String(a.actual).replace('.', ',') : '';
+  document.getElementById('objFuente').value = a && a.tipo === 'pct_grasa' ? a.fuente : 'cualquiera';
+  const fl = a ? a.fecha_limite : (sug ? localISO(new Date(Date.now() + sug.semanas * 7 * 86400000)) : '');
+  document.getElementById('objFechaLim').value = fl ? String(fl).slice(0, 10) : '';
+  document.getElementById('objNota').value = a ? (a.nota || '') : '';
+  document.getElementById('objVisibleCk').checked = a ? !!a.visible_cliente : true;
+  objTipoCambio(true);
+  document.getElementById('mObj').style.display = 'flex';
+}
+function objCerrarModal(){ document.getElementById('mObj').style.display = 'none'; _obj = null; }
+async function objTipoCambio(inicial){
+  if(!_obj) return;
+  const t = document.getElementById('objTipo').value, tt = OBJ_TIPOS[t];
+  document.getElementById('objTituloBox').querySelector('label').innerHTML = t === 'rendimiento' ? 'Qué quieres conseguir' : 'Título <span class="hd-opt">(opcional)</span>';
+  document.getElementById('objUniBox').style.display = t === 'rendimiento' ? '' : 'none';
+  document.getElementById('objActBox').style.display = t === 'rendimiento' ? '' : 'none';
+  document.getElementById('objFuenteBox').style.display = t === 'pct_grasa' ? '' : 'none';
+  document.getElementById('objIniL').textContent = t === 'rendimiento' ? 'Valor de partida' : `Valor de partida (${tt.u})`;
+  document.getElementById('objObjL').textContent = t === 'rendimiento' ? 'Valor objetivo' : `Valor objetivo (${tt.u})`;
+  document.getElementById('objIniSrc').textContent = '';
+  if(t === 'rendimiento') return;
+  const depId = _obj.depId, v = await objValorInicio(depId, t);
+  if(!_obj || _obj.depId != depId || document.getElementById('objTipo').value !== t) return;
+  if(v){
+    document.getElementById('objIniSrc').textContent = `Último valor: ${objFmt(v.v, tt.u)} (${v.o}).`;
+    if(!_obj.iniTocado && !document.getElementById('objIni').value) document.getElementById('objIni').value = String(Math.round(v.v * 10) / 10).replace('.', ',');
+  } else document.getElementById('objIniSrc').textContent = t === 'peso' ? 'No hay ningún peso registrado: escríbelo.' : 'No hay ningún % de grasa medido: escríbelo.';
+}
+async function objGuardar(){
+  if(!_obj) return;
+  const msg = document.getElementById('objMsg'), t = document.getElementById('objTipo').value, depId = _obj.depId;
+  const ini = objNum(document.getElementById('objIni').value), obj = objNum(document.getElementById('objObj').value);
+  const titulo = document.getElementById('objTitulo').value.trim(), unidad = t === 'rendimiento' ? document.getElementById('objUni').value.trim() : OBJ_TIPOS[t].u;
+  const lim = document.getElementById('objFechaLim').value, hoy = localISO(new Date());
+  const rango = { peso:[20, 400], pct_grasa:[3, 60] }[t];
+  if(t === 'rendimiento' && !titulo){ msg.textContent = 'Escribe qué quieres conseguir.'; return; }
+  if(ini == null || obj == null){ msg.textContent = 'Escribe el valor de partida y el objetivo.'; return; }
+  if(ini === obj){ msg.textContent = 'El objetivo tiene que ser distinto del valor de partida.'; return; }
+  if(rango && (ini < rango[0] || ini > rango[1] || obj < rango[0] || obj > rango[1])){ msg.textContent = `Los valores tienen que estar entre ${rango[0]} y ${rango[1]}.`; return; }
+  if(lim && !_obj.editId && lim < hoy){ msg.textContent = 'La fecha límite no puede estar en el pasado.'; return; }
+  const cuerpo = { tipo:t, titulo:titulo || null, unidad, valor_inicial:ini, valor_objetivo:obj, fecha_limite:lim || null,
+    fuente: t === 'rendimiento' ? 'manual' : t === 'pct_grasa' ? document.getElementById('objFuente').value : 'cualquiera',
+    valor_actual: t === 'rendimiento' ? objNum(document.getElementById('objAct').value) : null,
+    nota: document.getElementById('objNota').value.trim() || null, visible_cliente: document.getElementById('objVisibleCk').checked, actualizado: new Date().toISOString() };
+  const btn = document.getElementById('objBtnGuardar'); btn.disabled = true;
+  const fin = () => { btn.disabled = false; };
+  const hdr = { 'Prefer':'return=minimal' };
+  if(_obj.editId){
+    delete cuerpo.tipo;
+    const r = await sb(`objetivos_cliente?id=eq.${_obj.editId}`, { method:'PATCH', headers:hdr, body:JSON.stringify(cuerpo) });
+    fin(); if(esErrorSb(r)){ msg.textContent = 'No se pudo guardar. Inténtalo de nuevo.'; return; }
+    objCerrarModal(); loadObjetivo(depId); loadEstado(depId); toast('Objetivo actualizado'); return;
+  }
+  // Un solo objetivo activo: el anterior pasa a «sustituido» (y se restaura si falla el alta).
+  const previo = _objAct;
+  if(previo){
+    const r0 = await sb(`objetivos_cliente?id=eq.${previo.id}`, { method:'PATCH', headers:hdr, body:JSON.stringify({ estado:'sustituido', cerrado_en:hoy, valor_final:previo.actual, actualizado:new Date().toISOString() }) });
+    if(esErrorSb(r0)){ fin(); msg.textContent = 'No se pudo sustituir el objetivo anterior.'; return; }
+  }
+  const r = await sb('objetivos_cliente', { method:'POST', headers:hdr, body:JSON.stringify({ ...cuerpo, deportista_id:depId, origen:_obj.origen, fecha_inicio:hoy }) });
+  if(esErrorSb(r)){
+    if(previo) await sb(`objetivos_cliente?id=eq.${previo.id}`, { method:'PATCH', headers:hdr, body:JSON.stringify({ estado:'activo', cerrado_en:null, valor_final:null }) });
+    fin(); msg.textContent = 'No se pudo guardar. Inténtalo de nuevo.'; return;
+  }
+  fin(); objCerrarModal(); loadObjetivo(depId); loadEstado(depId);
+  toast(cuerpo.visible_cliente ? 'Objetivo guardado: el cliente ya lo ve' : 'Objetivo guardado (oculto para el cliente)');
+}
+async function objCerrar(depId, estado){
+  const a = _objAct; if(!a) return;
+  const hdr = { 'Prefer':'return=minimal' };
+  const r = await sb(`objetivos_cliente?id=eq.${a.id}`, { method:'PATCH', headers:hdr, body:JSON.stringify({ estado, cerrado_en:localISO(new Date()), valor_final:a.actual, actualizado:new Date().toISOString() }) });
+  if(esErrorSb(r)){ toast('No se pudo guardar. Inténtalo de nuevo.', { tipo:'error' }); return; }
+  loadObjetivo(depId); loadEstado(depId);
+  toast(estado === 'cumplido' ? 'Objetivo cumplido: queda en el historial' : 'Objetivo cancelado: el cliente deja de verlo', { ms:6000, accion:{ texto:'Deshacer', fn: async () => {
+    const r2 = await sb(`objetivos_cliente?id=eq.${a.id}`, { method:'PATCH', headers:hdr, body:JSON.stringify({ estado:'activo', cerrado_en:null, valor_final:null, actualizado:new Date().toISOString() }) });
+    if(esErrorSb(r2)) toast('No se pudo deshacer. Si ya hay otro objetivo activo, cancélalo primero.', { tipo:'error' });
+    loadObjetivo(depId); loadEstado(depId);
+  } } });
+}
+async function objVisible(id, depId, visible){
+  const r = await sb(`objetivos_cliente?id=eq.${id}`, { method:'PATCH', headers:{ 'Prefer':'return=minimal' }, body:JSON.stringify({ visible_cliente:visible, actualizado:new Date().toISOString() }) });
+  if(esErrorSb(r)){ toast('No se pudo cambiar. Inténtalo de nuevo.', { tipo:'error' }); return; }
+  loadObjetivo(depId); toast(visible ? 'El cliente vuelve a ver el objetivo' : 'El cliente ya no ve el objetivo');
+}
+async function objSetActual(id, depId){
+  const v = objNum(document.getElementById('objValAct').value);
+  if(v == null){ toast('Escribe un número.', { tipo:'aviso' }); return; }
+  const r = await sb(`objetivos_cliente?id=eq.${id}`, { method:'PATCH', headers:{ 'Prefer':'return=minimal' }, body:JSON.stringify({ valor_actual:v, actualizado:new Date().toISOString() }) });
+  if(esErrorSb(r)){ toast('No se pudo guardar. Inténtalo de nuevo.', { tipo:'error' }); return; }
+  loadObjetivo(depId); loadEstado(depId); toast('Valor actualizado');
 }
 
 // ═══════════════ HISTORIAL DE SESIONES + ACTIVIDAD ═══════════════

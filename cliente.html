@@ -114,6 +114,13 @@ body.in-plan .topbar{display:none}
 .rev-card .tile-ic{width:38px;height:38px;border-radius:11px}
 .nota-card{display:flex;align-items:flex-start;gap:12px;background:var(--t50);border:.5px solid rgba(29,158,117,.28);border-radius:14px;padding:.8rem .95rem;margin-bottom:12px}
 .nota-card .tile-ic{width:38px;height:38px;border-radius:11px;flex-shrink:0}
+.obj-card{display:flex;align-items:center;gap:12px;background:var(--sf);border:.5px solid var(--bdm);border-radius:14px;padding:.8rem .95rem;margin-bottom:12px}
+.obj-card .tile-ic{width:38px;height:38px;border-radius:11px;flex-shrink:0}
+.obj-card.ok{background:var(--t50);border-color:rgba(29,158,117,.28)}
+.obj-bar{height:8px;border-radius:5px;background:var(--pill-n);margin:7px 0 6px;overflow:hidden}
+.obj-bar>i{display:block;height:100%;border-radius:5px;background:linear-gradient(90deg,var(--t400),var(--t600));transition:width .6s ease}
+.obj-pct{font-size:20px;font-weight:700;color:var(--t600);flex-shrink:0;line-height:1}
+@media(prefers-reduced-motion:reduce){.obj-bar>i{transition:none}}
 #vreg .reg-row,#vdia .reg-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 10px;align-items:end}
 #vreg .reg-row label,#vdia .reg-row label{display:block;font-size:11.5px;font-weight:600;color:var(--g500);margin-bottom:5px}
 #vreg .reg-row>div,#vdia .reg-row>div{min-width:0}
@@ -560,6 +567,16 @@ body>*:not(#mnPrint){display:none !important}
       <a class="rev-add" id="revGoogle" href="#" target="_blank" rel="noopener noreferrer"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Añadir a Google Calendar</a>
     </div>
   </div>
+  <div class="obj-card" id="objCard" style="display:none">
+    <span class="tile-ic" id="objIc"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></span>
+    <div style="flex:1;min-width:0">
+      <div class="rev-l" id="objL">Tu objetivo</div>
+      <div class="rev-d" id="objT"></div>
+      <div class="obj-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-label="Avance de tu objetivo" id="objBarBox"><i id="objBar"></i></div>
+      <div class="rev-s" id="objS"></div>
+    </div>
+    <b class="obj-pct" id="objP"></b>
+  </div>
   <button class="tile" onclick="abrirDatos()">
     <span class="tile-ic"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>
     <span><span class="tile-t">Composición corporal</span><br><span class="tile-d">Antropometría, bioimpedancia y evolución</span></span>
@@ -807,7 +824,7 @@ async function guardarPassword(){
 function logout(){
   const s=authLoad();
   if(s) fetch(SURL+'/auth/v1/logout',{method:'POST',headers:{'apikey':SKEY,'Authorization':'Bearer '+s.access_token}}).catch(()=>{});
-  authClear(); FICHA=DATOS=REG=null; PLANES=[]; SUPL=[]; DIA=null; DIA_FILE=null; REG_CMP=null; 
+  authClear(); FICHA=DATOS=REG=null; PLANES=[]; SUPL=[]; OBJ=null; DIA=null; DIA_FILE=null; REG_CMP=null; 
   $('lpass').value=''; $('lerr').textContent='';
   show('vlogin');
 }
@@ -817,7 +834,7 @@ async function entrar(){
   show('vload');
   // Las peticiones opcionales salen a la vez que la ficha (antes iban una detrás de otra: 5 viajes seguidos). Si fallan, simplemente no salen sus tarjetas.
   const opc=fn=>rpc(fn).catch(()=>null);
-  const pPl=opc('cliente_mis_planes'), pDd=opc('cliente_mis_comidas'), pMm=opc('cliente_mi_menu'), pSu=opc('cliente_mi_suplementacion');
+  const pPl=opc('cliente_mis_planes'), pDd=opc('cliente_mis_comidas'), pMm=opc('cliente_mi_menu'), pSu=opc('cliente_mi_suplementacion'), pOb=opc('cliente_mi_objetivo');
   try{
     FICHA=await rpc('cliente_mi_ficha');
   }catch(e){
@@ -830,12 +847,13 @@ async function entrar(){
   const hh=new Date().getHours(), saludo=hh>=6&&hh<14?'Buenos días':hh>=14&&hh<21?'Buenas tardes':'Buenas noches';
   $('hello').textContent=nombre?(saludo+', '+nombre):saludo;
   $('helloSub').textContent=[FICHA.deporte,FICHA.objetivo].filter(Boolean).join(' · ')||'Aquí tienes tu información.';
-  const [pl,dd,mm,su]=await Promise.all([pPl,pDd,pMm,pSu]);
+  const [pl,dd,mm,su,ob]=await Promise.all([pPl,pDd,pMm,pSu,pOb]);
   PLANES=Array.isArray(pl)?pl:[];
   DIA=dd&&Array.isArray(dd.comidas)?dd:null;   // opcional: sin su SQL no sale la tarjeta
   MENU_DATA=mm&&mm.menu&&Array.isArray(mm.menu.semanas)&&mm.menu.semanas.length?mm:null;   // opcional: sin su SQL, o sin menú publicado, no sale la tarjeta
   SUPL=Array.isArray(su)?su:[];   // opcional: sin su SQL, o sin nada asignado, no sale la opción
-  pintarNota(); pintarRevision(); pintarInstTip(); pintarTileForms(); pintarTileComp(); pintarTileSupl(); pintarTileDia(); pintarMensajeDia(); pintarPush();
+  OBJ=ob&&typeof ob==='object'&&ob.objetivo!=null?ob:null;   // opcional: sin su SQL, o sin objetivo puesto por el profesional, no sale nada
+  pintarNota(); pintarRevision(); pintarObjetivo(); pintarInstTip(); pintarTileForms(); pintarTileComp(); pintarTileSupl(); pintarTileDia(); pintarMensajeDia(); pintarPush();
   show('vhome');
   abrirDesdeAviso();
 }
@@ -846,6 +864,28 @@ function pintarNota(){
   c.style.display=txt?'flex':'none'; if(!txt) return;
   $('notaT').textContent=txt;
   $('notaF').textContent=n.fecha?' · '+fmtF(String(n.fecha).slice(0,10),true):'';
+}
+// Objetivo que el profesional ha puesto (opcional): título, barra y valores. Sin juicios: nada de «retraso», solo dónde está y cuánto queda.
+const objFmtC=(n,u)=>{ const x=+n, e=Math.abs(x-Math.round(x))<0.05; return x.toLocaleString('es-ES',{minimumFractionDigits:e?0:1,maximumFractionDigits:e?0:1})+(u?(u==='%'?' %':' '+u):''); };
+function pintarObjetivo(){
+  const c=$('objCard'); if(!c) return;
+  const o=OBJ; c.style.display=o?'flex':'none'; if(!o) return;
+  const cumplido=o.estado==='cumplido', pct=Math.round(Math.max(0,Math.min(1,+o.progreso||0))*100);
+  let tit=o.titulo;
+  if(!tit) tit=o.tipo==='peso'?((o.objetivo<o.inicial?'Bajar':'Subir')+' a '+objFmtC(o.objetivo,'kg')):o.tipo==='pct_grasa'?((o.objetivo<o.inicial?'Bajar':'Subir')+' al '+objFmtC(o.objetivo,'%')+' de grasa'):('Llegar a '+objFmtC(o.objetivo,o.unidad));
+  c.classList.toggle('ok',cumplido);
+  $('objL').textContent=cumplido?'¡Objetivo conseguido!':'Tu objetivo';
+  $('objT').textContent=tit;
+  $('objBar').style.width=(cumplido?100:pct)+'%';
+  $('objBarBox').setAttribute('aria-valuenow',cumplido?100:pct);
+  $('objP').textContent=(cumplido?100:pct)+' %';
+  const partes=[];
+  if(!cumplido){
+    partes.push('Ahora '+objFmtC(o.actual,o.unidad)+' · objetivo '+objFmtC(o.objetivo,o.unidad));
+    if(o.dias!=null&&o.dias>=0) partes.push(o.dias===0?'es hoy':o.dias===1?'queda 1 día':'quedan '+o.dias+' días');
+    else if(o.dias!=null&&o.dias<0) partes.push('fecha límite: '+fmtF(String(o.fecha_limite).slice(0,10),true));
+  } else partes.push('Lo has conseguido: '+objFmtC(o.actual,o.unidad));
+  $('objS').textContent=partes.join(' · ');
 }
 // Una frase corta y amable bajo el saludo, según lo que más importa hoy.
 const MSG_ICO={ok:'<polyline points="20 6 9 17 4 12"/>',form:'<path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>',cal:'<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>'};
@@ -1455,7 +1495,7 @@ function evolucionSeg(){
 }
 
 // ═══ Plan de competición (copia ya calculada por el profesional; solo hasta el día siguiente a la competición) ═══
-let PLANES=[], SUPL=[];
+let PLANES=[], SUPL=[], OBJ=null;
 // ═══ Mi menú semanal: copia ya publicada por el profesional (nunca el borrador ni el catálogo) ═══
 // El bloque mnv*/mnImpr* es el mismo de planificador-nutricional.html (vista del cliente): si cambia allí, copiarlo aquí.
 let MENU=null, MENU_DATA=null; const MNV={sem:null,dia:0,tab:'hoy',rec:null,f:1};

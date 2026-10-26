@@ -465,6 +465,15 @@ body.dark-mode .mn-bib-b.veg{color:var(--t800)}
 .mn-imp-t tbody th{white-space:nowrap}
 .mn-imp-n{margin:14px 0 0;padding-left:18px;font-size:12.5px;color:var(--g500);line-height:1.6}
 .mn-dt-f{font-size:11.5px;color:var(--g400);margin-top:5px}
+.mn-reaj{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;background:var(--gold-50);border:.5px solid var(--pill-au-bd);border-left:3px solid var(--gold);border-radius:12px;padding:10px 14px;margin-bottom:14px}
+.mn-reaj>div:first-child{min-width:0;flex:1 1 280px;font-size:13px;line-height:1.5;color:var(--g900)}
+.mn-reaj b{display:block;font-size:13.5px}
+.mn-reaj span{color:var(--g700)}
+.mn-reaj-t{margin-top:4px}
+.mn-reaj-r{display:grid;grid-template-columns:120px 1fr 1fr;gap:4px 14px;align-items:baseline;padding:9px 0;border-top:.5px solid var(--bd);font-size:13px;color:var(--g700)}
+.mn-reaj-r b{color:var(--g900)}.mn-reaj-r strong{color:var(--t600)}
+@media(max-width:560px){.mn-reaj-r{grid-template-columns:1fr 1fr}.mn-reaj-r b{grid-column:1/-1}}
+.mn-reaj-l{margin:0;padding-left:18px;font-size:12.5px;line-height:1.6;color:var(--g700)}
 .mn-dt-n{font-size:12.5px;color:var(--g500);margin:14px 0 0;line-height:1.55}
 .mn-dt-n.warn{color:var(--gold-dk)}
 .mn-estado.bad i{background:#C0504D}
@@ -591,6 +600,9 @@ body.dark-mode .mn-bib-b.veg{color:var(--t800)}
 </div>
 <div class="mbg" id="mMnObj" style="display:none;z-index:315" role="dialog" aria-modal="true" aria-labelledby="mnObjTit" onclick="if(event.target===this)mnObjCerrar()">
   <div class="mc" style="max-width:720px;max-height:calc(100dvh - 2rem);overflow-y:auto" id="mnObjCuerpo"></div>
+</div>
+<div class="mbg" id="mMnReaj" style="display:none;z-index:318" role="dialog" aria-modal="true" aria-labelledby="mnReajTit" onclick="if(event.target===this)mnReajCerrar()">
+  <div class="mc" style="max-width:640px;max-height:calc(100dvh - 2rem);overflow-y:auto" id="mnReajCuerpo"></div>
 </div>
 <input type="file" id="mnFoto" accept="image/*" style="display:none" aria-hidden="true" tabindex="-1" onchange="mnFotoSubida(this)">
 
@@ -1329,7 +1341,7 @@ function mnMenuHtml() {
   const navSem = c.semanas.map(x => `<button type="button" class="mn-nav-i${x.id === s.id ? ' on' : ''}" onclick="mnElegirSemana('${x.id}')"><span>${sudEsc(x.nombre)}</span>${c.semanas.length > 1 && x.id === toca ? '<span class="mn-tag">Esta semana</span>' : ''}</button>`).join('');
   const navDias = s.dias.map((x, i) => `<button type="button" class="mn-nav-i${i === MN.dia ? ' on' : ''}" onclick="mnElegirDia(${i})"><span>${sudEsc(x.n)}${mnDiaPie(x) ? `<small>${sudEsc(mnDiaPie(x))}</small>` : ''}</span>${x.comidas.length ? `<span class="mn-n" aria-label="${x.comidas.length} comidas">${x.comidas.length}</span>` : ''}</button>`).join('');
   const comidas = d.comidas.length ? d.comidas.map((m, i) => mnComidaHtml(m, i, d.comidas.length)).join('') : `<div class="mn-vacio"><b>Este día no tiene comidas todavía</b><span class="mn-ayuda">Añade las que necesite este cliente: pueden ser 3, 4, 5 o las que haga falta.</span></div>`;
-  return `<div class="mn-grid">
+  return `${mnReajBanner()}<div class="mn-grid">
     <aside class="mn-side">
       <section class="mn-card"><p class="mn-k">Plan</p><label class="mn-l" for="mnTitulo">Título</label><input class="inp" id="mnTitulo" maxlength="120" value="${sudEsc(c.titulo || '')}" oninput="MN.c.titulo=this.value;mnCambio()">
         <div class="mn-f" style="margin-top:12px"><label class="mn-l" for="mnFac">Cantidades al publicar <span class="hd-opt">(%)</span></label><input class="inp" id="mnFac" type="number" min="50" max="150" step="5" value="${Math.round((c.factor || 1) * 100)}" onchange="mnFactorSet(this.value)"></div>
@@ -1849,8 +1861,10 @@ function mnDiaPie(x) { const t = mnTotDia(x); return [x.ctx && x.ctx.texto, t.ca
 
 // ── Ventana «Objetivos nutricionales» ──
 async function mnCargarPerfil(depId) {
-  const out = { sexo: '', nac: '', talla: null, peso: null, pesoFecha: '' };
-  const [pr, va] = await Promise.all([sb(`antropometria_perfil?deportista_id=eq.${depId}&select=*`).catch(() => null), sb(`antropometria_valoraciones?deportista_id=eq.${depId}&order=fecha.desc&limit=1&select=fecha,resumen,medidas`).catch(() => null)]);
+  const out = { sexo: '', nac: '', talla: null, peso: null, pesoFecha: '', pesoRec: null, objetivo: null };
+  const rpcOpc = (fn) => sb('rpc/' + fn, { method: 'POST', body: JSON.stringify({ p_dep: depId }) }).then(v => (v && typeof v === 'object' && !Array.isArray(v) && !v.code && !v.message) ? v : null).catch(() => null);
+  const [pr, va, rec, obj] = await Promise.all([sb(`antropometria_perfil?deportista_id=eq.${depId}&select=*`).catch(() => null), sb(`antropometria_valoraciones?deportista_id=eq.${depId}&order=fecha.desc&limit=1&select=fecha,resumen,medidas`).catch(() => null), rpcOpc('peso_reciente'), rpcOpc('objetivo_progreso')]);
+  out.pesoRec = rec; out.objetivo = obj;   // opcionales: sin supabase_objetivos.sql quedan en null y no pasa nada
   try { if (Array.isArray(pr) && pr[0]) { out.sexo = /^m/i.test(pr[0].sexo || '') ? 'M' : 'H'; out.nac = pr[0].fecha_nacimiento || ''; out.talla = pr[0].talla ? +pr[0].talla : null; } } catch (e) {}
   try { if (Array.isArray(va) && va[0]) { const v = va[0], p = (v.resumen && v.resumen.peso) || (v.medidas && v.medidas.peso); if (p) { out.peso = +p; out.pesoFecha = v.fecha; } if (!out.talla && v.medidas && v.medidas.talla) out.talla = +v.medidas.talla; } } catch (e) {}
   return out;
@@ -1910,6 +1924,81 @@ function mnObjGuardar() {
   MN.c.obj = { peso: mnNum2(o.peso), prot: mnNum2(o.prot) || 1.2, grasaPct: mnNum2(o.grasaPct) || 22, kcal, pal: o.pal, adj: mnNum2(o.adj) || 0, sexo: o.sexo, edad: mnNum2(o.edad), talla: mnNum2(o.talla) };
   mnObjCerrar(); mnCambio(); mnPintar(); toast('Objetivos guardados');
 }
+// ── Reajuste de las kcal al cambiar el peso ──
+// Si el peso del cliente se aleja del que se usó para calcular los objetivos (2 kg o un 3 %), avisa y propone nuevos objetivos. No cambia nada solo:
+// el profesional revisa la tabla y decide. Las kcal se reescalan con el cociente del gasto en reposo de Mifflin-St Jeor (peso nuevo / peso antiguo, mismos
+// sexo, edad y talla), así se conservan el factor de actividad y el ajuste que ya se había elegido. La proteína va por g/kg y se recalcula sola con el peso.
+const mnReajKcal = (obj, tipo) => obj.kcal[tipo] || obj.kcal.base || null;
+function mnPesoNuevo() {
+  const p = MN.perfil || {}, r = p.pesoRec;
+  if (r && r.valor) return { v: +(r.n7 > 1 && r.media7 ? r.media7 : r.valor), f: r.fecha, o: r.origen, media: r.n7 > 1 };
+  return p.peso ? { v: +p.peso, f: p.pesoFecha, o: 'antropometría', media: false } : null;
+}
+function mnReajInfo() {
+  const o = MN.c.obj; if (!o || !o.peso || !o.kcal) return null;
+  const n = mnPesoNuevo(); if (!n || !isFinite(n.v)) return null;
+  const dif = n.v - o.peso;
+  if (Math.abs(dif) < 2 && Math.abs(dif) / o.peso < 0.03) return null;
+  if (MN.c.reajNo != null && Math.abs(n.v - MN.c.reajNo) < 1) return null;
+  return { ...n, dif, antes: o.peso };
+}
+function mnReajBanner() {
+  const i = mnReajInfo(); if (!i) return '';
+  return `<div class="mn-reaj" role="status"><div><b>El peso ha cambiado</b><span>${mnF(i.antes, 1)} → ${mnF(i.v, 1)} kg (${i.dif > 0 ? '+' : '−'}${mnF(Math.abs(i.dif), 1)} kg${i.media ? ' · media de la última semana' : ''}). Conviene revisar los objetivos de kcal.</span></div><div class="mn-add" style="margin:0">${mnBtn('Revisar reajuste', 'mnReajAbrir()', { sm: true, icon: 'wand' })}${mnBtn('Ahora no', 'mnReajAhoraNo()', { sm: true, ghost: true })}</div></div>`;
+}
+function mnReajAhoraNo() { const i = mnReajInfo(); if (!i) return; MN.c.reajNo = i.v; mnCambio(); mnPintar(); }
+function mnReajPropuesta(i) {
+  const o = MN.c.obj, nuevo = Math.round(i.v * 10) / 10, tiene = !!(o.talla && o.edad);
+  const bmr = w => 10 * w + 6.25 * o.talla - 5 * o.edad + (o.sexo === 'M' ? -161 : 5);
+  const f = tiene ? bmr(nuevo) / bmr(o.peso) : null, kcal = {};
+  Object.keys(o.kcal).forEach(k => { kcal[k] = f ? Math.round(o.kcal[k] * f / 10) * 10 : o.kcal[k]; });
+  return { nuevo, tiene, f, kcal, nueva: { ...o, peso: nuevo, kcal } };
+}
+// Días del plan fuera de ±15 % de las kcal del objetivo (los mismos que marcan «mal» las barras).
+function mnReajDias(obj) {
+  const fuera = [];
+  let n = 0;
+  MN.c.semanas.forEach(s => s.dias.forEach(d => {
+    const t = mnTotDia(d); if (!t.calc || !d.comidas.length) return;
+    const tipo = mnTipoDia(d), obj_ = mnReajKcal(obj, tipo); if (!obj_) return;
+    n++; const r = t.kcal / obj_;
+    if (Math.abs(r - 1) > 0.15) fuera.push({ s: s.nombre, d: d.n, tipo: (MN_TIPOS_DIA.find(x => x[0] === tipo) || ['', ''])[1], kcal: t.kcal, obj: obj_, r });
+  }));
+  return { n, fuera };
+}
+function mnReajAbrir() {
+  const i = mnReajInfo(); if (!i) return;
+  const o = MN.c.obj, p = mnReajPropuesta(i), antes = mnReajDias(o), desp = mnReajDias(p.nueva), ob = MN.perfil && MN.perfil.objetivo;
+  _mnReaj = { info: i, prop: p };
+  const filas = Object.keys(o.kcal).map(k => { const n = (MN_TIPOS_DIA.find(x => x[0] === k) || [k, k])[1], pr = o.prot || 1.2; return `<div class="mn-reaj-r"><b>${sudEsc(n)}</b><span>${mnF(o.kcal[k])} → <strong>${mnF(p.kcal[k])}</strong> kcal</span><span>Proteína ${mnF(pr * o.peso)} → ${mnF(pr * p.nuevo)} g</span></div>`; }).join('');
+  let dir = '';
+  if (ob && ob.objetivo != null && ob.inicial != null) {
+    const bajar = ob.objetivo < ob.inicial, va = (i.dif < 0) === bajar;
+    dir = `<p class="mn-dt-n${va ? '' : ' warn'}" style="margin:0 0 10px">Su objetivo es ${bajar ? 'bajar' : 'subir'} a ${mnF(ob.objetivo, 1)}${ob.unidad ? ' ' + sudEsc(ob.unidad) : ''}${ob.tipo === 'peso' ? '' : ' (' + sudEsc(ob.titulo || ob.tipo) + ')'}: ${ob.tipo === 'peso' ? (va ? 'el cambio de peso va en esa dirección.' : 'el cambio de peso va en dirección contraria.') : 'mira si el cambio de peso encaja con él.'}</p>`;
+  }
+  const lista = desp.fuera.slice(0, 10).map(x => `<li>${sudEsc(x.s)} · ${sudEsc(x.d)}${x.tipo ? ' (' + sudEsc(x.tipo) + ')' : ''}: ${mnF(x.kcal)} kcal frente a ${mnF(x.obj)} (${x.r > 1 ? '+' : '−'}${mnF(Math.abs(x.r - 1) * 100)} %)</li>`).join('');
+  document.getElementById('mnReajCuerpo').innerHTML = `<p class="mt" id="mnReajTit">Reajustar al peso nuevo</p>
+    <p class="ms">Los objetivos se calcularon con ${mnF(i.antes, 1)} kg y ahora el peso es ${mnF(i.v, 1)} kg (${i.dif > 0 ? '+' : '−'}${mnF(Math.abs(i.dif), 1)} kg · ${sudEsc(i.o || '')}${i.f ? ', ' + sudEsc(mnFecha(i.f)) : ''}${i.media ? ' · media de la última semana' : ''}).</p>
+    ${dir}
+    ${p.tiene ? `<div class="mn-reaj-t" role="group" aria-label="Objetivos propuestos por tipo de día">${filas}</div>
+      <p class="mn-ayuda" style="margin:6px 0 0">Proteína a ${mnF(o.prot || 1.2, 1)} g/kg del peso nuevo.</p>
+      <p class="mn-ayuda" style="margin:8px 0 0">Las kcal se reescalan con el gasto en reposo de Mifflin-St Jeor (${mnF(o.peso, 1)} → ${mnF(p.nuevo, 1)} kg), así se conservan el factor de actividad y el ajuste que elegiste. Es una estimación: puedes corregirlas a mano después en «Objetivos nutricionales».</p>`
+      : `<p class="mn-dt-n warn" style="margin:0">Para recalcular las kcal hacen falta la edad y la talla del cliente. Puedes completarlas en «Objetivos nutricionales» o actualizar solo el peso (la proteína en gramos se recalcula sola).</p>`}
+    ${antes.n ? `<p class="mn-sec">Días del plan</p><p class="mn-ayuda" style="margin:0 0 6px">Con los objetivos actuales hay <b>${antes.fuera.length}</b> de ${antes.n} días fuera de ±15 % de las kcal${p.tiene ? '; con los propuestos, <b>' + desp.fuera.length + '</b>' : ''}.</p>${p.tiene && desp.fuera.length ? `<ul class="mn-reaj-l">${lista}</ul>${desp.fuera.length > 10 ? `<p class="mn-ayuda" style="margin:4px 0 0">…y ${desp.fuera.length - 10} más.</p>` : ''}` : ''}` : ''}
+    <p class="mn-ayuda" style="margin:12px 0 0">Estos objetivos solo los ves tú (el cliente no ve totales). El menú no cambia: si hace falta, ajusta los platos y vuelve a publicar.</p>
+    <div class="mbtns" style="margin-top:14px"><button type="button" class="btn-cancel" onclick="mnReajCerrar()">Cancelar</button>${p.tiene ? '' : `<button type="button" class="btn-cancel" onclick="mnReajCerrar();mnObjAbrir()">Abrir objetivos</button>`}<button type="button" class="btn-ok" onclick="mnReajAplicar()">${p.tiene ? 'Aplicar reajuste' : 'Actualizar solo el peso'}</button></div>`;
+  document.getElementById('mMnReaj').style.display = 'flex';
+}
+function mnReajCerrar() { _mnReaj = null; document.getElementById('mMnReaj').style.display = 'none'; }
+function mnReajAplicar() {
+  if (!_mnReaj) return;
+  const prev = JSON.parse(JSON.stringify(MN.c.obj)), prevNo = MN.c.reajNo, nueva = _mnReaj.prop.nueva;
+  MN.c.obj = nueva; delete MN.c.reajNo;
+  mnReajCerrar(); mnCambio(); mnPintar();
+  toast('Objetivos reajustados', { ms: 7000, accion: { texto: 'Deshacer', fn: () => { MN.c.obj = prev; if (prevNo != null) MN.c.reajNo = prevNo; mnCambio(); mnPintar(); } } });
+}
+let _mnReaj = null;
+
 function mnObjResumenHtml() {
   const o = MN.c.obj; if (!o || !o.kcal) return `<p class="mn-ayuda" style="margin:0 0 12px">Define las kcal por tipo de día para comparar lo que sumas con lo que necesita.</p>${mnBtn('Definir objetivos', 'mnObjAbrir()', { icon: 'plus', sm: true })}`;
   return `<div class="mn-ob-l">${mnTiposEnUso().filter(([k]) => o.kcal[k]).map(([k, n]) => `<div><span>${n}</span><b>${mnF(o.kcal[k])} kcal</b></div>`).join('')}</div><p class="mn-ayuda" style="margin:8px 0 12px">${mnF(o.peso, 1)} kg · proteína ${mnF(o.prot, 1)} g/kg · grasa ${mnF(o.grasaPct)} % de las kcal</p>${mnBtn('Editar objetivos', 'mnObjAbrir()', { icon: 'doc', sm: true })}`;
