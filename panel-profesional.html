@@ -1761,7 +1761,7 @@ body.dark-mode .ref-src,body.dark-mode .sup-badge,body.dark-mode .depd-avatar-fa
         <div class="cmp-slot-h" id="compSlotATit"><span class="cmp-tag a">A</span>Alimento A</div>
         <div class="cmp-search">
           <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <input type="text" id="compSearchA" placeholder="Buscar un alimento…" autocomplete="off" oninput="compSearch('A')">
+          <input type="text" id="compSearchA" placeholder="Buscar un alimento y pulsar Intro…" autocomplete="off" enterkeyhint="search" oninput="compSearch('A')" onkeydown="if(event.key==='Enter'){event.preventDefault();clearTimeout(compTimers.A);compSearchAhora('A')}">
           <button class="cmp-x" id="compClearA" onclick="compClear('A')" title="Quitar alimento" style="display:none">×</button>
           <div id="compResultsA" class="cmp-results"></div>
         </div>
@@ -1771,7 +1771,7 @@ body.dark-mode .ref-src,body.dark-mode .sup-badge,body.dark-mode .depd-avatar-fa
         <div class="cmp-slot-h"><span class="cmp-tag b">B</span>Alimento B</div>
         <div class="cmp-search">
           <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <input type="text" id="compSearchB" placeholder="Buscar un alimento…" autocomplete="off" oninput="compSearch('B')">
+          <input type="text" id="compSearchB" placeholder="Buscar un alimento y pulsar Intro…" autocomplete="off" enterkeyhint="search" oninput="compSearch('B')" onkeydown="if(event.key==='Enter'){event.preventDefault();clearTimeout(compTimers.B);compSearchAhora('B')}">
           <button class="cmp-x" id="compClearB" onclick="compClear('B')" title="Quitar alimento" style="display:none">×</button>
           <div id="compResultsB" class="cmp-results"></div>
         </div>
@@ -3543,17 +3543,35 @@ async function compFetchJson(url, ms){
     try{ return JSON.parse(txt); }catch(x){ const e = new Error('formato'); e.formato = true; throw e; }   // Open Food Facts a veces devuelve una página de error en vez de datos
   } finally { clearTimeout(t); }
 }
-const OFF_CAMPOS = 'code,product_name,product_name_es,generic_name,brands,image_small_url,image_front_small_url,nutriments,nutriscore_grade,nova_group,ingredients_text_es,ingredients_text,allergens_tags,quantity';
+const OFF_CAMPOS = 'code,product_name,product_name_es,generic_name,brands,image_small_url,image_front_small_url,nutriments,nutriscore_grade,nova_group,ingredients_text_es,ingredients_text,allergens_tags,quantity,countries_tags';
+// Open Food Facts limita las búsquedas (unas 10 por minuto y por conexión) y, cuando se pasa o se satura, responde sin las cabeceras que permiten leerlo desde el
+// navegador: aquí eso se veía como «sin conexión». Por eso se espacian las consultas, se busca solo al pulsar Intro o al dejar de escribir un momento, y no se
+// reintenta contra otra dirección (es la misma conexión, el mismo límite).
+let compOffUlt = 0;
+async function compOffEspera(){ const falta = compOffUlt + 3000 - Date.now(); if(falta > 0) await compEsperar(falta); compOffUlt = Date.now(); }
+const compOffNombre = p => p.product_name_es || p.product_name || p.generic_name;
+const compOffMarca = p => Array.isArray(p.brands) ? p.brands[0] : (p.brands ? String(p.brands).split(',')[0] : '');
+function compOffEspanaPrimero(items){ const es = x => (x.countries_tags||[]).includes('en:spain') ? 0 : 1; return items.map((x,i)=>[x,i]).sort((a,b)=>es(a[0])-es(b[0]) || a[1]-b[1]).map(x=>x[0]); }
 async function compBuscarOff(q){
-  const url = (host, soloEs) => `https://${host}.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(q)}&search_simple=1&action=process&json=1&page_size=12&lc=es&sort_by=unique_scans_n&fields=${OFF_CAMPOS}` + (soloEs ? '&tagtype_0=countries&tag_contains_0=contains&tag_0=spain' : '');
-  let d;
-  try{ d = await compFetchJson(url('world', true)); }
-  catch(e){ if(e.limite) throw e; await compEsperar(600); d = await compFetchJson(url('es', true)); }   // segundo intento por otra dirección de Open Food Facts
-  let items = (d.products || []).filter(p => p.product_name || p.product_name_es || p.generic_name);
-  if(!items.length){   // nada vendido en España con ese nombre: se busca en todo el mundo
-    try{ const d2 = await compFetchJson(url('world', false)); items = (d2.products || []).filter(p => p.product_name || p.product_name_es || p.generic_name); }catch(e){}
+  let items = [];
+  await compOffEspera();
+  try{   // 1) el buscador de texto actual de Open Food Facts (rápido y pensado para esto)
+    const d = await compFetchJson(`https://search.openfoodfacts.org/search?q=${encodeURIComponent(q)}&page_size=15&fields=${OFF_CAMPOS}`);
+    items = (d.hits || d.products || []).filter(p => compOffNombre(p));
+  }catch(e){
+    if(e.limite) throw e;
+    // 2) el buscador clásico, una sola vez (sin ordenar ni filtrar por país: eso es lo que más lo carga)
+    await compEsperar(1200); await compOffEspera();
+    const d = await compFetchJson(`https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(q)}&search_simple=1&action=process&json=1&page_size=15&lc=es&fields=${OFF_CAMPOS}`);
+    items = (d.products || []).filter(p => compOffNombre(p));
   }
-  return { items, traducido: '' };
+  return { items: compOffEspanaPrimero(items).slice(0, 12), traducido: '' };
+}
+// Si el resultado no trae los nutrientes (el buscador de texto a veces solo da el nombre), se pide el producto entero por su código
+async function compOffCompleto(raw){
+  const n = raw.nutriments || {};
+  if(typeof n['energy-kcal_100g'] === 'number' || typeof n['proteins_100g'] === 'number' || !raw.code) return raw;
+  try{ const d = await compFetchJson(`https://world.openfoodfacts.org/api/v2/product/${encodeURIComponent(raw.code)}.json?fields=${OFF_CAMPOS}`); return d.product ? { ...raw, ...d.product } : raw; }catch(e){ return raw; }
 }
 async function compBuscarUsda(q){
   const en = compEn(q), consulta = en || q, clave = compUsdaKey();
@@ -3571,7 +3589,7 @@ function compErrorHtml(e, side, src){
   if(e.limite){ msg = src==='usda' ? 'USDA ha alcanzado el límite de consultas por hora (la clave de prueba permite muy pocas).' : 'Open Food Facts pide esperar un poco antes de volver a buscar.'; clave = src==='usda' && compUsdaKey()==='DEMO_KEY'; }
   else if(e.clave){ msg = 'La clave de USDA no es válida. Revísala o quítala para usar la de prueba.'; clave = true; }
   else if(e.name === 'AbortError'){ msg = nombre + ' tarda demasiado en responder.'; }
-  else if(e instanceof TypeError){ msg = 'No se pudo conectar con ' + nombre + '. Comprueba tu conexión.'; }
+  else if(e instanceof TypeError){ msg = navigator.onLine === false ? 'Sin conexión a internet.' : nombre + ' no ha respondido: a veces se satura o limita las búsquedas seguidas. Espera unos segundos y pulsa Reintentar.'; }
   else { msg = nombre + ' no está respondiendo bien ahora mismo.'; }
   return `<div class="cmp-err"><p>${sudEsc(msg)}</p><div class="cmp-err-b"><button type="button" onclick="compSearchAhora('${side}')">Reintentar</button>${clave ? '<button type="button" onclick="compKeyAbrir()">Clave de USDA</button>' : ''}${src==='off' ? '<button type="button" onclick="setCompSource(\'usda\')">Probar con USDA</button>' : ''}</div></div>`;
 }
@@ -3581,7 +3599,7 @@ function compSearch(side){
   const inp = document.getElementById('compSearch'+side), q = inp.value.trim();
   document.getElementById('compClear'+side).style.display = inp.value ? 'block' : 'none';
   if(q.length < 3){ compReq[side]++; document.getElementById('compResults'+side).innerHTML = ''; return; }
-  compTimers[side] = setTimeout(() => compBuscar(side, q), 450);
+  compTimers[side] = setTimeout(() => compBuscar(side, q), compSource === 'off' ? 1100 : 600);
 }
 function compSearchAhora(side){ const q = document.getElementById('compSearch'+side).value.trim(); if(q.length >= 3) compBuscar(side, q); }
 async function compBuscar(side, q){
@@ -3598,8 +3616,8 @@ async function compBuscar(side, q){
       return;
     }
     resEl.innerHTML = (r.traducido ? `<p class="cmp-nota">USDA está en inglés: buscando «${sudEsc(r.traducido)}»</p>` : '') + items.map((p,i)=>{
-      const name = src==='off' ? (p.product_name_es||p.product_name||p.generic_name) : p.description;
-      const brand = src==='off' ? (p.brands?p.brands.split(',')[0]:'') : (p.brandOwner||p.dataType||'');
+      const name = src==='off' ? compOffNombre(p) : p.description;
+      const brand = src==='off' ? compOffMarca(p) : (p.brandOwner||p.dataType||'');
       const img = src==='off' ? (p.image_small_url||p.image_front_small_url) : null;
       return `<div class="cmp-res" role="button" tabindex="0" onclick="compSelect('${side}',${i})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();compSelect('${side}',${i})}">
         ${img ? `<img src="${sudEsc(img)}" alt="">` : `<span class="cmp-ph">${sudEsc(String(name).charAt(0).toUpperCase())}</span>`}
@@ -3659,7 +3677,7 @@ function compNormalize(raw, source){
     const micros = CMP_MICROS.map(m => num(n[m.off[0]]) !== undefined ? {k:m.k, label:m.label, unit:m.unit, v:n[m.off[0]]*m.off[1]} : null).filter(Boolean);
     return {
       name: raw.product_name_es || raw.product_name || raw.generic_name || 'Sin nombre',
-      brand: raw.brands ? raw.brands.split(',')[0] : '',
+      brand: compOffMarca(raw),
       extra: raw.quantity || '', nutri: raw.nutriscore_grade && /^[a-e]$/i.test(raw.nutriscore_grade) ? raw.nutriscore_grade.toUpperCase() : '',
       img: raw.image_small_url || raw.image_front_small_url || '',
       kcal: num(n['energy-kcal_100g']) !== undefined ? n['energy-kcal_100g'] : (num(n['energy_100g']) !== undefined ? n['energy_100g']/4.184 : undefined),
@@ -3688,9 +3706,10 @@ function compNormalize(raw, source){
   }
 }
 
-function compSelect(side, idx){
-  const raw = compRawResults[side][idx];
+async function compSelect(side, idx){
+  let raw = compRawResults[side][idx];
   if(!raw) return;
+  if(compSource === 'off') raw = await compOffCompleto(raw);
   const norm = compNormalize(raw, compSource);
   compData[side] = norm;
   document.getElementById('compResults'+side).innerHTML = '';
