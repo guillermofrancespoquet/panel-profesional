@@ -117,7 +117,21 @@ as $$
   delete from public.pesos_cliente where id = p_id and deportista_id = public.cliente_deportista_id()
 $$;
 
--- Registrar una foto ya subida al bucket (la ruta debe empezar por la carpeta del propio cliente).
+-- Rutas de archivos que escribe el cliente: sin «..» ni «.» como carpeta, sin «//», sin contrabarras ni caracteres de control.
+create or replace function public.cliente_ruta_valida(p_ruta text)
+returns boolean
+language sql
+immutable
+as $$
+  select p_ruta is not null
+     and p_ruta !~ '(^|/)\.\.?(/|$)'
+     and p_ruta !~ '//'
+     and position(E'\\' in p_ruta) = 0
+     and p_ruta !~ '[[:cntrl:]]'
+$$;
+revoke all on function public.cliente_ruta_valida(text) from public, anon, authenticated;
+
+-- Registrar una foto ya subida al bucket (la ruta debe empezar por la carpeta del propio cliente; máximo 400 por cliente).
 create or replace function public.cliente_registrar_foto(p_path text, p_fecha date, p_vista text)
 returns jsonb
 language plpgsql
@@ -130,7 +144,8 @@ declare
   fila  public.fotos_cliente;
 begin
   if dep is null then raise exception 'sin acceso'; end if;
-  if p_path is null or p_path not like dep::text || '/%' or length(p_path) > 300 then raise exception 'ruta no válida'; end if;
+  if p_path is null or p_path not like dep::text || '/%' or length(p_path) > 300 or not public.cliente_ruta_valida(p_path) then raise exception 'ruta no válida'; end if;
+  if (select count(*) from public.fotos_cliente where deportista_id = dep) >= 400 then raise exception 'demasiadas fotos'; end if;
   if p_fecha is null or p_fecha > hoy or p_fecha < hoy - 366 then raise exception 'fecha no válida'; end if;
   insert into public.fotos_cliente (deportista_id, fecha, vista, path)
   values (dep, p_fecha, case when p_vista in ('frente', 'lado', 'espalda') then p_vista else 'otra' end, p_path)

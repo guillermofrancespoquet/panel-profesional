@@ -90,7 +90,7 @@ begin
   if p_fecha is null or p_fecha > hoy or p_fecha < hoy - 14 then raise exception 'fecha no válida'; end if;
   if nota is null and ruta is null then raise exception 'falta la foto o la nota'; end if;
   if nota is not null and char_length(nota) > 300 then raise exception 'nota demasiado larga'; end if;
-  if ruta is not null and (ruta not like dep::text || '/comidas/%' or length(ruta) > 300) then raise exception 'ruta no válida'; end if;
+  if ruta is not null and (ruta not like dep::text || '/comidas/%' or length(ruta) > 300 or not public.cliente_ruta_valida(ruta)) then raise exception 'ruta no válida'; end if;
   if (select count(*) from public.comidas_cliente where deportista_id = dep and fecha = p_fecha) >= 20 then raise exception 'demasiadas comidas ese día'; end if;
   insert into public.comidas_cliente (deportista_id, fecha, momento, nota, foto_path)
   values (dep, p_fecha, case when p_momento in ('desayuno', 'media_manana', 'comida', 'merienda', 'cena') then p_momento else 'otro' end, nota, ruta)
