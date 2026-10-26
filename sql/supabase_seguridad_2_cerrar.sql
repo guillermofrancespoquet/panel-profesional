@@ -14,6 +14,15 @@
 -- Si algo sale mal, se puede reabrir temporalmente con el bloque "MARCHA ATRÁS" del final.
 -- ============================================================
 
+-- ⛔ GUARDA: este paso es ANTERIOR a `supabase_clientes_acceso.sql`. Si ese ya está ejecutado (existe es_profesional()), este script
+-- dejaría las tablas y los archivos abiertos a CUALQUIER usuario con sesión, también a los clientes. Por eso se niega a ejecutarse.
+do $$
+begin
+  if to_regprocedure('public.es_profesional()') is not null then
+    raise exception 'NO ejecutar: la base ya tiene el acceso «solo profesional» (supabase_clientes_acceso.sql) y este paso lo volvería a abrir a todos los usuarios con sesión.';
+  end if;
+end $$;
+
 -- 1) Tablas: RLS activada, se eliminan TODAS las políticas existentes (las abiertas) y se deja una sola
 --    que solo permite a usuarios autenticados. Los clientes del Método 3M siguen funcionando porque sus
 --    funciones (paso 1) son SECURITY DEFINER.

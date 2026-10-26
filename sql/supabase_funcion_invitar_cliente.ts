@@ -16,7 +16,8 @@
 // Si el panel no encuentra la función, sigue funcionando el método antiguo (invitar en Authentication →
 // Users y vincular después en la ficha).
 // ============================================================
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+// Versión fija (no «@2»): así un cambio en el servidor de paquetes no altera esta función sin que lo sepas.
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.4";
 
 const CORS = {
   "Access-Control-Allow-Origin": "*",
@@ -47,6 +48,10 @@ Deno.serve(async (req) => {
       return json({ ok: false, motivo: "datos_no_validos" }, 400);
     }
     const destino = /^https:\/\//.test(String(redirectTo ?? "")) ? String(redirectTo) : undefined;
+
+    // 2b) ¿Existe ese deportista? (con la sesión del profesional). Se comprueba ANTES de invitar para no crear una cuenta que luego no se pueda vincular.
+    const { data: dep } = await asUser.from("clientes_deportivos").select("id").eq("id", Number(deportista)).maybeSingle();
+    if (!dep) return json({ ok: false, motivo: "deportista_no_existe" }, 404);
 
     // 3) Invitación por correo (con la plantilla «Invite user» que ya configuraste).
     //    Si el correo ya tiene cuenta, no se envía nada y se sigue con la vinculación.

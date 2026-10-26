@@ -39,8 +39,13 @@ as $$
 declare v_dep bigint := public.cliente_deportista_id();
 begin
   if v_dep is null then raise exception 'sin acceso'; end if;
-  if p_endpoint is null or p_endpoint !~ '^https://' or char_length(p_endpoint) not between 20 and 1000 then
+  -- Solo los servicios de notificaciones de los navegadores (si no, la Edge Function haría peticiones a la dirección que mande el cliente)
+  if p_endpoint is null or char_length(p_endpoint) not between 20 and 1000
+     or p_endpoint !~ '^https://(fcm\.googleapis\.com|(updates\.)?push\.services\.mozilla\.com|web\.push\.apple\.com|[a-z0-9-]+(\.[a-z0-9-]+)*\.notify\.windows\.com)/[^\s]+$' then
     raise exception 'endpoint no válido';
+  end if;
+  if (select count(*) from public.push_suscripciones where deportista_id = v_dep and endpoint <> p_endpoint) >= 5 then
+    raise exception 'demasiados dispositivos';
   end if;
   -- Si el mismo dispositivo cambia de cuenta, el aviso pasa a la última que lo activó.
   insert into public.push_suscripciones (deportista_id, endpoint) values (v_dep, p_endpoint)

@@ -7,9 +7,10 @@ Todos se ejecutan a mano en Supabase → SQL Editor → New query → Run. Son s
 1. `supabase_antropometria.sql`
 2. `supabase_sudoracion.sql` y `supabase_plan_competicion.sql`
 3. `supabase_seguridad_1_tokens.sql`
-4. `supabase_clientes_acceso.sql` (cambiar antes `TU_CORREO@EJEMPLO.COM` por el correo del profesional)
-5. Cadena de `cliente_mi_ficha`, **en este orden**: `supabase_formularios.sql` → `supabase_revision_hora.sql` → `supabase_seguimiento.sql` → `supabase_nota_cliente.sql`
-6. El resto, en cualquier orden, respetando los requisitos:
+4. `supabase_seguridad_2_cerrar.sql` (solo cuando se cumplan las condiciones de su cabecera; **va antes del siguiente**: si `supabase_clientes_acceso.sql` ya está ejecutado, se niega a ejecutarse, porque dejaría las tablas abiertas a los clientes)
+5. `supabase_clientes_acceso.sql` (cambiar antes `TU_CORREO@EJEMPLO.COM` por el correo del profesional)
+6. Cadena de `cliente_mi_ficha`, **en este orden**: `supabase_formularios.sql` → `supabase_revision_hora.sql` → `supabase_seguimiento.sql` → `supabase_nota_cliente.sql`
+7. El resto, en cualquier orden, respetando los requisitos:
    - `supabase_plan_compartir.sql` (necesita `supabase_plan_competicion.sql`)
    - `supabase_sudoracion_compartir.sql` (necesita `supabase_sudoracion.sql`)
    - `supabase_bioimpedancia.sql`
@@ -22,11 +23,11 @@ Todos se ejecutan a mano en Supabase → SQL Editor → New query → Run. Son s
    - `supabase_banco_recetas.sql` (plan nutricional: banco compartido de recetas y comidas guardadas; requiere solo `supabase_clientes_acceso.sql`)
    - `supabase_objetivos.sql` (objetivos del cliente con seguimiento, opcional, y peso reciente para reajustar las kcal del plan; requiere `supabase_clientes_acceso.sql`, `supabase_seguimiento.sql`, `supabase_bioimpedancia.sql` y `supabase_registro_cliente.sql`)
    - `supabase_notificaciones.sql` (avisos al móvil del cliente: seguimiento semanal; requiere `supabase_seguimiento.sql`; **además hay que crear la Edge Function y programarla**, ver «Avisos al móvil» más abajo)
-7. `supabase_seguridad_2_cerrar.sql`, **el último**, solo cuando se cumplan las condiciones de su cabecera.
+8. `supabase_seguridad_3_endurecer.sql`, **el último** (endurecimiento tras la revisión de seguridad del 26 oct 2026: rutas de archivos, límites, direcciones de avisos, privilegios; sustituye tres funciones por su versión endurecida, que ya llevan también sus archivos originales). Después, `supabase_diagnostico_seguridad.sql` (solo lectura): todo debe salir «OK».
 
 ## Ojo
 
-- Cada archivo de la cadena del punto 5 **sustituye** a la función `cliente_mi_ficha` del anterior. Volver a ejecutar uno anterior después de uno posterior deshace los campos que añadió el posterior (por ejemplo, ejecutar `supabase_formularios.sql` tras `supabase_nota_cliente.sql` quitaría la nota). Si hay que repetir uno, ejecutar otra vez los siguientes en orden.
+- Cada archivo de la cadena del punto 6 **sustituye** a la función `cliente_mi_ficha` del anterior. Volver a ejecutar uno anterior después de uno posterior deshace los campos que añadió el posterior (por ejemplo, ejecutar `supabase_formularios.sql` tras `supabase_nota_cliente.sql` quitaría la nota). Si hay que repetir uno, ejecutar otra vez los siguientes en orden.
 - En la base real de producción ya están ejecutados todos, salvo los que se vayan añadiendo (se avisa en cada PR).
 
 ## No es SQL
