@@ -174,8 +174,8 @@ body.dark-mode .login-btn:hover{background:var(--t600)}
 .save-ok.show{opacity:1}
 
 /* MODALS */
-:root{--sat:env(safe-area-inset-top,0px);--sab:env(safe-area-inset-bottom,0px);--mvh:calc(100dvh - 2rem - var(--sat) - var(--sab))}
-.mbg{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:100;padding:calc(1rem + var(--sat)) 1rem calc(1rem + var(--sab))}
+:root{--sat:env(safe-area-inset-top,0px);--sab:env(safe-area-inset-bottom,0px);--mvh:calc(100dvh - var(--vvt,0px) - var(--vvb,0px) - 2rem - var(--sat) - var(--sab))}
+.mbg{position:fixed;top:var(--vvt,0px);bottom:var(--vvb,0px);left:0;right:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:100;padding:calc(1rem + var(--sat)) 1rem calc(1rem + var(--sab))}
 .mc{background:var(--sf);border-radius:16px;padding:2rem;width:100%;max-width:400px;max-height:var(--mvh);overflow-y:auto;overscroll-behavior:contain}
 .mt{font-size:18px;font-weight:700;margin-bottom:5px;letter-spacing:-.02em}
 .ms{font-size:13px;color:var(--g400);margin-bottom:1.5rem;line-height:1.5}
@@ -3618,7 +3618,7 @@ function compKeyAbrir(){
   document.getElementById('compKeyIn').value = k === 'DEMO_KEY' ? '' : k;
   document.getElementById('compKeyMsg').textContent = '';
   document.getElementById('mCompKey').style.display = 'flex';
-  if(!matchMedia('(pointer:coarse)').matches) setTimeout(() => document.getElementById('compKeyIn').focus(), 60);
+  setTimeout(() => enfocar('compKeyIn'), 60);
 }
 function compKeyCerrar(){ document.getElementById('mCompKey').style.display = 'none'; }
 async function compKeyGuardar(quitar){
@@ -4201,6 +4201,35 @@ function logout(){
   show('vlogin');
 }
 function show(v){_autoDep.ahora();_autoM3.ahora();document.querySelectorAll('.view').forEach(e=>e.classList.remove('active'));document.getElementById(v).classList.add('active');document.body.classList.toggle('emb-view',v==='vmenusem'||v==='vantro');}
+// ═══════════════ VENTANAS Y TECLADO (iPhone / iPad) ═══════════════
+// Con el teclado abierto, o cuando Safari desplaza la página al enfocar un campo, la zona visible es más pequeña y está más abajo que la «pantalla» que ve la
+// página: las ventanas se centraban en la pantalla entera y su parte de arriba quedaba fuera de lo visible. Aquí se mide la zona realmente visible (visualViewport)
+// y se guarda en --vvt / --vvb (lo que sobra por arriba y por abajo); las ventanas (.mbg) y su altura máxima (--mvh) la respetan. Sin teclado no se define nada
+// y todo queda como siempre. Los marcos incrustados (calculadora y planificador) reciben su parte por mensaje, porque sus ventanas viven en su propio documento.
+const esTactil = () => { try{ return matchMedia('(pointer:coarse)').matches; }catch(e){ return false; } };
+// En el móvil y la tableta no se enfoca solo el primer campo al abrir una ventana: abre el teclado y descoloca la ventana.
+function enfocar(id){ if(esTactil()) return; const e = document.getElementById(id); if(e) e.focus(); }
+(function(){
+  const v = window.visualViewport; if(!v) return;
+  let ult = null;
+  const aplicar = (forzar) => {
+    const alto = window.innerHeight, tecl = (alto - v.height) > 80 || v.offsetTop > 1;
+    const top = tecl ? Math.max(0, v.offsetTop) : 0, bajo = tecl ? Math.max(0, alto - v.offsetTop - v.height) : 0;
+    const clave = top + '|' + bajo;
+    if(clave === ult && !forzar) return; ult = clave;
+    const r = document.documentElement.style;
+    if(tecl){ r.setProperty('--vvt', top + 'px'); r.setProperty('--vvb', bajo + 'px'); } else { r.removeProperty('--vvt'); r.removeProperty('--vvb'); }
+    ['antroFrame','menuFrame'].forEach(id => {
+      const f = document.getElementById(id); if(!f || !f.contentWindow) return;
+      let msg = null;
+      if(tecl){ const fr = f.getBoundingClientRect(), a = Math.max(top, fr.top), z = Math.min(alto - bajo, fr.bottom); msg = { top: Math.max(0, a - fr.top), bottom: Math.max(0, fr.bottom - z) }; }
+      try{ f.contentWindow.postMessage({ nlvv: msg }, location.origin); }catch(e){}
+    });
+  };
+  v.addEventListener('resize', () => aplicar()); v.addEventListener('scroll', () => aplicar());
+  document.addEventListener('DOMContentLoaded', () => ['antroFrame','menuFrame'].forEach(id => { const f = document.getElementById(id); if(f) f.addEventListener('load', () => aplicar(true)); }));
+})();
+
 // ═══════════════ MODO OSCURO ═══════════════
 // Preferencia guardada en nutrilogos_dark: '1' oscuro, '0' claro, sin valor = seguir el sistema
 const modoPref=()=>{ try{ const v=localStorage.getItem('nutrilogos_dark'); return v==='1'?'dark':v==='0'?'light':'system'; }catch(e){ return 'system'; } };
@@ -4398,7 +4427,7 @@ function copyUrl(url){
 function saveNote(id){ _autoM3.cambio(id,document.getElementById('nta').value); return _autoM3.ahora(); }
 
 // ── ADD CLIENT ──
-function openAdd(){document.getElementById('mAdd').style.display='flex';setTimeout(()=>document.getElementById('mNombre').focus(),100);}
+function openAdd(){document.getElementById('mAdd').style.display='flex';setTimeout(()=>enfocar('mNombre'),100);}
 function closeAdd(){document.getElementById('mAdd').style.display='none';document.getElementById('mNombre').value='';document.getElementById('mEmail').value='';document.getElementById('mAddErr').textContent='';}
 async function createClient(){
   const nombre=document.getElementById('mNombre').value.trim();
@@ -5078,7 +5107,7 @@ async function abrirInformeProgreso(depId){
   infFotosUI();
   if(!_inf.med.length && !_inf.segs.length && !_inf.bio.length && !_inf.pesosCli.length){ cerrarInforme(); toast('Todavía no hay mediciones ni seguimientos para hacer el informe.', {tipo:'aviso', ms:5000}); return; }
   infPintar();
-  setTimeout(()=>{ const t=document.getElementById('infComent'); if(t) t.focus(); }, 60);
+  setTimeout(()=>enfocar('infComent'), 60);
 }
 function cerrarInforme(){ document.getElementById('mInforme').style.display = 'none'; _inf = null; }
 function infPintar(){
@@ -5353,7 +5382,7 @@ function openAccion(tipo, id, actual){
   accionCtx = { tipo, id };
   document.getElementById('accionInput').value = actual || '';
   document.getElementById('mAccion').style.display = 'flex';
-  setTimeout(()=>document.getElementById('accionInput').focus(), 80);
+  setTimeout(()=>enfocar('accionInput'), 80);
 }
 function closeAccion(){
   document.getElementById('mAccion').style.display = 'none';
@@ -5817,7 +5846,7 @@ function removeCita(id) {
 
 function openAddCita() {
   document.getElementById('mAddCita').style.display = 'flex';
-  setTimeout(() => document.getElementById('citaCliente').focus(), 100);
+  setTimeout(() => enfocar('citaCliente'), 100);
 }
 function closeAddCita() {
   document.getElementById('mAddCita').style.display = 'none';
@@ -5863,7 +5892,7 @@ async function createCita() {
 
 function openImportDep() {
   document.getElementById('mImportDep').style.display = 'flex';
-  setTimeout(() => document.getElementById('importText').focus(), 100);
+  setTimeout(() => enfocar('importText'), 100);
 }
 function closeImportDep() {
   document.getElementById('mImportDep').style.display = 'none';
@@ -5907,7 +5936,7 @@ async function importDeportistas() {
 
 function openAddDep() {
   document.getElementById('mAddDep').style.display = 'flex';
-  setTimeout(() => document.getElementById('depNombre').focus(), 100);
+  setTimeout(() => enfocar('depNombre'), 100);
 }
 function closeAddDep() {
   document.getElementById('mAddDep').style.display = 'none';
@@ -7036,7 +7065,7 @@ function abrirBio(depId, file) {
   document.getElementById('bioAviso').innerHTML = ''; document.getElementById('bioMsg').textContent = '';
   document.getElementById('bioPrev').innerHTML = '';
   bioPintarForm({ valores: {}, dudosos: {}, calculados: [], fecha: bioHoy(), fuente: null });
-  if (file) bioProcesar(file); else setTimeout(() => { const f = document.getElementById('bio_peso'); if (f) f.focus(); }, 60);
+  if (file) bioProcesar(file); else setTimeout(() => enfocar('bio_peso'), 60);
 }
 function cerrarBio() { document.getElementById('mBio').style.display = 'none'; _bio = null; }
 function bioPintarForm(res) {
@@ -8236,7 +8265,7 @@ async function abrirConsulta(depId, cita){
   document.getElementById('consPago').checked = false;
   document.getElementById('consGuardar').disabled = false;
   document.getElementById('mConsulta').style.display = 'flex';
-  if(d) setTimeout(() => document.getElementById('consNota').focus(), 60);
+  if(d) setTimeout(() => enfocar('consNota'), 60);
 }
 function cerrarConsulta(){ document.getElementById('mConsulta').style.display = 'none'; _cons = null; }
 async function guardarConsulta(){
