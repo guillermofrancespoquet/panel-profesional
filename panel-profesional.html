@@ -175,7 +175,7 @@ body.dark-mode .login-btn:hover{background:var(--t600)}
 
 /* MODALS */
 :root{--sat:env(safe-area-inset-top,0px);--sab:env(safe-area-inset-bottom,0px);--mvh:calc(100dvh - var(--vvt,0px) - var(--vvb,0px) - 2rem - var(--sat) - var(--sab))}
-.mbg{position:fixed;top:var(--vvt,0px);bottom:var(--vvb,0px);left:0;right:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:100;padding:calc(1rem + var(--sat)) 1rem calc(1rem + var(--sab))}
+.mbg{position:fixed;top:var(--vvt,0px);bottom:var(--vvb,0px);left:0;right:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:260;padding:calc(1rem + var(--sat)) 1rem calc(1rem + var(--sab))}   /* por encima de la barra superior móvil (150) y del menú lateral (200): con 100 la barra tapaba la parte de arriba de las ventanas */
 .mc{background:var(--sf);border-radius:16px;padding:2rem;width:100%;max-width:400px;max-height:var(--mvh);overflow-y:auto;overscroll-behavior:contain}
 .mt{font-size:18px;font-weight:700;margin-bottom:5px;letter-spacing:-.02em}
 .ms{font-size:13px;color:var(--g400);margin-bottom:1.5rem;line-height:1.5}
@@ -1322,6 +1322,8 @@ body.dark-mode :focus-visible{outline-color:#5CC8A6}
 @media(pointer:coarse){.btn-primary,.btn-add,.btn-action,.btn-unlock,.btn-save,.btn-ok,.btn-cancel,.btn-soft,.btn-plan,.btn-del{min-height:44px}.inp,select.inp{min-height:44px}.file-btn,.hist-del,.agenda-del,.agenda-cal,.tl-del,.btn-hist-add,.btn-rem-add{min-width:40px;min-height:40px}.tl-chip{min-height:38px}}
 .btn-primary,.btn-add,.btn-action,.btn-unlock,.btn-save,.btn-ok,.btn-cancel{min-height:var(--h-btn)}
 .inp{min-height:var(--h-field)}
+/* iPhone/iPad: los campos de fecha y hora ignoran el ancho y se salen de la ventana si no se les fuerza */
+.mc input[type=date].inp,.mc input[type=time].inp{-webkit-appearance:none;appearance:none;display:block;width:100%;min-width:0;max-width:100%;text-align:left}
 /* modo oscuro: textos de acento legibles */
 body.dark-mode .tl-chip.on{color:#fff;background:#0F6E56;border-color:#0F6E56}
 body.dark-mode .cmp-tag.b,body.dark-mode .cmp-cell.b::before,body.dark-mode .cmp-cell.b .cmp-track i,body.dark-mode .login-btn:hover{background:#0F6E56}
