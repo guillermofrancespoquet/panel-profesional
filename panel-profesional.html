@@ -174,8 +174,8 @@ body.dark-mode .login-btn:hover{background:var(--t600)}
 .save-ok.show{opacity:1}
 
 /* MODALS */
-:root{--sat:env(safe-area-inset-top,0px);--sab:env(safe-area-inset-bottom,0px);--mvh:calc(100dvh - 2rem - var(--sat) - var(--sab))}
-.mbg{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:100;padding:calc(1rem + var(--sat)) 1rem calc(1rem + var(--sab))}
+:root{--sat:env(safe-area-inset-top,0px);--sab:env(safe-area-inset-bottom,0px);--mvh:calc(100dvh - var(--vvt,0px) - var(--vvb,0px) - 2rem - var(--sat) - var(--sab))}
+.mbg{position:fixed;top:var(--vvt,0px);bottom:var(--vvb,0px);left:0;right:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:100;padding:calc(1rem + var(--sat)) 1rem calc(1rem + var(--sab))}
 .mc{background:var(--sf);border-radius:16px;padding:2rem;width:100%;max-width:400px;max-height:var(--mvh);overflow-y:auto;overscroll-behavior:contain}
 .mt{font-size:18px;font-weight:700;margin-bottom:5px;letter-spacing:-.02em}
 .ms{font-size:13px;color:var(--g400);margin-bottom:1.5rem;line-height:1.5}
@@ -708,6 +708,36 @@ body.dark-mode .sb-ic-moon{display:none}
 .cmp-leg{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:8px;font-size:11px;color:var(--g500)}
 .cmp-leg span{display:inline-flex;align-items:center;gap:5px}
 .cmp-leg i{width:8px;height:8px;border-radius:50%;display:inline-block}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.cmp-slots.uno{grid-template-columns:1fr;max-width:640px}
+.cmp-err{padding:12px 14px;font-size:12.5px;color:var(--g700);line-height:1.5}
+.cmp-err p{margin:0 0 8px}
+.cmp-err-b{display:flex;flex-wrap:wrap;gap:6px}
+.cmp-err-b button{border:.5px solid var(--bdm);background:var(--bg);border-radius:20px;padding:5px 12px;font-family:var(--f);font-size:12px;font-weight:600;color:var(--t600);cursor:pointer}
+.cmp-err-b button:hover{background:var(--t50);border-color:var(--t400)}
+.cmp-nota{margin:0;padding:8px 12px 4px;font-size:11.5px;color:var(--g500)}
+.cmp-res:focus-visible{outline:2px solid var(--t400);outline-offset:-2px}
+.cmp-uno{max-width:640px;margin-top:16px}
+.cmp-racion{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.cmp-racion label{font-size:12px;font-weight:600;color:var(--g700)}
+.cmp-racion input{width:92px;height:38px;border:.5px solid var(--bdm);border-radius:10px;background:var(--bg);color:var(--g900);font-family:var(--f);font-size:14px;padding:0 10px;outline:none}
+.cmp-racion input:focus{border-color:var(--t400);box-shadow:0 0 0 3px rgba(29,158,117,.15)}
+.cmp-racion>span{font-size:12.5px;color:var(--g500)}
+.cmp-chips{display:flex;gap:6px;flex-wrap:wrap}
+.cmp-chip{border:.5px solid var(--bdm);background:var(--bg);border-radius:20px;padding:5px 12px;font-family:var(--f);font-size:12px;color:var(--g700);cursor:pointer}
+.cmp-chip.on,.cmp-chip:hover{border-color:var(--t400);color:var(--t600);background:var(--t50)}
+.cmp-tabw{overflow-x:auto}
+.cmp-det{width:100%;border-collapse:collapse;font-size:13px}
+.cmp-det th,.cmp-det td{padding:8px 6px;border-bottom:.5px solid var(--bd);text-align:right;white-space:nowrap}
+.cmp-det thead th{font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--g500)}
+.cmp-det th[scope=row],.cmp-det thead th:first-child{text-align:left;font-weight:600;color:var(--g900);white-space:normal}
+.cmp-det td{font-weight:600;color:var(--g900)}
+.cmp-det .c100{color:var(--g500);font-weight:500}
+.cmp-det tr.sub th[scope=row]{font-weight:500;color:var(--g500);padding-left:18px;font-size:12px}
+.cmp-det tr.grp th{text-align:left;font-size:10.5px;font-weight:700;color:var(--gold-dk);text-transform:uppercase;letter-spacing:.07em;padding-top:16px;border-bottom:none}
+.cmp-aviso{margin:0 0 10px;padding:8px 12px;border-radius:10px;background:var(--gold-50);color:var(--gold-dk);font-size:12px;line-height:1.5}
+.cmp-ex{margin-top:14px}.cmp-ex b{display:block;font-size:10.5px;font-weight:700;color:var(--gold-dk);text-transform:uppercase;letter-spacing:.07em;margin-bottom:3px}
+.cmp-ex p{margin:0;font-size:12.5px;line-height:1.55;color:var(--g700)}
 .cmp-compare{margin-top:16px;background:var(--sf);border:.5px solid var(--bd);border-radius:16px;padding:18px 20px}
 .cmp-sum{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:8px}
 .cmp-sum>div{background:var(--bg);border:.5px solid var(--bd);border-radius:12px;padding:10px 12px;font-size:12px;color:var(--g700);line-height:1.5}
@@ -1701,13 +1731,20 @@ body.dark-mode .ref-src,body.dark-mode .sup-badge,body.dark-mode .depd-avatar-fa
 
     <div class="cmp-bar-top">
       <div class="cmp-ctl">
+        <span class="cmp-ctl-l">Ver</span>
+        <div class="cmp-seg" role="group" aria-label="Qué quieres hacer">
+          <button type="button" class="cmp-seg-b on" id="compVistaCmp" aria-pressed="true" onclick="setCompVista('comparar')">Comparar dos</button>
+          <button type="button" class="cmp-seg-b" id="compVistaUno" aria-pressed="false" onclick="setCompVista('uno')">Un alimento</button>
+        </div>
+      </div>
+      <div class="cmp-ctl">
         <span class="cmp-ctl-l">Fuente</span>
         <div class="cmp-seg">
           <button class="cmp-seg-b on" id="compSrcOff" onclick="setCompSource('off')">Supermercado</button>
           <button class="cmp-seg-b" id="compSrcUsda" onclick="setCompSource('usda')">Genéricos USDA</button>
         </div>
       </div>
-      <div class="cmp-ctl">
+      <div class="cmp-ctl" id="compCtlCmp">
         <span class="cmp-ctl-l">Comparar</span>
         <div class="cmp-seg">
           <button class="cmp-seg-b on" id="compMode100" onclick="setCompMode('100g')">Por 100 g</button>
@@ -1719,9 +1756,9 @@ body.dark-mode .ref-src,body.dark-mode .sup-badge,body.dark-mode .depd-avatar-fa
       </div>
     </div>
 
-    <div class="cmp-slots">
+    <div class="cmp-slots" id="compSlots">
       <div class="cmp-slot">
-        <div class="cmp-slot-h"><span class="cmp-tag a">A</span>Alimento A</div>
+        <div class="cmp-slot-h" id="compSlotATit"><span class="cmp-tag a">A</span>Alimento A</div>
         <div class="cmp-search">
           <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
           <input type="text" id="compSearchA" placeholder="Buscar un alimento…" autocomplete="off" oninput="compSearch('A')">
@@ -1730,7 +1767,7 @@ body.dark-mode .ref-src,body.dark-mode .sup-badge,body.dark-mode .depd-avatar-fa
         </div>
         <div id="compCardA"></div>
       </div>
-      <div class="cmp-slot">
+      <div class="cmp-slot" id="compSlotB">
         <div class="cmp-slot-h"><span class="cmp-tag b">B</span>Alimento B</div>
         <div class="cmp-search">
           <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -1743,7 +1780,8 @@ body.dark-mode .ref-src,body.dark-mode .sup-badge,body.dark-mode .depd-avatar-fa
     </div>
 
     <div id="compTable"></div>
-    <p class="ref-note" style="margin-top:14px" id="compFootnote">Valores por 100g/100mL reportados por el fabricante o el usuario que subió el producto a Open Food Facts.</p>
+    <p class="ref-note" style="margin-top:14px"><button type="button" class="btn-soft sm" onclick="compKeyAbrir()">Clave de USDA</button></p>
+    <p class="ref-note" style="margin-top:8px" id="compFootnote">Valores por 100g/100mL reportados por el fabricante o el usuario que subió el producto a Open Food Facts.</p>
   </div>
 </div>
 
@@ -2127,6 +2165,22 @@ body.dark-mode .ref-src,body.dark-mode .sup-badge,body.dark-mode .depd-avatar-fa
     <div class="mbtns" style="margin-top:14px">
       <button type="button" class="btn-cancel" onclick="objCerrarModal()">Cancelar</button>
       <button type="button" class="btn-ok" id="objBtnGuardar" onclick="objGuardar()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: CLAVE DE USDA (comparador) -->
+<div class="mbg" id="mCompKey" style="display:none;z-index:310" role="dialog" aria-modal="true" aria-labelledby="compKeyTit" onclick="if(event.target===this)compKeyCerrar()">
+  <div class="mc" style="max-width:460px">
+    <p class="mt" id="compKeyTit">Clave de USDA</p>
+    <p class="ms">La clave de prueba permite muy pocas consultas por hora, y por eso los alimentos genéricos fallan a menudo. Pega aquí tu clave gratuita de <a href="https://fdc.nal.usda.gov/api-key-signup" target="_blank" rel="noopener noreferrer" style="color:var(--t600)">fdc.nal.usda.gov</a>. Se guarda solo en este navegador y la usa también el planificador nutricional.</p>
+    <label class="mfl" for="compKeyIn">Clave</label>
+    <input type="text" class="inp" id="compKeyIn" autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="60" placeholder="Pega la clave del correo">
+    <p class="merr" id="compKeyMsg" role="alert"></p>
+    <div class="mbtns" style="margin-top:14px">
+      <button type="button" class="btn-cancel" onclick="compKeyCerrar()">Cancelar</button>
+      <button type="button" class="btn-cancel" onclick="compKeyGuardar(true)">Quitar clave</button>
+      <button type="button" class="btn-ok" onclick="compKeyGuardar()">Guardar</button>
     </div>
   </div>
 </div>
@@ -3432,16 +3486,30 @@ let compData = {A:null, B:null};
 let compRawResults = {A:[], B:[]};
 let compSource = 'off';
 let compMode = '100g';
-const USDA_KEY = 'DEMO_KEY'; // funciona sin registro (límite bajo). Guille puede pegar su propia clave gratuita de fdc.nal.usda.gov aquí para más límite.
+let compVista = 'comparar';   // 'comparar' (dos alimentos) o 'uno' (ficha de un solo alimento)
+let compRacion = 100;         // gramos de la ficha de un alimento
+const compReq = {A:0, B:0};   // para descartar respuestas que llegan tarde
+const compCache = new Map();  // «fuente|búsqueda» → resultados (no se repite la misma consulta)
+// Misma clave que el planificador nutricional (mismo origen): se pega una vez y vale para los dos
+const compUsdaKey = () => { try{ return localStorage.getItem('nl_usda_key') || 'DEMO_KEY'; }catch(e){ return 'DEMO_KEY'; } };
+// Diccionario español → inglés de USDA (copia del planificador: si cambia allí, cambiarlo aquí)
+const CMP_ES_EN = [['pechuga de pollo', 'chicken breast raw'], ['pollo', 'chicken meat raw'], ['pavo', 'turkey breast raw'], ['ternera', 'beef lean raw'], ['cerdo', 'pork lean raw'], ['jamon serrano', 'ham cured'], ['atun', 'tuna canned in water'], ['salmon', 'salmon atlantic raw'], ['merluza', 'cod atlantic raw'], ['bacalao', 'cod atlantic raw'], ['caballa', 'mackerel atlantic raw'], ['sardina', 'sardine canned'], ['lubina', 'sea bass raw'], ['dorada', 'sea bream raw'], ['gamba', 'shrimp raw'], ['huevo', 'egg whole raw'], ['tofu', 'tofu firm'], ['tempeh', 'tempeh'], ['arroz integral', 'brown rice cooked'], ['arroz', 'white rice cooked'], ['pasta integral', 'whole wheat pasta cooked'], ['pasta', 'pasta cooked enriched'], ['noquis', 'potato gnocchi'], ['cuscus', 'couscous cooked'], ['quinoa', 'quinoa cooked'], ['avena', 'oats rolled'], ['pan integral', 'whole wheat bread'], ['pan', 'white bread'], ['patata', 'potato raw'], ['boniato', 'sweet potato raw'], ['garbanzo', 'chickpeas cooked'], ['alubia', 'white beans cooked'], ['lenteja', 'lentils cooked'], ['hummus', 'hummus'], ['platano', 'banana raw'], ['manzana', 'apple raw'], ['naranja', 'orange raw'], ['fresa', 'strawberries raw'], ['aguacate', 'avocado raw'], ['tomate', 'tomato raw'], ['pepino', 'cucumber raw'], ['zanahoria', 'carrot raw'], ['espinaca', 'spinach raw'], ['brocoli', 'broccoli raw'], ['lechuga', 'lettuce raw'], ['pimiento', 'bell pepper raw'], ['cebolla', 'onion raw'], ['calabacin', 'zucchini raw'], ['champi', 'mushrooms white raw'], ['berenjena', 'eggplant raw'], ['coliflor', 'cauliflower raw'], ['judia verde', 'green beans raw'], ['nuez', 'walnuts'], ['almendra', 'almonds'], ['anacardo', 'cashews'], ['cacahuete', 'peanuts'], ['chia', 'chia seeds'], ['semilla', 'mixed seeds'], ['aceite de oliva', 'olive oil'], ['aove', 'olive oil'], ['miel', 'honey'], ['yogur', 'yogurt plain'], ['leche', 'milk whole'], ['bebida de soja', 'soy milk'], ['queso', 'cheese'], ['mantequilla de cacahuete', 'peanut butter'], ['ajo', 'garlic raw'], ['limon', 'lemon raw'], ['mostaza', 'mustard prepared'], ['pechuga de pavo','turkey breast raw'], ['solomillo de cerdo','pork tenderloin raw'], ['lomo','pork loin raw'], ['jamon cocido','ham cooked'], ['pollo cocido','chicken breast cooked'], ['merluza','cod atlantic raw'], ['trucha','trout rainbow raw'], ['atun fresco','tuna fresh bluefin raw'], ['langostino','shrimp raw'], ['mejillon','mussels blue raw'], ['calamar','squid raw'], ['pulpo','octopus raw'], ['clara de huevo','egg white raw'], ['ternera picada','beef ground lean raw'], ['seitan','seitan'], ['soja texturizada','soy protein textured dry'], ['edamame','edamame frozen prepared'], ['judia pinta','pinto beans cooked'], ['alubia negra','black beans cooked'], ['guisante','peas green raw'], ['haba','broad beans raw'], ['arroz basmati','rice basmati raw'], ['arroz bomba','rice white short-grain raw'], ['espagueti','pasta dry enriched'], ['macarron','pasta dry enriched'], ['fideo','pasta dry enriched'], ['pan de centeno','rye bread'], ['tortita de arroz','rice cakes'], ['tortilla de trigo','flour tortilla'], ['copos de maiz','corn flakes'], ['harina de avena','oat flour'], ['harina de trigo','wheat flour white'], ['harina de garbanzo','chickpea flour'], ['mijo','millet raw'], ['bulgur','bulgur dry'], ['cebada','barley pearled raw'], ['maiz','corn sweet raw'], ['palomitas','popcorn air-popped'], ['pera','pears raw'], ['melocoton','peaches raw'], ['kiwi','kiwifruit raw'], ['uva','grapes raw'], ['sandia','watermelon raw'], ['melon','cantaloupe raw'], ['pina','pineapple raw'], ['mango','mangos raw'], ['arandano','blueberries raw'], ['frambuesa','raspberries raw'], ['mandarina','tangerines raw'], ['pomelo','grapefruit raw'], ['cereza','cherries sweet raw'], ['ciruela','plums raw'], ['datil','dates medjool'], ['pasas','raisins'], ['higo','figs raw'], ['granada','pomegranate raw'], ['limon','lemon raw'], ['coco rallado','coconut dried'], ['esparrago','asparagus raw'], ['alcachofa','artichokes raw'], ['acelga','chard raw'], ['col rizada','kale raw'], ['repollo','cabbage raw'], ['rucula','arugula raw'], ['canonigo','lambs lettuce raw'], ['remolacha','beets raw'], ['calabaza','pumpkin raw'], ['puerro','leeks raw'], ['apio','celery raw'], ['rabano','radishes raw'], ['pimiento rojo','red bell pepper raw'], ['tomate triturado','tomatoes crushed canned'], ['tomate frito','tomato sauce'], ['maiz dulce','corn sweet canned'], ['champinon','mushrooms white raw'], ['seta','oyster mushrooms raw'], ['jengibre','ginger root raw'], ['avellana','hazelnuts'], ['pistacho','pistachios'], ['nuez de brasil','brazil nuts'], ['pipas de girasol','sunflower seeds'], ['semillas de calabaza','pumpkin seeds'], ['sesamo','sesame seeds'], ['lino','flax seeds'], ['linaza','flax seeds'], ['tahini','tahini'], ['crema de cacahuete','peanut butter'], ['crema de almendra','almond butter'], ['mantequilla','butter salted'], ['aceite de coco','coconut oil'], ['aceite de girasol','sunflower oil'], ['yogur natural','yogurt plain whole milk'], ['yogur griego','yogurt greek plain'], ['yogur de soja','soy yogurt'], ['skyr','skyr'], ['queso fresco','cottage cheese'], ['requeson','ricotta'], ['queso rallado','parmesan grated'], ['mozzarella','mozzarella'], ['leche de almendra','almond milk unsweetened'], ['bebida de almendra','almond milk unsweetened'], ['bebida de avena','oat milk'], ['leche de avena','oat milk'], ['bebida de arroz','rice milk'], ['leche desnatada','milk nonfat'], ['leche entera','milk whole'], ['cacao','cocoa powder unsweetened'], ['chocolate negro','chocolate dark 70-85%'], ['miel','honey'], ['azucar','sugar granulated'], ['levadura nutricional','nutritional yeast'], ['proteina en polvo','whey protein powder'], ['garbanzo','chickpeas cooked']].sort((a, b) => b[0].length - a[0].length);
+const compNorm = s => String(s==null?'':s).normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/\s+/g,' ').trim();
+function compEn(q){ const t = ' ' + compNorm(q) + ' '; for(const [es,en] of CMP_ES_EN) if(t.indexOf(' '+es) >= 0) return en; return ''; }
+const compEsperar = ms => new Promise(r => setTimeout(r, ms));
 
 function setCompSource(src){
   compSource = src;
   document.getElementById('compSrcOff').classList.toggle('on', src==='off');
   document.getElementById('compSrcUsda').classList.toggle('on', src==='usda');
-  document.getElementById('compFootnote').textContent = src==='off'
-    ? 'Valores por 100g/100mL reportados por el fabricante o el usuario que subió el producto a Open Food Facts.'
-    : 'Valores por 100g según USDA FoodData Central (base de datos oficial del gobierno de EE.UU.).';
-  ['A','B'].forEach(s=>{ document.getElementById('compResults'+s).innerHTML=''; });
+  compPie();
+  ['A','B'].forEach(s=>{ compReq[s]++; document.getElementById('compResults'+s).innerHTML=''; });
+}
+function compPie(){
+  const propia = compUsdaKey() !== 'DEMO_KEY';
+  document.getElementById('compFootnote').textContent = compSource==='off'
+    ? 'Valores por 100g/100mL reportados por el fabricante o el usuario que subió el producto a Open Food Facts (primero los productos vendidos en España).'
+    : 'Valores por 100g según USDA FoodData Central (base de datos oficial del gobierno de EE.UU.; alimentos genéricos, en inglés: lo que escribes en español se traduce). ' + (propia ? 'Usando tu clave de USDA.' : 'Usando la clave de prueba, que permite muy pocas consultas por hora: añade la tuya en «Clave de USDA».');
 }
 function setCompMode(mode){
   compMode = mode;
@@ -3450,76 +3518,179 @@ function setCompMode(mode){
   document.getElementById('compIsoInput').style.display = mode==='iso' ? 'flex' : 'none';
   renderCompCards();
 }
+function setCompVista(v){
+  compVista = v;
+  document.getElementById('compVistaCmp').classList.toggle('on', v==='comparar');
+  document.getElementById('compVistaUno').classList.toggle('on', v==='uno');
+  document.getElementById('compVistaCmp').setAttribute('aria-pressed', v==='comparar');
+  document.getElementById('compVistaUno').setAttribute('aria-pressed', v==='uno');
+  document.getElementById('compSlotB').style.display = v==='uno' ? 'none' : '';
+  document.getElementById('compCtlCmp').style.display = v==='uno' ? 'none' : '';
+  document.getElementById('compSlots').classList.toggle('uno', v==='uno');
+  document.getElementById('compSlotATit').innerHTML = v==='uno' ? 'Alimento' : '<span class="cmp-tag a">A</span>Alimento A';
+  renderCompCards();
+}
+
+// ── Red: tiempo máximo, reintento y mensajes que dicen qué pasa ──
+async function compFetchJson(url, ms){
+  const ac = new AbortController(), t = setTimeout(() => ac.abort(), ms || 10000);
+  try{
+    const r = await fetch(url, { signal: ac.signal });
+    if(r.status === 429){ const e = new Error('limite'); e.limite = true; throw e; }
+    if(r.status === 403 && /nal\.usda\.gov/.test(url)){ const e = new Error('clave'); e.clave = true; throw e; }
+    if(!r.ok){ const e = new Error('http ' + r.status); e.http = r.status; throw e; }
+    const txt = await r.text();
+    try{ return JSON.parse(txt); }catch(x){ const e = new Error('formato'); e.formato = true; throw e; }   // Open Food Facts a veces devuelve una página de error en vez de datos
+  } finally { clearTimeout(t); }
+}
+const OFF_CAMPOS = 'code,product_name,product_name_es,generic_name,brands,image_small_url,image_front_small_url,nutriments,nutriscore_grade,nova_group,ingredients_text_es,ingredients_text,allergens_tags,quantity';
+async function compBuscarOff(q){
+  const url = (host, soloEs) => `https://${host}.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(q)}&search_simple=1&action=process&json=1&page_size=12&lc=es&sort_by=unique_scans_n&fields=${OFF_CAMPOS}` + (soloEs ? '&tagtype_0=countries&tag_contains_0=contains&tag_0=spain' : '');
+  let d;
+  try{ d = await compFetchJson(url('world', true)); }
+  catch(e){ if(e.limite) throw e; await compEsperar(600); d = await compFetchJson(url('es', true)); }   // segundo intento por otra dirección de Open Food Facts
+  let items = (d.products || []).filter(p => p.product_name || p.product_name_es || p.generic_name);
+  if(!items.length){   // nada vendido en España con ese nombre: se busca en todo el mundo
+    try{ const d2 = await compFetchJson(url('world', false)); items = (d2.products || []).filter(p => p.product_name || p.product_name_es || p.generic_name); }catch(e){}
+  }
+  return { items, traducido: '' };
+}
+async function compBuscarUsda(q){
+  const en = compEn(q), consulta = en || q, clave = compUsdaKey();
+  const url = dt => `https://api.nal.usda.gov/fdc/v1/foods/search?api_key=${encodeURIComponent(clave)}&query=${encodeURIComponent(consulta)}&pageSize=10` + (dt ? '&dataType=Foundation,SR%20Legacy' : '');
+  let d;
+  try{ d = await compFetchJson(url(true)); }
+  catch(e){ if(e.limite || e.clave) throw e; await compEsperar(600); d = await compFetchJson(url(true)); }
+  let items = d.foods || [];
+  if(!items.length){ try{ const d2 = await compFetchJson(url(false)); items = d2.foods || []; }catch(e){ if(e.limite || e.clave) throw e; } }
+  return { items, traducido: en };
+}
+function compErrorHtml(e, side, src){
+  const nombre = src==='off' ? 'Open Food Facts' : 'USDA';
+  let msg, clave = false;
+  if(e.limite){ msg = src==='usda' ? 'USDA ha alcanzado el límite de consultas por hora (la clave de prueba permite muy pocas).' : 'Open Food Facts pide esperar un poco antes de volver a buscar.'; clave = src==='usda' && compUsdaKey()==='DEMO_KEY'; }
+  else if(e.clave){ msg = 'La clave de USDA no es válida. Revísala o quítala para usar la de prueba.'; clave = true; }
+  else if(e.name === 'AbortError'){ msg = nombre + ' tarda demasiado en responder.'; }
+  else if(e instanceof TypeError){ msg = 'No se pudo conectar con ' + nombre + '. Comprueba tu conexión.'; }
+  else { msg = nombre + ' no está respondiendo bien ahora mismo.'; }
+  return `<div class="cmp-err"><p>${sudEsc(msg)}</p><div class="cmp-err-b"><button type="button" onclick="compSearchAhora('${side}')">Reintentar</button>${clave ? '<button type="button" onclick="compKeyAbrir()">Clave de USDA</button>' : ''}${src==='off' ? '<button type="button" onclick="setCompSource(\'usda\')">Probar con USDA</button>' : ''}</div></div>`;
+}
 
 function compSearch(side){
   clearTimeout(compTimers[side]);
-  const q = document.getElementById('compSearch'+side).value.trim();
-  const resEl = document.getElementById('compResults'+side);
-  document.getElementById('compClear'+side).style.display = document.getElementById('compSearch'+side).value ? 'block' : 'none';
-  if(q.length < 3){ resEl.innerHTML = ''; return; }
-  compTimers[side] = setTimeout(async ()=>{
-    resEl.innerHTML = '<p class="dash-empty" style="padding:10px">Buscando…</p>';
-    try{
-      let items = [];
-      if(compSource === 'off'){
-        const url = `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(q)}&search_simple=1&action=process&json=1&page_size=8&lc=es`;
-        const r = await fetch(url);
-        const data = await r.json();
-        items = (data.products||[]).filter(p=>p.product_name || p.generic_name);
-      } else {
-        const url = `https://api.nal.usda.gov/fdc/v1/foods/search?api_key=${USDA_KEY}&query=${encodeURIComponent(q)}&pageSize=8`;
-        const r = await fetch(url);
-        const data = await r.json();
-        items = data.foods || [];
-      }
-      compRawResults[side] = items;
-      if(!items.length){ resEl.innerHTML = '<p class="dash-empty" style="padding:10px">Sin resultados.</p>'; return; }
-      resEl.innerHTML = items.map((p,i)=>{
-        const name = compSource==='off' ? (p.product_name||p.generic_name) : p.description;
-        const brand = compSource==='off' ? (p.brands?p.brands.split(',')[0]:'') : (p.brandOwner||p.dataType||'');
-        const img = compSource==='off' ? p.image_small_url : null;
-        return `<div class="cmp-res" onclick="compSelect('${side}',${i})">
-          ${img ? `<img src="${sudEsc(img)}" alt="">` : `<span class="cmp-ph">${sudEsc(String(name).charAt(0).toUpperCase())}</span>`}
-          <span class="cmp-res-t"><span class="cmp-res-n">${sudEsc(name)}</span>${brand?`<span class="cmp-res-b">${sudEsc(brand)}</span>`:''}</span>
-        </div>`;
-      }).join('');
-    }catch(e){
-      resEl.innerHTML = '<p class="dash-empty" style="padding:10px">Error al buscar. Inténtalo de nuevo.</p>';
+  const inp = document.getElementById('compSearch'+side), q = inp.value.trim();
+  document.getElementById('compClear'+side).style.display = inp.value ? 'block' : 'none';
+  if(q.length < 3){ compReq[side]++; document.getElementById('compResults'+side).innerHTML = ''; return; }
+  compTimers[side] = setTimeout(() => compBuscar(side, q), 450);
+}
+function compSearchAhora(side){ const q = document.getElementById('compSearch'+side).value.trim(); if(q.length >= 3) compBuscar(side, q); }
+async function compBuscar(side, q){
+  const resEl = document.getElementById('compResults'+side), tok = ++compReq[side], src = compSource, clave = src + '|' + compNorm(q);
+  resEl.innerHTML = '<p class="dash-empty" style="padding:10px">Buscando…</p>';
+  try{
+    let r = compCache.get(clave);
+    if(!r){ r = src==='off' ? await compBuscarOff(q) : await compBuscarUsda(q); if(r.items.length) compCache.set(clave, r); }
+    if(tok !== compReq[side] || src !== compSource) return;   // llegó tarde: ya se ha buscado otra cosa
+    const items = r.items;
+    compRawResults[side] = items;
+    if(!items.length){
+      resEl.innerHTML = `<p class="dash-empty" style="padding:10px">Sin resultados${src==='usda' && !r.traducido ? '. USDA está en inglés: prueba el nombre en inglés (por ejemplo «lentils»)' : ''}.</p>`;
+      return;
     }
-  }, 450);
+    resEl.innerHTML = (r.traducido ? `<p class="cmp-nota">USDA está en inglés: buscando «${sudEsc(r.traducido)}»</p>` : '') + items.map((p,i)=>{
+      const name = src==='off' ? (p.product_name_es||p.product_name||p.generic_name) : p.description;
+      const brand = src==='off' ? (p.brands?p.brands.split(',')[0]:'') : (p.brandOwner||p.dataType||'');
+      const img = src==='off' ? (p.image_small_url||p.image_front_small_url) : null;
+      return `<div class="cmp-res" role="button" tabindex="0" onclick="compSelect('${side}',${i})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();compSelect('${side}',${i})}">
+        ${img ? `<img src="${sudEsc(img)}" alt="">` : `<span class="cmp-ph">${sudEsc(String(name).charAt(0).toUpperCase())}</span>`}
+        <span class="cmp-res-t"><span class="cmp-res-n">${sudEsc(name)}</span>${brand?`<span class="cmp-res-b">${sudEsc(brand)}</span>`:''}</span>
+      </div>`;
+    }).join('');
+  }catch(e){
+    if(tok !== compReq[side]) return;
+    resEl.innerHTML = compErrorHtml(e, side, src);
+  }
 }
 
+// Clave de USDA (se guarda solo en este navegador; la comparte el planificador nutricional)
+function compKeyAbrir(){
+  const k = compUsdaKey();
+  document.getElementById('compKeyIn').value = k === 'DEMO_KEY' ? '' : k;
+  document.getElementById('compKeyMsg').textContent = '';
+  document.getElementById('mCompKey').style.display = 'flex';
+  setTimeout(() => enfocar('compKeyIn'), 60);
+}
+function compKeyCerrar(){ document.getElementById('mCompKey').style.display = 'none'; }
+async function compKeyGuardar(quitar){
+  const msg = document.getElementById('compKeyMsg'), v = quitar ? '' : document.getElementById('compKeyIn').value.trim();
+  if(v && !/^[A-Za-z0-9]{20,60}$/.test(v)){ msg.textContent = 'La clave de USDA son letras y números (unos 40 caracteres): cópiala entera del correo.'; return; }
+  if(v){
+    msg.textContent = 'Comprobando…';
+    try{
+      const r = await fetch('https://api.nal.usda.gov/fdc/v1/foods/search?api_key=' + encodeURIComponent(v) + '&query=apple&pageSize=1');
+      if(r.status === 403){ msg.textContent = 'USDA no reconoce esa clave. Revisa que esté completa.'; return; }
+    }catch(e){ /* sin conexión: se guarda igualmente */ }
+  }
+  try{ if(v) localStorage.setItem('nl_usda_key', v); else localStorage.removeItem('nl_usda_key'); }catch(e){ msg.textContent = 'Este navegador no deja guardar la clave.'; return; }
+  compKeyCerrar(); compPie(); compCache.clear();
+  toast(v ? 'Clave de USDA guardada' : 'Clave de USDA quitada: se usa la de prueba');
+}
+
+// Normaliza un resultado (OFF o USDA) a una forma común, sea cual sea la fuente
+const CMP_MICROS = [
+  {k:'calcium', label:'Calcio', unit:'mg', off:['calcium_100g',1000], usda:1087},
+  {k:'iron', label:'Hierro', unit:'mg', off:['iron_100g',1000], usda:1089},
+  {k:'magnesium', label:'Magnesio', unit:'mg', off:['magnesium_100g',1000], usda:1090},
+  {k:'potassium', label:'Potasio', unit:'mg', off:['potassium_100g',1000], usda:1092},
+  {k:'zinc', label:'Zinc', unit:'mg', off:['zinc_100g',1000], usda:1095},
+  {k:'vitc', label:'Vitamina C', unit:'mg', off:['vitamin-c_100g',1000], usda:1162},
+  {k:'vitd', label:'Vitamina D', unit:'µg', off:['vitamin-d_100g',1e6], usda:1114},
+  {k:'b12', label:'Vitamina B12', unit:'µg', off:['vitamin-b12_100g',1e6], usda:1178},
+  {k:'folate', label:'Folato (B9)', unit:'µg', off:['vitamin-b9_100g',1e6], usda:1177}
+];
+const CMP_ALERGENOS = {milk:'leche', gluten:'gluten', eggs:'huevo', nuts:'frutos de cáscara', peanuts:'cacahuetes', soybeans:'soja', fish:'pescado', crustaceans:'crustáceos', molluscs:'moluscos', celery:'apio', mustard:'mostaza', 'sesame-seeds':'sésamo', 'sulphur-dioxide-and-sulphites':'sulfitos', lupin:'altramuces'};
 // Normaliza un resultado (OFF o USDA) a una forma común, sea cual sea la fuente
 function compNormalize(raw, source){
   if(source === 'off'){
     const n = raw.nutriments || {};
+    const num = v => typeof v === 'number' && isFinite(v) ? v : undefined;
+    let sodio = num(n['sodium_100g']) !== undefined ? n['sodium_100g']*1000 : undefined;
+    if(sodio === undefined && num(n['salt_100g']) !== undefined) sodio = n['salt_100g']/2.5*1000;
+    const micros = CMP_MICROS.map(m => num(n[m.off[0]]) !== undefined ? {k:m.k, label:m.label, unit:m.unit, v:n[m.off[0]]*m.off[1]} : null).filter(Boolean);
     return {
-      name: raw.product_name || raw.generic_name || 'Sin nombre',
+      name: raw.product_name_es || raw.product_name || raw.generic_name || 'Sin nombre',
       brand: raw.brands ? raw.brands.split(',')[0] : '',
-      extra: '', nutri: raw.nutriscore_grade && /^[a-e]$/i.test(raw.nutriscore_grade) ? raw.nutriscore_grade.toUpperCase() : '',
+      extra: raw.quantity || '', nutri: raw.nutriscore_grade && /^[a-e]$/i.test(raw.nutriscore_grade) ? raw.nutriscore_grade.toUpperCase() : '',
       img: raw.image_small_url || raw.image_front_small_url || '',
-      kcal: n['energy-kcal_100g'], protein: n['proteins_100g'], carbs: n['carbohydrates_100g'],
-      sugars: n['sugars_100g'], fat: n['fat_100g'], satfat: n['saturated-fat_100g'],
-      fiber: n['fiber_100g'], sodium_mg: n['sodium_100g']!==undefined ? n['sodium_100g']*1000 : undefined
+      kcal: num(n['energy-kcal_100g']) !== undefined ? n['energy-kcal_100g'] : (num(n['energy_100g']) !== undefined ? n['energy_100g']/4.184 : undefined),
+      protein: num(n['proteins_100g']), carbs: num(n['carbohydrates_100g']),
+      sugars: num(n['sugars_100g']), fat: num(n['fat_100g']), satfat: num(n['saturated-fat_100g']),
+      fiber: num(n['fiber_100g']), sodium_mg: sodio, micros,
+      ingredientes: String(raw.ingredients_text_es || raw.ingredients_text || '').trim(),
+      alergenos: (raw.allergens_tags || []).map(t => String(t).replace(/^[a-z]{2}:/, '')).map(t => CMP_ALERGENOS[t] || t.replace(/-/g,' ')),
+      nova: raw.nova_group ? String(raw.nova_group) : '', fuente: 'Open Food Facts'
     };
   } else {
     const get = (id) => {
       const found = (raw.foodNutrients||[]).find(x => x.nutrientId===id || x.nutrient?.id===id);
       return found ? (found.value!==undefined?found.value:found.amount) : undefined;
     };
+    const micros = CMP_MICROS.map(m => get(m.usda) !== undefined ? {k:m.k, label:m.label, unit:m.unit, v:get(m.usda)} : null).filter(Boolean);
     return {
       name: raw.description || 'Sin nombre',
       brand: raw.brandOwner || raw.dataType || '',
       extra: raw.brandOwner ? (raw.dataType || '') : '', nutri: '', img: '',
       kcal: get(1008), protein: get(1003), carbs: get(1005),
       sugars: get(2000), fat: get(1004), satfat: get(1258),
-      fiber: get(1079), sodium_mg: get(1093)
+      fiber: get(1079), sodium_mg: get(1093), micros,
+      ingredientes: '', alergenos: [], nova: '', fuente: 'USDA FoodData Central'
     };
   }
 }
 
 function compSelect(side, idx){
   const raw = compRawResults[side][idx];
+  if(!raw) return;
   const norm = compNormalize(raw, compSource);
   compData[side] = norm;
   document.getElementById('compResults'+side).innerHTML = '';
@@ -3618,6 +3789,48 @@ function compTablaHtml(A, B){
     <p class="ref-note" style="margin-top:12px">"Destaca" = más proteína y fibra, o menos azúcares, saturadas y sodio. Las grasas, los carbohidratos y la energía no se valoran: dependen del objetivo.</p></div>`;
 }
 
+// Ficha de un solo alimento: todos los nutrientes por la cantidad elegida y por 100 g
+function compRacionSet(v){
+  const g = parseFloat(String(v).replace(',','.'));
+  compRacion = isFinite(g) && g > 0 ? Math.min(g, 5000) : 100;
+  const p = compData.A, cuerpo = document.getElementById('compDetBody');
+  if(p && cuerpo){ cuerpo.innerHTML = compDetCuerpo(p); const i = document.getElementById('compRacion'); if(i && document.activeElement !== i) i.value = compRacion; document.querySelectorAll('#compTable .cmp-chip').forEach(b => b.classList.toggle('on', +b.dataset.g === compRacion)); }
+}
+function compDetCuerpo(p){
+  const g = compRacion, sc = g/100;
+  const fmt = (v, d) => (v===undefined||v===null||isNaN(v)) ? '—' : compVal(v*sc, d);
+  const fmt100 = (v, d) => (v===undefined||v===null||isNaN(v)) ? '—' : compVal(v, d);
+  const fila = (label, v, unit, d, sub) => `<tr class="${sub?'sub':''}"><th scope="row">${label}</th><td>${fmt(v,d)}${v===undefined||v===null?'':' '+unit}</td><td class="c100">${fmt100(v,d)}${v===undefined||v===null?'':' '+unit}</td></tr>`;
+  const sal = p.sodium_mg !== undefined ? p.sodium_mg*2.5/1000 : undefined;
+  let aviso = '';
+  if([p.kcal,p.protein,p.carbs,p.fat].every(x=>x!==undefined&&x!==null)){
+    const calc = 4*p.protein + 4*p.carbs + 9*p.fat;
+    if(Math.abs(p.kcal-calc) > Math.max(25, 0.3*Math.max(p.kcal,calc))) aviso = '<p class="cmp-aviso">Las kcal no cuadran con la proteína, los hidratos y la grasa: este dato puede estar mal cargado en la base de datos. Compáralo con otro resultado.</p>';
+  } else aviso = '<p class="cmp-aviso">Faltan datos de este alimento en la base de datos (aparecen con «—»).</p>';
+  const macros = `<tbody>
+    ${fila('Energía', p.kcal, 'kcal', 0)}
+    ${fila('Proteínas', p.protein, 'g', 1)}
+    ${fila('Hidratos de carbono', p.carbs, 'g', 1)}
+    ${fila('de los cuales azúcares', p.sugars, 'g', 1, true)}
+    ${fila('Grasas', p.fat, 'g', 1)}
+    ${fila('de las cuales saturadas', p.satfat, 'g', 1, true)}
+    ${fila('Fibra', p.fiber, 'g', 1)}
+    ${fila('Sal', sal, 'g', 2)}
+    ${fila('Sodio', p.sodium_mg, 'mg', 0, true)}</tbody>`;
+  const micros = (p.micros||[]).length ? `<tbody><tr class="grp"><th scope="colgroup" colspan="3">Minerales y vitaminas</th></tr>${p.micros.map(m => fila(m.label, m.v, m.unit, m.v>=100?0:m.v>=10?1:2)).join('')}</tbody>` : '';
+  const extras = [];
+  if(p.ingredientes) extras.push(`<div class="cmp-ex"><b>Ingredientes</b><p>${sudEsc(p.ingredientes.length>600 ? p.ingredientes.slice(0,600)+'…' : p.ingredientes)}</p></div>`);
+  if(p.alergenos && p.alergenos.length) extras.push(`<div class="cmp-ex"><b>Alérgenos declarados</b><p>${sudEsc(p.alergenos.join(', '))}</p></div>`);
+  if(p.nova) extras.push(`<div class="cmp-ex"><b>Grado de procesado (NOVA)</b><p>${sudEsc(p.nova)} de 4${p.nova==='4'?' · ultraprocesado':''}</p></div>`);
+  return `${aviso}<div class="cmp-tabw"><table class="cmp-det"><caption class="sr-only">Información nutricional de ${sudEsc(p.name)}</caption>
+      <thead><tr><th scope="col">Nutriente</th><th scope="col">Por ${compVal(g, g%1?1:0)} g</th><th scope="col" class="c100">Por 100 g</th></tr></thead>${macros}${micros}</table></div>
+    ${extras.join('')}<p class="ref-note" style="margin-top:12px">Fuente: ${sudEsc(p.fuente || '')}.</p>`;
+}
+function compDetalleHtml(p){
+  const chips = [50,100,150,200].map(g => `<button type="button" class="cmp-chip${g===compRacion?' on':''}" data-g="${g}" onclick="compRacionSet(${g});document.getElementById('compRacion').value=${g}">${g} g</button>`).join('');
+  return `<div class="cmp-compare cmp-uno"><div class="cmp-racion"><label for="compRacion">Cantidad</label><input type="number" id="compRacion" min="1" max="5000" step="1" value="${compRacion}" inputmode="decimal" oninput="compRacionSet(this.value)"><span>g</span><div class="cmp-chips">${chips}</div></div><div id="compDetBody">${compDetCuerpo(p)}</div></div>`;
+}
+
 function renderCompCards(){
   ['A','B'].forEach(side=>{
     const p = compData[side], el = document.getElementById('compCard'+side);
@@ -3625,6 +3838,13 @@ function renderCompCards(){
       side==='A' ? '<div class="cmp-ej">'+['Avena','Lentejas','Plátano','Arroz integral'].map(t=>`<button onclick="compEjemplo('${t}')">${t}</button>`).join('')+'</div>' : ''}</div>`;
   });
   const tabla = document.getElementById('compTable');
+  if(compVista === 'uno'){
+    const hay = document.getElementById('compRacion');
+    if(compData.A){ if(!hay || tabla.dataset.nombre !== compData.A.name){ tabla.innerHTML = compDetalleHtml(compData.A); tabla.dataset.nombre = compData.A.name; } }
+    else { tabla.innerHTML = ''; tabla.dataset.nombre = ''; }
+    return;
+  }
+  tabla.dataset.nombre = '';
   tabla.innerHTML = (compData.A && compData.B) ? compTablaHtml(compData.A, compData.B)
     : (compData.A || compData.B) ? '<p class="hd-hint" style="text-align:center;margin-top:14px">Elige un segundo alimento para ver la comparativa.</p>' : '';
 }
@@ -3981,6 +4201,35 @@ function logout(){
   show('vlogin');
 }
 function show(v){_autoDep.ahora();_autoM3.ahora();document.querySelectorAll('.view').forEach(e=>e.classList.remove('active'));document.getElementById(v).classList.add('active');document.body.classList.toggle('emb-view',v==='vmenusem'||v==='vantro');}
+// ═══════════════ VENTANAS Y TECLADO (iPhone / iPad) ═══════════════
+// Con el teclado abierto, o cuando Safari desplaza la página al enfocar un campo, la zona visible es más pequeña y está más abajo que la «pantalla» que ve la
+// página: las ventanas se centraban en la pantalla entera y su parte de arriba quedaba fuera de lo visible. Aquí se mide la zona realmente visible (visualViewport)
+// y se guarda en --vvt / --vvb (lo que sobra por arriba y por abajo); las ventanas (.mbg) y su altura máxima (--mvh) la respetan. Sin teclado no se define nada
+// y todo queda como siempre. Los marcos incrustados (calculadora y planificador) reciben su parte por mensaje, porque sus ventanas viven en su propio documento.
+const esTactil = () => { try{ return matchMedia('(pointer:coarse)').matches; }catch(e){ return false; } };
+// En el móvil y la tableta no se enfoca solo el primer campo al abrir una ventana: abre el teclado y descoloca la ventana.
+function enfocar(id){ if(esTactil()) return; const e = document.getElementById(id); if(e) e.focus(); }
+(function(){
+  const v = window.visualViewport; if(!v) return;
+  let ult = null;
+  const aplicar = (forzar) => {
+    const alto = window.innerHeight, tecl = (alto - v.height) > 80 || v.offsetTop > 1;
+    const top = tecl ? Math.max(0, v.offsetTop) : 0, bajo = tecl ? Math.max(0, alto - v.offsetTop - v.height) : 0;
+    const clave = top + '|' + bajo;
+    if(clave === ult && !forzar) return; ult = clave;
+    const r = document.documentElement.style;
+    if(tecl){ r.setProperty('--vvt', top + 'px'); r.setProperty('--vvb', bajo + 'px'); } else { r.removeProperty('--vvt'); r.removeProperty('--vvb'); }
+    ['antroFrame','menuFrame'].forEach(id => {
+      const f = document.getElementById(id); if(!f || !f.contentWindow) return;
+      let msg = null;
+      if(tecl){ const fr = f.getBoundingClientRect(), a = Math.max(top, fr.top), z = Math.min(alto - bajo, fr.bottom); msg = { top: Math.max(0, a - fr.top), bottom: Math.max(0, fr.bottom - z) }; }
+      try{ f.contentWindow.postMessage({ nlvv: msg }, location.origin); }catch(e){}
+    });
+  };
+  v.addEventListener('resize', () => aplicar()); v.addEventListener('scroll', () => aplicar());
+  document.addEventListener('DOMContentLoaded', () => ['antroFrame','menuFrame'].forEach(id => { const f = document.getElementById(id); if(f) f.addEventListener('load', () => aplicar(true)); }));
+})();
+
 // ═══════════════ MODO OSCURO ═══════════════
 // Preferencia guardada en nutrilogos_dark: '1' oscuro, '0' claro, sin valor = seguir el sistema
 const modoPref=()=>{ try{ const v=localStorage.getItem('nutrilogos_dark'); return v==='1'?'dark':v==='0'?'light':'system'; }catch(e){ return 'system'; } };
@@ -4178,7 +4427,7 @@ function copyUrl(url){
 function saveNote(id){ _autoM3.cambio(id,document.getElementById('nta').value); return _autoM3.ahora(); }
 
 // ── ADD CLIENT ──
-function openAdd(){document.getElementById('mAdd').style.display='flex';setTimeout(()=>document.getElementById('mNombre').focus(),100);}
+function openAdd(){document.getElementById('mAdd').style.display='flex';setTimeout(()=>enfocar('mNombre'),100);}
 function closeAdd(){document.getElementById('mAdd').style.display='none';document.getElementById('mNombre').value='';document.getElementById('mEmail').value='';document.getElementById('mAddErr').textContent='';}
 async function createClient(){
   const nombre=document.getElementById('mNombre').value.trim();
@@ -4858,7 +5107,7 @@ async function abrirInformeProgreso(depId){
   infFotosUI();
   if(!_inf.med.length && !_inf.segs.length && !_inf.bio.length && !_inf.pesosCli.length){ cerrarInforme(); toast('Todavía no hay mediciones ni seguimientos para hacer el informe.', {tipo:'aviso', ms:5000}); return; }
   infPintar();
-  setTimeout(()=>{ const t=document.getElementById('infComent'); if(t) t.focus(); }, 60);
+  setTimeout(()=>enfocar('infComent'), 60);
 }
 function cerrarInforme(){ document.getElementById('mInforme').style.display = 'none'; _inf = null; }
 function infPintar(){
@@ -5133,7 +5382,7 @@ function openAccion(tipo, id, actual){
   accionCtx = { tipo, id };
   document.getElementById('accionInput').value = actual || '';
   document.getElementById('mAccion').style.display = 'flex';
-  setTimeout(()=>document.getElementById('accionInput').focus(), 80);
+  setTimeout(()=>enfocar('accionInput'), 80);
 }
 function closeAccion(){
   document.getElementById('mAccion').style.display = 'none';
@@ -5597,7 +5846,7 @@ function removeCita(id) {
 
 function openAddCita() {
   document.getElementById('mAddCita').style.display = 'flex';
-  setTimeout(() => document.getElementById('citaCliente').focus(), 100);
+  setTimeout(() => enfocar('citaCliente'), 100);
 }
 function closeAddCita() {
   document.getElementById('mAddCita').style.display = 'none';
@@ -5643,7 +5892,7 @@ async function createCita() {
 
 function openImportDep() {
   document.getElementById('mImportDep').style.display = 'flex';
-  setTimeout(() => document.getElementById('importText').focus(), 100);
+  setTimeout(() => enfocar('importText'), 100);
 }
 function closeImportDep() {
   document.getElementById('mImportDep').style.display = 'none';
@@ -5687,7 +5936,7 @@ async function importDeportistas() {
 
 function openAddDep() {
   document.getElementById('mAddDep').style.display = 'flex';
-  setTimeout(() => document.getElementById('depNombre').focus(), 100);
+  setTimeout(() => enfocar('depNombre'), 100);
 }
 function closeAddDep() {
   document.getElementById('mAddDep').style.display = 'none';
@@ -6816,7 +7065,7 @@ function abrirBio(depId, file) {
   document.getElementById('bioAviso').innerHTML = ''; document.getElementById('bioMsg').textContent = '';
   document.getElementById('bioPrev').innerHTML = '';
   bioPintarForm({ valores: {}, dudosos: {}, calculados: [], fecha: bioHoy(), fuente: null });
-  if (file) bioProcesar(file); else setTimeout(() => { const f = document.getElementById('bio_peso'); if (f) f.focus(); }, 60);
+  if (file) bioProcesar(file); else setTimeout(() => enfocar('bio_peso'), 60);
 }
 function cerrarBio() { document.getElementById('mBio').style.display = 'none'; _bio = null; }
 function bioPintarForm(res) {
@@ -8016,7 +8265,7 @@ async function abrirConsulta(depId, cita){
   document.getElementById('consPago').checked = false;
   document.getElementById('consGuardar').disabled = false;
   document.getElementById('mConsulta').style.display = 'flex';
-  if(d) setTimeout(() => document.getElementById('consNota').focus(), 60);
+  if(d) setTimeout(() => enfocar('consNota'), 60);
 }
 function cerrarConsulta(){ document.getElementById('mConsulta').style.display = 'none'; _cons = null; }
 async function guardarConsulta(){

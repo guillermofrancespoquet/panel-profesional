@@ -264,9 +264,9 @@ body.dark-mode canvas{background:#fff;border-radius:10px;}
    continuación del contenido: así no queda a mitad de hoja ni salta a una página nueva. */
 .rep-foot{position:absolute;left:14mm;right:14mm;bottom:3mm;margin:0;padding-top:4px;font-size:9.5px;line-height:1.3;color:var(--g500);text-align:center;border-top:.5px solid var(--bdm);}
 .footer-import-export{display:flex;gap:8px;}
-.modal-bg{position:fixed;inset:0;background:rgba(4,52,44,.5);display:none;align-items:center;justify-content:center;z-index:900;padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px);}
+.modal-bg{position:fixed;top:var(--vvt,0px);bottom:var(--vvb,0px);left:0;right:0;background:rgba(4,52,44,.5);display:none;align-items:center;justify-content:center;z-index:900;padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px);}
 .modal-bg.show{display:flex;}
-.modal{background:var(--sf);color:var(--g900);border-radius:20px;padding:1.75rem;max-width:420px;width:90%;max-height:min(88vh,calc(100dvh - 1.5rem - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)));overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.25);}
+.modal{background:var(--sf);color:var(--g900);border-radius:20px;padding:1.75rem;max-width:420px;width:90%;max-height:min(88vh,calc(100dvh - var(--vvt,0px) - var(--vvb,0px) - 1.5rem - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)));overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.25);}
 .modal.wide{max-width:640px;}
 .modal.ficha{max-width:640px;padding:0;display:flex;flex-direction:column;overflow:hidden;}
 .fi-scroll{overflow-y:auto;overscroll-behavior:contain;padding:1.5rem 1.75rem .5rem;flex:1 1 auto;min-height:0;}
@@ -384,7 +384,7 @@ body.dark-mode canvas{background:#fff;border-radius:10px;}
   #clientTable td:nth-child(6){grid-column:1/-1;margin-top:8px;}
   #clientTable td:nth-child(6) .btn-group{display:grid;grid-template-columns:1fr 1fr;}
   #clientTable td:nth-child(6) .btn{justify-content:center;}
-  .modal{padding:16px;max-height:calc(100dvh - 1rem - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));}
+  .modal{padding:16px;max-height:calc(100dvh - var(--vvt,0px) - var(--vvb,0px) - 1rem - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));}
   .modal.ficha{padding:0;width:calc(100% - 16px);}
   .fi-scroll{padding:1.1rem 1rem .25rem;}
   .fi-foot{padding-left:1rem;padding-right:1rem;}
@@ -503,6 +503,20 @@ body.dark-mode :focus-visible{outline-color:#5CC8A6}
 <!-- pdf.js (lector de PDF) ya no va embebido: se descarga de jsDelivr, con versión fija, solo al importar un PDF (ver cargarPdfJs). Así la calculadora abre mucho más rápido. -->
 
 <script>
+// Ventanas y teclado (iPhone / iPad): dentro del panel, este documento recibe del panel la franja realmente visible (--vvt / --vvb); ver «VENTANAS Y TECLADO» en panel-profesional.html.
+window.addEventListener('message', e => {
+  if(e.origin !== location.origin || e.source !== window.parent || !e.data || !('nlvv' in e.data)) return;
+  const r = document.documentElement.style, v = e.data.nlvv;
+  if(v){ r.setProperty('--vvt', v.top + 'px'); r.setProperty('--vvb', v.bottom + 'px'); } else { r.removeProperty('--vvt'); r.removeProperty('--vvb'); }
+});
+(function(){   // suelta (fuera del panel): la misma medición sobre su propio visualViewport
+  const v = window.visualViewport; if(!v || window.top !== window) return;
+  const aplicar = () => { const alto = innerHeight, tecl = (alto - v.height) > 80 || v.offsetTop > 1, r = document.documentElement.style;
+    if(tecl){ r.setProperty('--vvt', Math.max(0, v.offsetTop) + 'px'); r.setProperty('--vvb', Math.max(0, alto - v.offsetTop - v.height) + 'px'); } else { r.removeProperty('--vvt'); r.removeProperty('--vvb'); } };
+  v.addEventListener('resize', aplicar); v.addEventListener('scroll', aplicar);
+})();
+const esTactil = () => { try{ return matchMedia('(pointer:coarse)').matches; }catch(e){ return false; } };   // en el móvil y la tableta no se enfoca solo el primer campo de una ventana
+
 /* ============================================================
    ANTROPOMETRÍA & SOMATOCARTA — App conectada a Supabase
    Réplica funcional de la calculadora ISAK de Excel, con:
@@ -1547,7 +1561,7 @@ function openClientForm(client, prefill){
   };
   document.getElementById("f_fnac").addEventListener("input", pintaEdad); pintaEdad();
   document.getElementById("f_nombre").addEventListener("input", ()=>{ document.getElementById("f_nombre_err").style.display="none"; });
-  if(isNew) document.getElementById("f_nombre").focus();
+  if(isNew && !esTactil()) document.getElementById("f_nombre").focus();
   document.getElementById("btnCancelClient").addEventListener("click", ()=>{ PENDING_CLIENT_IMPORT = null; closeModal(); });
   document.getElementById("btnSaveClient").addEventListener("click", async ()=>{
     const nombreCompleto = document.getElementById("f_nombre").value.trim();

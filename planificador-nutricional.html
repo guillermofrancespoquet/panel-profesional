@@ -37,8 +37,8 @@ body{font-family:var(--f);background:var(--bg);color:var(--g900);min-height:100v
 .notes-ta:focus{border-color:var(--t400)}
 .notes-foot{display:flex;align-items:center;gap:10px;margin-top:8px}
 .btn-save{padding:9px 18px;background:var(--btn);border:none;border-radius:8px;color:#fff;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--f)}
-.mbg{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:100;padding:1rem}
-.mc{background:var(--sf);border-radius:16px;padding:2rem;width:100%;max-width:400px;max-height:calc(100dvh - 2rem);overflow-y:auto;overscroll-behavior:contain}
+.mbg{position:fixed;top:var(--vvt,0px);bottom:var(--vvb,0px);left:0;right:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:100;padding:1rem}
+.mc{background:var(--sf);border-radius:16px;padding:2rem;width:100%;max-width:400px;max-height:calc(100dvh - var(--vvt,0px) - var(--vvb,0px) - 2rem);overflow-y:auto;overscroll-behavior:contain}
 .mt{font-size:18px;font-weight:700;margin-bottom:5px;letter-spacing:-.02em}
 .ms{font-size:13px;color:var(--g400);margin-bottom:1.5rem;line-height:1.5}
 .mfl{font-size:12px;font-weight:500;color:var(--g500);margin-bottom:6px;display:block}
@@ -562,54 +562,67 @@ body.dark-mode .mn-bib-b.veg{color:var(--t800)}
 <div id="vmenuc" class="view" role="main"><div class="page" id="mnPage"></div></div>
 
 <div class="mbg" id="mMnCat" style="display:none;z-index:310" role="dialog" aria-modal="true" aria-labelledby="mnCatTit" onclick="if(event.target===this)mnCatCerrar()">
-  <div class="mc" style="max-width:600px;max-height:calc(100dvh - 2rem);overflow-y:auto" id="mnCatCuerpo"></div>
+  <div class="mc" style="max-width:600px;max-height:calc(100dvh - var(--vvt,0px) - var(--vvb,0px) - 2rem);overflow-y:auto" id="mnCatCuerpo"></div>
 </div>
 <div class="mbg" id="mMnCopiar" style="display:none;z-index:310" role="dialog" aria-modal="true" aria-labelledby="mnCopTit" onclick="if(event.target===this)mnCopiarCerrar()">
-  <div class="mc" style="max-width:420px;max-height:calc(100dvh - 2rem);overflow-y:auto" id="mnCopCuerpo"></div>
+  <div class="mc" style="max-width:420px;max-height:calc(100dvh - var(--vvt,0px) - var(--vvb,0px) - 2rem);overflow-y:auto" id="mnCopCuerpo"></div>
 </div>
 <div class="mbg" id="mMnBanco" style="display:none;z-index:315" role="dialog" aria-modal="true" aria-labelledby="mnBancoTit" onclick="if(event.target===this)mnBancoCerrar()">
-  <div class="mc" style="max-width:640px;max-height:calc(100dvh - 2rem);overflow-y:auto" id="mnBancoCuerpo"></div>
+  <div class="mc" style="max-width:640px;max-height:calc(100dvh - var(--vvt,0px) - var(--vvb,0px) - 2rem);overflow-y:auto" id="mnBancoCuerpo"></div>
 </div>
 <div class="mbg" id="mMnScan" style="display:none;z-index:330" role="dialog" aria-modal="true" aria-labelledby="mnScanTit" onclick="if(event.target===this)mnScanCerrar()">
-  <div class="mc" style="max-width:460px;max-height:calc(100dvh - 2rem);overflow-y:auto" id="mnScanCuerpo"></div>
+  <div class="mc" style="max-width:460px;max-height:calc(100dvh - var(--vvt,0px) - var(--vvb,0px) - 2rem);overflow-y:auto" id="mnScanCuerpo"></div>
 </div>
 <div class="mbg" id="mMnUsda" style="display:none;z-index:340" role="dialog" aria-modal="true" aria-labelledby="mnUsdaTit" onclick="if(event.target===this)mnUsdaCerrar()">
   <div class="mc" style="max-width:460px" id="mnUsdaCuerpo"></div>
 </div>
 <div class="mbg" id="mMnAuto" style="display:none;z-index:320" role="dialog" aria-modal="true" aria-labelledby="mnAutoTit" onclick="if(event.target===this)mnAutoCerrar()">
-  <div class="mc" style="max-width:940px;max-height:calc(100dvh - 2rem);overflow-y:auto" id="mnAutoCuerpo"></div>
+  <div class="mc" style="max-width:940px;max-height:calc(100dvh - var(--vvt,0px) - var(--vvb,0px) - 2rem);overflow-y:auto" id="mnAutoCuerpo"></div>
 </div>
 <div class="mbg" id="mMnImp" style="display:none;z-index:320" role="dialog" aria-modal="true" aria-labelledby="mnImpTit" onclick="if(event.target===this)mnImpCerrar()">
-  <div class="mc" style="max-width:760px;max-height:calc(100dvh - 2rem);overflow-y:auto" id="mnImpCuerpo"></div>
+  <div class="mc" style="max-width:760px;max-height:calc(100dvh - var(--vvt,0px) - var(--vvb,0px) - 2rem);overflow-y:auto" id="mnImpCuerpo"></div>
 </div>
 <input type="file" id="mnImpFile" accept=".html,.htm,text/html" style="display:none" aria-hidden="true" tabindex="-1" onchange="mnImpArchivo(this)">
 <div class="mbg" id="mMnGen" style="display:none;z-index:320" role="dialog" aria-modal="true" aria-labelledby="mnGenTit" onclick="if(event.target===this)mnGenCerrar()">
-  <div class="mc" style="max-width:760px;max-height:calc(100dvh - 2rem);overflow-y:auto" id="mnGenCuerpo"></div>
+  <div class="mc" style="max-width:760px;max-height:calc(100dvh - var(--vvt,0px) - var(--vvb,0px) - 2rem);overflow-y:auto" id="mnGenCuerpo"></div>
 </div>
 <div class="mbg" id="mMnBibE" style="display:none;z-index:325" role="dialog" aria-modal="true" aria-labelledby="mnBibETit" onclick="if(event.target===this)mnBibECerrar()">
-  <div class="mc" style="max-width:600px;max-height:calc(100dvh - 2rem);overflow-y:auto" id="mnBibECuerpo"></div>
+  <div class="mc" style="max-width:600px;max-height:calc(100dvh - var(--vvt,0px) - var(--vvb,0px) - 2rem);overflow-y:auto" id="mnBibECuerpo"></div>
 </div>
 <div class="mbg" id="mMnSu" style="display:none;z-index:325" role="dialog" aria-modal="true" aria-labelledby="mnSuTit" onclick="if(event.target===this)mnSuCerrar()">
-  <div class="mc" style="max-width:680px;max-height:calc(100dvh - 2rem);overflow-y:auto" id="mnSuCuerpo"></div>
+  <div class="mc" style="max-width:680px;max-height:calc(100dvh - var(--vvt,0px) - var(--vvb,0px) - 2rem);overflow-y:auto" id="mnSuCuerpo"></div>
 </div>
 <div class="mbg" id="mMnVer" style="display:none;z-index:325" role="dialog" aria-modal="true" aria-labelledby="mnVerTit" onclick="if(event.target===this)mnVerCerrar()">
-  <div class="mc" style="max-width:620px;max-height:calc(100dvh - 2rem);overflow-y:auto" id="mnVerCuerpo"></div>
+  <div class="mc" style="max-width:620px;max-height:calc(100dvh - var(--vvt,0px) - var(--vvb,0px) - 2rem);overflow-y:auto" id="mnVerCuerpo"></div>
 </div>
 <div class="mbg" id="mMnCopC" style="display:none;z-index:325" role="dialog" aria-modal="true" aria-labelledby="mnCopCTit" onclick="if(event.target===this)mnCopCCerrar()">
-  <div class="mc" style="max-width:480px;max-height:calc(100dvh - 2rem);overflow-y:auto" id="mnCopCCuerpo"></div>
+  <div class="mc" style="max-width:480px;max-height:calc(100dvh - var(--vvt,0px) - var(--vvb,0px) - 2rem);overflow-y:auto" id="mnCopCCuerpo"></div>
 </div>
 <div class="mbg" id="mMnImpr" style="display:none;z-index:325" role="dialog" aria-modal="true" aria-labelledby="mnImprTit" onclick="if(event.target===this)mnImprCerrar()">
-  <div class="mc" style="max-width:540px;max-height:calc(100dvh - 2rem);overflow-y:auto" id="mnImprCuerpo"></div>
+  <div class="mc" style="max-width:540px;max-height:calc(100dvh - var(--vvt,0px) - var(--vvb,0px) - 2rem);overflow-y:auto" id="mnImprCuerpo"></div>
 </div>
 <div class="mbg" id="mMnObj" style="display:none;z-index:315" role="dialog" aria-modal="true" aria-labelledby="mnObjTit" onclick="if(event.target===this)mnObjCerrar()">
-  <div class="mc" style="max-width:720px;max-height:calc(100dvh - 2rem);overflow-y:auto" id="mnObjCuerpo"></div>
+  <div class="mc" style="max-width:720px;max-height:calc(100dvh - var(--vvt,0px) - var(--vvb,0px) - 2rem);overflow-y:auto" id="mnObjCuerpo"></div>
 </div>
 <div class="mbg" id="mMnReaj" style="display:none;z-index:318" role="dialog" aria-modal="true" aria-labelledby="mnReajTit" onclick="if(event.target===this)mnReajCerrar()">
-  <div class="mc" style="max-width:640px;max-height:calc(100dvh - 2rem);overflow-y:auto" id="mnReajCuerpo"></div>
+  <div class="mc" style="max-width:640px;max-height:calc(100dvh - var(--vvt,0px) - var(--vvb,0px) - 2rem);overflow-y:auto" id="mnReajCuerpo"></div>
 </div>
 <input type="file" id="mnFoto" accept="image/*" style="display:none" aria-hidden="true" tabindex="-1" onchange="mnFotoSubida(this)">
 
 <script>
+// Ventanas y teclado (iPhone / iPad): dentro del panel, este documento recibe del panel la franja realmente visible (--vvt / --vvb); ver «VENTANAS Y TECLADO» en panel-profesional.html.
+window.addEventListener('message', e => {
+  if(e.origin !== location.origin || e.source !== window.parent || !e.data || !('nlvv' in e.data)) return;
+  const r = document.documentElement.style, v = e.data.nlvv;
+  if(v){ r.setProperty('--vvt', v.top + 'px'); r.setProperty('--vvb', v.bottom + 'px'); } else { r.removeProperty('--vvt'); r.removeProperty('--vvb'); }
+});
+(function(){   // suelta (fuera del panel): la misma medición sobre su propio visualViewport
+  const v = window.visualViewport; if(!v || window.top !== window) return;
+  const aplicar = () => { const alto = innerHeight, tecl = (alto - v.height) > 80 || v.offsetTop > 1, r = document.documentElement.style;
+    if(tecl){ r.setProperty('--vvt', Math.max(0, v.offsetTop) + 'px'); r.setProperty('--vvb', Math.max(0, alto - v.offsetTop - v.height) + 'px'); } else { r.removeProperty('--vvt'); r.removeProperty('--vvb'); } };
+  v.addEventListener('resize', aplicar); v.addEventListener('scroll', aplicar);
+})();
+const esTactil = () => { try{ return matchMedia('(pointer:coarse)').matches; }catch(e){ return false; } };   // en el móvil y la tableta no se enfoca solo el primer campo de una ventana
 const SURL='https://knmucvrbxpzmrjwxyksj.supabase.co';
 const SKEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtubXVjdnJieHB6bXJqd3h5a3NqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODExOTE4NTgsImV4cCI6MjA5Njc2Nzg1OH0.DRKDDzKlxCXFedofGvXF0dLhWtSQ4LLI9oLWItEYJGQ';
 const AUTH_KEY='nl_session';
@@ -2236,7 +2249,7 @@ function mnBibEditar(ix, previo) { // ix = plato de la lista (editar o copiar un
     <p class="mn-l" style="margin:14px 0 6px">Tipos de día en los que lo usas</p><div class="mn-checks">${MN_BIB_DIAS.map(t => `<label class="mn-chk2"><input type="checkbox" data-bd="${t[0]}"${(d.d || []).indexOf(t[0]) >= 0 ? ' checked' : ''}> ${t[1]}</label>`).join('')}</div>
     <div class="mn-f" style="margin-top:12px"><label class="mn-l" for="mnBibENt">Nota <span class="hd-opt">(opcional)</span></label><input class="inp" id="mnBibENt" maxlength="300" value="${sudEsc(d.nt || '')}"></div>
     <div class="mbtns" style="margin-top:16px"><button type="button" class="btn-cancel" onclick="mnBibECerrar()">Cancelar</button><button type="button" class="btn-ok" onclick="mnBibEGuardar()">Guardar en mi biblioteca</button></div>`;
-  document.getElementById('mMnBibE').style.display = 'flex'; document.getElementById('mnBibEN').focus();
+  document.getElementById('mMnBibE').style.display = 'flex'; if (!esTactil()) document.getElementById('mnBibEN').focus();
 }
 function mnBibECerrar() { document.getElementById('mMnBibE').style.display = 'none'; }
 async function mnBibEGuardar() {
