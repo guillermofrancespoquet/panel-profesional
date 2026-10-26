@@ -517,10 +517,12 @@ body::before{content:'';position:fixed;top:0;left:0;right:0;height:env(safe-area
 .sb-nav::-webkit-scrollbar{display:none}
 .sb-brand,.sb-search-wrap{flex:none}
 .sb-nav>*{flex-shrink:0}
-.sb-divider{padding:14px 1.25rem 6px;font-size:10px;font-weight:700;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.6px;margin:0}
+.sb-divider{padding:20px 12px 8px;font-size:10.5px;font-weight:700;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.14em;margin:0}
+.sb-nav>.sb-divider:first-child{padding-top:6px}
+.sb-nav>.sb-divider:not(:first-child){margin-top:10px;border-top:.5px solid rgba(255,255,255,.08)}
 .sb-item{
-  display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:10px;
-  color:rgba(255,255,255,.62);font-size:13.5px;font-weight:500;cursor:pointer;
+  display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:12px;
+  color:rgba(255,255,255,.66);font-size:13.5px;font-weight:500;cursor:pointer;
   border:none;background:transparent;font-family:var(--f);text-align:left;width:100%;
   transition:background .15s,color .15s;position:relative;
 }
@@ -529,10 +531,18 @@ body::before{content:'';position:fixed;top:0;left:0;right:0;height:env(safe-area
 .sb-chevron.open{transform:rotate(0deg)}
 .sb-chevron:not(.open){transform:rotate(-90deg)}
 .sb-subnav{overflow:hidden;max-height:0;transition:max-height .22s ease;display:flex;flex-direction:column;gap:2px}
-.sb-subnav.open{max-height:120px;margin-top:2px}
-.sb-subitem{padding-left:2.4rem;font-size:12.5px}
-.sb-item.on{background:rgba(255,255,255,.1);color:#fff}
-.sb-item.on::before{content:'';position:absolute;left:-.75rem;top:8px;bottom:8px;width:3px;background:var(--gold);border-radius:0 3px 3px 0}
+.sb-subnav.open{max-height:120px;margin-top:2px;margin-bottom:2px}
+.sb-subitem{padding-left:3.4rem;font-size:12.5px}
+.sb-item.on{background:rgba(255,255,255,.1);color:#fff;font-weight:600}
+/* Secciones principales: icono en círculo y, al estar activas, píldora clara con flecha */
+.sb-main{padding:7px 12px 7px 8px;border-radius:16px;min-height:48px}
+.sb-main>svg:first-child{box-sizing:border-box;width:34px;height:34px;padding:8.5px;border-radius:50%;background:rgba(255,255,255,.08);opacity:1;transition:background .15s}
+.sb-main:hover>svg:first-child{background:rgba(255,255,255,.12)}
+.sb-main.on{background:#F4F2ED;color:var(--t900);box-shadow:0 6px 18px rgba(0,0,0,.22)}
+.sb-main.on>svg:first-child{background:rgba(4,52,44,.09);color:var(--t900)}
+.sb-main.on:hover{background:#fff}
+.sb-main.on::after{content:'';position:absolute;right:14px;top:50%;width:15px;height:15px;transform:translateY(-50%);background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2304342C' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='9 6 15 12 9 18'/%3E%3C/svg%3E") center/contain no-repeat}
+.sb-main.on .sb-badge{margin-right:24px}
 .sb-item svg{flex-shrink:0;opacity:.9}
 .sb-badge{margin-left:auto;background:var(--red);color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:20px;min-width:16px;text-align:center}
 .sb-export{width:100%;display:flex;align-items:center;gap:11px;background:transparent;border:none;border-radius:10px;color:rgba(217,184,140,.85);font-size:13.5px;font-weight:500;padding:10px 12px;cursor:pointer;font-family:var(--f);text-align:left;transition:background .15s,color .15s}
@@ -573,16 +583,16 @@ body::before{content:'';position:fixed;top:0;left:0;right:0;height:env(safe-area
 .gsearch-item-sub{font-size:11.5px;color:var(--g400)}
 .gsearch-empty{padding:2rem 1rem;text-align:center;font-size:13px;color:var(--g400)}
 .sb-foot{position:relative;flex:none;padding:.75rem .75rem 0;margin-top:.5rem;border-top:.5px solid rgba(255,255,255,.08)}
-.sb-acct{display:flex;align-items:center;gap:6px}
-.sb-acct-btn{flex:1;min-width:0;display:flex;align-items:center;gap:10px;background:transparent;border:none;border-radius:12px;padding:7px 8px;cursor:pointer;font-family:var(--f);text-align:left;color:#fff;transition:background .15s}
-.sb-acct-btn:hover,.sb-acct-btn[aria-expanded="true"]{background:rgba(255,255,255,.08)}
-.sb-av{flex:none;width:32px;height:32px;border-radius:50%;background:var(--gold);color:var(--t900);font-size:12px;font-weight:800;letter-spacing:.02em;display:flex;align-items:center;justify-content:center}
+.sb-acct{display:flex;align-items:center;gap:2px;padding:5px;border-radius:18px;background:rgba(255,255,255,.06);border:.5px solid rgba(255,255,255,.1)}
+.sb-acct-btn{flex:1;min-width:0;display:flex;align-items:center;gap:8px;background:transparent;border:none;border-radius:14px;padding:2px 2px;cursor:pointer;font-family:var(--f);text-align:left;color:#fff;transition:background .15s}
+.sb-acct-btn:hover,.sb-acct-btn[aria-expanded="true"]{background:transparent}
+.sb-av{flex:none;width:34px;height:34px;border-radius:11px;background:var(--gold);color:var(--t900);font-size:12px;font-weight:800;letter-spacing:.02em;display:flex;align-items:center;justify-content:center}
 .sb-acct-t{flex:1;min-width:0;line-height:1.2}
-.sb-acct-n{display:block;font-size:13.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sb-acct-n{display:block;font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sb-acct-s{display:block;font-size:11px;color:rgba(255,255,255,.65);margin-top:1px}
-.sb-acct-btn .sb-chev{flex:none;opacity:.7;transition:transform .2s}
-.sb-acct-btn[aria-expanded="true"] .sb-chev{transform:rotate(180deg)}
-.sb-icon-btn{flex:none;width:36px;height:36px;display:flex;align-items:center;justify-content:center;background:transparent;border:none;border-radius:10px;color:rgba(255,255,255,.8);cursor:pointer;transition:background .15s,color .15s}
+.sb-acct-btn .sb-chev{box-sizing:content-box;flex:none;width:14px;height:14px;padding:6px;border-radius:9px;border:.5px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06);opacity:.85}
+.sb-acct-btn:hover .sb-chev,.sb-acct-btn[aria-expanded="true"] .sb-chev{background:rgba(255,255,255,.12);opacity:1}
+.sb-icon-btn{flex:none;width:34px;height:34px;display:flex;align-items:center;justify-content:center;background:transparent;border:none;border-radius:10px;color:rgba(255,255,255,.8);cursor:pointer;transition:background .15s,color .15s}
 .sb-icon-btn:hover{background:rgba(255,255,255,.1);color:#fff}
 .sb-ic-sun{display:none}
 body.dark-mode .sb-ic-sun{display:block}
@@ -1370,16 +1380,17 @@ body.dark-mode .ref-src,body.dark-mode .sup-badge,body.dark-mode .depd-avatar-fa
     <div class="sb-search-results" id="sbSearchResults"></div>
   </div>
   <div class="sb-nav">
-    <button class="sb-item" id="sbHome" onclick="navTo('home')">
+    <p class="sb-divider">Menú principal</p>
+    <button class="sb-item sb-main" id="sbHome" onclick="navTo('home')">
       <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
       Dashboard
     </button>
-    <button class="sb-item" id="sbAgenda" onclick="navTo('agenda')">
+    <button class="sb-item sb-main" id="sbAgenda" onclick="navTo('agenda')">
       <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
       Agenda
       <span class="sb-badge" id="sbAgendaBadge" style="display:none">0</span>
     </button>
-    <button class="sb-item sb-group-toggle" id="sbServiciosToggle" onclick="toggleServiciosGroup()">
+    <button class="sb-item sb-main sb-group-toggle" id="sbServiciosToggle" onclick="toggleServiciosGroup()">
       <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 7h-3V5a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2v2H4a1 1 0 0 0-1 1v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8a1 1 0 0 0-1-1zM9 5h6v2H9z"/></svg>
       Servicios
       <svg class="sb-chevron open" id="sbServiciosChevron" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="margin-left:auto"><polyline points="6 9 12 15 18 9"/></svg>
@@ -1394,7 +1405,7 @@ body.dark-mode .ref-src,body.dark-mode .sup-badge,body.dark-mode .depd-avatar-fa
         Nutrición Deportiva
       </button>
     </div>
-    <button class="sb-item" id="sbFact" onclick="navTo('facturacion')">
+    <button class="sb-item sb-main" id="sbFact" onclick="navTo('facturacion')">
       <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
       Facturación
     </button>
@@ -1462,7 +1473,7 @@ body.dark-mode .ref-src,body.dark-mode .sup-badge,body.dark-mode .depd-avatar-fa
       <button type="button" class="sb-acct-btn" id="sbAcctBtn" aria-haspopup="menu" aria-expanded="false" aria-controls="sbAcctMenu" onclick="toggleAcctMenu()">
         <span class="sb-av" aria-hidden="true">NL</span>
         <span class="sb-acct-t"><span class="sb-acct-n">NutriLogos</span><span class="sb-acct-s">Profesional</span></span>
-        <svg class="sb-chev" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><polyline points="18 15 12 9 6 15"/></svg>
+        <svg class="sb-chev" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><polyline points="7 15 12 20 17 15"/><polyline points="7 9 12 4 17 9"/></svg>
       </button>
       <button type="button" class="sb-icon-btn" id="darkModeBtn" onclick="toggleDarkMode()" aria-label="Cambiar a modo oscuro" title="Cambiar a modo oscuro">
         <svg class="sb-ic-moon" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
