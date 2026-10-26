@@ -7683,18 +7683,18 @@ function objTit(tipo, titulo, ini, obj, u){
   if(tipo === 'pct_grasa') return `${obj < ini ? 'Bajar' : 'Subir'} al ${objFmt(obj, '%')} de grasa`;
   return `Llegar a ${objFmt(obj, u)}`;
 }
-// Sugerencia prudente a partir del objetivo escrito en la ficha: solo para BAJAR peso, nunca en menores de 18 ni si el texto no deja clara la dirección.
-// Ritmo: ≈ 0,5 % del peso por semana durante 8 semanas, el extremo prudente del 0,5-1 %/sem. que recomiendan Helms 2014 (doi 10.1186/1550-2783-11-20; pensado para
-// preparación de competición con culturismo natural) para conservar masa muscular. Para SUBIR no hay una cifra validada (Slater 2019, doi 10.3389/fnut.2019.00131:
-// «el superávit necesario es desconocido»), así que no se sugiere nada: lo pones tú.
+// Sugerencia prudente a partir del objetivo escrito en la ficha: solo peso, nunca en menores de 18 ni si el texto no deja clara la dirección.
+// Bajar: ≈ 0,5 % del peso por semana durante 8 semanas, el extremo prudente del 0,5-1 %/sem. que recomiendan Helms 2014 (doi 10.1186/1550-2783-11-20; pensado para
+// preparación de competición con culturismo natural) para conservar masa muscular. Subir: ≈ 0,25 %/sem. como cifra ORIENTATIVA decidida con el usuario, SIN respaldo
+// (Slater 2019, doi 10.3389/fnut.2019.00131: el superávit necesario no está validado); la tarjeta de sugerencia lo avisa.
 function objSugerencia(texto, peso, edad){
   if(!peso || (edad != null && edad < 18)) return null;
   const t = String(texto || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/manten\w*\s+(la\s+)?masa(\s+muscular)?/g, ' ');
   const baja = /\b(perd|bajar|bajada|adelgaz|defin|reduc|deficit|quemar)/.test(t), sube = /\b(gan|volumen|aument|hipertrof|subir|masa muscular)/.test(t);
-  if(!baja || sube) return null;
-  const sem = 8, ritmo = 0.5, obj = Math.round(peso * (1 - ritmo / 100 * sem) * 2) / 2, ini = Math.round(peso * 10) / 10;
+  if(baja === sube) return null;
+  const sem = 8, ritmo = baja ? 0.5 : 0.25, obj = Math.round(peso * (1 + (baja ? -1 : 1) * ritmo / 100 * sem) * 2) / 2, ini = Math.round(peso * 10) / 10;
   if(obj === ini) return null;
-  return { dir: 'bajar', inicial: ini, objetivo: obj, semanas: sem, ritmo };
+  return { dir: baja ? 'bajar' : 'subir', inicial: ini, objetivo: obj, semanas: sem, ritmo };
 }
 // Cómo va un objetivo activo: texto y tono (ok / warn / '').
 function objEstado(a){
@@ -7750,7 +7750,7 @@ async function objSugerir(depId){
   const box = document.getElementById('objSug'); if(!box || currentDepId != depId) return;
   const s = objSugerencia(d.objetivo, ctx.peso, ctx.edad); if(!s) return;
   s.peso = ctx.peso;
-  box.innerHTML = `<div class="obj-sug"><p class="obj-sug-t">La app sugiere: <b>${s.dir === 'bajar' ? 'Bajar' : 'Subir'} de ${objFmt(s.inicial, 'kg')} a ${objFmt(s.objetivo, 'kg')} en ${s.semanas} semanas</b></p><p class="obj-meta" style="margin:0 0 8px">Sale del objetivo de su ficha («${sudEsc(d.objetivo)}») y de un ritmo prudente de ≈ ${String(s.ritmo).replace('.', ',')} % del peso por semana. Revísalo y ajústalo: nada llega al cliente hasta que lo aceptes.</p>
+  box.innerHTML = `<div class="obj-sug"><p class="obj-sug-t">La app sugiere: <b>${s.dir === 'bajar' ? 'Bajar' : 'Subir'} de ${objFmt(s.inicial, 'kg')} a ${objFmt(s.objetivo, 'kg')} en ${s.semanas} semanas</b></p><p class="obj-meta" style="margin:0 0 8px">Sale del objetivo de su ficha («${sudEsc(d.objetivo)}») y de un ritmo prudente de ≈ ${String(s.ritmo).replace('.', ',')} % del peso por semana. ${s.dir === 'subir' ? 'Para subir no hay una cifra validada: es solo orientativa. ' : ''}Revísalo y ajústalo: nada llega al cliente hasta que lo aceptes.</p>
     <div class="med-actions">${btnSoft('Revisar y aceptar', `objAbrir(${depId},'sugerido')`, 'plus')}<button type="button" class="btn-soft sm" onclick="_objSugNo[${depId}]=1;document.getElementById('objSug').innerHTML=''">Ahora no</button></div></div>`;
   box.dataset.s = JSON.stringify(s);
 }
