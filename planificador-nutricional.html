@@ -38,7 +38,7 @@ body{font-family:var(--f);background:var(--bg);color:var(--g900);min-height:100v
 .notes-foot{display:flex;align-items:center;gap:10px;margin-top:8px}
 .btn-save{padding:9px 18px;background:var(--btn);border:none;border-radius:8px;color:#fff;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--f)}
 .mbg{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:100;padding:1rem}
-.mc{background:var(--sf);border-radius:16px;padding:2rem;width:100%;max-width:400px}
+.mc{background:var(--sf);border-radius:16px;padding:2rem;width:100%;max-width:400px;max-height:calc(100dvh - 2rem);overflow-y:auto;overscroll-behavior:contain}
 .mt{font-size:18px;font-weight:700;margin-bottom:5px;letter-spacing:-.02em}
 .ms{font-size:13px;color:var(--g400);margin-bottom:1.5rem;line-height:1.5}
 .mfl{font-size:12px;font-weight:500;color:var(--g500);margin-bottom:6px;display:block}
@@ -279,6 +279,8 @@ button,a,[role=button],select,summary{-webkit-tap-highlight-color:transparent;to
 .mn-ib:hover{background:var(--g100);color:var(--g900)}
 .mn-tabs{display:flex;gap:2px;border-bottom:.5px solid var(--bdm);margin:0 0 24px;overflow-x:auto;scrollbar-width:none}
 .mn-tabs::-webkit-scrollbar{display:none}
+/* En tableta (o con el panel abierto en un ordenador pequeño) las pestañas no caben en una fila: pasan a dos en vez de quedar detrás del scroll */
+@media(min-width:600px){.mn-tabs{flex-wrap:wrap;overflow-x:visible}}
 .mn-tab{position:relative;flex:0 0 auto;padding:11px 12px;background:none;border:none;font:600 14px var(--f);color:var(--g500);cursor:pointer;white-space:nowrap}
 .mn-tab:hover{color:var(--g900)}
 .mn-tab.on{color:var(--t600)}
@@ -289,6 +291,7 @@ button,a,[role=button],select,summary{-webkit-tap-highlight-color:transparent;to
 .mn-tab.main.on{background:linear-gradient(135deg,var(--t600),var(--btn));border-color:var(--btn);color:#fff;box-shadow:0 3px 10px rgba(15,110,86,.28)}
 .mn-tab.main.on::after{display:none}
 .mn-tab.main:active{transform:translateY(1px)}
+@media(min-width:600px) and (max-width:1100px){.mn-tab{padding:11px 8px;font-size:13px}.mn-tab.main{padding:0 13px 0 11px;margin-right:2px}}
 .mn-tab.on::after{content:'';position:absolute;left:12px;right:12px;bottom:-.5px;height:2px;border-radius:2px;background:var(--t400)}
 .mn-n{display:inline-flex;min-width:20px;height:20px;padding:0 6px;margin-left:6px;border-radius:10px;background:var(--g100);color:var(--g500);font:600 11.5px var(--f);align-items:center;justify-content:center}
 .mn-grid{display:grid;grid-template-columns:272px minmax(0,1fr);gap:24px;align-items:start}

@@ -38,10 +38,12 @@
   --f:'Inter',system-ui,sans-serif;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:var(--f);background:var(--bg);color:var(--g900);min-height:100vh;font-size:15px;-webkit-font-smoothing:antialiased;line-height:1.6}
+body{font-family:var(--f);background:var(--bg);color:var(--g900);min-height:100vh;min-height:100dvh;font-size:15px;-webkit-font-smoothing:antialiased;line-height:1.6}
 .view{display:none}.view.active{display:block}
-.antro-frame{display:block;width:100%;height:calc(100vh - env(safe-area-inset-top,0px));border:0;background:var(--bg)}
-@media(max-width:860px){.antro-frame{height:calc(100vh - 56px - env(safe-area-inset-top,0px))}}
+.antro-frame{display:block;width:100%;height:calc(100vh - env(safe-area-inset-top,0px));height:calc(100dvh - env(safe-area-inset-top,0px));border:0;background:var(--bg)}
+@media(max-width:860px){.antro-frame{height:calc(100vh - 56px - env(safe-area-inset-top,0px));height:calc(100dvh - 56px - env(safe-area-inset-top,0px))}}
+/* Con la calculadora o el planificador incrustados la página no se desplaza: las ventanas de dentro se centran en el iframe, así que este tiene que coincidir con lo que se ve (en Safari 100vh es más alto que la pantalla visible y las ventanas quedaban bajo la barra superior) */
+body.emb-view{overflow:hidden}
 
 /* LOADING */
 #vload{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:22px;position:fixed;inset:0;z-index:9000;background:#04342C}
@@ -3978,7 +3980,7 @@ function logout(){
   document.getElementById('sidebar').classList.remove('show');
   show('vlogin');
 }
-function show(v){_autoDep.ahora();_autoM3.ahora();document.querySelectorAll('.view').forEach(e=>e.classList.remove('active'));document.getElementById(v).classList.add('active');}
+function show(v){_autoDep.ahora();_autoM3.ahora();document.querySelectorAll('.view').forEach(e=>e.classList.remove('active'));document.getElementById(v).classList.add('active');document.body.classList.toggle('emb-view',v==='vmenusem'||v==='vantro');}
 // ═══════════════ MODO OSCURO ═══════════════
 // Preferencia guardada en nutrilogos_dark: '1' oscuro, '0' claro, sin valor = seguir el sistema
 const modoPref=()=>{ try{ const v=localStorage.getItem('nutrilogos_dark'); return v==='1'?'dark':v==='0'?'light':'system'; }catch(e){ return 'system'; } };
