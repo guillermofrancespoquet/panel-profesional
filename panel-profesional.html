@@ -7683,16 +7683,18 @@ function objTit(tipo, titulo, ini, obj, u){
   if(tipo === 'pct_grasa') return `${obj < ini ? 'Bajar' : 'Subir'} al ${objFmt(obj, '%')} de grasa`;
   return `Llegar a ${objFmt(obj, u)}`;
 }
-// Sugerencia prudente a partir del objetivo escrito en la ficha: solo peso, nunca en menores de 18 ni si el texto no deja clara la dirección.
-// Ritmo orientativo (hay que contrastarlo con la bibliografía antes de fiarse): perder ≈ 0,5 % del peso por semana y ganar ≈ 0,25 %, durante 8 semanas.
+// Sugerencia prudente a partir del objetivo escrito en la ficha: solo para BAJAR peso, nunca en menores de 18 ni si el texto no deja clara la dirección.
+// Ritmo: ≈ 0,5 % del peso por semana durante 8 semanas, el extremo prudente del 0,5-1 %/sem. que recomiendan Helms 2014 (doi 10.1186/1550-2783-11-20; pensado para
+// preparación de competición con culturismo natural) para conservar masa muscular. Para SUBIR no hay una cifra validada (Slater 2019, doi 10.3389/fnut.2019.00131:
+// «el superávit necesario es desconocido»), así que no se sugiere nada: lo pones tú.
 function objSugerencia(texto, peso, edad){
   if(!peso || (edad != null && edad < 18)) return null;
   const t = String(texto || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/manten\w*\s+(la\s+)?masa(\s+muscular)?/g, ' ');
   const baja = /\b(perd|bajar|bajada|adelgaz|defin|reduc|deficit|quemar)/.test(t), sube = /\b(gan|volumen|aument|hipertrof|subir|masa muscular)/.test(t);
-  if(baja === sube) return null;
-  const sem = 8, ritmo = baja ? 0.5 : 0.25, obj = Math.round(peso * (1 + (baja ? -1 : 1) * ritmo / 100 * sem) * 2) / 2, ini = Math.round(peso * 10) / 10;
+  if(!baja || sube) return null;
+  const sem = 8, ritmo = 0.5, obj = Math.round(peso * (1 - ritmo / 100 * sem) * 2) / 2, ini = Math.round(peso * 10) / 10;
   if(obj === ini) return null;
-  return { dir: baja ? 'bajar' : 'subir', inicial: ini, objetivo: obj, semanas: sem, ritmo };
+  return { dir: 'bajar', inicial: ini, objetivo: obj, semanas: sem, ritmo };
 }
 // Cómo va un objetivo activo: texto y tono (ok / warn / '').
 function objEstado(a){
