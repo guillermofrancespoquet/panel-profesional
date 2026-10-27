@@ -1,3 +1,5 @@
+-- NOTA (nov 2026): la app ya no escribe en esta tabla. La lista de comidas es ahora comidas_banco (supabase_banco_recetas.sql);
+-- esta tabla solo se lee una vez para pasar los platos antiguos con el botón «Pasarlos a mis comidas». No hace falta ejecutarla en instalaciones nuevas.
 -- =====================================================================================================================
 -- BIBLIOTECA DE PLATOS DEL MENÚ SEMANAL (ampliable desde la app)
 -- Ejecutar en Supabase → SQL Editor. Requiere haber ejecutado antes `supabase_clientes_acceso.sql` (usa es_profesional()).
