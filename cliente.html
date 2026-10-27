@@ -1510,6 +1510,47 @@ function mnEscala(i, f) {
   const min = red(c.min), max = c.max ? Math.max(min, red(c.max)) : null;
   return { ...i, cant: { ...c, min, max: max && max > min ? max : null } };
 }
+const mnNorm = s => String(s == null ? '' : s).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/\s+/g, ' ').trim();
+const MN_COMPRA_FMT = [ // [alimento, formato (singular), plural, tamaño, unidad del tamaño]
+  [/lenteja|garbanzo|alubia|judia/, 'bote', 'botes', 400, 'g'], [/\barroz\b/, 'paquete', 'paquetes', 1000, 'g'], [/pasta|espagueti|macarron|fideo/, 'paquete', 'paquetes', 500, 'g'],
+  [/avena|copos/, 'bolsa', 'bolsas', 500, 'g'], [/cuscus|quinoa/, 'paquete', 'paquetes', 500, 'g'], [/harina/, 'paquete', 'paquetes', 1000, 'g'],
+  [/tofu|tempeh|seitan/, 'bloque', 'bloques', 200, 'g'], [/bebida (vegetal|de )|leche/, 'brik', 'briks', 1000, 'ml'], [/aceite|aove/, 'botella', 'botellas', 900, 'g'],
+  [/\bpan\b/, 'barra', 'barras', 400, 'g'], [/hummus/, 'tarro', 'tarros', 200, 'g'], [/crema de cacahuete|mantequilla de cacahuete/, 'tarro', 'tarros', 350, 'g'],
+  [/frutos secos|almendra|nuez|nueces|anacardo|pistacho|avellana/, 'bolsa', 'bolsas', 200, 'g'], [/huevo/, 'docena', 'docenas', 12, 'ud'], [/\bmiel\b/, 'bote', 'botes', 500, 'g']
+];
+const mnCompraNum = n => String(+(+n).toFixed(n >= 10 ? 0 : 1)).replace('.', ',');
+const mnCompraPeso = g => g >= 1000 ? mnCompraNum(g / 1000) + ' kg' : mnCompraNum(Math.round(g / 5) * 5 || g) + ' g';
+const mnCompraVol = ml => ml >= 1000 ? mnCompraNum(ml / 1000) + ' l' : mnCompraNum(Math.round(ml / 5) * 5 || ml) + ' ml';
+const mnCompraUni = (u, n) => { u = u === 'ud' ? 'ud' : u; return n > 1 ? (u === 'ud' ? 'uds' : /s$/.test(u) ? u : u + 's') : u; };
+function mnCompraSemana(sem, dias) { // dias: índices de día a incluir (todos si no se pasa)
+  const it = {};
+  sem.dias.forEach((d, ix) => { if (dias && dias.indexOf(ix) < 0) return; d.comidas.forEach(m => { if (m.libre) return; (mnSrc(m).ing || []).forEach(i => {
+    const al = i.a ? MN.cat.find(x => x.id == i.a) : null, k = al ? 'a' + al.id : mnNorm(i.n); if (!k) return;
+    const o = it[k] || (it[k] = { k, n: al ? al.nombre : i.n, cat: (al && al.categoria) || mnCategoria(i.n) || 'Otros', g: 0, gd: 0, ml: 0, uds: {}, sinG: 0, veces: 0, cant: 0 });
+    o.veces++; const c = i.cant;
+    if (!c || c.modo === 'libre') return; o.cant++;
+    const v = c.max || c.min;
+    if (c.modo === 'g') { if (c.u === 'ml' || c.u === 'l') o.ml += v * (c.u === 'l' ? 1000 : 1); else { const g = v * (c.u === 'kg' ? 1000 : 1); o.g += g; o.gd += g; } return; }
+    const u = c.modo === 'ud' ? 'ud' : mnNorm(c.u).replace(/s$/, ''); o.uds[u] = (o.uds[u] || 0) + v;
+    const g = mnGramos({ ...i, cant: { ...c, min: v, max: null } }); if (g === null) o.sinG += 1; else o.g += g;
+  }); }); });
+  return Object.values(it).map(o => mnCompraFila(o, 1)).sort((a, b) => (MN_CATEGORIAS.indexOf(a.cat) + 1 || 99) - (MN_CATEGORIAS.indexOf(b.cat) + 1 || 99) || a.libre - b.libre || a.n.localeCompare(b.n, 'es'));
+}
+// Texto de una fila de la compra a partir de sus totales (o.gd/g g, ml, uds, sinG); f = factor del cliente (1 = tal cual). Mismo código en cliente.html.
+function mnCompraFila(o, f) {
+  if (!o.cant) return { k: o.k, n: o.n, cat: o.cat, txt: 'al gusto', fmt: '', veces: o.veces, libre: true };
+  const gd = o.gd * f, g = o.g * f, ml = o.ml * f, uds = {}; Object.keys(o.uds).forEach(u => { uds[u] = f === 1 ? o.uds[u] : Math.max(0.5, Math.round(o.uds[u] * f / 0.5) * 0.5); });
+  const partes = []; if (gd) partes.push(mnCompraPeso(gd)); if (ml) partes.push(mnCompraVol(ml));
+  Object.keys(uds).forEach(u => partes.push(mnCompraNum(uds[u]) + ' ' + mnCompraUni(u, uds[u])));
+  const soloG = !Object.keys(uds).length && !ml; let txt = partes.join(' + ');
+  if (!soloG && g > gd && !o.sinG && !ml) txt += ' (≈ ' + mnCompraPeso(g) + ')';
+  let fmt = ''; const nom = mnNorm(o.n), fm = MN_COMPRA_FMT.find(x => x[0].test(nom));
+  if (fm) { const tot = fm[4] === 'ml' ? ml : fm[4] === 'ud' ? (uds.ud || 0) : (o.sinG ? 0 : g); if (tot > 0) { const n = Math.ceil(tot / fm[3] - 0.02); fmt = '≈ ' + n + ' ' + (n > 1 ? fm[2] : fm[1]) + (fm[4] === 'ud' ? '' : ' de ' + (fm[3] >= 1000 ? fm[3] / 1000 + (fm[4] === 'ml' ? ' l' : ' kg') : fm[3] + ' ' + fm[4])); } }
+  const r = { k: o.k, n: o.n, cat: o.cat, txt, fmt, veces: o.veces, libre: false };
+  if (f === 1) r.raw = { gd: o.gd, g: o.g, ml: o.ml, uds: o.uds, sinG: o.sinG };
+  return r;
+}
+function mnCompraAjusta(filas, fa) { return fa === 1 ? filas : filas.map(f => f.raw ? { ...mnCompraFila({ ...f.raw, k: f.k, n: f.n, cat: f.cat, veces: f.veces, cant: 1 }, fa), k: f.k } : f); }
 function mnCompraAgrupa(filas) { const g = []; filas.forEach(f => { const c = f.libre ? 'Al gusto' : f.cat; let x = g.find(y => y.c === c); if (!x) { x = { c, f: [] }; g.push(x); } x.f.push(f); }); g.sort((a, b) => (a.c === 'Al gusto') - (b.c === 'Al gusto')); return g; }
 const mnImprEsc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
 function mnImprHtml(m, o) {
@@ -1518,7 +1559,7 @@ function mnImprHtml(m, o) {
   const dias = sem.dias.map(d => { const c = d.ctx || {}; return `<section class="pd"><div class="pd-h"><h2>${e(d.n)}</h2>${c.texto ? `<span class="pd-t">${e(c.texto)}</span>` : ''}</div>${c.aviso ? `<p class="pd-av">${e(c.aviso)}</p>` : ''}${c.suppl ? `<p class="pd-av"><b>Suplementación:</b> ${e(c.suppl)}</p>` : ''}
     ${d.comidas.length ? d.comidas.map(x => `<div class="pd-m"><div class="pd-mt"><b>${T[x.tipo] || 'Comida'}</b>${x.hora ? `<span>${e(x.hora)}</span>` : ''}</div><div class="pd-mc">${x.nombre ? `<div class="pd-n">${e(x.nombre)}${x.libre ? ' <i>(libre)</i>' : ''}</div>` : ''}${(x.ing || []).length ? `<div class="pd-i">${x.ing.map(i => e(txt(i)) + (i.nota ? ` <i>(${e(i.nota)})</i>` : '')).join(' · ')}</div>` : ''}${x.nota ? `<div class="pd-no">${e(x.nota)}</div>` : ''}</div></div>`).join('') : '<p class="pd-av">Sin comidas</p>'}</section>`; }).join('');
   const imp = (m.impresiones || []), obj = (o.objetivo && (m.objetivo || imp.length)) ? `<section class="pd pd-ob">${m.objetivo ? `<p><b>Objetivo:</b> ${e(m.objetivo)}</p>` : ''}${imp.length ? `<p><b>Impresiones:</b> ${imp.map(x => e(x.t)).join(' · ')}</p>` : ''}</section>` : '';
-  const compra = o.compra && (sem.compra || []).length ? `<section class="pd-pag"><h2 class="pd-h2">Lista de la compra · ${e(sem.nombre)}</h2><div class="pd-cp">${mnCompraAgrupa(sem.compra).map(g => `<div class="pd-cg"><h3>${e(g.c)}</h3>${g.f.map(x => `<p><span>${e(x.n)}</span><b>${x.libre ? 'al gusto' : e(x.txt)}${x.fmt ? ` <i>${e(x.fmt)}</i>` : ''}</b></p>`).join('')}</div>`).join('')}</div></section>` : '';
+  const compra = o.compra && (sem.compra || []).length ? `<section class="pd-pag"><h2 class="pd-h2">Lista de la compra · ${e(sem.nombre)}</h2><div class="pd-cp">${mnCompraAgrupa(mnCompraAjusta(sem.compra, o.factor || 1)).map(g => `<div class="pd-cg"><h3>${e(g.c)}</h3>${g.f.map(x => `<p><span>${e(x.n)}</span><b>${x.libre ? 'al gusto' : e(x.txt)}${x.fmt ? ` <i>${e(x.fmt)}</i>` : ''}</b></p>`).join('')}</div>`).join('')}</div></section>` : '';
   const rec = o.recetas && (m.recetas || []).length ? `<section class="pd-pag"><h2 class="pd-h2">Recetas</h2>${m.recetas.map(r => `<article class="pd pd-r"><h3>${e(r.nombre)}</h3><p class="pd-no">${[r.tiempo, r.raciones, r.dificultad].filter(Boolean).map(e).join(' · ')}</p>${(r.ing || []).length ? `<p class="pd-i"><b>Ingredientes:</b> ${r.ing.map(i => e(i.t)).join(' · ')}</p>` : ''}${(r.pasos || []).length ? `<ol>${r.pasos.map(p => `<li>${e(p)}</li>`).join('')}</ol>` : ''}${r.consejo ? `<p class="pd-no">${e(r.consejo)}</p>` : ''}</article>`).join('')}</section>` : '';
   return `<header class="pd-top"><img src="icon-rounded-192.png" alt=""><div><div class="pd-ti">${e(m.titulo || 'Planificación nutricional')}</div><div class="pd-su">${e(o.cliente || '')}${o.cliente ? ' · ' : ''}${e(sem.nombre)}${sem.nota ? ' · ' + e(sem.nota) : ''}</div></div></header>${obj}${dias}${compra}${rec}<footer class="pd-pie">NutriLogos · ${new Date().toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })}</footer>`;
 }
@@ -1610,8 +1651,8 @@ function mnvCompraMarcas(s) { try { return JSON.parse(localStorage.getItem(mnvCo
 function mnvCompraMarca(k, v) { const s = mnvSem(), m = mnvCompraMarcas(s); if (v) m[k] = 1; else delete m[k]; try { localStorage.setItem(mnvCompraKey(s), JSON.stringify(m)); } catch (e) {} pintarMenu(); }
 function mnvCompra(s) {
   const filas = s.compra || [], marcas = mnvCompraMarcas(s); if (!filas.length) return '';
-  const g = mnCompraAgrupa(filas), hechas = filas.filter(f => marcas[f.k]).length;
-  return `<p class="mnv-sub">Lo que necesitas para esta semana · ${hechas} de ${filas.length} marcados${(MNV.f || 1) !== 1 ? ' · la lista es para las cantidades de tu plan (sin tu ajuste)' : ''}</p>` + g.map(x => `<div class="card mnv-cp"><p class="mnv-sh" style="margin-top:0">${esc(x.c)}</p>${x.f.map(f => `<label class="mnv-cpf${marcas[f.k] ? ' ok' : ''}"><input type="checkbox"${marcas[f.k] ? ' checked' : ''} onchange="mnvCompraMarca('${esc(f.k)}',this.checked)"><span class="mnv-cpn">${esc(f.n)}</span><span class="mnv-cpq">${f.libre ? 'al gusto' : esc(f.txt)}${f.fmt ? `<small>${esc(f.fmt)}</small>` : ''}</span></label>`).join('')}</div>`).join('');
+  const g = mnCompraAgrupa(mnCompraAjusta(filas, MNV.f || 1)), hechas = filas.filter(f => marcas[f.k]).length;
+  return `<p class="mnv-sub">Lo que necesitas para esta semana · ${hechas} de ${filas.length} marcados${(MNV.f || 1) !== 1 ? ' · ajustada a tus cantidades' : ''}</p>` + g.map(x => `<div class="card mnv-cp"><p class="mnv-sh" style="margin-top:0">${esc(x.c)}</p>${x.f.map(f => `<label class="mnv-cpf${marcas[f.k] ? ' ok' : ''}"><input type="checkbox"${marcas[f.k] ? ' checked' : ''} onchange="mnvCompraMarca('${esc(f.k)}',this.checked)"><span class="mnv-cpn">${esc(f.n)}</span><span class="mnv-cpq">${f.libre ? 'al gusto' : esc(f.txt)}${f.fmt ? `<small>${esc(f.fmt)}</small>` : ''}</span></label>`).join('')}</div>`).join('');
 }
 function abrirMenu(){
   const d=MENU_DATA; if(!d) return; const m=d.menu;
