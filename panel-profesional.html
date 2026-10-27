@@ -251,6 +251,7 @@ body.dark-mode .btn-ok.danger,body.dark-mode .sb-badge{background:#B83232}
 .dep-avatar{width:64px;height:64px;border-radius:50%;overflow:hidden;margin:0 auto 10px;background:var(--gold-50);display:flex;align-items:center;justify-content:center;border:2px solid var(--gold-50)}
 .dep-avatar img{width:100%;height:100%;object-fit:cover}
 .dep-avatar-fallback{font-size:22px;font-weight:700;color:var(--gold-dk)}
+.foto-pick{display:flex;align-items:center;gap:14px;margin-bottom:6px}.foto-pick .dep-avatar{margin:0;flex:none}.foto-pick-b{min-width:0}.foto-pick-r{display:flex;gap:8px;flex-wrap:wrap}.foto-pick-n{font-size:12px;color:var(--g400);margin:6px 0 0;line-height:1.4}
 .dep-name{font-size:13px;font-weight:600;color:var(--g900);margin-bottom:2px}
 .dep-sport{font-size:11px;color:var(--g400)}
 
@@ -1944,14 +1945,17 @@ body.dark-mode .ref-src,body.dark-mode .sup-badge,body.dark-mode .depd-avatar-fa
     <input type="text" class="inp" id="depDeporte" placeholder="Ej. Ciclismo de carretera">
     <label class="mfl" style="margin-top:10px">Objetivo</label>
     <input type="text" class="inp" id="depObjetivo" placeholder="Ej. Pérdida de grasa, Rendimiento...">
-    <label class="mfl" style="margin-top:10px">URL de la foto (GitHub)</label>
-    <input type="text" class="inp" id="depFoto" placeholder="https://raw.githubusercontent.com/...">
+    <label class="mfl" style="margin-top:10px">Foto <span class="hd-opt">(opcional)</span></label>
+    <div class="foto-pick"><div class="dep-avatar" id="depFotoPrev"><span class="dep-avatar-fallback">+</span></div>
+      <div class="foto-pick-b"><div class="foto-pick-r"><button type="button" class="btn-soft" onclick="document.getElementById('depFotoFile').click()">Elegir foto</button><button type="button" class="btn-soft" id="depFotoQ" style="display:none" onclick="fotoPerfilQuitar('dep')">Quitar</button></div>
+      <p class="foto-pick-n">Se guarda en privado y solo la ves tú. Se recorta cuadrada y se reduce.</p></div>
+      <input type="file" id="depFotoFile" accept="image/*" style="display:none" aria-label="Elegir foto" onchange="fotoPerfilElegir('dep',this)"></div>
     <label class="mfl" style="margin-top:10px">Descripción breve</label>
     <textarea class="inp" id="depDesc" placeholder="Objetivo, contexto, cualquier dato relevante…" style="min-height:70px;resize:vertical"></textarea>
     <label class="mfl" style="margin-top:10px">URL del plan nutricional (GitHub)</label>
     <input type="text" class="inp" id="depPlan" placeholder="https://tu-usuario.github.io/...">
     <label class="mfl" style="margin-top:10px">Próxima revisión (fecha y hora)</label>
-    <div style="display:flex;gap:8px"><input type="date" class="inp" id="depRevision" style="flex:1.5;min-width:0"><input type="time" class="inp" id="depRevisionHora" style="flex:1;min-width:0" aria-label="Hora de la revisión"></div>
+    <div style="display:flex;gap:8px"><input type="date" class="inp" id="depRevision" style="flex:1.5;min-width:0" aria-label="Fecha de la revisión"><input type="time" class="inp" id="depRevisionHora" style="flex:1;min-width:0" aria-label="Hora de la revisión"></div>
     <p class="merr" id="mAddDepErr"></p>
     <div class="mact">
       <button class="btn-cancel" onclick="closeAddDep()">Cancelar</button>
@@ -1971,8 +1975,11 @@ body.dark-mode .ref-src,body.dark-mode .sup-badge,body.dark-mode .depd-avatar-fa
     <input type="text" class="inp" id="editDepDeporte" placeholder="Ej. Ciclismo de carretera">
     <label class="mfl" style="margin-top:10px">Objetivo</label>
     <input type="text" class="inp" id="editDepObjetivo" placeholder="Ej. Pérdida de grasa, Rendimiento...">
-    <label class="mfl" style="margin-top:10px">URL de la foto (GitHub)</label>
-    <input type="text" class="inp" id="editDepFoto" placeholder="https://raw.githubusercontent.com/...">
+    <label class="mfl" style="margin-top:10px">Foto <span class="hd-opt">(opcional)</span></label>
+    <div class="foto-pick"><div class="dep-avatar" id="editDepFotoPrev"><span class="dep-avatar-fallback">+</span></div>
+      <div class="foto-pick-b"><div class="foto-pick-r"><button type="button" class="btn-soft" onclick="document.getElementById('editDepFotoFile').click()">Elegir foto</button><button type="button" class="btn-soft" id="editDepFotoQ" style="display:none" onclick="fotoPerfilQuitar('editDep')">Quitar</button></div>
+      <p class="foto-pick-n">Se guarda en privado y solo la ves tú. Se recorta cuadrada y se reduce.</p></div>
+      <input type="file" id="editDepFotoFile" accept="image/*" style="display:none" aria-label="Elegir foto" onchange="fotoPerfilElegir('editDep',this)"></div>
     <label class="mfl" style="margin-top:10px">Descripción breve</label>
     <textarea class="inp" id="editDepDesc" placeholder="Objetivo, contexto, cualquier dato relevante…" style="min-height:70px;resize:vertical"></textarea>
     <label class="mfl" style="margin-top:10px">URL del plan nutricional (GitHub)</label>
@@ -4761,9 +4768,7 @@ function renderDeportistas() {
   }
   g.innerHTML = filtered.map(d => {
     const initials = getInitials(d.nombre);
-    const avatarContent = d.foto_url
-      ? `<img src="${d.foto_url}" alt="${d.nombre}" onerror="this.parentElement.innerHTML='<span class=\'dep-avatar-fallback\'>${initials}</span>'">`
-      : `<span class="dep-avatar-fallback">${initials}</span>`;
+    const avatarContent = avatarHtml(d, 'dep-avatar-fallback');
     return `<div class="dep-card" onclick="openDepDet(${d.id})">
       <div class="dep-avatar">${avatarContent}</div>
       <div class="dep-name">${d.nombre}</div>
@@ -4773,9 +4778,66 @@ function renderDeportistas() {
       <div class="accion-badge subtle${d.proxima_accion?'':' empty'}" onclick="event.stopPropagation();openAccion('deportista',${d.id},'${(d.proxima_accion||'').replace(/'/g,"\\'")}')">${d.proxima_accion || '+ próxima acción'}</div>
     </div>`;
   }).join('');
+  cargarAvatares(g);
 }
 
 
+
+// ── Foto de perfil del deportista: se sube desde la app, cuadrada y reducida, al bucket PRIVADO deportistas-docs (<id>/perfil/…) ──
+// foto_url guarda «storage:<ruta>» (las URL antiguas de GitHub siguen mostrándose). Solo la ve el profesional: el cliente no tiene acceso a esa ruta.
+const FP_PREFIJO = 'storage:', _fpUrls = {}, _fp = { dep: null, editDep: null };
+const fotoPerfilPath = v => String(v || '').indexOf(FP_PREFIJO) === 0 ? String(v).slice(FP_PREFIJO.length) : null;
+const _rutaSt = p => String(p).split('/').map(encodeURIComponent).join('/');
+async function urlFotoPerfil(path) {
+  const c = _fpUrls[path]; if (c && Date.now() - c.t < 50 * 60000) return c.u;
+  const r = await authFetch(`${SURL}/storage/v1/object/sign/${STORAGE_BUCKET}/${_rutaSt(path)}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ expiresIn: 3600 }) });
+  const j = await r.json(); if (!r.ok || !j.signedURL) throw new Error('firma');
+  const u = SURL + '/storage/v1' + j.signedURL; _fpUrls[path] = { u, t: Date.now() }; return u;
+}
+function avatarHtml(d, cls) {
+  const ini = getInitials(d.nombre), fb = `<span class="${cls}">${ini}</span>`, f = d.foto_url; if (!f) return fb;
+  const err = `if(this.parentElement)this.parentElement.innerHTML='<span class=\\'${cls}\\'>${ini}</span>'`, path = fotoPerfilPath(f);
+  return path ? `<img data-pf="${sudEsc(path)}" alt="${sudEsc(d.nombre)}" onerror="${err}">` : `<img src="${sudEsc(f)}" alt="${sudEsc(d.nombre)}" onerror="${err}">`;
+}
+function cargarAvatares(root) {
+  (root || document).querySelectorAll('img[data-pf]').forEach(async im => { try { im.src = await urlFotoPerfil(im.dataset.pf); } catch (e) { im.dispatchEvent(new Event('error')); } });
+}
+async function fotoPerfilReducir(file) { // cuadrada (algo más arriba, donde suele estar la cara) y 512 px
+  const url = URL.createObjectURL(file);
+  try {
+    const img = await new Promise((ok, ko) => { const i = new Image(); i.onload = () => ok(i); i.onerror = () => ko(new Error('imagen')); i.src = url; });
+    const w = img.naturalWidth, h = img.naturalHeight, l = Math.min(w, h), c = document.createElement('canvas'); c.width = c.height = 512;
+    c.getContext('2d').drawImage(img, (w - l) / 2, (h - l) * 0.25, l, l, 0, 0, 512, 512);
+    return await new Promise(ok => c.toBlob(ok, 'image/jpeg', 0.85));
+  } finally { URL.revokeObjectURL(url); }
+}
+function fotoPerfilPrep(w, d) { // w = 'dep' (nuevo) o 'editDep'; d = deportista (solo al editar)
+  _fp[w] = { blob: null, quitar: false, prev: null };
+  const prev = document.getElementById(w + 'FotoPrev'), q = document.getElementById(w + 'FotoQ'), inp = document.getElementById(w + 'FotoFile'); if (inp) inp.value = '';
+  if (d && d.foto_url) { prev.innerHTML = avatarHtml(d, 'dep-avatar-fallback'); cargarAvatares(prev); q.style.display = ''; }
+  else { prev.innerHTML = '<span class="dep-avatar-fallback">' + (d ? getInitials(d.nombre) : '+') + '</span>'; q.style.display = 'none'; }
+}
+async function fotoPerfilElegir(w, inp) {
+  const f = inp.files && inp.files[0]; if (!f) return;
+  if (!/^image\//.test(f.type)) { toast('Elige una imagen.', { tipo: 'aviso' }); inp.value = ''; return; }
+  try {
+    const blob = await fotoPerfilReducir(f), st = _fp[w] || (_fp[w] = {}); if (st.prev) URL.revokeObjectURL(st.prev);
+    st.blob = blob; st.quitar = false; st.prev = URL.createObjectURL(blob);
+    document.getElementById(w + 'FotoPrev').innerHTML = `<img src="${st.prev}" alt="Vista previa de la foto">`; document.getElementById(w + 'FotoQ').style.display = '';
+  } catch (e) { toast('No se pudo leer esa imagen. Prueba con otra (JPG o PNG).', { tipo: 'error' }); }
+  inp.value = '';
+}
+function fotoPerfilQuitar(w) {
+  const st = _fp[w] || (_fp[w] = {}); if (st.prev) URL.revokeObjectURL(st.prev); st.blob = null; st.prev = null; st.quitar = true;
+  const d = w === 'editDep' ? deportistas.find(x => x.id === editingDepId) : null;
+  document.getElementById(w + 'FotoPrev').innerHTML = '<span class="dep-avatar-fallback">' + (d ? getInitials(d.nombre) : '+') + '</span>'; document.getElementById(w + 'FotoQ').style.display = 'none';
+}
+async function fotoPerfilSubir(depId, blob) { // devuelve el valor para foto_url o lanza
+  const path = `${depId}/perfil/${Date.now()}.jpg`;
+  const r = await authFetch(`${SURL}/storage/v1/object/${STORAGE_BUCKET}/${_rutaSt(path)}`, { method: 'POST', headers: { 'Content-Type': 'image/jpeg' }, body: blob });
+  if (!r.ok) throw new Error('subida'); return FP_PREFIJO + path;
+}
+const fotoPerfilBorrar = v => { const p = fotoPerfilPath(v); if (p) authFetch(`${SURL}/storage/v1/object/${STORAGE_BUCKET}/${_rutaSt(p)}`, { method: 'DELETE' }).catch(() => {}); };
 
 let editingDepId = null;
 function openEditDep(id) {
@@ -4785,7 +4847,7 @@ function openEditDep(id) {
   document.getElementById('editDepNombre').value = d.nombre || '';
   document.getElementById('editDepDeporte').value = d.deporte || '';
   document.getElementById('editDepObjetivo').value = d.objetivo || '';
-  document.getElementById('editDepFoto').value = d.foto_url || '';
+  fotoPerfilPrep('editDep', d);
   document.getElementById('editDepDesc').value = d.descripcion || '';
   document.getElementById('editDepPlan').value = d.plan_url || '';
   document.getElementById('mEditDepErr').textContent = '';
@@ -4803,13 +4865,17 @@ async function saveEditDep() {
       nombre,
       deporte: document.getElementById('editDepDeporte').value.trim() || null,
       objetivo: document.getElementById('editDepObjetivo').value.trim() || null,
-      foto_url: document.getElementById('editDepFoto').value.trim() || null,
       descripcion: document.getElementById('editDepDesc').value.trim() || null,
       plan_url: document.getElementById('editDepPlan').value.trim() || null
     };
+    const dep = deportistas.find(x => x.id == editingDepId), fp = _fp.editDep || {}, antes = dep && dep.foto_url;
+    let nueva = null;
+    if (fp.blob) { try { nueva = await fotoPerfilSubir(editingDepId, fp.blob); updates.foto_url = nueva; } catch (e) { document.getElementById('mEditDepErr').textContent = 'No se pudo subir la foto. Inténtalo de nuevo.'; return; } }
+    else if (fp.quitar) updates.foto_url = null;
     // La fecha y la hora de la revisión se cambian en la pestaña Resumen de la ficha (revGuardar), no aquí.
     const res = await patchDep(editingDepId, updates);
-    if (res && res.code) throw new Error(res.message);
+    if (res && res.code) { if (nueva) fotoPerfilBorrar(nueva); throw new Error(res.message); }
+    if ((nueva || fp.quitar) && antes) fotoPerfilBorrar(antes);
     const d = deportistas.find(x => x.id === editingDepId);
     if (d) Object.assign(d, updates);
     const idGuardado = editingDepId;   // closeEditDep() lo pone a null: sin esta copia la ficha no se refrescaba tras guardar
@@ -5957,22 +6023,24 @@ async function importDeportistas() {
 
 function openAddDep() {
   document.getElementById('mAddDep').style.display = 'flex';
+  fotoPerfilPrep('dep');
   setTimeout(() => enfocar('depNombre'), 100);
 }
 function closeAddDep() {
   document.getElementById('mAddDep').style.display = 'none';
-  ['depNombre','depDeporte','depObjetivo','depFoto','depDesc','depPlan','depRevision'].forEach(id => document.getElementById(id).value = '');
+  ['depNombre','depDeporte','depObjetivo','depDesc','depPlan','depRevision'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('mAddDepErr').textContent = '';
+  if (_fp.dep && _fp.dep.prev) URL.revokeObjectURL(_fp.dep.prev); _fp.dep = null;
 }
 async function createDeportista() {
   const nombre = document.getElementById('depNombre').value.trim();
   if (!nombre) { document.getElementById('mAddDepErr').textContent = 'El nombre es obligatorio'; return; }
   try {
-    await insertDep({
+    const fotoBlob = _fp.dep && _fp.dep.blob;
+    const ins = await insertDep({
       nombre,
       deporte: document.getElementById('depDeporte').value.trim() || null,
       objetivo: document.getElementById('depObjetivo').value.trim() || null,
-      foto_url: document.getElementById('depFoto').value.trim() || null,
       descripcion: document.getElementById('depDesc').value.trim() || null,
       plan_url: document.getElementById('depPlan').value.trim() || null,
       proxima_revision: document.getElementById('depRevision').value || null,
@@ -5982,6 +6050,11 @@ async function createDeportista() {
     });
     await syncDepCita(nombre, document.getElementById('depRevision').value || null, document.getElementById('depRevision').value ? (document.getElementById('depRevisionHora').value || null) : null);
     closeAddDep();
+    if (fotoBlob) {
+      const nuevoId = Array.isArray(ins) && ins[0] && ins[0].id;
+      try { if (!nuevoId) throw new Error('sin id'); const r = await patchDep(nuevoId, { foto_url: await fotoPerfilSubir(nuevoId, fotoBlob) }); if (esErrorSb(r)) throw new Error('patch'); }
+      catch (e) { toast('Deportista creado, pero no se pudo guardar la foto. Añádela desde «Editar».', { tipo: 'aviso', ms: 6000 }); }
+    }
     await loadDeportistas();
   } catch(e) {
     document.getElementById('mAddDepErr').textContent = 'Error al crear el deportista. Inténtalo de nuevo.';
@@ -6014,9 +6087,7 @@ function openDepDet(id) {
   const d = deportistas.find(x => x.id === id);
   if (!d) return;
   const initials = getInitials(d.nombre);
-  const avatarContent = d.foto_url
-    ? `<img src="${d.foto_url}" alt="${d.nombre}" onerror="this.parentElement.innerHTML='<span class=\'depd-avatar-fallback\'>${initials}</span>'">`
-    : `<span class="depd-avatar-fallback">${initials}</span>`;
+  const avatarContent = avatarHtml(d, 'depd-avatar-fallback');
 
   document.getElementById('depdetPage').innerHTML = `
     <button class="det-back" onclick="show('vdepdash');loadDeportistas()">
@@ -6203,6 +6274,7 @@ function openDepDet(id) {
     </div>
   `;
   show('vdepdet');
+  cargarAvatares(document.getElementById('depdetPage'));
   loadHistorial(d.id);
   loadAccesoCliente(d.id);
   loadSeguimientos(d.id);
