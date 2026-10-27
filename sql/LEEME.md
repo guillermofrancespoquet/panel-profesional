@@ -19,7 +19,7 @@ Todos se ejecutan a mano en Supabase → SQL Editor → New query → Run. Son s
    - `supabase_suplementacion.sql`
    - `supabase_citas_hecha.sql`
    - `supabase_menu_semanal.sql` (menú semanal: catálogo de alimentos, menús, publicar)
-   - `supabase_biblioteca_platos.sql` (menú semanal: biblioteca de platos ampliable desde la app; requiere solo `supabase_clientes_acceso.sql`)
+   - `supabase_biblioteca_platos.sql` (ya opcional desde nov 2026: la lista de comidas es `comidas_banco`; esta tabla solo sirve para pasar los platos antiguos con «Pasarlos a mis comidas»)
    - `supabase_banco_recetas.sql` (plan nutricional: banco compartido de recetas y comidas guardadas; requiere solo `supabase_clientes_acceso.sql`)
    - `supabase_objetivos.sql` (objetivos del cliente con seguimiento, opcional, y peso reciente para reajustar las kcal del plan; requiere `supabase_clientes_acceso.sql`, `supabase_seguimiento.sql`, `supabase_bioimpedancia.sql` y `supabase_registro_cliente.sql`)
    - `supabase_notificaciones.sql` (avisos al móvil del cliente: seguimiento semanal; requiere `supabase_seguimiento.sql`; **además hay que crear la Edge Function y programarla**, ver «Avisos al móvil» más abajo)
