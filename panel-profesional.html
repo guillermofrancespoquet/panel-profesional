@@ -6041,11 +6041,11 @@ function closeAddCita() {
   document.getElementById('citaRequierePago').checked = true;
   document.getElementById('mAddCitaErr').textContent = '';
 }
-// Una cita de «Revisión» creada en la agenda para un deportista (mismo nombre) pasa a ser su próxima revisión, con fecha y hora,
+// Una cita de «Revisión» o de Nutrición Deportiva creada en la agenda para un deportista (mismo nombre) pasa a ser su próxima revisión, con fecha y hora,
 // para que también la vea el cliente. No se llama a syncDepCita: la cita ya existe.
 async function syncCitaRevisionADep(cliente, servicio, fecha, hora) {
   try {
-    if (!/revisi/i.test(servicio || '') || fecha < localISO(new Date())) return;
+    if (!/revisi|nutrici[oó]n deportiva/i.test(servicio || '') || fecha < localISO(new Date())) return;
     const filas = await sb('clientes_deportivos?select=*') || [];
     const d = filas.find(x => String(x.nombre || '').trim().toLowerCase() === String(cliente).trim().toLowerCase());
     if (!d) return;

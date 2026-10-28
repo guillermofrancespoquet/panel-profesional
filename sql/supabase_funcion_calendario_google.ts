@@ -2,7 +2,7 @@
 // EDGE FUNCTION «calendario-google» — copia las citas del panel a tu Google Calendar (solo en un sentido: panel → Google)
 // ============================================================
 // Qué hace: cuando creas, mueves o borras una cita o revisión en el panel, el panel llama a esta función y ella crea,
-// mueve o borra el evento en tu Google Calendar. Título: «REVISIÓN - ANA» / «CONSULTA - ANA» (en mayúsculas, solo el
+// mueve o borra el evento en tu Google Calendar. Título: «REVISIÓN - ANA» (en mayúsculas, solo el
 // primer nombre). Color «Tomate». Dura 60 min (si la cita no tiene hora, es un evento de todo el día).
 // En el evento NO van notas, importes ni datos de salud: solo el título y el nombre del servicio.
 //
@@ -38,8 +38,9 @@ const DURACION_MIN = 60;
 const API = "https://www.googleapis.com/calendar/v3";
 
 // ── Utilidades puras (se prueban fuera de Deno) ──────────────────────────────────────────────
-export function tipoTitulo(servicio: unknown): string {
-  return /revisi/i.test(String(servicio ?? "")) ? "REVISIÓN" : "CONSULTA";
+// Revisión y consulta son lo mismo: el título es siempre «REVISIÓN» (el parámetro se conserva por compatibilidad).
+export function tipoTitulo(_servicio?: unknown): string {
+  return "REVISIÓN";
 }
 export function primerNombre(cliente: unknown): string {
   const p = String(cliente ?? "").trim().split(/\s+/)[0] ?? "";
