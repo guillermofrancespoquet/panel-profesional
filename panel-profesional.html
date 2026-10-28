@@ -864,7 +864,56 @@ body.dark-mode .cmp-cell.b .cmp-track i{background:var(--t400)}
 .fact-card{align-items:center}
 .fact-card-label{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--gold);margin-bottom:4px}
 .fact-card-txt{font-size:12.5px;line-height:1.55;color:rgba(255,255,255,.92)}
-.dash-hero{margin-bottom:1.75rem}
+.dash-hero{margin-bottom:1.25rem}
+.dash-hero-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.dash-hero-txt{min-width:0}
+.dash-resumen{font-size:14px;font-weight:500;color:var(--g700);margin-top:8px;line-height:1.5}
+.dash-pers{flex:none;display:inline-flex;align-items:center;gap:7px;height:36px;padding:0 12px;border-radius:10px;border:.5px solid var(--bdm,var(--bd));background:var(--sf);color:var(--g700);font:600 12.5px var(--f);cursor:pointer}
+.dash-pers:hover{background:var(--g100)}
+.dash-pers[aria-pressed="true"]{background:var(--pill-g);border-color:var(--pill-g-bd);color:var(--t800)}
+.dash-qa{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.dash-qa-b{display:inline-flex;align-items:center;gap:8px;height:40px;padding:0 15px;border-radius:12px;border:.5px solid var(--bdm,var(--bd));background:var(--sf);color:var(--g900);font:600 13px var(--f);cursor:pointer;transition:background .15s,border-color .15s}
+.dash-qa-b:hover{background:var(--g100);border-color:var(--t400)}
+.dash-qa-b.pri{background:var(--btn);border-color:var(--btn);color:#fff}
+.dash-qa-b.pri:hover{filter:brightness(1.08)}
+.dash-persbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:12px;padding:10px 14px;border-radius:12px;background:var(--gold-50);border:.5px dashed var(--gold);font-size:12.5px;color:var(--g700);line-height:1.45}
+.dash-persbar-b{display:flex;gap:8px}
+.dash-prox{display:flex;align-items:center;gap:1rem;background:var(--sf);border:.5px solid var(--bd);border-radius:16px;padding:1.1rem 1.4rem;margin-bottom:1.1rem;box-shadow:0 2px 10px rgba(0,0,0,.04)}
+.dash-prox-h{flex:none;display:flex;flex-direction:column;align-items:center;justify-content:center;width:64px;height:64px;border-radius:14px;background:var(--pill-g);box-shadow:inset 0 0 0 .5px var(--pill-g-bd);color:var(--t800)}
+.dash-prox.ya .dash-prox-h{background:var(--pill-au);box-shadow:inset 0 0 0 .5px var(--pill-au-bd);color:var(--gold-dk)}
+.dash-prox-h b{font-size:17px;line-height:1.15;letter-spacing:-.01em}
+.dash-prox-h span{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;line-height:1.3;margin-top:2px}
+.dash-prox-c{flex:1 1 auto;min-width:0}
+.dash-prox-k{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--gold-dk);margin-bottom:3px}
+.dash-prox-n{font-size:16px;font-weight:700;letter-spacing:-.01em;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dash-prox-s{font-size:12.5px;color:var(--g500);line-height:1.4;margin-top:2px}
+.dash-prox-chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.dash-chip{font-size:11px;font-weight:600;padding:2px 10px;border-radius:20px;background:var(--pill-n);box-shadow:inset 0 0 0 .5px var(--pill-n-bd);color:var(--g700);white-space:nowrap}
+.dash-chip.warn{background:var(--pill-au);box-shadow:inset 0 0 0 .5px var(--pill-au-bd);color:var(--gold-dk)}
+.dash-prox-a{display:flex;gap:8px;flex:none}
+.dash-cols{display:flex;flex-direction:column;gap:14px;margin-bottom:1.5rem}
+.dash-col{display:flex;flex-direction:column;gap:14px;min-width:0}
+@media(min-width:1150px){.dash-cols{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);align-items:start}}
+.dash-vacio{display:flex;align-items:center;gap:11px;padding:.5rem 0 .2rem;color:var(--g400);font-size:12.5px;line-height:1.4}
+.dash-vacio>span{flex:none;width:30px;height:30px;border-radius:50%;background:var(--t50);color:var(--t600);display:flex;align-items:center;justify-content:center}
+.dash-ok{display:flex;align-items:center;gap:16px;flex-wrap:wrap;background:var(--sf);border:.5px solid var(--pill-g-bd);border-radius:16px;padding:1.2rem 1.4rem;margin-bottom:1.25rem;box-shadow:0 2px 10px rgba(0,0,0,.04)}
+.dash-ok-ic{flex:none;width:52px;height:52px;border-radius:50%;background:var(--pill-g);color:var(--t600);display:flex;align-items:center;justify-content:center}
+.dash-ok-t{font-size:16px;font-weight:700;letter-spacing:-.015em}
+.dash-ok-s{font-size:13px;color:var(--g500);margin-top:2px;line-height:1.5}
+.dash-ok>div:nth-child(2){flex:1 1 220px;min-width:0}
+.dc-bar{display:none}
+.dash-edit [data-dc]{position:relative;outline:1.5px dashed var(--gold);outline-offset:3px}
+.dash-edit .dc-bar{display:flex;position:absolute;top:-19px;right:14px;z-index:5;gap:2px;padding:2px;border-radius:10px;background:var(--sf);border:.5px solid var(--bdm,var(--bd));box-shadow:0 2px 8px rgba(0,0,0,.12)}
+.dc-bar button{width:30px;height:30px;border-radius:8px;border:none;background:transparent;color:var(--g700);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.dc-bar button:hover{background:var(--g100)}
+.dc-off{display:none !important}
+.dash-edit .dc-off{display:block !important;outline-color:var(--g400);outline-style:dotted}
+.dash-edit .dc-off.fact-card{display:flex !important}
+@media(max-width:860px){
+  .dash-qa-b{flex:1 1 auto;justify-content:center;padding:0 12px}
+  .dash-pers span{display:none}.dash-pers{width:36px;padding:0;justify-content:center}
+  .dash-prox{flex-wrap:wrap;padding:1rem 1.1rem;gap:.8rem 1rem}.dash-prox-c{flex:1 1 140px}.dash-prox-a{order:4;width:100%}.dash-prox-a .btn-soft{flex:1;justify-content:center}.dash-prox-s{white-space:normal}
+}
 .dash-greet{font-size:22px;font-weight:700;letter-spacing:-.02em;margin-bottom:3px}
 .dash-date{font-size:13px;color:var(--g400)}
 .dash-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:1.5rem}
@@ -1593,15 +1642,68 @@ body.dark-mode .ref-src,body.dark-mode .sup-badge,body.dark-mode .depd-avatar-fa
 <div id="vhome" class="view" role="main">
   <div class="page">
     <div class="dash-hero">
-      <p class="dash-greet" role="heading" aria-level="1">Hola, Guillermo</p>
-      <p class="dash-date" id="dashDate"></p>
+      <div class="dash-hero-top">
+        <div class="dash-hero-txt">
+          <p class="dash-greet" role="heading" aria-level="1">Hola, Guillermo</p>
+          <p class="dash-date" id="dashDate"></p>
+          <p class="dash-resumen" id="dashResumen" aria-live="polite"></p>
+        </div>
+        <button type="button" class="dash-pers" id="dashPersBtn" onclick="dashPersonalizar()" aria-pressed="false" aria-label="Personalizar el panel"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg><span>Personalizar</span></button>
+      </div>
+      <div class="dash-qa" role="group" aria-label="Accesos rápidos">
+        <button type="button" class="dash-qa-b pri" onclick="navTo('agenda');openAddCita()"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="12" y1="14" x2="12" y2="18"/><line x1="10" y1="16" x2="14" y2="16"/></svg><span>Nueva cita</span></button>
+        <button type="button" class="dash-qa-b" onclick="dashElegirConsulta()"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg><span>Registrar consulta</span></button>
+        <button type="button" class="dash-qa-b" onclick="openGlobalSearch()"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><span>Buscar cliente</span></button>
+      </div>
+      <div class="dash-persbar" id="dashPersBar" style="display:none"><span>Mueve las tarjetas con las flechas u ocúltalas con el ojo. Se guarda solo en este navegador.</span><span class="dash-persbar-b"><button type="button" class="btn-soft sm" onclick="dashPersReset()">Restablecer</button><button type="button" class="btn-soft sm" onclick="dashPersonalizar()">Listo</button></span></div>
     </div>
 
-    <div class="dash-stats" id="dashStats" style="margin-bottom:1.5rem"></div>
+    <div id="dashProxima"></div>
 
-    <div class="fact-card" id="factCard"></div>
+    <div class="fact-card" id="factCard" data-dc="fact"></div>
 
-    <div class="dash-card" style="margin-bottom:1.5rem">
+    <div id="dashTodoOk"></div>
+
+    <div class="dash-cols" id="dashCols">
+      <div class="dash-col" id="dashColMain" data-col="main">
+        <div class="dash-card" data-dc="avisos" id="dashAvisosCard" style="display:none">
+      <div class="dash-card-head">
+        <span class="dash-card-title"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>Por atender</span>
+        <span class="dash-card-count" id="dashAvisosCount">0</span>
+      </div>
+      <div id="dashAvisos"></div>
+    </div>
+        <div class="dash-card" data-dc="sesiones">
+        <div class="dash-card-head">
+          <span class="dash-card-title"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Hoy y mañana</span>
+          <span class="dash-card-count" id="dashSesionesCount">0</span>
+        </div>
+        <div id="dashSesiones"></div>
+      </div>
+      </div>
+      <div class="dash-col" id="dashColSide" data-col="side">
+        <div class="dash-card" data-dc="pagos">
+        <div class="dash-card-head">
+          <span class="dash-card-title"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Pagos</span>
+          <span class="dash-card-count" id="dashPagosCount">0</span>
+        </div>
+        <div id="dashPagos"></div>
+      </div>
+        <div class="dash-card" data-dc="revisiones">
+        <div class="dash-card-head">
+          <span class="dash-card-title"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>Revisiones próximas</span>
+          <span class="dash-card-count" id="dashRevCount">0</span>
+        </div>
+        <div id="dashRevisiones"></div>
+      </div>
+        <div class="dash-card" data-dc="inactividad">
+        <div class="dash-card-head">
+          <span class="dash-card-title"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Sin actividad (14+ días)</span>
+          <span class="dash-card-count" id="dashInactCount">0</span>
+        </div>
+        <div id="dashInactividad"></div>
+      </div>
+        <div class="dash-card" data-dc="recordatorios">
       <div class="dash-card-head">
         <span class="dash-card-title"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Recordatorios</span>
       </div>
@@ -1611,51 +1713,10 @@ body.dark-mode .ref-src,body.dark-mode .sup-badge,body.dark-mode .depd-avatar-fa
       </div>
       <div id="remList"></div>
     </div>
-
-    <div class="dash-card" id="dashAvisosCard" style="margin-bottom:1.5rem;display:none">
-      <div class="dash-card-head">
-        <span class="dash-card-title"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>Por atender</span>
-        <span class="dash-card-count" id="dashAvisosCount">0</span>
-      </div>
-      <div id="dashAvisos"></div>
-    </div>
-
-    <div class="dash-grid">
-      <div class="dash-card">
-        <div class="dash-card-head">
-          <span class="dash-card-title"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Hoy y mañana</span>
-          <span class="dash-card-count" id="dashSesionesCount">0</span>
-        </div>
-        <div id="dashSesiones"></div>
-      </div>
-
-      <div class="dash-card">
-        <div class="dash-card-head">
-          <span class="dash-card-title"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Pagos</span>
-          <span class="dash-card-count" id="dashPagosCount">0</span>
-        </div>
-        <div id="dashPagos"></div>
-      </div>
-
-      <div class="dash-card">
-        <div class="dash-card-head">
-          <span class="dash-card-title"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>Revisiones próximas</span>
-          <span class="dash-card-count" id="dashRevCount">0</span>
-        </div>
-        <div id="dashRevisiones"></div>
-      </div>
-
-      <div class="dash-card">
-        <div class="dash-card-head">
-          <span class="dash-card-title"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Sin actividad (14+ días)</span>
-          <span class="dash-card-count" id="dashInactCount">0</span>
-        </div>
-        <div id="dashInactividad"></div>
       </div>
     </div>
   </div>
 </div>
-
 
 <!-- DEPORTISTAS DASHBOARD -->
 <!-- FACTURACIÓN -->
@@ -2229,6 +2290,17 @@ body.dark-mode .ref-src,body.dark-mode .sup-badge,body.dark-mode .depd-avatar-fa
 <!-- MODAL: FICHA INICIAL DEL CLIENTE -->
 <div class="mbg" id="mFicha" style="display:none" role="dialog" aria-modal="true" aria-label="Ficha inicial" onclick="if(event.target===this)fiCerrar()">
   <div class="mc" style="max-width:640px" id="fichaCuerpo"></div>
+</div>
+
+<!-- MODAL: ELEGIR DEPORTISTA PARA REGISTRAR UNA CONSULTA (acceso rápido del dashboard) -->
+<div class="mbg" id="mPickDep" style="display:none" role="dialog" aria-modal="true" aria-labelledby="pickTit" onclick="if(event.target===this)pickCerrar()">
+  <div class="mc" style="max-width:440px">
+    <p class="mt" id="pickTit">¿De quién es la consulta?</p>
+    <p class="ms">Elige al deportista para registrarla.</p>
+    <input type="text" class="inp" id="pickQ" placeholder="Buscar por nombre…" aria-label="Buscar deportista" autocomplete="off" oninput="pickPintar()">
+    <div id="pickList" class="pick-list" role="list"></div>
+    <div class="mact"><button type="button" class="btn-cancel" onclick="pickCerrar()">Cancelar</button></div>
+  </div>
 </div>
 
 <!-- MODAL: REGISTRAR CONSULTA -->
@@ -3223,7 +3295,7 @@ function renderRecordatorios(){
   const el = document.getElementById('remList');
   if(!el) return;
   const sorted = [...recordatorios].sort((a,b)=>(a.hecho===b.hecho)?0:(a.hecho?1:-1));
-  if(!sorted.length){ el.innerHTML = '<p class="dash-empty">Sin recordatorios pendientes.</p>'; return; }
+  if(!sorted.length){ el.innerHTML = dashVacio('list','Sin recordatorios pendientes.'); return; }
   el.innerHTML = sorted.map(r=>`<div class="rem-item">
     <div class="rem-check${r.hecho?' on':''}" onclick="toggleRecordatorio(${r.id})"></div>
     <span class="rem-txt${r.hecho?' done':''}">${r.texto}</span>
@@ -4100,6 +4172,9 @@ async function loadDashboard(){
   loadRecordatorios();
   let [dashClients,dashCitas,dashDeps]=await Promise.all([getAll(),getCitas(),getDeportistas()]);
   dashClients=dashClients||[];dashCitas=dashCitas||[];dashDeps=(dashDeps||[]).filter(d=>!d.fecha_baja);
+  citas=dashCitas;   // la misma lista que la agenda: así «Editar» y «Registrar consulta» de la próxima cita funcionan desde aquí
+  _dash={hoy:0,venc:0,revs:0,avisos:null};
+  aplicarLayoutDash();
 
   const today=new Date();today.setHours(0,0,0,0);
   const tomorrow=new Date(today);tomorrow.setDate(tomorrow.getDate()+1);
@@ -4109,31 +4184,35 @@ async function loadDashboard(){
   // ── Sesiones hoy/mañana ──
   const sesiones=dashCitas.filter(c=>(c.fecha===todayISO||c.fecha===tomorrowISO)&&!citaArchivada(c))
     .sort((a,b)=>(a.fecha+  (a.hora||'')).localeCompare(b.fecha+(b.hora||'')));
+  _dash.hoy=sesiones.filter(c=>c.fecha===todayISO).length;
+  pintarProximaDash(dashCitas,dashDeps);
   document.getElementById('dashSesionesCount').textContent=sesiones.length;
   document.getElementById('dashSesiones').innerHTML=sesiones.length?sesiones.slice(0,5).map(c=>{
     const tag=c.fecha===todayISO?'Hoy':'Mañana';
     const hora=c.hora?c.hora.slice(0,5)+'h':'';
     return `<div class="dash-row"><div class="dash-row-dot ${c.fecha===todayISO?'gold':'teal'}"></div><div class="dash-row-txt"><div class="dash-row-name">${c.cliente}</div><div class="dash-row-sub">${c.servicio||'Revisión'}${hora?' · '+hora:''}</div></div><span class="dash-row-tag">${tag}</span></div>`;
-  }).join(''):'<p class="dash-empty">Sin sesiones para hoy o mañana.</p>';
+  }).join(''):dashVacio('cal','Sin sesiones para hoy ni para mañana.');
 
   // ── Pagos pendientes/atrasados ──
   const impagos=dashCitas.filter(c=>!c.pagado&&c.requiere_pago!==false).sort((a,b)=>(citaYaPaso(b)-citaYaPaso(a))||a.fecha.localeCompare(b.fecha));   // primero las que ya pasaron
-  document.getElementById('dashPagosCount').textContent=impagos.filter(c=>citaYaPaso(c)).length;
+  _dash.venc=impagos.filter(c=>citaYaPaso(c)).length;
+  document.getElementById('dashPagosCount').textContent=_dash.venc;
   document.getElementById('dashPagos').innerHTML=impagos.length?impagos.slice(0,5).map(c=>{
     const vencido=citaYaPaso(c);
     return `<div class="dash-row"><div class="dash-row-dot ${vencido?'red':'teal'}"></div><div class="dash-row-txt"><div class="dash-row-name">${c.cliente}</div><div class="dash-row-sub">${c.servicio||'Revisión'}</div></div><span class="dash-row-tag">${vencido?'Pendiente':'Por cobrar'}</span></div>`;
-  }).join(''):'<p class="dash-empty">Sin pagos pendientes.</p>';
+  }).join(''):dashVacio('card','Sin pagos pendientes.');
 
   // ── Revisiones deportistas próximas (a partir de hoy, hasta 7 días vista; las atrasadas ya no
   //    se muestran aquí — ese aviso lo cubre la sección de pagos) ──
   const revs=dashDeps.map(d=>({...d,_days:daysUntil(d.proxima_revision)}))
     .filter(d=>d._days!==null&&d._days>=0&&d._days<=7)
     .sort((a,b)=>a._days-b._days);
+  _dash.revs=revs.length;
   document.getElementById('dashRevCount').textContent=revs.length;
   document.getElementById('dashRevisiones').innerHTML=revs.length?revs.slice(0,5).map(d=>{
     const lbl=d._days===0?'Hoy':`En ${d._days}d`;
     return `<div class="dash-row"><div class="dash-row-dot ${d._days===0?'red':'gold'}"></div><div class="dash-row-txt"><div class="dash-row-name">${d.nombre}</div><div class="dash-row-sub">${d.deporte||''}</div></div><span class="dash-row-tag">${lbl}</span></div>`;
-  }).join(''):'<p class="dash-empty">Sin revisiones próximas.</p>';
+  }).join(''):dashVacio('bolt','Sin revisiones en los próximos 7 días.');
 
   // ── Inactividad 14+ días ──
   const inact=dashDeps.map(d=>{
@@ -4144,7 +4223,7 @@ async function loadDashboard(){
   document.getElementById('dashInactCount').textContent=inact.length;
   document.getElementById('dashInactividad').innerHTML=inact.length?inact.slice(0,5).map(d=>{
     return `<div class="dash-row"><div class="dash-row-dot red"></div><div class="dash-row-txt"><div class="dash-row-name">${d.nombre}</div><div class="dash-row-sub">${d.deporte||''}</div></div><span class="dash-row-tag">${d._idays}d</span></div>`;
-  }).join(''):'<p class="dash-empty">Todos con actividad reciente.</p>';
+  }).join(''):dashVacio('ok','Todos con actividad reciente.');
 
   // ── Por atender: seguimientos sin enviar esta semana y revisiones sin cita ──
   pintarAvisosDash(dashDeps, dashCitas, todayISO);
@@ -4155,16 +4234,135 @@ async function loadDashboard(){
   if(totalAvisos>0){badgeEl.textContent=totalAvisos>9?'9+':totalAvisos;badgeEl.style.display='inline-block';}
   else{badgeEl.style.display='none';}
 
-  // ── Quick stats ──
-  const activosM3M=dashClients.filter(c=>(c.semana||0)<12).length;
-  const weekEnd=new Date(today);weekEnd.setDate(weekEnd.getDate()+7);
-  const citasSemana=dashCitas.filter(c=>{const d=new Date(c.fecha);return d>=today&&d<=weekEnd;}).length;
-  document.getElementById('dashStats').innerHTML=`
-    <div class="dash-stat"><div class="dash-stat-n">${dashDeps.length}</div><div class="dash-stat-l">Deportistas</div></div>
-    <div class="dash-stat"><div class="dash-stat-n">${activosM3M}</div><div class="dash-stat-l">Método 3M activos</div></div>
-    <div class="dash-stat"><div class="dash-stat-n">${citasSemana}</div><div class="dash-stat-l">Citas esta semana</div></div>
-    <div class="dash-stat"><div class="dash-stat-n">${revs.length}</div><div class="dash-stat-l">Revisiones por hacer</div></div>
-  `;
+  dashPintarEstado();
+}
+
+// ═══════════════ DASHBOARD: resumen del día, próxima cita, acceso rápido y personalización ═══════════════
+let _dash = { hoy: 0, venc: 0, revs: 0, avisos: null };
+const DV_ICO = {
+  cal: '<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>',
+  card: '<rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/>',
+  bolt: '<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>',
+  ok: '<polyline points="20 6 9 17 4 12"/>',
+  list: '<path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>'
+};
+const dashVacio = (ico, txt) => `<div class="dash-vacio"><span aria-hidden="true"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">${DV_ICO[ico] || DV_ICO.ok}</svg></span><p>${txt}</p></div>`;
+// Frase de arriba y tarjeta «Todo al día»: se recalculan cuando llegan los datos (los avisos se cargan después)
+function dashPintarEstado() {
+  const r = document.getElementById('dashResumen'), ok = document.getElementById('dashTodoOk'); if (!r) return;
+  const n = (k, s, p) => `${k} ${k === 1 ? s : p}`, p = [];
+  p.push(_dash.hoy ? n(_dash.hoy, 'cita hoy', 'citas hoy') : 'Sin citas hoy');
+  if (_dash.avisos) p.push(n(_dash.avisos, 'cosa por atender', 'cosas por atender'));
+  if (_dash.venc) p.push(n(_dash.venc, 'cobro vencido', 'cobros vencidos'));
+  const todo = _dash.avisos === 0 && !_dash.venc && !_dash.revs;
+  if (todo) p.push('todo al día');
+  r.textContent = p.join(' · ');
+  if (ok) ok.innerHTML = todo ? `<div class="dash-ok"><span class="dash-ok-ic" aria-hidden="true"><svg width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span><div><p class="dash-ok-t">Todo al día</p><p class="dash-ok-s">No hay nada pendiente ahora mismo: ni avisos, ni cobros vencidos ni revisiones en los próximos 7 días.</p></div><button type="button" class="btn-soft" onclick="navTo('agenda');openAddCita()">Nueva cita</button></div>` : '';
+}
+function pintarProximaDash(lista, deps) {
+  const el = document.getElementById('dashProxima'); if (!el) return;
+  const ahora = new Date(), ini = c => c.hora ? new Date(String(c.fecha).slice(0, 10) + 'T' + String(c.hora).slice(0, 5) + ':00') : null;
+  const c = lista.filter(x => !x.hecha && !citaArchivada(x)).sort((a, b) => (String(a.fecha).slice(0, 10) + (a.hora || '')).localeCompare(String(b.fecha).slice(0, 10) + (b.hora || '')))[0];
+  if (!c) { el.innerHTML = `<div class="dash-prox"><div class="dash-prox-h"><b>—</b><span>Sin hora</span></div><div class="dash-prox-c"><p class="dash-prox-k">Tu próxima cita</p><p class="dash-prox-n">No tienes citas próximas</p><p class="dash-prox-s">Cuando añadas una, saldrá aquí.</p></div><div class="dash-prox-a"><button type="button" class="btn-soft" onclick="navTo('agenda');openAddCita()">Nueva cita</button></div></div>`; return; }
+  const f = String(c.fecha).slice(0, 10), d0 = ini(c), hoyISO = localISO(ahora), man = new Date(ahora); man.setDate(man.getDate() + 1);
+  const ya = !!(d0 && ahora >= d0), mins = d0 ? Math.round((d0 - ahora) / 60000) : null;
+  const dur = m => m >= 60 ? Math.floor(m / 60) + ' h' + (m % 60 ? ' ' + (m % 60) + ' min' : '') : m + ' min';
+  let cuando;
+  if (ya) cuando = 'Empezó hace ' + dur(Math.max(1, -mins));
+  else if (f === hoyISO) cuando = d0 ? 'Empieza en ' + dur(mins) : 'Hoy, sin hora';
+  else if (f === localISO(man)) cuando = 'Mañana';
+  else cuando = 'En ' + Math.round((new Date(f + 'T00:00:00') - new Date(hoyISO + 'T00:00:00')) / 86400000) + ' días';
+  const dia = f === hoyISO ? 'Hoy' : f === localISO(man) ? 'Mañana' : new Date(f + 'T00:00:00').toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric', month: 'short' }).replace('.', '');
+  const dep = deps.find(x => String(x.nombre || '').trim().toLowerCase() === String(c.cliente || '').trim().toLowerCase());
+  const chips = [];
+  if (c.requiere_pago !== false && !c.pagado) chips.push(`<span class="dash-chip warn">${citaYaPaso(c) ? 'Pago pendiente' : 'Por cobrar'}</span>`);
+  el.innerHTML = `<div class="dash-prox${ya ? ' ya' : ''}">
+    <div class="dash-prox-h"><b>${c.hora ? sudEsc(String(c.hora).slice(0, 5)) : '—'}</b><span>${sudEsc(dia)}</span></div>
+    <div class="dash-prox-c"><p class="dash-prox-k">${ya ? 'En curso' : 'Tu próxima cita'}</p><p class="dash-prox-n">${sudEsc(c.cliente)}</p><p class="dash-prox-s">${sudEsc(cuando)} · ${sudEsc(c.servicio || 'Revisión')}</p>${chips.length ? `<div class="dash-prox-chips">${chips.join('')}</div>` : ''}</div>
+    <div class="dash-prox-a">${dep ? `<button type="button" class="btn-soft" onclick="abrirFichaDash(${dep.id})">Abrir ficha</button>` : ''}${ya ? `<button type="button" class="btn-soft" onclick="dashRegistrar(${c.id})">Registrar consulta</button>` : ''}<button type="button" class="btn-soft" onclick="openEditCita(${c.id})">Editar cita</button></div>
+  </div>`;
+}
+function dashRegistrar(id) {
+  const c = citaPorId(id); if (!c) return;
+  const d = deportistas.find(x => String(x.nombre || '').trim().toLowerCase() === String(c.cliente || '').trim().toLowerCase());
+  abrirConsulta(d ? d.id : null, c);
+}
+// Acceso rápido «Registrar consulta»: primero hay que elegir de quién (los de hoy salen arriba)
+async function dashElegirConsulta() {
+  if (!deportistas.length) await loadDeportistas();
+  document.getElementById('pickQ').value = ''; pickPintar();
+  document.getElementById('mPickDep').style.display = 'flex'; enfocar('pickQ');
+}
+function pickCerrar() { document.getElementById('mPickDep').style.display = 'none'; }
+function pickPintar() {
+  const q = mnNormLite(document.getElementById('pickQ').value), hoy = localISO(new Date());
+  const deHoy = new Set((citas || []).filter(c => String(c.fecha).slice(0, 10) === hoy).map(c => String(c.cliente || '').trim().toLowerCase()));
+  const l = deportistas.filter(d => !d.fecha_baja && (!q || mnNormLite(d.nombre).includes(q)))
+    .sort((a, b) => (deHoy.has(String(b.nombre).trim().toLowerCase()) - deHoy.has(String(a.nombre).trim().toLowerCase())) || String(a.nombre).localeCompare(String(b.nombre), 'es'));
+  document.getElementById('pickList').innerHTML = l.length ? l.slice(0, 40).map(d => `<button type="button" class="pick-it" role="listitem" onclick="pickElegir(${d.id})"><b>${sudEsc(d.nombre)}</b><span>${deHoy.has(String(d.nombre).trim().toLowerCase()) ? '<span class="hoy">Cita hoy</span> · ' : ''}${sudEsc(d.deporte || '')}</span></button>`).join('') : '<p class="dash-empty" style="padding:12px 14px">Nadie coincide con esa búsqueda.</p>';
+}
+const mnNormLite = s => String(s == null ? '' : s).normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
+function pickElegir(id) { pickCerrar(); abrirConsulta(id); }
+
+// Personalizar: ocultar y mover las tarjetas (solo dentro de su columna). Se guarda en este navegador.
+const DC_KEY = 'nl_dash_layout', DC_TIT = { fact: 'el dato del día' };
+let _dcDef = null;
+function dcLeer() { try { const v = JSON.parse(localStorage.getItem(DC_KEY) || 'null'); return v && typeof v === 'object' ? v : {}; } catch (e) { return {}; } }
+function dcCols() { return { main: document.getElementById('dashColMain'), side: document.getElementById('dashColSide') }; }
+function dcSnapshot() {
+  const c = dcCols(), o = {};
+  ['main', 'side'].forEach(k => { o[k] = [...c[k].children].filter(e => e.dataset.dc).map(e => e.dataset.dc); });
+  o.hide = [...document.querySelectorAll('#vhome [data-dc].dc-off')].map(e => e.dataset.dc);
+  return o;
+}
+function dcTitulo(e) { const t = e.querySelector('.dash-card-title'); return DC_TIT[e.dataset.dc] || (t ? t.textContent.trim().toLowerCase() : e.dataset.dc); }
+function aplicarLayoutDash() {
+  const c = dcCols(); if (!c.main) return;
+  if (!_dcDef) { _dcDef = { main: [...c.main.children].map(e => e.dataset.dc), side: [...c.side.children].map(e => e.dataset.dc) }; }
+  const l = dcLeer(), hide = Array.isArray(l.hide) ? l.hide : [];
+  ['main', 'side'].forEach(k => {   // orden guardado; lo que no esté en la lista (tarjetas nuevas) se queda detrás, en su orden de origen
+    const ord = Array.isArray(l[k]) ? l[k] : [], pos = e => { const i = ord.indexOf(e.dataset.dc); return i < 0 ? 1000 : i; };
+    [...c[k].children].map((e, i) => [e, i]).sort((a, b) => (pos(a[0]) - pos(b[0])) || (a[1] - b[1])).forEach(x => c[k].appendChild(x[0]));
+  });
+  document.querySelectorAll('#vhome [data-dc]').forEach(e => {
+    e.classList.toggle('dc-off', hide.includes(e.dataset.dc) && e.dataset.dc !== 'todook');
+    if (!e.querySelector(':scope>.dc-bar') && e.dataset.dc !== 'todook') {
+      const mov = e.parentElement && e.parentElement.dataset.col, ar = (d, p) => `<button type="button" aria-label="${d} ${sudEsc(dcTitulo(e))}" onclick="dcMover('${e.dataset.dc}',${d === 'Subir' ? -1 : 1})"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="${p}"/></svg></button>`;
+      const b = document.createElement('div'); b.className = 'dc-bar'; b.setAttribute('role', 'group'); b.setAttribute('aria-label', 'Personalizar ' + dcTitulo(e));
+      b.innerHTML = (mov ? ar('Subir', '6 15 12 9 18 15') + ar('Bajar', '6 9 12 15 18 9') : '') + `<button type="button" class="dc-eye" onclick="dcOcultar('${e.dataset.dc}')"></button>`;
+      e.insertBefore(b, e.firstChild);
+    }
+    dcOjo(e);
+  });
+}
+function dcOjo(e) {
+  const b = e.querySelector(':scope>.dc-bar .dc-eye'); if (!b) return; const off = e.classList.contains('dc-off');
+  b.setAttribute('aria-label', (off ? 'Mostrar ' : 'Ocultar ') + dcTitulo(e)); b.setAttribute('aria-pressed', String(off));
+  b.innerHTML = off ? '<svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>' : '<svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
+}
+function dcMover(id, d) {
+  const e = document.querySelector(`#vhome [data-dc="${id}"]`); if (!e) return;
+  const s = d < 0 ? e.previousElementSibling : e.nextElementSibling;
+  if (s && s.dataset.dc) { d < 0 ? e.parentNode.insertBefore(e, s) : e.parentNode.insertBefore(s, e); try { localStorage.setItem(DC_KEY, JSON.stringify(dcSnapshot())); } catch (x) {} }
+  const b = e.querySelector(`:scope>.dc-bar button[aria-label^="${d < 0 ? 'Subir' : 'Bajar'}"]`); if (b) b.focus();
+}
+function dcOcultar(id) {
+  const e = document.querySelector(`#vhome [data-dc="${id}"]`); if (!e) return;
+  e.classList.toggle('dc-off'); dcOjo(e);
+  try { localStorage.setItem(DC_KEY, JSON.stringify(dcSnapshot())); } catch (x) {}
+}
+function dashPersonalizar() {
+  const v = document.getElementById('vhome'), on = !v.classList.contains('dash-edit');
+  v.classList.toggle('dash-edit', on);
+  const b = document.getElementById('dashPersBtn'); b.setAttribute('aria-pressed', String(on));
+  document.getElementById('dashPersBar').style.display = on ? '' : 'none';
+  if (on) toast('Mueve las tarjetas con las flechas u ocúltalas con el ojo.', { ms: 4000 });
+}
+function dashPersReset() {
+  try { localStorage.removeItem(DC_KEY); } catch (e) {}
+  const c = dcCols(); if (_dcDef) ['main', 'side'].forEach(k => _dcDef[k].forEach(id => { const e = c[k].querySelector(`:scope>[data-dc="${id}"]`); if (e) c[k].appendChild(e); }));
+  document.querySelectorAll('#vhome [data-dc].dc-off').forEach(e => { e.classList.remove('dc-off'); dcOjo(e); });
+  toast('Panel restablecido');
 }
 
 // Lunes de esta semana en hora de Madrid (así se guarda `seguimientos.semana`)
@@ -4225,6 +4423,7 @@ async function pintarAvisosDash(deps, citasAll, todayISO){
   avisos.unshift(...planes.map(({ d, pp }) => ({ id: d.id, n: d.nombre, sub: d.deporte || '', tag: 'Plan por preparar · ' + planPendienteTxt(pp), cls: daysUntil(pp.para) <= 0 ? 'red' : 'gold' })));
   document.getElementById('dashAvisosCount').textContent = avisos.length;
   card.style.display = avisos.length ? '' : 'none';
+  _dash.avisos = avisos.length; dashPintarEstado();
   document.getElementById('dashAvisos').innerHTML = avisos.map(a=>`<div class="dash-row dash-row-link" role="button" tabindex="0" onclick="abrirFichaDash(${a.id})" onkeydown="if(event.key==='Enter')abrirFichaDash(${a.id})"><div class="dash-row-dot ${a.cls}"></div><div class="dash-row-txt"><div class="dash-row-name">${sudEsc(a.n)}</div><div class="dash-row-sub">${sudEsc(a.sub)}</div></div><span class="dash-row-tag">${a.tag}</span></div>`).join('');
 }
 async function abrirFichaDash(id){ if(!deportistas.length) await loadDeportistas(); openDepDet(id); }
@@ -8718,6 +8917,7 @@ async function guardarConsulta(){
     const dep = C.depId;
     cerrarConsulta();
     if(dep != null && currentDepId == dep && document.getElementById('vdepdet').classList.contains('active')) openDepDet(dep);
+    if(document.getElementById('vhome').classList.contains('active')) loadDashboard();
   }catch(e){ toast('No se pudo guardar. Inténtalo de nuevo.', {tipo:'error'}); btn.disabled = false; }
 }
 
