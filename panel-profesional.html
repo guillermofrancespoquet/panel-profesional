@@ -175,7 +175,8 @@ body.dark-mode .login-btn:hover{background:var(--t600)}
 /* NOTES */
 .notes-ta{width:100%;min-height:110px;padding:12px 14px;border:.5px solid var(--bdm);border-radius:10px;font-size:14px;font-family:var(--f);color:var(--g900);outline:none;resize:vertical;line-height:1.6;background:var(--bg);transition:border-color .15s}
 .notes-ta:focus{border-color:var(--t400)}
-.notes-foot{display:flex;align-items:center;gap:10px;margin-top:8px}
+.notes-foot{position:relative;height:0}
+.notes-foot .save-ok{position:absolute;right:2px;top:7px;line-height:1}
 .btn-save{padding:9px 18px;background:var(--btn);border:none;border-radius:8px;color:#fff;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--f)}
 .save-ok{font-size:12px;color:var(--t600);opacity:0;transition:opacity .3s}
 .save-ok.show{opacity:1}
@@ -271,18 +272,18 @@ body.dark-mode .btn-ok.danger,body.dark-mode .sb-badge{background:#B83232}
 .dep-sport{font-size:11px;color:var(--g400)}
 
 /* DEPORTISTA DETAIL */
-.depd-hero{background:linear-gradient(135deg,var(--t900) 0%,#1f4d5e 100%);color:#fff;border-radius:16px;padding:1.5rem;margin-bottom:1.25rem;display:flex;align-items:center;gap:1.1rem;flex-wrap:wrap;box-shadow:0 6px 18px rgba(4,52,44,.18)}
-.depd-actions{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.depd-hero{background:linear-gradient(135deg,var(--t900) 0%,#1f4d5e 100%);color:#fff;border-radius:16px;padding:1.5rem;margin-bottom:1.25rem;display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:1.1rem 1.25rem;box-shadow:0 6px 18px rgba(4,52,44,.18)}
+.depd-actions{grid-column:1/-1;display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding-top:1.1rem;border-top:.5px solid rgba(255,255,255,.16)}
 .depd-actions .btn-action{padding:10px 16px}
 @media(max-width:700px){
-  .depd-actions{width:100%;margin-left:0;margin-top:4px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .depd-actions{width:100%;margin-left:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
   .depd-actions .btn-action{justify-content:center;white-space:nowrap;padding:10px 8px}
   .depd-actions .btn-action.primary,.depd-actions .btn-action:nth-child(2){grid-column:1/-1}
 }
 .depd-avatar{width:84px;height:84px;border-radius:22px;overflow:hidden;background:rgba(184,149,106,.16);display:flex;align-items:center;justify-content:center;flex-shrink:0;border:.5px solid rgba(217,184,140,.34);box-shadow:inset 0 1px 0 rgba(255,255,255,.07)}
 .depd-avatar img{width:100%;height:100%;object-fit:cover}
 .depd-avatar-fallback{font-size:28px;font-weight:700;color:#fff}
-.depd-info{flex:1;min-width:180px}
+.depd-info{min-width:0}
 .depd-name{font-size:24px;font-weight:700;letter-spacing:-.02em;margin-bottom:3px;color:#fff}
 .depd-sport{font-size:13px;color:rgba(255,255,255,.82);font-weight:500}
 .depd-hero .dep-obj-badge{background:rgba(184,149,106,.24);box-shadow:inset 0 0 0 .5px rgba(217,184,140,.5);color:#F0D9B5;font-size:11px;padding:3px 11px}
@@ -996,7 +997,6 @@ body.dark-mode .cmp-cell.b .cmp-track i{background:var(--t400)}
   .hist-add{grid-template-columns:minmax(0,1fr)}
   .hist-add .btn-hist-add{width:100%}
   .hist-add input[type=date]{-webkit-appearance:none;appearance:none;min-height:40px}
-  .depd-hero{flex-wrap:wrap}
   .plan-box{flex-wrap:wrap}
   .gsearch-modal{width:calc(100% - 1.5rem);max-width:100%;margin:0 auto}
   .sb-search-btn{display:none}
