@@ -115,10 +115,10 @@ body.dark-mode .login-btn:hover{background:var(--t600)}
 
 /* CLIENT GRID */
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
-.ccard{background:var(--sf);border-radius:12px;border:.5px solid var(--bd);padding:1.25rem;cursor:pointer;transition:border-color .15s,box-shadow .15s}
+.ccard{background:linear-gradient(135deg,var(--t50) 0%,var(--sf) 62%);border-radius:16px;border:.5px solid var(--bd);padding:1.25rem;cursor:pointer;box-shadow:0 2px 10px rgba(4,52,44,.05);transition:border-color .15s,box-shadow .15s}
 .ccard:hover{border-color:var(--t400);box-shadow:0 2px 16px rgba(29,158,117,.1)}
 .ccard-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-.cavatar{width:40px;height:40px;border-radius:50%;background:var(--t50);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:var(--t800)}
+.cavatar{width:46px;height:46px;border-radius:14px;background:linear-gradient(135deg,#04342C 0%,#1f4d5e 100%);border:.5px solid rgba(217,184,140,.5);box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 4px 12px rgba(4,52,44,.2);display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:700;color:#fff}
 .cbadge{font-size:10px;font-weight:600;padding:3px 9px;border-radius:20px;text-transform:uppercase;letter-spacing:.05em}
 .cbadge.on{background:var(--t50);color:var(--t600)}
 .cbadge.off{background:var(--g100);color:var(--g400)}
@@ -878,7 +878,7 @@ body.dark-mode .cmp-cell.b .cmp-track i{background:var(--t400)}
 .dash-prox{display:flex;align-items:center;gap:18px;background:linear-gradient(135deg,var(--t900) 0%,#1f4d5e 100%);border-radius:16px;padding:18px 22px;margin-bottom:1.25rem;color:#fff;box-shadow:0 6px 18px rgba(4,52,44,.18)}
 .dash-prox-h{flex:none;display:flex;flex-direction:column;align-items:center;justify-content:center;width:96px;height:84px;border-radius:18px;background:rgba(184,149,106,.16);border:.5px solid rgba(217,184,140,.34);box-shadow:inset 0 1px 0 rgba(255,255,255,.07);color:#fff}
 .dash-prox-h b{font-size:26px;font-weight:700;line-height:1;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
-.dash-prox-h span{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;line-height:1.2;margin-top:7px;color:var(--gold)}
+.dash-prox-h span{white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;line-height:1.2;margin-top:7px;color:var(--gold)}
 .dash-prox.ya .dash-prox-h{background:rgba(184,149,106,.3);border-color:rgba(217,184,140,.6)}
 .dash-prox-c{flex:1 1 auto;min-width:0}
 .dash-prox-k{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--gold);margin-bottom:5px}
@@ -912,7 +912,7 @@ body.dark-mode .cmp-cell.b .cmp-track i{background:var(--t400)}
 .dash-edit .dc-off.fact-card{display:flex !important}
 @media(max-width:860px){
     .dash-pers span{display:none}.dash-pers{width:36px;padding:0;justify-content:center}
-  .dash-prox{flex-wrap:wrap;padding:16px;gap:14px}.dash-prox-h{width:68px;height:68px;border-radius:15px}.dash-prox-h b{font-size:21px}.dash-prox-c{flex:1 1 140px}.dash-prox-n{font-size:18px}.dash-prox-a{width:100%}.dash-prox-a .btn-soft{flex:1;justify-content:center}.dash-prox-s{white-space:normal}
+  .dash-prox{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;padding:16px;gap:14px 14px}.dash-prox-h{width:72px;height:72px;border-radius:16px}.dash-prox-h b{font-size:21px}.dash-prox-h span{margin-top:5px;letter-spacing:.06em}.dash-prox-n{font-size:18px}.dash-prox-a{grid-column:1/-1;width:100%}.dash-prox-a .btn-soft{flex:1;justify-content:center}.dash-prox-s{white-space:normal}
 }
 .dash-greet{font-size:22px;font-weight:700;letter-spacing:-.02em;margin-bottom:3px}
 .dash-date{font-size:13px;color:var(--g400)}
@@ -954,8 +954,6 @@ body.dark-mode .cmp-cell.b .cmp-track i{background:var(--t400)}
   .sidebar{width:270px;padding-top:calc(1.5rem + env(safe-area-inset-top,0px));transform:translateX(-100%);transition:transform .25s ease,box-shadow .25s ease;box-shadow:none}
   .sidebar.mobile-open{transform:translateX(0);box-shadow:6px 0 28px rgba(0,0,0,.3)}
   .btn-rem-add,.btn-hist-add{padding:11px 16px;font-size:13px}
-  .dep-head-btns{width:100%}
-  .dep-head-btns .btn-add{flex:1;justify-content:center;white-space:nowrap;padding:10px 8px;font-size:12.5px;gap:6px}
 
   html,body{overflow-x:hidden}
   .page{padding:1rem;max-width:100%}
@@ -2002,16 +2000,10 @@ body.dark-mode .ref-src,body.dark-mode .sup-badge,body.dark-mode .depd-avatar-fa
   <div class="page">
     <div class="page-header">
       <div><p class="page-title" role="heading" aria-level="1">Mis deportistas</p><p class="page-sub" id="depsub">Cargando…</p></div>
-      <div class="dep-head-btns" style="display:flex;gap:8px">
-        <button class="btn-add" style="background:var(--g100);color:var(--g700)" onclick="openImportDep()">
-          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          Importar varios
-        </button>
-        <button class="btn-add" onclick="openAddDep()">
-          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          Nuevo deportista
-        </button>
-      </div>
+      <button class="btn-add" onclick="openAddDep()">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Nuevo deportista
+      </button>
     </div>
     <div class="dep-toolbar">
       <div class="dep-search">
@@ -2083,21 +2075,6 @@ body.dark-mode .ref-src,body.dark-mode .sup-badge,body.dark-mode .depd-avatar-fa
     <div class="mact">
       <button class="btn-cancel" onclick="closeEditDep()">Cancelar</button>
       <button class="btn-ok" onclick="saveEditDep()">Guardar cambios</button>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL: IMPORTAR VARIOS DEPORTISTAS -->
-<div class="mbg" id="mImportDep" style="display:none">
-  <div class="mc" style="max-width:520px">
-    <p class="mt">Importar varios deportistas</p>
-    <p class="ms">Pega una línea por deportista con el formato: <strong>nombre | deporte | descripción | URL del plan | fecha revisión (AAAA-MM-DD, opcional)</strong>. Separa cada campo con el símbolo <strong>|</strong>.</p>
-    <textarea class="inp" id="importText" placeholder="Juancho Sastre Medina | Fútbol de competición | Objetivo de pico de rendimiento... | https://...&#10;Rocío Flores | Fútbol · Valencia CF | Maximizar rendimiento... | https://..." style="min-height:180px;resize:vertical;font-family:monospace;font-size:12px;line-height:1.6"></textarea>
-    <p class="merr" id="mImportErr"></p>
-    <p style="font-size:12px;color:var(--gold-dk);margin-top:4px" id="mImportOk"></p>
-    <div class="mact">
-      <button class="btn-cancel" onclick="closeImportDep()">Cancelar</button>
-      <button class="btn-ok" onclick="importDeportistas()">Importar todos</button>
     </div>
   </div>
 </div>
@@ -4100,8 +4077,8 @@ function renderFacturacion(){
 
   document.getElementById('factStats').innerHTML = `
     <div class="dash-stat"><div class="dash-stat-n">${fmtMoney(totalCobrado)}</div><div class="dash-stat-l">Total cobrado</div></div>
-    <div class="dash-stat"><div class="dash-stat-n">${fmtMoney(totalM3M)}</div><div class="dash-stat-l">Método 3M</div></div>
     <div class="dash-stat"><div class="dash-stat-n">${fmtMoney(totalDep)}</div><div class="dash-stat-l">Nutrición Deportiva</div></div>
+    <div class="dash-stat"><div class="dash-stat-n">${fmtMoney(totalM3M)}</div><div class="dash-stat-l">Método 3M</div></div>
     <div class="dash-stat"><div class="dash-stat-n" style="color:var(--red)">${fmtMoney(totalPend)}</div><div class="dash-stat-l">Pendiente de cobro</div></div>
   `;
 }
@@ -4256,12 +4233,12 @@ function pintarProximaDash(lista, deps) {
   else if (f === hoyISO) cuando = d0 ? 'Empieza en ' + dur(mins) : 'Hoy, sin hora';
   else if (f === localISO(man)) cuando = 'Mañana';
   else cuando = 'En ' + Math.round((new Date(f + 'T00:00:00') - new Date(hoyISO + 'T00:00:00')) / 86400000) + ' días';
-  const dia = f === hoyISO ? 'Hoy' : f === localISO(man) ? 'Mañana' : new Date(f + 'T00:00:00').toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric', month: 'short' }).replace('.', '');
+  const dia = f === hoyISO ? 'Hoy' : f === localISO(man) ? 'Mañana' : new Date(f + 'T00:00:00').toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric' }).replace('.', '').replace(',', '');
   const dep = deps.find(x => String(x.nombre || '').trim().toLowerCase() === String(c.cliente || '').trim().toLowerCase());
   const chips = [];
   if (c.requiere_pago !== false && !c.pagado) chips.push(`<span class="dash-chip warn">${citaYaPaso(c) ? 'Pago pendiente' : 'Por cobrar'}</span>`);
   el.innerHTML = `<div class="dash-prox${ya ? ' ya' : ''}">
-    <div class="dash-prox-h"><b>${c.hora ? sudEsc(String(c.hora).slice(0, 5)) : '—'}</b><span>${sudEsc(dia)}</span></div>
+    <div class="dash-prox-h"><b>${c.hora ? sudEsc(String(c.hora).slice(0, 5)) : new Date(f + 'T00:00:00').getDate()}</b><span>${c.hora ? sudEsc(dia) : (f === hoyISO ? 'Hoy' : sudEsc(new Date(f + 'T00:00:00').toLocaleDateString('es-ES', { weekday: 'short' }).replace('.', '')))}</span></div>
     <div class="dash-prox-c"><p class="dash-prox-k">${ya ? 'En curso' : 'Tu próxima cita'}</p><p class="dash-prox-n">${sudEsc(c.cliente)}</p><p class="dash-prox-s">${sudEsc(cuando)} · ${sudEsc(c.servicio || 'Revisión')}</p>${chips.length ? `<div class="dash-prox-chips">${chips.join('')}</div>` : ''}</div>
     <div class="dash-prox-a">${ya ? `<button type="button" class="btn-soft pri" onclick="dashRegistrar(${c.id})">Registrar consulta</button>` : ''}${dep ? `<button type="button" class="btn-soft${ya ? '' : ' pri'}" onclick="abrirFichaDash(${dep.id})">Abrir ficha</button>` : ''}<button type="button" class="btn-soft" onclick="openEditCita(${c.id})">Editar cita</button></div>
   </div>`;
@@ -4575,7 +4552,7 @@ function renderDash(){
     const startDate=c.created_at?new Date(c.created_at).toLocaleDateString('es-ES',{day:'numeric',month:'short'}):'—';
     return `<div class="ccard" onclick="openDet(${c.id})">
       <div class="ccard-top">
-        <div class="cavatar" style="background:${phaseBg};color:${phaseColor}">${c.nombre.charAt(0).toUpperCase()}</div>
+        <div class="cavatar">${c.nombre.charAt(0).toUpperCase()}</div>
         <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px">
           <span class="cbadge ${done?'off':'on'}">${done?'Completado':'Activo'}</span>
           ${!(c.semana||0)?'':`<span style="font-size:10px;font-weight:500;padding:3px 9px;border-radius:20px;background:${phaseBg};color:${phaseColor};letter-spacing:.03em">${phaseLabel}</span>`}
@@ -6304,50 +6281,6 @@ async function createCita() {
   } catch(e) {
     document.getElementById('mAddCitaErr').textContent = 'Error al crear la cita. Inténtalo de nuevo.';
   }
-}
-
-function openImportDep() {
-  document.getElementById('mImportDep').style.display = 'flex';
-  setTimeout(() => enfocar('importText'), 100);
-}
-function closeImportDep() {
-  document.getElementById('mImportDep').style.display = 'none';
-  document.getElementById('importText').value = '';
-  document.getElementById('mImportErr').textContent = '';
-  document.getElementById('mImportOk').textContent = '';
-}
-async function importDeportistas() {
-  const raw = document.getElementById('importText').value.trim();
-  if (!raw) { document.getElementById('mImportErr').textContent = 'Pega al menos una línea.'; return; }
-
-  const lines = raw.split('\n').map(l => l.trim()).filter(l => l.length > 0);
-  const errEl = document.getElementById('mImportErr');
-  const okEl = document.getElementById('mImportOk');
-  errEl.textContent = ''; okEl.textContent = '';
-
-  let created = 0, failed = 0;
-  for (const line of lines) {
-    const parts = line.split('|').map(p => p.trim());
-    if (!parts[0]) { failed++; continue; }
-    try {
-      await insertDep({
-        nombre: parts[0],
-        deporte: parts[1] || null,
-        descripcion: parts[2] || null,
-        plan_url: parts[3] || null,
-        proxima_revision: parts[4] || null,
-        foto_url: null,
-        notas: ''
-      });
-      created++;
-    } catch(e) {
-      failed++;
-    }
-  }
-
-  okEl.textContent = `✓ ${created} deportista${created!==1?'s':''} importado${created!==1?'s':''}${failed>0?` · ${failed} con error`:''}`;
-  await loadDeportistas();
-  setTimeout(() => { closeImportDep(); }, 1500);
 }
 
 function openAddDep() {
