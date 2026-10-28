@@ -25,6 +25,7 @@ Todos se ejecutan a mano en Supabase → SQL Editor → New query → Run. Son s
    - `supabase_notificaciones.sql` (avisos al móvil del cliente: seguimiento semanal; requiere `supabase_seguimiento.sql`; **además hay que crear la Edge Function y programarla**, ver «Avisos al móvil» más abajo)
    - `supabase_calendario_google.sql` (columna `citas.google_event_id` para el Calendario de Google; opcional, va con la Edge Function `calendario-google`, ver «Calendario de Google» más abajo)
 8. `supabase_seguridad_3_endurecer.sql`, **el último** (endurecimiento tras la revisión de seguridad del 26 oct 2026: rutas de archivos, límites, direcciones de avisos, privilegios; sustituye tres funciones por su versión endurecida, que ya llevan también sus archivos originales). Después, `supabase_diagnostico_seguridad.sql` (solo lectura): todo debe salir «OK».
+9. `supabase_proteccion_datos.sql` (protección de datos: consentimientos, baja del cliente y registro de eliminaciones; **después del paso 8**, no cambia sus funciones; ver «Protección de datos» más abajo)
 
 ## Ojo
 
@@ -34,6 +35,7 @@ Todos se ejecutan a mano en Supabase → SQL Editor → New query → Run. Son s
 ## No es SQL
 
 - `supabase_funcion_invitar_cliente.ts` es la Edge Function `invitar-cliente`: se pega en Supabase → Edge Functions → Via Editor.
+- `supabase_funcion_eliminar_cuenta_cliente.ts` es la Edge Function `eliminar-cuenta-cliente` (ver «Protección de datos» más abajo).
 - `supabase_funcion_calendario_google.ts` es la Edge Function `calendario-google` (ver «Calendario de Google» más abajo).
 
 ## Avisos al móvil (notificaciones del seguimiento semanal)
@@ -53,6 +55,15 @@ Pasos, una sola vez y en este orden (hasta el paso 5 el cliente no ve nada nuevo
 4. Edge Functions → Secrets: `AVISOS_SECRET` (una clave larga cualquiera), `VAPID_PRIVADA_JWK` (el JSON de la privada), `VAPID_PUBLICA` (la pública) y `VAPID_CONTACTO` (`mailto:tu@correo`).
 5. Database → Extensions: activar `pg_cron` y `pg_net`; después ejecutar en el SQL Editor el bloque «PROGRAMACIÓN» del final de `supabase_notificaciones.sql` (con tu `AVISOS_SECRET`).
 6. Prueba: con un cliente de pruebas con el seguimiento activo y el aviso activado, llamar a la función con `?forzar=1` (salta la comprobación de lunes) y la cabecera `x-cron-secret`; debe llegar el aviso al móvil.
+
+## Protección de datos (consentimiento, baja y eliminación de clientes)
+
+1. Ejecuta `supabase_proteccion_datos.sql` (después de `supabase_seguridad_3_endurecer.sql`). Es seguro repetirlo. Luego ejecuta `supabase_diagnostico_seguridad.sql`: debe seguir todo «OK».
+2. Instala la Edge Function `eliminar-cuenta-cliente` (Supabase → Edge Functions → «Deploy a new function» → «Via Editor» → nombre `eliminar-cuenta-cliente` → pega `supabase_funcion_eliminar_cuenta_cliente.ts` → «Deploy function», con «Verify JWT» activado; no necesita secretos). Sin ella, al eliminar a un cliente el panel te dice el correo de su cuenta para que la borres a mano en Authentication → Users.
+3. En el panel → Ajustes → **Protección de datos**: rellena tu nombre o razón social, NIF, dirección y un correo de contacto, y los años de conservación (mínimo 5; art. 17 de la Ley 41/2002). **Antes de activar, revisa los dos textos con un profesional del derecho** («Ver y editar los textos»; lo que traen es un borrador). Al guardar con nombre y contacto, el consentimiento queda activado: cada cliente lo verá al entrar en su área.
+4. Clientes sin acceso al área (o que firmaron en papel): en la ficha → Archivos → Datos y privacidad → «Registrar aceptación en papel».
+
+Qué se hace con la conservación: **dar de baja** al cliente (ficha → Archivos → Datos y privacidad) fija la fecha de alta del proceso asistencial; el panel te dice hasta cuándo conservarlo. **Eliminar** antes de esa fecha es posible (escribiendo ELIMINAR y con un motivo), pero queda anotado como «antes del plazo» en el registro y en el justificante.
 
 ## Calendario de Google (citas y revisiones → tu Google Calendar)
 

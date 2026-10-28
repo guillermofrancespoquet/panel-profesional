@@ -268,6 +268,13 @@ button.hello-msg{cursor:pointer}
 .chart text.v{font-weight:600;fill:var(--g900);font-size:10px;paint-order:stroke;stroke:var(--sf);stroke-width:3px;stroke-linejoin:round}
 .chart .dot{fill:var(--sf)}
 .note{font-size:11.5px;color:var(--g500);margin-top:10px;line-height:1.55}
+.btn:disabled{opacity:.45;cursor:default}
+.cons-brand{display:flex;align-items:center;gap:10px;margin-bottom:18px;font-weight:700;color:var(--t900)}.cons-brand img{width:40px;height:40px;border-radius:22%}
+body.dark-mode .cons-brand{color:var(--g900)}
+.cons-txt{max-height:46vh;overflow:auto;font-size:14px;line-height:1.55;margin-top:12px}.cons-txt p{margin:0 0 10px}.cons-txt p:last-child{margin-bottom:0}
+.cons-chk{display:flex;gap:10px;align-items:flex-start;margin:14px 0 12px;font-size:15px;cursor:pointer}.cons-chk input{margin-top:2px;width:20px;height:20px;flex:none;accent-color:var(--btn)}
+.priv-link{display:block;width:100%;margin:1.6rem 0 .4rem;padding:12px;background:none;border:0;color:var(--g400);font:inherit;font-size:13px;text-decoration:underline;cursor:pointer}
+.priv-it{margin-top:12px}.priv-it h3{font-size:15px;margin:0 0 4px}.priv-it details{margin-top:8px}.priv-it summary{cursor:pointer;color:var(--t600);font-size:13px;font-weight:600}
 table.hist{width:100%;border-collapse:collapse;font-size:13px}
 table.hist th{font-size:10.5px;font-weight:500;color:var(--g400);text-transform:uppercase;letter-spacing:.05em;text-align:left;padding:4px 8px 8px 0}
 table.hist td{padding:9px 8px 9px 0;border-top:.5px solid var(--bd)}
@@ -613,6 +620,7 @@ body>*:not(#mnPrint){display:none !important}
     <span><span class="tile-t">Mi plan de competición</span><br><span class="tile-d">Qué comer y beber antes, durante y después</span><br><span class="tile-badge" id="tileCompB"></span></span>
     <span class="tile-go"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></span>
   </button>
+  <button type="button" class="priv-link" id="privLink" style="display:none" onclick="abrirPriv()">Privacidad y mis datos</button>
 </div></div>
 
 <div id="vdia" class="view" role="main"><div class="wrap">
@@ -690,6 +698,23 @@ body>*:not(#mnPrint){display:none !important}
   <div id="segBody"></div>
 </div></div>
 
+<div id="vcons" class="view" role="main"><div class="wrap">
+  <div class="cons-brand"><img src="icon-rounded-192.png" alt=""><span>NutriLogos</span></div>
+  <h1 class="h2">Antes de empezar</h1>
+  <p class="fcard-h">Para usar tu área necesitamos que leas y aceptes cómo tratamos tus datos de salud.</p>
+  <div class="card"><p class="sec" style="margin:0" id="consTit"></p><div class="cons-txt" id="consTxt" tabindex="0" role="region" aria-label="Texto de protección de datos"></div></div>
+  <label class="cons-chk"><input type="checkbox" id="consChk" onchange="$('consBtn').disabled=!this.checked"><span>He leído y acepto este texto.</span></label>
+  <button class="btn" id="consBtn" style="width:100%" disabled onclick="consAceptarGate()">Aceptar y continuar</button>
+  <p class="note" id="consMsg" role="status"></p>
+  <button class="btn soft" style="width:100%;margin-top:10px" onclick="logout()">Salir</button>
+</div></div>
+
+<div id="vpriv" class="view" role="main"><div class="wrap">
+  <button class="back" onclick="show('vhome')"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> Inicio</button>
+  <h1 class="h2">Privacidad y mis datos</h1>
+  <div id="privBody"></div>
+</div></div>
+
 <div id="vsin" class="view" role="main"><div class="wrap"><div class="center">
   <h2 id="sinTitle">Tu cuenta aún no está activada</h2>
   <p class="empty" id="sinMsg">Tu perfil todavía no está vinculado a esta cuenta. Escribe a tu nutricionista para que active tu acceso.</p>
@@ -705,10 +730,10 @@ document.querySelectorAll('img[data-logo]').forEach(i=>{ i.src=LOGO; });
 const $=id=>document.getElementById(id);
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const BUCKET='deportistas-docs';
-let FICHA=null, DATOS=null;
+let FICHA=null, DATOS=null, CONS=null;
 
 // ═══ Vistas ═══
-const APP_VIEWS=['vhome','vdatos','vreg','vplan','vforms','vform','vseg','vcomp','vsin','vmenu'];
+const APP_VIEWS=['vhome','vdatos','vreg','vplan','vforms','vform','vseg','vcomp','vsin','vmenu','vpriv'];
 function show(v){
   document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));
   $(v).classList.add('active');
@@ -824,17 +849,73 @@ async function guardarPassword(){
 function logout(){
   const s=authLoad();
   if(s) fetch(SURL+'/auth/v1/logout',{method:'POST',headers:{'apikey':SKEY,'Authorization':'Bearer '+s.access_token}}).catch(()=>{});
-  authClear(); FICHA=DATOS=REG=null; PLANES=[]; SUPL=[]; OBJ=null; DIA=null; DIA_FILE=null; REG_CMP=null; 
+  authClear(); FICHA=DATOS=REG=CONS=null; PLANES=[]; SUPL=[]; OBJ=null; DIA=null; DIA_FILE=null; REG_CMP=null; 
   $('lpass').value=''; $('lerr').textContent='';
   show('vlogin');
 }
+
+
+// ═══ Protección de datos: consentimiento y privacidad (supabase_proteccion_datos.sql) ═══
+// El texto lo escribe y versiona el profesional (en la base de datos); aquí solo se muestra y se acepta. Sin ese SQL, o mientras el profesional
+// no lo active, CONS queda en null y no se exige nada.
+const consItem=t=>CONS&&CONS.items&&CONS.items.find(x=>x.tipo===t)||null;
+const consPendiente=t=>{ const i=consItem(t); return !!(i&&!i.aceptado); };
+const fotosPermitidas=()=>!CONS||!consItem('fotos')||consItem('fotos').aceptado;
+function consHtml(txt){
+  return String(txt||'').split(/\n\s*\n/).map(par=>{ const m=par.match(/^([^:\n.]{3,70}):\s*([\s\S]*)$/); return '<p>'+(m?'<b>'+esc(m[1])+':</b> '+esc(m[2]):esc(par))+'</p>'; }).join('');
+}
+function consPintarGate(){
+  const it=consItem('tratamiento'); $('consTit').textContent=it.titulo; $('consTxt').innerHTML=consHtml(it.texto);
+  $('consChk').checked=false; $('consBtn').disabled=true; $('consMsg').textContent=''; show('vcons');
+}
+async function consRecargar(){ try{ const c=await rpc('cliente_consentimientos'); CONS=c&&c.activo&&Array.isArray(c.items)?c:null; }catch(e){} }
+async function consAceptarGate(){
+  const it=consItem('tratamiento'); if(!it) return; const b=$('consBtn'); b.disabled=true; $('consMsg').textContent='';
+  try{ await rpc('cliente_aceptar_consentimiento',{p_tipo:'tratamiento',p_version:it.version}); await entrar(); }
+  catch(e){ $('consMsg').textContent='No se pudo guardar. Comprueba tu conexión e inténtalo de nuevo.'; b.disabled=false; }
+}
+async function abrirPriv(){ show('vpriv'); pintarPriv(); }
+let PRIV_RETIRAR=false;
+function pintarPriv(){
+  const c=CONS; if(!c){ $('privBody').innerHTML='<p class="empty">No hay información de privacidad disponible todavía.</p>'; return; }
+  let h='<p class="fcard-h">Aquí puedes ver qué has aceptado y cómo ejercer tus derechos.</p>';
+  c.items.forEach(i=>{
+    const fecha=i.aceptado_en?fmtF(String(i.aceptado_en).slice(0,10),true):'';
+    h+=`<div class="card priv-it"><h3>${esc(i.titulo)}</h3>
+      <p class="note" style="margin:0">${i.aceptado?'Aceptado'+(fecha?' el '+esc(fecha):''):(i.tipo==='fotos'?'No has dado este permiso':'Pendiente de aceptar')}</p>
+      <details><summary>Leer el texto</summary><div class="cons-txt" style="max-height:none;margin-top:10px">${consHtml(i.texto)}</div></details>`;
+    if(i.tipo==='fotos'){
+      if(i.aceptado) h+=`<button class="btn soft" style="margin-top:12px" id="privRet" onclick="consRetirarFotos()">${PRIV_RETIRAR?'¿Seguro? Pulsa otra vez para retirar el permiso':'Retirar el permiso de fotos'}</button><p class="note">Si lo retiras, dejarás de poder subir fotos nuevas. Para que se borren las que ya subiste, escribe a ${esc(c.contacto||'tu nutricionista')}.</p>`;
+      else h+=`<label class="cons-chk"><input type="checkbox" id="privChk" onchange="$('privBtn').disabled=!this.checked"><span>He leído y acepto dar este permiso.</span></label><button class="btn" id="privBtn" disabled style="width:100%" onclick="consAceptarFotos()">Dar el permiso</button>`;
+    }
+    h+='</div>';
+  });
+  h+=`<div class="card priv-it"><h3>Tus derechos</h3><p class="note" style="margin:0;font-size:13px">Puedes pedir que te enseñemos, corrijamos, borremos o te entreguemos tus datos, y retirar tu consentimiento, escribiendo a <b>${esc(c.contacto||'tu nutricionista')}</b>${c.responsable?' ('+esc(c.responsable)+')':''}.</p></div>`;
+  $('privBody').innerHTML=h;
+}
+async function consAceptarFotos(){
+  const it=consItem('fotos'); if(!it) return; const b=$('privBtn'); b.disabled=true;
+  try{ await rpc('cliente_aceptar_consentimiento',{p_tipo:'fotos',p_version:it.version}); await consRecargar(); toast('Permiso guardado.'); pintarPriv(); }
+  catch(e){ toast('No se pudo guardar. Inténtalo de nuevo.',{tipo:'error'}); b.disabled=false; }
+}
+async function consRetirarFotos(){
+  if(!PRIV_RETIRAR){ PRIV_RETIRAR=true; pintarPriv(); setTimeout(()=>{ if(PRIV_RETIRAR){ PRIV_RETIRAR=false; if($('vpriv').classList.contains('active')) pintarPriv(); } },6000); return; }
+  PRIV_RETIRAR=false;
+  try{ await rpc('cliente_retirar_consentimiento',{p_tipo:'fotos'}); await consRecargar(); toast('Permiso retirado.'); }
+  catch(e){ toast('No se pudo retirar. Inténtalo de nuevo.',{tipo:'error'}); }
+  pintarPriv();
+}
+// Si el servidor rechazó la foto porque el permiso se retiró (o se retiró desde otro móvil), se refresca el estado y se avisa.
+async function consFalloFoto(){ if(!CONS) return false; const antes=fotosPermitidas(); await consRecargar(); if(antes&&!fotosPermitidas()){ toast('Falta tu permiso para subir fotos.',{tipo:'error'}); return true; } return false; }
+// Aviso en las pantallas de fotos cuando falta el permiso
+const fotosAvisoHtml=()=>`<div class="card" style="margin-top:12px"><p style="margin:0;font-size:14px;line-height:1.5"><b>Para subir fotos necesitamos tu permiso.</b> Solo las vemos tú y tu nutricionista.</p><button class="btn" style="margin-top:10px" onclick="abrirPriv()">Leer y dar el permiso</button></div>`;
 
 // ═══ Cargar la ficha del cliente y mostrar el inicio ═══
 async function entrar(){
   show('vload');
   // Las peticiones opcionales salen a la vez que la ficha (antes iban una detrás de otra: 5 viajes seguidos). Si fallan, simplemente no salen sus tarjetas.
   const opc=fn=>rpc(fn).catch(()=>null);
-  const pPl=opc('cliente_mis_planes'), pDd=opc('cliente_mis_comidas'), pMm=opc('cliente_mi_menu'), pSu=opc('cliente_mi_suplementacion'), pOb=opc('cliente_mi_objetivo');
+  const pCons=opc('cliente_consentimientos'), pPl=opc('cliente_mis_planes'), pDd=opc('cliente_mis_comidas'), pMm=opc('cliente_mi_menu'), pSu=opc('cliente_mi_suplementacion'), pOb=opc('cliente_mi_objetivo');
   try{
     FICHA=await rpc('cliente_mi_ficha');
   }catch(e){
@@ -843,6 +924,8 @@ async function entrar(){
     mostrarSin('No se pudo cargar tu información','Comprueba tu conexión y vuelve a intentarlo.'); return;
   }
   if(!FICHA){ mostrarSin('Tu cuenta aún no está activada','Tu perfil todavía no está vinculado a esta cuenta. Escribe a tu nutricionista para que active tu acceso.'); return; }
+  CONS=await pCons; if(!CONS||!CONS.activo||!Array.isArray(CONS.items)) CONS=null;   // sin su SQL, o sin activar por el profesional, no se exige nada
+  if(consPendiente('tratamiento')){ consPintarGate(); return; }
   const nombre=String(FICHA.nombre||'').trim().split(/\s+/)[0]||'';
   const hh=new Date().getHours(), saludo=hh>=6&&hh<14?'Buenos días':hh>=14&&hh<21?'Buenas tardes':'Buenas noches';
   $('hello').textContent=nombre?(saludo+', '+nombre):saludo;
@@ -853,7 +936,7 @@ async function entrar(){
   MENU_DATA=mm&&mm.menu&&Array.isArray(mm.menu.semanas)&&mm.menu.semanas.length?mm:null;   // opcional: sin su SQL, o sin menú publicado, no sale la tarjeta
   SUPL=Array.isArray(su)?su:[];   // opcional: sin su SQL, o sin nada asignado, no sale la opción
   OBJ=ob&&typeof ob==='object'&&ob.objetivo!=null?ob:null;   // opcional: sin su SQL, o sin objetivo puesto por el profesional, no sale nada
-  pintarNota(); pintarRevision(); pintarObjetivo(); pintarInstTip(); pintarTileForms(); pintarTileComp(); pintarTileSupl(); pintarTileDia(); pintarMensajeDia(); pintarPush();
+  pintarNota(); pintarRevision(); pintarObjetivo(); pintarInstTip(); pintarTileForms(); pintarTileComp(); pintarTileSupl(); pintarTileDia(); pintarMensajeDia(); pintarPush(); $('privLink').style.display=CONS?'block':'none';
   show('vhome');
   abrirDesdeAviso();
 }
@@ -1068,11 +1151,11 @@ function pintarReg(){
     if(ps.length>1) h+=`<div class="series">${serie(ps,'peso','#1D9E75','Mi peso','kg',1)}</div>`;
     h+='<div class="card" style="margin-top:12px">'+ps.slice().reverse().slice(0,8).map(p=>{ const r=REG.pesos.find(x=>String(x.fecha).slice(0,10)===p.fecha); return `<div class="file"><span style="flex:1"><b>${nf(p.peso)} kg</b> <span class="empty">· ${fmtF(p.fecha)}</span></span><button class="reg-del" aria-label="Borrar el peso del ${fmtF(p.fecha)}" onclick="regBorrarPeso(${r.id})">×</button></div>`; }).join('')+'</div>';
   }
-  h+=`<p class="sec">Mis fotos</p><div class="card">
+  h+=`<p class="sec">Mis fotos</p>`+(!fotosPermitidas()?fotosAvisoHtml():`<div class="card">
     <div class="reg-row"><div><label for="regVista">Foto de</label><select class="seg-inp" id="regVista"><option value="frente">Frente</option><option value="lado">Lado</option><option value="espalda">Espalda</option><option value="otra">Otra</option></select></div>
     <div><label for="regFotoF">Día</label><input class="seg-inp" id="regFotoF" type="date" value="${hoyISO()}" max="${hoyISO()}"></div>
     <button class="btn" id="fotoBtn" onclick="$('regFile').click()">Añadir foto</button></div>
-    <p class="note">Solo tú y tu nutricionista veis estas fotos. Para compararlas bien, hazlas siempre con la misma luz, a la misma distancia y con la misma postura.</p></div>`;
+    <p class="note">Solo tú y tu nutricionista veis estas fotos. Para compararlas bien, hazlas siempre con la misma luz, a la misma distancia y con la misma postura.</p></div>`);
   if(REG.fotos.length){
     h+='<div class="fgrid">'+REG.fotos.slice().reverse().map(f=>`<button class="fth" onclick="abrirLb(${f.id})" aria-label="Foto ${VISTAS[f.vista]||''} del ${fmtF(String(f.fecha).slice(0,10))}"><img alt="" data-p="${esc(f.path)}"><span>${VISTAS[f.vista]||'Otra'} · ${fmtF(String(f.fecha).slice(0,10),true)}</span></button>`).join('')+'</div>';
     if(REG.fotos.length>1) h+='<p class="sec">Comparar</p><div class="card" id="cmpBox"></div>';
@@ -1135,6 +1218,7 @@ async function regSubirFoto(file){
     toast('Foto guardada'); pintarReg();
   }catch(e){
     if(path) authFetch(`${SURL}/storage/v1/object/fotos-clientes/${path}`,{method:'DELETE'}).catch(()=>{});
+    if(await consFalloFoto()){ pintarReg(); return; }
     toast('No se pudo subir la foto. Inténtalo de nuevo.',{tipo:'error'}); b.disabled=false; b.textContent='Añadir foto';
   }
 }
@@ -1181,7 +1265,7 @@ function pintarDia(){
   let h=`<div class="card dia-add"><p class="dia-l">¿Qué comida es?</p>
     <div class="dia-ch" role="radiogroup" aria-label="Momento">${Object.keys(DIA_M).map(k=>`<button type="button" class="dia-c${k===DIA_MOM?' on':''}" role="radio" aria-checked="${k===DIA_MOM}" onclick="DIA_MOM='${k}';pintarDia()">${DIA_M[k]}</button>`).join('')}</div>
     <div class="reg-row" style="margin-top:12px"><div><label for="diaFecha">Día</label><select class="seg-inp" id="diaFecha">${dias.map(([v,t])=>`<option value="${v}"${v===fecha?' selected':''}>${t}</option>`).join('')}</select></div>
-      <div><label>Foto</label><button type="button" class="btn soft dia-foto" onclick="$('diaFile').click()">${DIA_FILE?'Cambiar foto':'Hacer o elegir foto'}</button></div></div>
+      <div><label>Foto</label>${fotosPermitidas()?`<button type="button" class="btn soft dia-foto" onclick="$('diaFile').click()">${DIA_FILE?'Cambiar foto':'Hacer o elegir foto'}</button>`:`<button type="button" class="btn soft dia-foto" onclick="abrirPriv()">Dar permiso para fotos</button>`}</div></div>
     ${DIA_FILE?`<div class="dia-prev"><img alt="Foto de la comida" src="${DIA_FILE.url}"><button type="button" class="reg-del" aria-label="Quitar la foto" onclick="diaQuitarFoto()">×</button></div>`:''}
     <label for="diaNota" class="dia-l" style="margin-top:12px">Nota <span class="empty">(opcional si hay foto)</span></label>
     <textarea class="seg-inp" id="diaNota" maxlength="300" rows="2" style="height:auto;padding:10px 12px" placeholder="Qué has comido, cuánta hambre tenías…">${esc(nota)}</textarea>
@@ -1219,6 +1303,7 @@ async function diaGuardar(){
     $('diaNota').value=''; toast('Comida guardada'); DIA_MOM=momentoAhora(); pintarDia();
   }catch(e){
     if(path) authFetch(`${SURL}/storage/v1/object/fotos-clientes/${path}`,{method:'DELETE'}).catch(()=>{});
+    if(DIA_FILE&&await consFalloFoto()){ DIA_FILE=null; pintarDia(); return; }
     toast('No se pudo guardar. Inténtalo de nuevo.',{tipo:'error'}); b.disabled=false; b.textContent='Guardar comida';
   }
 }
