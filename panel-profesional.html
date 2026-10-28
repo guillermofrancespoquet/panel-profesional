@@ -4897,19 +4897,21 @@ async function syncDepCita(nombre, fecha, hora) {
   const servicioTag = 'Revisión · Nutrición Deportiva';
   const todayISO = localISO(new Date());
   try {
-    const existing = await sb(`citas?select=id,fecha&cliente=eq.${encodeURIComponent(nombre)}&servicio=eq.${encodeURIComponent(servicioTag)}`) || [];
+    const existing = await sb(`citas?select=*&cliente=eq.${encodeURIComponent(nombre)}&servicio=eq.${encodeURIComponent(servicioTag)}`) || [];
     const futuras = existing.filter(e => e.fecha >= todayISO).sort((a,b)=>a.fecha.localeCompare(b.fecha));
     if (!fecha) {
       // Solo borramos revisiones futuras aún no ocurridas; el histórico pasado se conserva
-      for (const e of futuras) await deleteCita(e.id);
+      for (const e of futuras) { await deleteCita(e.id); gcalBorrar(e.google_event_id); }
       return;
     }
     if (futuras.length) {
       // Reprogramar la próxima revisión pendiente en vez de crear otra
       await patchCita(futuras[0].id, { fecha, hora: hora || null });
+      gcalSubir(futuras[0].id);
     } else {
       // No hay ninguna futura (o la anterior ya pasó y quedó como histórico) → crear una nueva
-      await insertCita({ cliente: nombre, servicio: servicioTag, fecha, hora: hora || null, nota: null, pagado: false, requiere_pago: true, monto: 40 });
+      const ins = await insertCita({ cliente: nombre, servicio: servicioTag, fecha, hora: hora || null, nota: null, pagado: false, requiere_pago: true, monto: 40 });
+      gcalSubir(Array.isArray(ins) && ins[0] && ins[0].id);
     }
   } catch(e) { /* silencioso: no bloquear el guardado del deportista si falla la sync */ }
 }
@@ -4921,6 +4923,70 @@ const getCitas = () => sb('citas?select=*&order=fecha.asc,hora.asc');
 const insertCita = (d) => sb('citas', {method:'POST', body: JSON.stringify(d)});
 const patchCita = (id, d) => sb(`citas?id=eq.${id}`, {method:'PATCH', headers:{'Prefer':'return=minimal'}, body: JSON.stringify(d)});
 const deleteCita = (id) => sb(`citas?id=eq.${id}`, {method:'DELETE', headers:{'Prefer':'return=minimal'}});
+
+// ═══════════════ CALENDARIO DE GOOGLE (Edge Function «calendario-google» + sql/supabase_calendario_google.sql) ═══════════════
+// Panel → Google, en un solo sentido: al crear, mover o borrar una cita (o revisión) se crea, mueve o borra su evento
+// («REVISIÓN - ANA», color Tomate, 60 min; sin notas ni importes). Si la función no está instalada o configurada, no se hace nada.
+const GCAL = { estado: null };   // null = sin consultar · { configurado, motivo }
+const GCAL_MSG = {
+  no_instalada: 'La función «calendario-google» no está instalada en Supabase (pasos en sql/LEEME.md).',
+  no_configurado: 'Faltan los secretos GOOGLE_SA_JSON y GOOGLE_CALENDAR_ID en Supabase.',
+  credenciales: 'Google no acepta la clave: revisa el secreto GOOGLE_SA_JSON.',
+  calendario_no_compartido: 'No encuentro ese calendario: compártelo con el correo de la cuenta de servicio (permiso «Hacer cambios en eventos») y revisa GOOGLE_CALENDAR_ID.',
+  sin_permiso: 'Google rechaza el acceso: ¿está activada la Google Calendar API y el permiso es «Hacer cambios en eventos»?',
+  no_autorizado: 'Tu cuenta no está autorizada como profesional.',
+  red: 'Sin conexión con Supabase.'
+};
+const gcalMotivo = r => (GCAL_MSG[r && r.motivo] || 'Google devolvió un error.') + (r && r.detalle ? ' (' + r.detalle + ')' : '');
+async function gcalLlamar(cuerpo) {
+  let r; try { r = await authFetch(SURL + '/functions/v1/calendario-google', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(cuerpo) }); } catch (e) { return { ok: false, motivo: 'red' }; }
+  if (r.status === 404) return { ok: false, motivo: 'no_instalada' };
+  try { return await r.json(); } catch (e) { return { ok: false, motivo: 'error' }; }
+}
+async function gcalActivo(forzar) {
+  if (GCAL.estado === null || forzar) { const r = await gcalLlamar({ accion: 'estado' }); GCAL.estado = { configurado: !!(r && r.ok && r.configurado), motivo: r && r.ok ? 'no_configurado' : (r && r.motivo) }; }
+  return GCAL.estado.configurado;
+}
+let _gcalAvisoT = 0;
+function gcalAviso(r) { if (Date.now() - _gcalAvisoT < 60000) return; _gcalAvisoT = Date.now(); toast('No se pudo enviar la cita a Google Calendar. Revisa Ajustes → Calendario de Google.', { tipo: 'aviso', ms: 6000 }); }
+async function gcalSubir(citaId) {
+  try {
+    if (!citaId || !(await gcalActivo())) return null;
+    const r = await gcalLlamar({ accion: 'sync', cita_id: citaId });
+    if (r && r.ok) {
+      const c = citas.find(x => x.id == citaId); if (c && r.event_id) c.google_event_id = r.event_id;
+      if (r.aviso === 'sin_columna') toast('Falta ejecutar supabase_calendario_google.sql: sin él, al mover la cita se duplicaría en Google.', { tipo: 'aviso', ms: 8000 });
+      return r;
+    }
+    gcalAviso(r);
+  } catch (e) { /* nunca debe romper el guardado de la cita */ }
+  return null;
+}
+async function gcalBorrar(eventId) {
+  try { if (!eventId || !(await gcalActivo())) return; const r = await gcalLlamar({ accion: 'borrar', event_id: eventId }); if (!r || !r.ok) gcalAviso(r); } catch (e) {}
+}
+async function gcalPintarEstado() {
+  const el = document.getElementById('ajGcalEst'); if (!el) return;
+  await gcalActivo(true); const e = GCAL.estado;
+  el.textContent = e.configurado ? 'Conectado' : (e.motivo === 'no_instalada' ? 'No instalado' : 'Falta configurar');
+  el.title = e.configurado ? '' : gcalMotivo({ motivo: e.motivo });
+}
+async function gcalProbar() {
+  const b = document.getElementById('ajGcalProbar'); if (b) b.disabled = true;
+  const r = await gcalLlamar({ accion: 'probar' }); if (b) b.disabled = false;
+  if (r && r.ok) toast('Conectado con el calendario «' + r.calendario + '»' + (r.zona ? ' (' + r.zona + ')' : '') + '.'); else toast(gcalMotivo(r), { tipo: 'error', ms: 9000 });
+  gcalPintarEstado();
+}
+async function gcalEnviarProximas() {
+  const b = document.getElementById('ajGcalEnviar'); if (b) b.disabled = true;
+  const r = await gcalLlamar({ accion: 'sync_proximas' }); if (b) b.disabled = false;
+  if (r && r.ok) {
+    toast(r.enviadas + (r.enviadas === 1 ? ' cita enviada' : ' citas enviadas') + ' a Google Calendar' + (r.fallidas ? ' · ' + r.fallidas + ' con error' : '') + '.', { tipo: r.fallidas ? 'aviso' : undefined, ms: 6000 });
+    if (r.aviso === 'sin_columna') toast('Falta ejecutar supabase_calendario_google.sql.', { tipo: 'aviso', ms: 8000 });
+    try { await loadCitas(); } catch (e) {}
+  } else toast(gcalMotivo(r), { tipo: 'error', ms: 9000 });
+}
+
 
 async function loadCitas() {
   citas = await getCitas() || [];
@@ -5931,7 +5997,7 @@ function removeCita(id) {
     texto: 'Cita de ' + c.cliente + ' eliminada',
     ocultar: () => { citas = citas.filter(x => x.id != id); renderCitas(); },
     restaurar: () => { citas = antes.filter(x => x.id == id || citas.some(y => y.id == x.id)); renderCitas(); },
-    ejecutar: () => deleteCita(id)
+    ejecutar: async () => { const r = await deleteCita(id); gcalBorrar(c.google_event_id); return r; }
   });
 }
 
@@ -5964,7 +6030,7 @@ async function createCita() {
   const fecha = document.getElementById('citaFecha').value;
   if (!cliente || !fecha) { document.getElementById('mAddCitaErr').textContent = 'Cliente y fecha son obligatorios'; return; }
   try {
-    await insertCita({
+    const ins = await insertCita({
       cliente,
       servicio: document.getElementById('citaServicio').value.trim() || null,
       fecha,
@@ -5976,6 +6042,7 @@ async function createCita() {
     await syncCitaRevisionADep(cliente, document.getElementById('citaServicio').value, fecha, document.getElementById('citaHora').value || null);
     closeAddCita();
     await loadCitas();
+    gcalSubir(Array.isArray(ins) && ins[0] && ins[0].id);
   } catch(e) {
     document.getElementById('mAddCitaErr').textContent = 'Error al crear la cita. Inténtalo de nuevo.';
   }
@@ -8864,6 +8931,10 @@ async function abrirAjustes(){
     <p class="aj-h">Mantenimiento</p>
     <p class="med-note" style="margin:0 0 8px">La copia de seguridad descarga todos los datos del panel. Limpiar archivos busca fotos y documentos de deportistas que ya no existen.</p>
     <div class="aj-btns"><button type="button" class="btn-soft" onclick="cerrarAjustes();exportAllData()">Copia de seguridad</button><button type="button" class="btn-soft" onclick="cerrarAjustes();abrirHuerfanos()">Limpiar archivos</button></div>
+    <p class="aj-h">Calendario de Google</p>
+    <p class="med-note" style="margin:0 0 8px">Al crear, mover o borrar una cita o revisión, se crea, mueve o borra sola en tu Google Calendar («REVISIÓN - ANA», color Tomate, 60 min, sin notas ni importes). Solo va del panel a Google: lo que cambies en Google no vuelve aquí.</p>
+    <div class="aj-row"><b>Estado</b><span class="v" id="ajGcalEst">Comprobando…</span></div>
+    <div class="aj-btns" style="margin-top:8px"><button type="button" class="btn-soft" id="ajGcalProbar" onclick="gcalProbar()">Probar conexión</button><button type="button" class="btn-soft" id="ajGcalEnviar" onclick="gcalEnviarProximas()">Enviar las próximas citas</button></div>
     <p class="aj-h">Aplicación</p>
     <div class="aj-row"><b>Cuenta</b><span class="v">${mail?sudEsc(mail):'—'}</span></div>
     <div class="aj-row"><b>Versión</b><span class="v" id="ajVer">Comprobando…</span></div>
@@ -8873,7 +8944,7 @@ async function abrirAjustes(){
     <div class="aj-row"><span>Cerrar una ventana o el menú</span><span class="v"><span class="aj-kbd">Esc</span></span></div>
     <div class="aj-row"><span>Abrir la barra lateral (móvil)</span><span class="v">Deslizar desde el borde</span></div>
     <div class="mact"><button type="button" class="btn-cancel" onclick="cerrarAjustes()">Cerrar</button></div>`;
-  ajPintarModo(); ajRgPintar();
+  ajPintarModo(); ajRgPintar(); gcalPintarEstado();
   document.getElementById('mAjustes').style.display='flex';
   document.querySelector('#ajCuerpo .aj-seg button').focus();
   try{ const r=await fetch(location.pathname,{method:'HEAD',cache:'no-store'}); const lm=r.headers.get('last-modified'); const el=document.getElementById('ajVer'); if(el) el.textContent=lm?new Date(lm).toLocaleString('es-ES',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}):'—'; }catch(e){ const el=document.getElementById('ajVer'); if(el) el.textContent='—'; }
