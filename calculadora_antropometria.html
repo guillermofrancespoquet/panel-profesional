@@ -393,15 +393,24 @@ body.dark-mode canvas{background:#fff;border-radius:10px;}
   /* Lista de clientes: tarjetas separadas (antes solo una línea fina entre filas) */
   #clientTable tbody{display:flex;flex-direction:column;gap:10px;}
   #clientTable tr.clientrow{position:relative;padding:14px 14px 14px 18px;background:var(--sf);border:.5px solid rgba(0,0,0,.14);border-radius:16px;overflow:hidden;box-shadow:0 1px 2px rgba(4,52,44,.06),0 6px 18px rgba(4,52,44,.10);}
-  #clientTable tr.clientrow::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--t400);}
+  #clientTable tr.clientrow::before{content:none;}
   body.dark-mode #clientTable tr.clientrow{border-color:rgba(255,255,255,.14);box-shadow:0 1px 2px rgba(0,0,0,.35),0 6px 18px rgba(0,0,0,.35);}
   #clientTable tr.clientrow.open{background:var(--t50);border-color:var(--t400);}
-  #clientTable tr.clientrow.open::before{background:var(--t600);}
   #clientTable tr.clientrow:active{transform:scale(.985);transition:transform .08s ease-out;}
   #clientTable td:nth-child(1){display:flex;align-items:center;gap:10px;}
   #clientTable td:nth-child(1) .chev{display:none;}
-  #clientTable td:nth-child(1) .cl-av{display:inline-flex;align-items:center;justify-content:center;flex:none;width:36px;height:36px;border-radius:50%;background:var(--t50);color:var(--t600);font-size:13px;font-weight:700;letter-spacing:.02em;box-shadow:inset 0 0 0 .5px rgba(15,110,86,.28);}
-  #clientTable tr.clientrow.open td:nth-child(1) .cl-av{background:var(--t400);color:#fff;box-shadow:none;}
+  #clientTable td:nth-child(1) .cl-av{display:inline-flex;align-items:center;justify-content:center;flex:none;width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,var(--t600),var(--btn));color:#fff;font-size:15px;font-weight:700;letter-spacing:.02em;box-shadow:0 4px 12px rgba(15,110,86,.26);}
+  #clientTable td:nth-child(1) strong{font-size:16px;letter-spacing:-.01em;}
+  #clientTable tr.clientrow{gap:10px 10px;}
+  /* Deporte como píldora y dos recuadros con los datos (en vez de la barra verde lateral) */
+  #clientTable td:nth-child(2){grid-column:1/-1;margin-top:-2px;}
+  #clientTable td:nth-child(2):not(:empty){display:inline-block;justify-self:start;font-size:11px;font-weight:600;color:var(--gold-dk,#8A6A3F);background:var(--pill-au,#F3EADB);box-shadow:inset 0 0 0 .5px var(--pill-au-bd,rgba(184,149,106,.4));padding:3px 11px;border-radius:20px;line-height:1.4;}
+  #clientTable td:nth-child(4),#clientTable td:nth-child(5){background:var(--g100);border-radius:12px;padding:9px 12px;font-size:15px;font-weight:700;color:var(--g900);text-align:left;}
+  #clientTable td:nth-child(4)::before,#clientTable td:nth-child(5)::before{display:block;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--g400);margin-bottom:2px;}
+  #clientTable td:nth-child(4)::before{content:"Valoraciones";}
+  #clientTable td:nth-child(5)::before{content:"Última";}
+  #clientTable td:nth-child(4) .small-note{display:none;}
+  #clientTable tr.clientrow.open td:nth-child(4),#clientTable tr.clientrow.open td:nth-child(5){background:var(--sf);}
   #clientTable td:nth-child(6) .btn-group{grid-template-columns:1.35fr 1fr 44px;}
   #clientTable td:nth-child(6) .btn-group .btn.danger{padding-left:0;padding-right:0;}
   #clientTable tr.clientrow.open td{background:transparent;}
@@ -441,7 +450,8 @@ html.embed .navbtn.active::before{display:none;}
 html.embed .newtab{display:inline-flex;font-size:12px;text-decoration:none;color:var(--g400);margin-left:6px;}
 html.embed .main{padding:1.25rem 2rem 2rem;}
 @media screen and (max-width:900px){
-  html.embed .sidebar{margin:12px 14px 0;max-width:calc(100% - 28px);flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;}
+  /* La tira de pestañas se queda fija arriba al desplazarse (como las de la ficha del panel) */
+  html.embed .sidebar{position:sticky;top:0;z-index:60;margin:0;max-width:100%;width:100%;border-radius:0;padding:8px 14px;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;background:var(--g100);border-bottom:.5px solid var(--bd);box-shadow:0 4px 14px rgba(4,52,44,.08);}
   html.embed .sidebar::-webkit-scrollbar{display:none;}
   html.embed .navbtn{flex:0 0 auto;padding:8px 12px;}
   html.embed .main{padding:14px;}
