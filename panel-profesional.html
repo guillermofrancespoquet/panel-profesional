@@ -500,10 +500,10 @@ body.dark-mode .btn-soft{color:var(--t100);border-color:rgba(159,225,203,.22)}
 .pay-toggle.upcoming{background:var(--g100);color:var(--g500)}
 /* En la agenda el botón de pago y los iconos comparten forma: cuadrado con esquinas redondeadas (igual que en móvil) */
 .agenda-actions .pay-toggle{border-radius:8px;min-height:28px;justify-content:center}
-.agenda-actions .agenda-cal,.agenda-actions .agenda-del,.agenda-actions .agenda-hecha{border-radius:8px}
+.agenda-actions .agenda-edit,.agenda-actions .agenda-del,.agenda-actions .agenda-hecha{border-radius:8px}
 .agenda-del{background:var(--g100);border:none;border-radius:6px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--g500)}
-.agenda-cal{background:var(--t50);border:none;border-radius:6px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--t600);text-decoration:none}
-.agenda-cal:hover{background:var(--t100)}
+.agenda-edit{background:var(--t50);border:none;border-radius:6px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--t600);text-decoration:none}
+.agenda-edit:hover{background:var(--t100)}
 .agenda-hecha{background:var(--t50);border:none;border-radius:8px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--t600);flex-shrink:0}
 .agenda-hecha:hover{background:var(--t100)}
 .agenda-empty-group{font-size:11px;font-weight:500;color:var(--g400);text-transform:uppercase;letter-spacing:.06em;margin:1.25rem 0 8px;padding-bottom:6px;border-bottom:.5px solid var(--bd)}
@@ -876,7 +876,7 @@ body.dark-mode .cmp-cell.b .cmp-track i{background:var(--t400)}
   .agenda-info{grid-column:2}
   .agenda-actions{grid-column:2;flex-wrap:nowrap;justify-content:flex-start}
   .agenda-actions .pay-toggle{flex:1 1 auto;justify-content:center;min-height:40px;border-radius:10px;font-size:12px;padding:0 12px}
-  .agenda-actions .agenda-cal,.agenda-actions .agenda-del,.agenda-actions .agenda-hecha{width:40px;height:40px;border-radius:10px;flex-shrink:0}
+  .agenda-actions .agenda-edit,.agenda-actions .agenda-del,.agenda-actions .agenda-hecha{width:40px;height:40px;border-radius:10px;flex-shrink:0}
   body.has-sidebar{padding-left:0;padding-top:calc(56px + env(safe-area-inset-top,0px));padding-bottom:env(safe-area-inset-bottom,0px)}
   body.has-sidebar .mobile-topbar{display:flex}
   .sidebar{width:270px;padding-top:calc(1.5rem + env(safe-area-inset-top,0px));transform:translateX(-100%);transition:transform .25s ease,box-shadow .25s ease;box-shadow:none}
@@ -1325,7 +1325,7 @@ body.dark-mode :focus-visible{outline-color:#5CC8A6}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
 .skip-link{position:fixed;left:12px;top:-60px;z-index:20000;background:#fff;color:#04342C;font:600 14px var(--f,system-ui);padding:10px 16px;border-radius:10px;box-shadow:0 4px 16px rgba(0,0,0,.25);text-decoration:none;transition:top .15s}
 .skip-link:focus{top:12px}
-@media(pointer:coarse){.btn-primary,.btn-add,.btn-action,.btn-unlock,.btn-save,.btn-ok,.btn-cancel,.btn-soft,.btn-plan,.btn-del{min-height:44px}.inp,select.inp{min-height:44px}.file-btn,.hist-del,.agenda-del,.agenda-cal,.tl-del,.btn-hist-add,.btn-rem-add{min-width:40px;min-height:40px}.tl-chip{min-height:38px}}
+@media(pointer:coarse){.btn-primary,.btn-add,.btn-action,.btn-unlock,.btn-save,.btn-ok,.btn-cancel,.btn-soft,.btn-plan,.btn-del{min-height:44px}.inp,select.inp{min-height:44px}.file-btn,.hist-del,.agenda-del,.agenda-edit,.tl-del,.btn-hist-add,.btn-rem-add{min-width:40px;min-height:40px}.tl-chip{min-height:38px}}
 .btn-primary,.btn-add,.btn-action,.btn-unlock,.btn-save,.btn-ok,.btn-cancel{min-height:var(--h-btn)}
 .inp{min-height:var(--h-field)}
 /* iPhone/iPad: los campos de fecha y hora ignoran el ancho y se salen de la ventana si no se les fuerza */
@@ -2251,27 +2251,31 @@ body.dark-mode .ref-src,body.dark-mode .sup-badge,body.dark-mode .depd-avatar-fa
 <!-- MODAL: NUEVA CITA -->
 <div class="mbg" id="mAddCita" style="display:none">
   <div class="mc">
-    <p class="mt">Nueva cita</p>
-    <p class="ms">Añade una revisión o consulta a la agenda.</p>
+    <p class="mt" id="citaTitulo">Nueva cita</p>
+    <p class="ms" id="citaSub">Añade una revisión o consulta a la agenda.</p>
     <label class="mfl">Cliente *</label>
     <input type="text" class="inp" id="citaCliente" placeholder="Ej. Ana García">
-    <label class="mfl" style="margin-top:10px">Servicio</label>
-    <input type="text" class="inp" id="citaServicio" placeholder="Ej. Método 3M — Sesión 11">
+    <label class="mfl" style="margin-top:10px" for="citaServicio">Servicio *</label>
+    <select class="inp" id="citaServicio" onchange="citaServicioCambio()">
+      <option value="">Elige un servicio</option>
+      <option value="Método 3M">Método 3M</option>
+      <option value="Nutrición Deportiva">Nutrición Deportiva</option>
+    </select>
     <label class="mfl-check">
       <input type="checkbox" id="citaRequierePago" checked>
       <span>Esta cita requiere seguimiento de pago individual</span>
     </label>
     <p class="mfl-hint">Desactívalo para sesiones de Método 3M — ese pago ya se gestiona una vez al inicio del programa, no por sesión.</p>
-    <label class="mfl" style="margin-top:10px">Fecha *</label>
+    <label class="mfl" for="citaFecha" style="margin-top:10px">Fecha *</label>
     <input type="date" class="inp" id="citaFecha">
-    <label class="mfl" style="margin-top:10px">Hora</label>
+    <label class="mfl" for="citaHora" style="margin-top:10px">Hora</label>
     <input type="time" class="inp" id="citaHora">
     <label class="mfl" style="margin-top:10px">Nota (opcional)</label>
     <input type="text" class="inp" id="citaNota" placeholder="Cualquier detalle a recordar">
     <p class="merr" id="mAddCitaErr"></p>
     <div class="mact">
       <button class="btn-cancel" onclick="closeAddCita()">Cancelar</button>
-      <button class="btn-ok" onclick="createCita()">Añadir a la agenda</button>
+      <button class="btn-ok" id="citaGuardar" onclick="createCita()">Añadir a la agenda</button>
     </div>
   </div>
 </div>
@@ -3250,7 +3254,7 @@ function accHtml(q, deps){
   const nq = _nrm(q), palabras = nq.split(/\s+/).filter(Boolean);
   const todas = ACC_BASE.slice();
   (deps||[]).forEach(d=>{
-    todas.push({t:'Nueva cita con '+d.nombre, k:'', f:()=>{ navTo('agenda'); openAddCita(); document.getElementById('citaCliente').value = d.nombre; }});
+    todas.push({t:'Nueva cita con '+d.nombre, k:'', f:()=>{ navTo('agenda'); openAddCita(); document.getElementById('citaCliente').value = d.nombre; citaServicioPon('Nutrición Deportiva'); }});
     todas.push({t:'Antropometría de '+d.nombre, k:'medidas valoracion', f:()=>abrirAntropometria(d.id)});
     todas.push({t:'Plan nutricional de '+d.nombre, k:'menu semanal dieta plan comidas compra planificacion', f:()=>abrirMenuSemanal(d.id)});
   });
@@ -5925,28 +5929,6 @@ function calcAll(){
   `;
 }
 
-function googleCalLink(c){
-  const pad = n => String(n).padStart(2,'0');
-  const [y,m,d] = c.fecha.split('-');
-  let datesParam, extra='';
-  if(c.hora){
-    const [hh,mm] = c.hora.split(':');
-    const start = `${y}${m}${d}T${pad(hh)}${pad(mm)}00`;
-    const endDate = new Date(`${c.fecha}T${c.hora}`);
-    endDate.setMinutes(endDate.getMinutes()+45);
-    const end = `${endDate.getFullYear()}${pad(endDate.getMonth()+1)}${pad(endDate.getDate())}T${pad(endDate.getHours())}${pad(endDate.getMinutes())}00`;
-    datesParam = `${start}/${end}`;
-    extra = '&ctz=Europe%2FMadrid';
-  } else {
-    const nd = new Date(c.fecha+'T00:00:00'); nd.setDate(nd.getDate()+1);
-    const endStr = `${nd.getFullYear()}${pad(nd.getMonth()+1)}${pad(nd.getDate())}`;
-    datesParam = `${y}${m}${d}/${endStr}`;
-  }
-  const text = encodeURIComponent(`${c.cliente} — ${c.servicio||'Revisión'}`.toUpperCase());
-  const details = encodeURIComponent(c.nota||'');
-  return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${text}&dates=${datesParam}&details=${details}${extra}`;
-}
-
 const citaPorId = id => citas.find(x => x.id == id);
 // Deportista de una cita (por nombre; el mismo vínculo que usa la revisión). `null` si es de otro servicio.
 const citaDepId = c => { const d = deportistas.find(x => x.nombre === c.cliente); return d ? d.id : 'null'; };
@@ -5972,9 +5954,9 @@ function renderCitaItem(c, isPast) {
     </div>
     <div class="agenda-actions">
       ${hechaBtn}${payHtml}
-      <a class="agenda-cal" href="${googleCalLink(c)}" target="_blank" title="Añadir a Google Calendar">
-        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="12" y1="14" x2="12" y2="18"/><line x1="10" y1="16" x2="14" y2="16"/></svg>
-      </a>
+      <button class="agenda-edit" onclick="openEditCita(${c.id})" aria-label="Editar la cita de ${sudEsc(c.cliente)}" title="Editar fecha, hora o datos">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>
+      </button>
       <button class="agenda-del" onclick="removeCita(${c.id})" aria-label="Eliminar la cita de ${sudEsc(c.cliente)}" title="Eliminar">
         <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>
       </button>
@@ -6001,13 +5983,49 @@ function removeCita(id) {
   });
 }
 
+let citaEditId = null;
+// Método 3M se paga una vez al inicio del programa (sin seguimiento por sesión); Nutrición Deportiva sí.
+function citaServicioCambio() {
+  const v = document.getElementById('citaServicio').value;
+  if (citaEditId == null && v) document.getElementById('citaRequierePago').checked = (v !== 'Método 3M');
+}
+function citaServicioPon(v) {
+  const sel = document.getElementById('citaServicio');
+  sel.querySelectorAll('option[data-extra]').forEach(o => o.remove());
+  if (v && ![...sel.options].some(o => o.value === v)) {
+    const o = document.createElement('option'); o.value = v; o.textContent = v; o.dataset.extra = '1'; sel.appendChild(o);
+  }
+  sel.value = v || '';
+}
 function openAddCita() {
+  citaEditId = null;
+  document.getElementById('citaTitulo').textContent = 'Nueva cita';
+  document.getElementById('citaSub').textContent = 'Añade una revisión o consulta a la agenda.';
+  document.getElementById('citaGuardar').textContent = 'Añadir a la agenda';
   document.getElementById('mAddCita').style.display = 'flex';
   setTimeout(() => enfocar('citaCliente'), 100);
 }
+function openEditCita(id) {
+  const c = citaPorId(id); if (!c) return;
+  citaEditId = c.id;
+  document.getElementById('citaTitulo').textContent = 'Editar cita';
+  document.getElementById('citaSub').textContent = 'Cambia la fecha, la hora o los datos. Si está en Google Calendar, se mueve sola.';
+  document.getElementById('citaGuardar').textContent = 'Guardar cambios';
+  document.getElementById('citaCliente').value = c.cliente || '';
+  citaServicioPon(c.servicio || '');
+  document.getElementById('citaFecha').value = c.fecha || '';
+  document.getElementById('citaHora').value = c.hora ? String(c.hora).slice(0, 5) : '';
+  document.getElementById('citaNota').value = c.nota || '';
+  document.getElementById('citaRequierePago').checked = c.requiere_pago !== false;
+  document.getElementById('mAddCitaErr').textContent = '';
+  document.getElementById('mAddCita').style.display = 'flex';
+  setTimeout(() => enfocar('citaFecha'), 100);
+}
 function closeAddCita() {
   document.getElementById('mAddCita').style.display = 'none';
-  ['citaCliente','citaServicio','citaFecha','citaHora','citaNota'].forEach(id => document.getElementById(id).value = '');
+  citaEditId = null;
+  ['citaCliente','citaFecha','citaHora','citaNota'].forEach(id => document.getElementById(id).value = '');
+  citaServicioPon('');
   document.getElementById('citaRequierePago').checked = true;
   document.getElementById('mAddCitaErr').textContent = '';
 }
@@ -6028,18 +6046,38 @@ async function syncCitaRevisionADep(cliente, servicio, fecha, hora) {
 async function createCita() {
   const cliente = document.getElementById('citaCliente').value.trim();
   const fecha = document.getElementById('citaFecha').value;
-  if (!cliente || !fecha) { document.getElementById('mAddCitaErr').textContent = 'Cliente y fecha son obligatorios'; return; }
+  const servicioSel = document.getElementById('citaServicio').value;
+  if (!cliente || !fecha || !servicioSel) { document.getElementById('mAddCitaErr').textContent = 'Cliente, servicio y fecha son obligatorios'; return; }
+  if (citaEditId != null) {
+    const id = citaEditId, hora = document.getElementById('citaHora').value || null;
+    try {
+      const r = await patchCita(id, {
+        cliente, servicio: servicioSel, fecha, hora,
+        nota: document.getElementById('citaNota').value.trim() || null,
+        requiere_pago: document.getElementById('citaRequierePago').checked
+      });
+      if (esErrorSb(r)) throw new Error('patch');
+      await syncCitaRevisionADep(cliente, servicioSel, fecha, hora);
+      closeAddCita();
+      await loadCitas();
+      gcalSubir(id);
+      toast('Cita actualizada');
+    } catch(e) {
+      document.getElementById('mAddCitaErr').textContent = 'No se pudo guardar. Inténtalo de nuevo.';
+    }
+    return;
+  }
   try {
     const ins = await insertCita({
       cliente,
-      servicio: document.getElementById('citaServicio').value.trim() || null,
+      servicio: servicioSel,
       fecha,
       hora: document.getElementById('citaHora').value || null,
       nota: document.getElementById('citaNota').value.trim() || null,
       pagado: false,
       requiere_pago: document.getElementById('citaRequierePago').checked
     });
-    await syncCitaRevisionADep(cliente, document.getElementById('citaServicio').value, fecha, document.getElementById('citaHora').value || null);
+    await syncCitaRevisionADep(cliente, servicioSel, fecha, document.getElementById('citaHora').value || null);
     closeAddCita();
     await loadCitas();
     gcalSubir(Array.isArray(ins) && ins[0] && ins[0].id);
