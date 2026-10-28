@@ -251,6 +251,7 @@ body.dark-mode .btn-ok.danger,body.dark-mode .sb-badge{background:#B83232}
 .dep-avatar{width:64px;height:64px;border-radius:50%;overflow:hidden;margin:0 auto 10px;background:var(--gold-50);display:flex;align-items:center;justify-content:center;border:2px solid var(--gold-50)}
 .dep-avatar img{width:100%;height:100%;object-fit:cover}
 .dep-avatar-fallback{font-size:22px;font-weight:700;color:var(--gold-dk)}
+.fi-alert{margin:0 0 10px;padding:10px 12px 10px 28px;border-radius:10px;background:rgba(184,149,106,.14);border:.5px solid var(--gold);font-size:13px;line-height:1.5}
 .plan-chk{display:flex;gap:8px;align-items:flex-start;font-size:14px;line-height:1.4;cursor:pointer}.plan-chk input{margin-top:3px;width:18px;height:18px;flex:none;accent-color:var(--btn)}
 .est-acc{margin-top:6px}
 .rg-fila{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:.5px solid var(--bd);flex-wrap:wrap}.rg-fila:last-child{border-bottom:0}.rg-fila b{font-size:14px}.rg-sub{font-size:12.5px;color:var(--g400);margin-top:2px;line-height:1.4}
@@ -2193,6 +2194,11 @@ body.dark-mode .ref-src,body.dark-mode .sup-badge,body.dark-mode .depd-avatar-fa
       <button type="button" class="btn-ok" onclick="compKeyGuardar()">Guardar</button>
     </div>
   </div>
+</div>
+
+<!-- MODAL: FICHA INICIAL DEL CLIENTE -->
+<div class="mbg" id="mFicha" style="display:none" role="dialog" aria-modal="true" aria-label="Ficha inicial" onclick="if(event.target===this)fiCerrar()">
+  <div class="mc" style="max-width:640px" id="fichaCuerpo"></div>
 </div>
 
 <!-- MODAL: REGISTRAR CONSULTA -->
@@ -6318,6 +6324,11 @@ function openDepDet(id) {
     </div>
 
     <div class="depd-section">
+      <p class="sec-title">Ficha inicial</p>
+      <div class="med-box" id="fichaBox">${skel(2)}</div>
+    </div>
+
+    <div class="depd-section">
       <p class="sec-title">Formularios del cliente</p>
       <div class="med-box" id="frmBox">${frmHtml(d)}</div>
     </div>
@@ -6406,6 +6417,7 @@ function openDepDet(id) {
   depTabsFade();
   loadRegCliente(d.id);
   loadDiario(d.id);
+  loadFichaInicial(d.id);
   loadMediciones(d.id);
   loadEstado(d.id);
   loadObjetivo(d.id);
@@ -6595,7 +6607,127 @@ async function loadSeguimientos(depId){
     ${notas?`<p class="sec-sub" style="margin:12px 0 2px;font-size:12px;font-weight:700;color:var(--g500)">Notas del cliente</p>${notas}`:''}`;
 }
 
-// ── Formularios del cliente (Google Forms): estado guardado en clientes_deportivos.formularios ──
+// ═══ FICHA INICIAL (supabase_ficha_inicial.sql): lo que el cliente contesta en su área, en una hoja legible ═══
+// Los campos están también en el SQL (lista blanca) y en FI_PASOS de cliente.html: si se cambian preguntas, tocar los tres sitios.
+const FI_SCOFF_P=['Tiene la sensación de estar enfermo/a porque siente el estómago tan lleno que le resulta incómodo','Está preocupado/a porque siente que tiene que controlar cuánto come','Ha perdido más de 6 kg en tres meses','Cree que está gordo/a aunque otros digan que está demasiado delgado/a','Dice que la comida domina su vida'];
+const FI_HOJA=[
+ ['Sobre el cliente',[['fnac','Fecha de nacimiento','fecha'],['sexo','Sexo'],['estatura','Estatura','cm'],['peso','Peso actual (autodeclarado)','kg'],['ocupacion','Ocupación']]],
+ ['Salud',[['enf','Enfermedad o condición','si:enf_txt'],['med','Medicación','si:med_txt'],['alerg','Alergia o intolerancia','si:alerg_txt'],['dig','Problemas digestivos','si:dig_txt'],['anal','Analítica en el último año'],['les','Lesión actual o reciente','si:les_txt']]],
+ ['Peso y dietas',[['peso_hab','Peso habitual en el último año','kg'],['peso_cambio','Cambio de peso en 3 meses','pc'],['dieta','Dietas anteriores','si:dieta_txt']]],
+ ['Hábitos',[['comidas_dia','Comidas principales al día'],['entre','Come entre horas'],['estilo','Estilo de alimentación','otro:estilo_otro'],['antojos','Antojos o hambre emocional'],['hidrat','Hidratación (1-10)']]],
+ ['Actividad',[['ejer','Hace ejercicio','si:ejer_txt'],['ejer_tiempo','Tiempo con la rutina'],['nivel','Nivel de actividad (1-5)'],['deporte','Deporte principal'],['deporte_nivel','Nivel'],['entrenos_sem','Entrenamientos por semana'],['entreno_dur','Duración de un entrenamiento','min'],['horario','Horario habitual']]],
+ ['Descanso',[['sueno_h','Horas de sueño','h'],['sueno_cal','Calidad del sueño (1-5)'],['estres','Estrés (1-5)']]],
+ ['Objetivos',[['obj','Objetivos','otro:obj_otro'],['evento','Fecha o evento meta','si:evento_txt'],['reto','Mayor dificultad o reto']]],
+ ['Preferencias',[['no_gusta','No le gustan o no toma'],['gusta','Disfruta especialmente'],['supl','Suplementos','si:supl_txt']]],
+ ['Cocina',[['quien','Quién cocina'],['tiempo','Tiempo para cocinar'],['electro','Electrodomésticos','otro:electro_otro'],['cocinar','Cocinar']]],
+ ['Comentarios',[['final_txt','Algo más']]]
+];
+const FI_COM=[['desayuno','Desayuno'],['almuerzo','Almuerzo'],['comida','Comida'],['merienda','Merienda'],['cena','Cena'],['otros','Otros']];
+function fiScoffN(r){ return Array.isArray(r.scoff)?r.scoff.filter(x=>x==='Sí').length:null; }
+// Valores a los que mirar antes de preparar el plan
+function fiAlertas(r){
+  const a=[]; r=r||{};
+  if(r.enf==='Sí') a.push('Enfermedad: '+(r.enf_txt||'sí'));
+  if(r.med==='Sí') a.push('Medicación: '+(r.med_txt||'sí'));
+  if(r.alerg==='Sí') a.push('Alergia o intolerancia: '+(r.alerg_txt||'sí'));
+  if(r.dig==='Sí') a.push('Digestivo: '+(r.dig_txt||'sí'));
+  if(r.les==='Sí') a.push('Lesión: '+(r.les_txt||'sí'));
+  const n=fiScoffN(r); if(n!=null&&n>=2) a.push('Cribado de conducta alimentaria: '+n+' de 5 respuestas afirmativas');
+  return a;
+}
+function fiVal(r,k,fmt){
+  let v=r[k]; if(v==null||v==='') return '';
+  if(Array.isArray(v)) v=v.join(', ');
+  v=String(v);
+  if(fmt==='fecha') v=frmFecha(v)+' ('+edadDeISO(r.fnac)+' años)';
+  else if(fmt==='cm'||fmt==='kg'||fmt==='min'||fmt==='h') v=v.replace('.',',')+' '+fmt;
+  else if(fmt==='pc'&&r.peso_cambio_kg!=null&&r.peso_cambio!=='Se ha mantenido') v+=' ('+String(r.peso_cambio_kg).replace('.',',')+' kg)';
+  else if(fmt&&fmt.startsWith('si:')&&r[fmt.slice(3)]) v+=' — '+r[fmt.slice(3)];
+  else if(fmt&&fmt.startsWith('otro:')&&r[fmt.slice(5)]) v+=' — '+r[fmt.slice(5)];
+  return v;
+}
+function edadDeISO(f){ if(!f) return '?'; const n=new Date(f+'T00:00:00'), h=new Date(); let e=h.getFullYear()-n.getFullYear(); if(h.getMonth()<n.getMonth()||(h.getMonth()===n.getMonth()&&h.getDate()<n.getDate())) e--; return e; }
+// Hoja (HTML con estilos en línea: se usa en la ventana y al imprimir)
+function fiHoja(r,nombre,enviada,imp){
+  // En pantalla usa los colores de la app (claro/oscuro); al imprimir, siempre claros.
+  const E=sudEsc, C=imp?{t:'#1c1c1a',g:'#6A6963',v:'#0F6E56',l:'#d9d6cd',a:'#fbf3e6',ab:'#B8956A'}:{t:'var(--g900)',g:'var(--g400)',v:'var(--t600)',l:'var(--bd)',a:'rgba(184,149,106,.14)',ab:'var(--gold)'};
+  const s=(t)=>`<h3 style="font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:${C.v};margin:18px 0 6px;border-bottom:1px solid ${C.l};padding-bottom:4px">${E(t)}</h3>`;
+  const fila=(l,v)=>`<tr><td style="padding:4px 12px 4px 0;color:${C.g};width:42%;vertical-align:top">${E(l)}</td><td style="padding:4px 0;vertical-align:top">${E(v)}</td></tr>`;
+  let h=`<div style="font-family:Inter,Arial,sans-serif;color:${C.t};font-size:13px;line-height:1.5"><div style="font-size:18px;font-weight:700">Ficha inicial · ${E(nombre)}</div><div style="color:${C.g};margin-top:2px">${enviada?'Enviada el '+E(frmFecha(String(enviada).slice(0,10))):'Borrador sin enviar'}</div>`;
+  const al=fiAlertas(r); if(al.length) h+=`<div style="margin:12px 0 0;padding:10px 12px;border-radius:10px;background:${C.a};border:1px solid ${C.ab}"><b>A tener en cuenta</b><ul style="margin:6px 0 0 18px;padding:0">${al.map(x=>`<li>${E(x)}</li>`).join('')}</ul></div>`;
+  FI_HOJA.forEach(([t,cs])=>{ const f=cs.map(([k,l,fmt])=>[l,fiVal(r,k,fmt)]).filter(x=>x[1]); if(f.length) h+=s(t)+`<table style="width:100%;border-collapse:collapse">${f.map(x=>fila(x[0],x[1])).join('')}</table>`; });
+  const c=r.comidas||{}, filas=FI_COM.filter(([k])=>c[k]&&c[k].a);
+  if(filas.length) h+=s('Un día típico')+`<table style="width:100%;border-collapse:collapse">${filas.map(([k,l])=>`<tr><td style="padding:4px 12px 4px 0;color:${C.g};width:20%;vertical-align:top">${E(l)}</td><td style="padding:4px 12px 4px 0;width:14%;vertical-align:top">${E(c[k].h||'')}</td><td style="padding:4px 12px 4px 0;width:22%;vertical-align:top;color:${C.g}">${E(c[k].l||'')}</td><td style="padding:4px 0;vertical-align:top">${E(c[k].a)}</td></tr>`).join('')}</table>`;
+  if(r.scoff_skip) h+=s('Relación con la comida')+`<p style="margin:0;color:${C.g}">El cliente prefirió no contestar el cribado.</p>`;
+  else if(Array.isArray(r.scoff)){ const n=fiScoffN(r); h+=s('Relación con la comida (cribado de 5 preguntas)')+`<table style="width:100%;border-collapse:collapse">${FI_SCOFF_P.map((q,i)=>fila(q,r.scoff[i]||'')).join('')}</table><p style="margin:8px 0 0;color:${C.g}">${n} de 5 afirmativas${n>=2?'. Con 2 o más el cribado es positivo: es una señal para hablarlo con cuidado, no un diagnóstico.':'.'}</p>`; }
+  return h+'</div>';
+}
+let _fichas={};
+async function loadFichaInicial(depId){
+  const box=document.getElementById('fichaBox'); if(!box) return;
+  let r=null, perfil=null; try{ r=await sb(`fichas_iniciales?deportista_id=eq.${depId}&select=*`); }catch(e){}
+  try{ const p=await sb(`antropometria_perfil?deportista_id=eq.${depId}&select=sexo,fecha_nacimiento,talla`); if(Array.isArray(p)) perfil=p[0]||null; }catch(e){}
+  if(currentDepId!=depId||!document.getElementById('fichaBox')) return;
+  if(!Array.isArray(r)){ box.innerHTML='<p class="med-empty">Esta función necesita el SQL <b>supabase_ficha_inicial.sql</b> ejecutado en Supabase.</p>'; return; }
+  const f=r[0]; _fichas[depId]={f,perfil};
+  if(!f){ box.innerHTML='<p class="med-empty">El cliente aún no ha empezado la ficha inicial. La verá en su área, en «Formularios».</p>'; return; }
+  const re=f.respuestas||{}, n=Object.keys(re).length;
+  if(!f.enviado_en){ box.innerHTML=`<div class="med-head"><span class="med-date">Borrador sin enviar</span><span class="med-ago">${n} campo${n!==1?'s':''} contestado${n!==1?'s':''}</span></div><div class="acc-row" style="gap:8px;flex-wrap:wrap">${btnSoft('Ver lo contestado',`fiAbrir(${depId})`,'doc',false)}</div>`; return; }
+  const al=fiAlertas(re);
+  box.innerHTML=`<div class="med-head"><span class="med-date">Enviada el ${sudEsc(frmFecha(String(f.enviado_en).slice(0,10)))}</span></div>
+    ${al.length?`<ul class="fi-alert">${al.map(x=>`<li>${sudEsc(x)}</li>`).join('')}</ul>`:'<p class="med-note" style="margin:0 0 8px">Sin alertas en salud.</p>'}
+    <div class="acc-row" style="gap:8px;flex-wrap:wrap">${btnSoft('Ver ficha',`fiAbrir(${depId})`,'doc',false)}${btnSoft('Reabrir para que la corrija',`fiReabrir(${depId})`,'plus',false)}</div>`;
+}
+// Objetivo que dice el cliente en la ficha, como texto para «Objetivo» de su ficha (lo lee la sugerencia de objetivo: perder, ganar…)
+function fiObjetivoTxt(r){
+  const l=(Array.isArray(r.obj)?r.obj:[]).map(x=>x==='Otro'&&r.obj_otro?r.obj_otro:x).filter(x=>x&&x!=='Otro');
+  if(!l.length) return '';
+  let t=l.join(', '); if(r.evento==='Sí'&&r.evento_txt) t+='. Meta: '+r.evento_txt;
+  return t.slice(0,300);
+}
+async function fiAplicarObjetivo(depId){
+  const x=_fichas[depId]; if(!x||!x.f) return; const t=fiObjetivoTxt(x.f.respuestas||{}); if(!t) return;
+  const r=await patchDep(depId,{objetivo:t}); if(esErrorSb(r)){ toast('No se pudo guardar el objetivo.',{tipo:'error'}); return; }
+  const d=deportistas.find(z=>z.id==depId); if(d) d.objetivo=t;
+  toast('Objetivo del cliente actualizado'); fiCerrar(); loadFichaInicial(depId);
+}
+function fiDifPerfil(depId){
+  const x=_fichas[depId]; if(!x||!x.f||!x.f.enviado_en) return [];
+  const r=x.f.respuestas||{}, p=x.perfil||{}, d=[];
+  if(r.sexo&&r.sexo!==p.sexo) d.push(['Sexo',p.sexo||'—',r.sexo,{sexo:r.sexo}]);
+  if(r.fnac&&r.fnac!==p.fecha_nacimiento) d.push(['Fecha de nacimiento',p.fecha_nacimiento?frmFecha(p.fecha_nacimiento):'—',frmFecha(r.fnac),{fecha_nacimiento:r.fnac}]);
+  if(r.estatura!=null&&Number(p.talla)!==Number(r.estatura)) d.push(['Estatura',p.talla!=null?p.talla+' cm':'—',r.estatura+' cm',{talla:r.estatura}]);
+  return d;
+}
+function fiAbrir(depId){
+  const x=_fichas[depId]; if(!x||!x.f) return; const d=deportistas.find(z=>z.id==depId);
+  const dif=fiDifPerfil(depId);
+  document.getElementById('fichaCuerpo').innerHTML=fiHoja(x.f.respuestas||{},d?d.nombre:'',x.f.enviado_en)
+    +(()=>{ const t=fiObjetivoTxt(x.f.respuestas||{}); if(!t||!x.f.enviado_en||(d&&String(d.objetivo||'').trim()===t)) return ''; return `<div style="margin-top:14px;padding:12px;border-radius:12px;background:var(--t50)"><b style="font-size:13px">Objetivo del cliente</b><p class="med-note" style="margin:4px 0 8px">En su ficha pone «${sudEsc((d&&d.objetivo)||'sin objetivo')}». El cliente dice: «${sudEsc(t)}». Solo se cambia si pulsas el botón.</p><button class="btn-soft" onclick="fiAplicarObjetivo(${depId})">Usar como objetivo del cliente</button></div>`; })()
+    +(dif.length?`<div style="margin-top:18px;padding:12px;border-radius:12px;background:var(--t50)"><b style="font-size:13px">Perfil de antropometría</b><p class="med-note" style="margin:4px 0 8px">Lo que dice el cliente difiere de su perfil. Lo medido por ti manda: solo se cambia si pulsas el botón.</p>${dif.map(z=>`<div style="font-size:13px;margin-bottom:3px">${sudEsc(z[0])}: perfil <b>${sudEsc(z[1])}</b> · ficha <b>${sudEsc(z[2])}</b></div>`).join('')}<button class="btn-soft" style="margin-top:8px" onclick="fiAplicarPerfil(${depId})">Pasar al perfil</button></div>`:'')
+    +`<div class="mbtns" style="margin-top:16px"><button class="btn-cancel" onclick="fiCerrar()">Cerrar</button><button class="btn-ok" onclick="fiImprimir(${depId})">Imprimir o guardar en PDF</button></div>`;
+  document.getElementById('mFicha').style.display='flex';
+}
+function fiCerrar(){ document.getElementById('mFicha').style.display='none'; }
+async function fiAplicarPerfil(depId){
+  const dif=fiDifPerfil(depId); if(!dif.length) return; const upd={deportista_id:depId}; dif.forEach(z=>Object.assign(upd,z[3]));
+  const r=await sb('antropometria_perfil?on_conflict=deportista_id',{method:'POST',headers:{'Prefer':'resolution=merge-duplicates,return=minimal'},body:JSON.stringify(upd)});
+  if(esErrorSb(r)){ toast('No se pudo actualizar el perfil.',{tipo:'error'}); return; }
+  toast('Perfil de antropometría actualizado'); fiCerrar(); loadFichaInicial(depId);
+}
+async function fiReabrir(depId){
+  const r=await sb(`fichas_iniciales?deportista_id=eq.${depId}`,{method:'PATCH',headers:{'Prefer':'return=minimal'},body:JSON.stringify({enviado_en:null})});
+  if(esErrorSb(r)){ toast('No se pudo reabrir.',{tipo:'error'}); return; }
+  toast('Reabierta: el cliente puede corregirla y volver a enviarla'); loadFichaInicial(depId);
+}
+function fiImprimir(depId){
+  const x=_fichas[depId]; if(!x||!x.f) return; const d=deportistas.find(z=>z.id==depId);
+  const fr=document.createElement('iframe'); fr.style.cssText='position:fixed;right:0;bottom:0;width:0;height:0;border:0'; document.body.appendChild(fr);
+  const doc=fr.contentDocument; doc.open(); doc.write('<!doctype html><meta charset="utf-8"><title>Ficha inicial</title><style>@page{size:A4;margin:14mm}body{margin:0}</style>'+fiHoja(x.f.respuestas||{},d?d.nombre:'',x.f.enviado_en,true)); doc.close();
+  setTimeout(()=>{ try{ fr.contentWindow.focus(); fr.contentWindow.print(); }catch(e){ toast('No se pudo abrir la impresión.',{tipo:'error'}); } setTimeout(()=>fr.remove(),4000); },250);
+}
+
+// ── Formularios del cliente: estado guardado en clientes_deportivos.formularios ──
 // El cliente los marca como enviados desde su área; aquí puedes marcarlos o desmarcarlos tú y activar el seguimiento semanal.
 const FRM_LISTA=[{k:'inicial',t:'Cuestionario inicial'},{k:'anamnesis',t:'Anamnesis nutricional'}];
 function frmFecha(f){ return f?new Date(f+'T00:00:00').toLocaleDateString('es-ES',{day:'numeric',month:'short',year:'numeric'}):''; }
@@ -6622,7 +6754,7 @@ function frmHtml(d){
   const u=d._segUltimo||seg.ultimo;
   const segRow=fila('Seguimiento semanal',!!seg.activo,seg.activo?'Activo'+(u?' · último '+frmFecha(u):' · sin enviar'):'No activo',
     btnSoft(seg.activo?'Desactivar':'Activar cada semana',`frmSeguimiento(${d.id})`,seg.activo?'trash':'plus',false));
-  return main+segRow+'<p class="med-note">El cliente los ve en su área («Mis formularios») y marca cada uno cuando lo envía. El seguimiento solo le aparece si lo activas, y vuelve a quedar pendiente cada lunes.</p>'+(seg.activo?`<p class="med-note" id="frmPush">${pushTxt(d.id)}</p>`:'');
+  return main+segRow+'<p class="med-note">Al enviar la ficha inicial se marcan solos; aquí puedes marcarlos o desmarcarlos a mano (por ejemplo, si ya los contestó en Google). El seguimiento solo le aparece si lo activas, y vuelve a quedar pendiente cada lunes.</p>'+(seg.activo?`<p class="med-note" id="frmPush">${pushTxt(d.id)}</p>`:'');
 }
 async function frmGuardar(depId,nuevo){
   const d=deportistas.find(x=>x.id==depId); if(!d) return;
@@ -6812,7 +6944,7 @@ async function revGuardar(depId, quitar){
 // ── Estado del cliente: resumen calculado con lo que ya hay (mediciones, seguimiento, peso, consultas, revisión y formularios) ──
 async function loadEstado(depId){
   const seguro = p => Promise.resolve(p).then(v => Array.isArray(v) ? v : []).catch(() => []);
-  const [meds, bios, segs, pesos, hist, comidas, objA, pubEst, , , consEst] = await Promise.all([
+  const [meds, bios, segs, pesos, hist, comidas, objA, pubEst, , , consEst, fichaEst] = await Promise.all([
     seguro(getMediciones(depId)), seguro(getBio(depId)),
     seguro(sb(`seguimientos?deportista_id=eq.${depId}&order=semana.desc&limit=6&select=semana,respuestas`)),
     seguro(sb(`pesos_cliente?deportista_id=eq.${depId}&order=fecha.desc&limit=1&select=fecha,peso`)),
@@ -6820,7 +6952,8 @@ async function loadEstado(depId){
     seguro(sb(`comidas_cliente?deportista_id=eq.${depId}&fecha=gte.${localISO(new Date(Date.now() - 7*86400000))}&select=id,comentario`)),
     Promise.resolve(sb('rpc/objetivo_progreso', { method:'POST', body:JSON.stringify({ p_dep:depId }) })).then(v => (v && typeof v === 'object' && !esErrorSb(v)) ? v : null).catch(() => null),
     Promise.resolve(sb(`menus_cliente?deportista_id=eq.${depId}&select=publicado_en`)).then(a => Array.isArray(a) && a[0] ? a[0].publicado_en : null).catch(() => null),
-    rgCargarAjustes(), rgCargarTextos(), seguro(sb(`consentimientos?deportista_id=eq.${depId}&select=tipo,version,retirado_en`))
+    rgCargarAjustes(), rgCargarTextos(), seguro(sb(`consentimientos?deportista_id=eq.${depId}&select=tipo,version,retirado_en`)),
+    seguro(sb(`fichas_iniciales?deportista_id=eq.${depId}&select=respuestas,enviado_en`))
   ]);
   const el = document.getElementById('estBox'), d = deportistas.find(x => x.id == depId);
   if(!el || !d || currentDepId != depId) return;
@@ -6893,7 +7026,9 @@ async function loadEstado(depId){
 
   // Formularios iniciales
   const pend = [['inicial', 'Cuestionario inicial'], ['anamnesis', 'Anamnesis']].filter(([k]) => !(fm[k] && fm[k].hecho)).map(x => x[1]);
+  const fi = fichaEst && fichaEst[0] && fichaEst[0].enviado_en ? fichaEst[0] : null;
   if(pend.length) add('Formularios', 'Pendientes: ' + pend.join(' y ') + '.', true);
+  if(fi){ const al = fiAlertas(fi.respuestas); add('Ficha inicial', al.length ? 'Enviada. A tener en cuenta: ' + al.join(' · ') + '.' : 'Enviada, sin alertas en salud.', al.length > 0, '<button type="button" class="btn-soft sm" onclick="depTab(\'seguimiento\')">Ver ficha</button>'); }
 
   // Protección de datos: solo si el consentimiento está activado y el cliente no está de baja
   if(rgActivo() && !d.fecha_baja && !rgConsentOk(consEst, 'tratamiento')) add('Consentimiento', 'Falta el consentimiento de tratamiento de datos: lo acepta el cliente al entrar en su área, o regístralo en papel en Archivos → Datos y privacidad.', true);
@@ -8748,7 +8883,7 @@ const RG_TABLAS = [['ficha', 'clientes_deportivos?id=eq.{id}&select=*'], ['antro
   ['historial_deportista', 'historial_deportista?deportista_id=eq.{id}&select=*'], ['progresion_cargas', 'progresion_cargas?deportista_id=eq.{id}&select=*'],
   ['seguimientos', 'seguimientos?deportista_id=eq.{id}&select=*'], ['pesos_cliente', 'pesos_cliente?deportista_id=eq.{id}&select=*'], ['fotos_cliente', 'fotos_cliente?deportista_id=eq.{id}&select=*'],
   ['comidas_cliente', 'comidas_cliente?deportista_id=eq.{id}&select=*'], ['suplementos_cliente', 'suplementos_cliente?deportista_id=eq.{id}&select=*'], ['objetivos_cliente', 'objetivos_cliente?deportista_id=eq.{id}&select=*'],
-  ['menus_cliente', 'menus_cliente?deportista_id=eq.{id}&select=*'], ['consentimientos', 'consentimientos?deportista_id=eq.{id}&select=*'], ['acceso_area_clientes', 'clientes_acceso?deportista_id=eq.{id}&select=email,creado']];
+  ['menus_cliente', 'menus_cliente?deportista_id=eq.{id}&select=*'], ['consentimientos', 'consentimientos?deportista_id=eq.{id}&select=*'], ['fichas_iniciales', 'fichas_iniciales?deportista_id=eq.{id}&select=*'], ['acceso_area_clientes', 'clientes_acceso?deportista_id=eq.{id}&select=email,creado']];
 async function rgRecoger(d) {
   const datos = {}, faltan = [];
   const rutas = RG_TABLAS.map(([k, r]) => [k, r.replace('{id}', d.id)]).concat([['citas', `citas?cliente=eq.${encodeURIComponent(d.nombre)}&select=*&order=fecha.asc`]]);

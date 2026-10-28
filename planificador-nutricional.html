@@ -1357,7 +1357,7 @@ function mnMenuHtml() {
   const navSem = c.semanas.map(x => `<button type="button" class="mn-nav-i${x.id === s.id ? ' on' : ''}" onclick="mnElegirSemana('${x.id}')"><span>${sudEsc(x.nombre)}</span>${c.semanas.length > 1 && x.id === toca ? '<span class="mn-tag">Esta semana</span>' : ''}</button>`).join('');
   const navDias = s.dias.map((x, i) => `<button type="button" class="mn-nav-i${i === MN.dia ? ' on' : ''}" onclick="mnElegirDia(${i})"><span>${sudEsc(x.n)}${mnDiaPie(x) ? `<small>${sudEsc(mnDiaPie(x))}</small>` : ''}</span>${x.comidas.length ? `<span class="mn-n" aria-label="${x.comidas.length} comidas">${x.comidas.length}</span>` : ''}</button>`).join('');
   const comidas = d.comidas.length ? d.comidas.map((m, i) => mnComidaHtml(m, i, d.comidas.length)).join('') : `<div class="mn-vacio"><b>Este día no tiene comidas todavía</b><span class="mn-ayuda">Añade las que necesite este cliente: pueden ser 3, 4, 5 o las que haga falta.</span></div>`;
-  return `${mnReajBanner()}<div class="mn-grid">
+  return `${mnReajBanner()}${mnFichaBanner()}<div class="mn-grid">
     <aside class="mn-side">
       <section class="mn-card"><p class="mn-k">Plan</p><label class="mn-l" for="mnTitulo">Título</label><input class="inp" id="mnTitulo" maxlength="120" value="${sudEsc(c.titulo || '')}" oninput="MN.c.titulo=this.value;mnCambio()">
         <div class="mn-f" style="margin-top:12px"><label class="mn-l" for="mnFac">Cantidades al publicar <span class="hd-opt">(%)</span></label><input class="inp" id="mnFac" type="number" min="50" max="150" step="5" value="${Math.round((c.factor || 1) * 100)}" onchange="mnFactorSet(this.value)"></div>
@@ -1877,10 +1877,11 @@ function mnDiaPie(x) { const t = mnTotDia(x); return [x.ctx && x.ctx.texto, t.ca
 
 // ── Ventana «Objetivos nutricionales» ──
 async function mnCargarPerfil(depId) {
-  const out = { sexo: '', nac: '', talla: null, peso: null, pesoFecha: '', pesoRec: null, objetivo: null };
+  const out = { sexo: '', nac: '', talla: null, peso: null, pesoFecha: '', pesoRec: null, objetivo: null, ficha: null };
   const rpcOpc = (fn) => sb('rpc/' + fn, { method: 'POST', body: JSON.stringify({ p_dep: depId }) }).then(v => (v && typeof v === 'object' && !Array.isArray(v) && !v.code && !v.message) ? v : null).catch(() => null);
-  const [pr, va, rec, obj] = await Promise.all([sb(`antropometria_perfil?deportista_id=eq.${depId}&select=*`).catch(() => null), sb(`antropometria_valoraciones?deportista_id=eq.${depId}&order=fecha.desc&limit=1&select=fecha,resumen,medidas`).catch(() => null), rpcOpc('peso_reciente'), rpcOpc('objetivo_progreso')]);
-  out.pesoRec = rec; out.objetivo = obj;   // opcionales: sin supabase_objetivos.sql quedan en null y no pasa nada
+  const [pr, va, rec, obj, fi] = await Promise.all([sb(`antropometria_perfil?deportista_id=eq.${depId}&select=*`).catch(() => null), sb(`antropometria_valoraciones?deportista_id=eq.${depId}&order=fecha.desc&limit=1&select=fecha,resumen,medidas`).catch(() => null), rpcOpc('peso_reciente'), rpcOpc('objetivo_progreso'), sb(`fichas_iniciales?deportista_id=eq.${depId}&select=respuestas,enviado_en`).catch(() => null)]);
+  out.pesoRec = rec; out.objetivo = obj;
+  try { if (Array.isArray(fi) && fi[0] && fi[0].enviado_en) out.ficha = fi[0].respuestas || null; } catch (e) {}   // opcional: sin supabase_ficha_inicial.sql queda en null   // opcionales: sin supabase_objetivos.sql quedan en null y no pasa nada
   try { if (Array.isArray(pr) && pr[0]) { out.sexo = /^m/i.test(pr[0].sexo || '') ? 'M' : 'H'; out.nac = pr[0].fecha_nacimiento || ''; out.talla = pr[0].talla ? +pr[0].talla : null; } } catch (e) {}
   try { if (Array.isArray(va) && va[0]) { const v = va[0], p = (v.resumen && v.resumen.peso) || (v.medidas && v.medidas.peso); if (p) { out.peso = +p; out.pesoFecha = v.fecha; } if (!out.talla && v.medidas && v.medidas.talla) out.talla = +v.medidas.talla; } } catch (e) {}
   return out;
@@ -1962,6 +1963,39 @@ function mnReajBanner() {
   const i = mnReajInfo(); if (!i) return '';
   return `<div class="mn-reaj" role="status"><div><b>El peso ha cambiado</b><span>${mnF(i.antes, 1)} → ${mnF(i.v, 1)} kg (${i.dif > 0 ? '+' : '−'}${mnF(Math.abs(i.dif), 1)} kg${i.media ? ' · media de la última semana' : ''}). Conviene revisar los objetivos de kcal.</span></div><div class="mn-add" style="margin:0">${mnBtn('Revisar reajuste', 'mnReajAbrir()', { sm: true, icon: 'wand' })}${mnBtn('Ahora no', 'mnReajAhoraNo()', { sm: true, ghost: true })}</div></div>`;
 }
+// Ficha inicial → «No puede o no quiere comer» (contenido.gen.excl, el mismo campo del generador y de las sustituciones).
+// Propone las alergias o intolerancias y lo que no le gusta que aún no estén en la lista; nada cambia hasta pulsar el botón.
+const FI_VACIO = /^(ninguno|ninguna|nada|no|nada en especial|ningun[oa] en particular|sin restricciones?)$/;
+function mnFichaTerminos(r) {
+  if (!r) return [];
+  const t = [];
+  [r.alerg === 'Sí' ? r.alerg_txt : '', r.no_gusta].forEach(x => String(x || '').split(/[,;.\n]|\by\b|\be\b/i).forEach(p => {
+    let w = p.trim(), a; do { a = w; w = w.replace(/^(el|la|los|las|un|una|unos|unas|me da asco|no me gusta[n]?|no como|no tomo|odio|alergia a|intolerancia a)\s+/i, ''); } while (w !== a);
+    w = w.replace(/[.]+$/, '').trim();
+    if (w && !FI_VACIO.test(mnNorm(w)) && mnNorm(w).length >= 3 && !t.includes(w)) t.push(w);
+  }));
+  return t;
+}
+function mnFichaPendiente() {
+  const f = MN.perfil && MN.perfil.ficha; if (!f) return null;
+  const ya = mnGenPalabras((MN.c.gen || {}).excl), nuevos = mnFichaTerminos(f).filter(w => !ya.some(x => mnGenTiene(x, mnNorm(w)) || mnGenTiene(mnNorm(w), x)));
+  if (!nuevos.length) return null;
+  const clave = nuevos.map(mnNorm).sort().join('|');
+  if (MN.c.fichaNo === clave) return null;
+  return { nuevos, clave, alerg: f.alerg === 'Sí' ? f.alerg_txt : '' };
+}
+function mnFichaBanner() {
+  const i = mnFichaPendiente(); if (!i) return '';
+  return `<div class="mn-reaj" role="status"><div><b>La ficha inicial menciona alimentos que evitar</b><span>Se añadirían a «No puede o no quiere comer»: ${i.nuevos.map(sudEsc).join(', ')}.${i.alerg ? ' Incluye su alergia o intolerancia.' : ''} El generador y las sustituciones no los propondrán.</span></div><div class="mn-add" style="margin:0">${mnBtn('Añadir a excluidos', 'mnFichaAplicar()', { sm: true, icon: 'plus' })}${mnBtn('Ahora no', 'mnFichaAhoraNo()', { sm: true, ghost: true })}</div></div>`;
+}
+function mnFichaAplicar() {
+  const i = mnFichaPendiente(); if (!i) return;
+  MN.c.gen = MN.c.gen || {}; const prev = MN.c.gen.excl || '', prevNo = MN.c.fichaNo;
+  MN.c.gen.excl = (prev.trim() ? prev.trim().replace(/[,;\s]+$/, '') + ', ' : '') + i.nuevos.join(', ');
+  delete MN.c.fichaNo; mnCambio(); mnPintar();
+  toast('Añadido a «No puede o no quiere comer»', { ms: 7000, accion: { texto: 'Deshacer', fn: () => { MN.c.gen.excl = prev; if (prevNo != null) MN.c.fichaNo = prevNo; mnCambio(); mnPintar(); } } });
+}
+function mnFichaAhoraNo() { const i = mnFichaPendiente(); if (!i) return; MN.c.fichaNo = i.clave; mnCambio(); mnPintar(); }
 function mnReajAhoraNo() { const i = mnReajInfo(); if (!i) return; MN.c.reajNo = i.v; mnCambio(); mnPintar(); }
 function mnReajPropuesta(i) {
   const o = MN.c.obj, nuevo = Math.round(i.v * 10) / 10, tiene = !!(o.talla && o.edad);

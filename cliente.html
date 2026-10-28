@@ -44,7 +44,7 @@ button{font-family:var(--f);cursor:pointer}
 .view{display:none}.view.active{display:block}
 
 /* ── Planificación dentro de la app (marco a pantalla completa con barra "Inicio") ── */
-#vplan.active,#vform.active{display:flex;flex-direction:column;height:100vh;height:100dvh}
+#vplan.active{display:flex;flex-direction:column;height:100vh;height:100dvh}
 .plan-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:calc(env(safe-area-inset-top,0px) + 8px) 14px 8px;background:var(--t900);flex:none}
 .plan-bar .back{margin:0;color:#fff}
 .plan-t{font-size:14px;font-weight:700;color:#fff}
@@ -177,6 +177,18 @@ body.dark-mode .nota-card{background:rgba(29,158,117,.12)}
 .rev-add{display:inline-flex;align-items:center;gap:5px;margin-top:6px;font-size:11.5px;font-weight:600;color:var(--t600);text-decoration:none;padding:3px 10px 3px 8px;border-radius:20px;background:var(--pill-g);box-shadow:inset 0 0 0 .5px var(--pill-g-bd)}
 .rev-add:hover{color:var(--t800)}
 .seg-lead{font-size:13px;color:var(--g500);line-height:1.55;margin:-.4rem 0 1rem}
+.fi-bar{height:6px;border-radius:3px;background:var(--pill-n);overflow:hidden;margin:.2rem 0 .4rem}.fi-bar i{display:block;height:100%;background:var(--t400);border-radius:3px;transition:width .25s}
+.fi-paso{font-size:12px;color:var(--g500);font-weight:600;margin-bottom:.8rem}.fi-h{font-size:19px;font-weight:700;letter-spacing:-.02em;margin:0 0 .35rem}
+.fi-ops{display:flex;flex-wrap:wrap;gap:7px}
+.fi-op{padding:9px 14px;border-radius:20px;font-size:13.5px;font-weight:600;line-height:1.2;min-height:40px;background:var(--pill-n);border:.5px solid var(--pill-n-bd);color:var(--g700)}
+.fi-op.on{background:var(--pill-g);border-color:var(--t400);box-shadow:inset 0 0 0 1px var(--t400);color:var(--t800)}
+.fi-esc{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}.fi-n{padding:11px 0;border-radius:12px;font-size:15px;font-weight:700;background:var(--pill-n);border:.5px solid var(--pill-n-bd);color:var(--g700)}
+.fi-n.on{background:var(--pill-g);border-color:var(--t400);box-shadow:inset 0 0 0 1px var(--t400);color:var(--t800)}
+.fi-ext{display:flex;justify-content:space-between;font-size:11px;color:var(--g500);margin-top:6px}
+.fi-num{display:flex;align-items:center;gap:9px}.fi-num .seg-inp{max-width:170px}.fi-num span{font-size:13px;color:var(--g500)}
+.fi-date{appearance:none;-webkit-appearance:none;min-width:0;width:100%;min-height:46px}
+.fi-com{display:grid;grid-template-columns:1fr 1.4fr;gap:10px}.fi-l{display:block;font-size:12px;font-weight:600;color:var(--g500)}.fi-l .seg-inp{margin-top:4px;font-weight:400;color:var(--g900)}
+.fi-nav{display:flex;gap:10px;margin-top:1rem}.fi-nav .btn{flex:1;padding:14px 18px;font-size:15px}.fi-nav .btn.soft{flex:0 0 auto;font-size:14px;padding:14px 20px;border-radius:12px}
 .sq{background:var(--sf);border:.5px solid var(--bdm);border-radius:14px;padding:.9rem 1rem 1rem;margin-bottom:10px}
 .sq-t{font-size:14.5px;font-weight:700;letter-spacing:-.01em}
 .sq-d{font-size:12.5px;color:var(--g500);margin:2px 0 11px;line-height:1.45}
@@ -671,20 +683,16 @@ body>*:not(#mnPrint){display:none !important}
 <div id="vforms" class="view" role="main"><div class="wrap">
   <button class="back" onclick="show('vhome')"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Inicio</button>
   <h1 class="h2">Formularios</h1>
-  <p class="fcard-h">Rellénalos con calma: nos ayudan a preparar tu planificación. Cuando termines cada uno, pulsa «Ya lo he enviado» para que quede marcado.</p>
+  <p class="fcard-h">Rellénalos con calma: nos ayudan a preparar tu planificación. Cuando envíes cada uno, queda marcado solo.</p>
   <div id="formsBody"></div>
   <p class="push-line" id="pushLine" style="display:none"></p>
 </div></div>
 
-<div id="vform" class="view" role="main">
-  <div class="plan-bar">
-    <button class="back" onclick="cerrarForm()"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Formularios</button>
-    <span class="plan-t" id="formT"></span>
-    <a class="plan-ext" id="formExt" href="#" target="_blank" rel="noopener noreferrer">Abrir aparte</a>
-  </div>
-  <div id="formBody" style="flex:1;min-height:0;display:flex;flex-direction:column"></div>
-  <div class="plan-foot" id="formFoot"></div>
-</div>
+<div id="vficha" class="view" role="main"><div class="wrap">
+  <button class="back" onclick="fiSalir()"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Formularios</button>
+  <h1 class="h2">Ficha inicial</h1>
+  <div id="fiBody"></div>
+</div></div>
 
 <div id="vcomp" class="view" role="main"><div class="wrap">
   <button class="back" onclick="show('vhome')"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Inicio</button>
@@ -733,12 +741,12 @@ const BUCKET='deportistas-docs';
 let FICHA=null, DATOS=null, CONS=null;
 
 // ═══ Vistas ═══
-const APP_VIEWS=['vhome','vdatos','vreg','vplan','vforms','vform','vseg','vcomp','vsin','vmenu','vpriv'];
+const APP_VIEWS=['vhome','vdatos','vreg','vplan','vforms','vficha','vseg','vcomp','vsin','vmenu','vpriv'];
 function show(v){
   document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));
   $(v).classList.add('active');
   document.body.classList.toggle('in-app',APP_VIEWS.includes(v));
-  document.body.classList.toggle('in-plan',v==='vplan'||v==='vform');
+  document.body.classList.toggle('in-plan',v==='vplan');
   window.scrollTo(0,0);
 }
 function togglePw(id,btn){
@@ -1435,18 +1443,18 @@ function abrirDesdeAviso(){
 }
 if('serviceWorker' in navigator) navigator.serviceWorker.addEventListener('message',e=>{ if(e.data&&e.data.abrir==='seguimiento'&&FICHA){ history.replaceState(null,'',location.pathname+'?abrir=seguimiento'); abrirDesdeAviso(); } });
 
-// ═══ Formularios (Google Forms): los enlaces son de Guillermo; el «hecho» lo marca el cliente con un botón ═══
+// ═══ Formularios: ficha inicial propia (supabase_ficha_inicial.sql) y seguimiento semanal propio ═══
+// La ficha sustituye a los dos Google Forms (cuestionario inicial y anamnesis). Al enviarla, el servidor marca solo `inicial` y `anamnesis` como hechos.
 const FORMS=[
-  {k:'inicial',t:'Cuestionario inicial',d:'Cuéntanos quién eres y qué quieres conseguir.',url:'https://docs.google.com/forms/d/e/1FAIpQLSeyPobu4XOuFfC5u0HWPyANBPfAcsMAh-RSF-tJn1YH8IsyUA/viewform'},
-  {k:'anamnesis',t:'Anamnesis nutricional',d:'Tu historial de salud y tus hábitos de alimentación.',url:'https://docs.google.com/forms/d/e/1FAIpQLSeLg2sJIH7lHZLj8KprznzpV87g_WjF0ZzLv4WqzPGC_hvzrg/viewform'},
-  {k:'seguimiento',t:'Seguimiento semanal',d:'Cuéntanos cómo ha ido tu semana.',semanal:true}   // cuestionario propio (abrirSeg), sin Google Forms
+  {k:'ficha',t:'Ficha inicial',d:'Cuéntanos quién eres, tu salud y tus hábitos para preparar tu plan.'},
+  {k:'seguimiento',t:'Seguimiento semanal',d:'Cuéntanos cómo ha ido tu semana.',semanal:true}   // cuestionario propio (abrirSeg)
 ];
 // Formularios que ve este cliente y su estado. Si la función SQL aún no está (sin `forms`), no se muestra nada.
 function estadoForms(){
   const f=FICHA&&FICHA.forms; if(!f) return null;
   return FORMS.filter(x=>!x.semanal||(f.seguimiento_activo&&f.seguimiento_propio)).map(x=>{
-    const fecha=x.semanal?f.seguimiento_ultimo:f[x.k+'_hecho'];
-    const pend=x.semanal?!!f.seguimiento_pendiente:!f[x.k+'_hecho'];
+    if(x.k==='ficha'){ const ok=!!(f.inicial_hecho&&f.anamnesis_hecho); return {...x,fecha:f.inicial_hecho||f.anamnesis_hecho,pend:!ok}; }
+    const fecha=f.seguimiento_ultimo, pend=!!f.seguimiento_pendiente;
     return {...x,fecha,pend};
   });
 }
@@ -1475,25 +1483,194 @@ function abrirForms(){
 function abrirForm(k){
   const x=(estadoForms()||[]).find(y=>y.k===k); if(!x) return;
   if(x.semanal){ abrirSeg(); return; }
-  $('formT').textContent=x.t; $('formExt').href=x.url;
-  // Dentro de la app (embedded=true): así, desde la pantalla de inicio del móvil no salta al navegador.
-  $('formBody').innerHTML=`<iframe class="plan-frame" src="${esc(x.url)}?embedded=true" title="${esc(x.t)}"></iframe>`;
-  $('formFoot').innerHTML=x.pend
-    ?`<button class="btn" id="formOk" onclick="marcarForm('${x.k}')">Ya lo he enviado ✓</button><small>Pulsa aquí cuando hayas terminado y enviado el formulario.</small>`
-    :`<small>Ya lo tienes marcado como hecho${x.fecha?' ('+fmtF(x.fecha,true)+')':''}.</small>`;
-  show('vform');
+  abrirFicha();
 }
-function cerrarForm(){ $('formBody').innerHTML=''; abrirForms(); }
-async function marcarForm(k){
-  const b=$('formOk'); if(b){ b.disabled=true; b.textContent='Guardando…'; }
-  try{
-    await rpc('cliente_marcar_formulario',{p_tipo:k});
-    const f=await rpc('cliente_mi_ficha'); if(f) FICHA=f;
-  }catch(e){
-    if(b){ b.disabled=false; b.textContent='Ya lo he enviado ✓'; }
-    toast('No se pudo guardar. Comprueba tu conexión y vuelve a intentarlo.',{tipo:'error'}); return;
+
+// ═══ Ficha inicial por pasos (supabase_ficha_inicial.sql) ═══
+// Los campos y sus valores permitidos también están en el SQL (lista blanca) y en la hoja de la ficha del panel (fiHoja): si se cambian preguntas, tocar los tres sitios.
+const FI_YN=['Sí','No'];
+const FI_LUGARES=['Casa','Trabajo o estudios','Restaurante','En la calle','Otro'];
+const FI_COMIDAS=[['desayuno','Desayuno'],['almuerzo','Almuerzo'],['comida','Comida'],['merienda','Merienda'],['cena','Cena'],['otros','Otros']];
+// Texto de la versión española validada (Garcia-Campayo 2005, apéndice A), pasado de «usted» a «tú» sin cambiar el sentido.
+const FI_SCOFF=['¿Tienes la sensación de estar enfermo/a porque sientes el estómago tan lleno que te resulta incómodo?','¿Estás preocupado/a porque sientes que tienes que controlar cuánto comes?','¿Has perdido recientemente más de 6 kg en un periodo de tres meses?','¿Crees que estás gordo/a aunque otros digan que estás demasiado delgado/a?','¿Dirías que la comida domina tu vida?'];
+const FI_PASOS=[
+ {t:'Sobre ti',d:'Unos datos básicos para empezar.',c:[
+  {k:'fnac',t:'¿Cuál es tu fecha de nacimiento?',tipo:'fecha',req:1},
+  {k:'sexo',t:'Sexo',tipo:'op',ops:['Hombre','Mujer'],req:1},
+  {k:'estatura',t:'¿Cuánto mides?',tipo:'num',u:'cm',min:100,max:230,req:1,ph:'Por ejemplo, 175'},
+  {k:'peso',t:'¿Cuánto pesas ahora?',d:'Si te has pesado hace poco, mejor en ayunas y sin ropa. Si no, una estimación.',tipo:'num',u:'kg',min:20,max:300,req:1,ph:'Por ejemplo, 72,4'},
+  {k:'ocupacion',t:'¿A qué te dedicas?',tipo:'txt',req:1,ph:'Tu trabajo o estudios'}]},
+ {t:'Tu salud',d:'Es información confidencial: solo la ve tu nutricionista.',c:[
+  {k:'enf',t:'¿Tienes alguna enfermedad diagnosticada o condición médica?',tipo:'op',ops:FI_YN,req:1},
+  {k:'enf_txt',t:'¿Cuál o cuáles?',tipo:'area',req:1,si:['enf','Sí']},
+  {k:'med',t:'¿Tomas medicación actualmente?',tipo:'op',ops:FI_YN,req:1},
+  {k:'med_txt',t:'¿Cuál y para qué?',tipo:'area',req:1,si:['med','Sí']},
+  {k:'alerg',t:'¿Tienes alguna alergia o intolerancia alimentaria?',tipo:'op',ops:FI_YN,req:1},
+  {k:'alerg_txt',t:'¿A qué?',tipo:'area',req:1,si:['alerg','Sí']},
+  {k:'dig',t:'¿Tienes problemas digestivos con frecuencia (hinchazón, gases, acidez…)?',tipo:'op',ops:FI_YN,req:1},
+  {k:'dig_txt',t:'¿Cuáles?',tipo:'area',req:1,si:['dig','Sí']},
+  {k:'anal',t:'¿Te has hecho una analítica en el último año?',d:'Si la tienes, llévala a tu próxima consulta.',tipo:'op',ops:FI_YN,req:1},
+  {k:'les',t:'¿Tienes alguna lesión actual o reciente?',tipo:'op',ops:FI_YN,req:1},
+  {k:'les_txt',t:'¿Cuál y desde cuándo?',tipo:'area',req:1,si:['les','Sí']}]},
+ {t:'Tu peso y tus dietas',d:'Para entender de dónde partes.',c:[
+  {k:'peso_hab',t:'¿Cuál ha sido tu peso habitual en el último año?',d:'Opcional.',tipo:'num',u:'kg',min:20,max:300,ph:'Por ejemplo, 70'},
+  {k:'peso_cambio',t:'En los últimos 3 meses, tu peso…',tipo:'op',ops:['Se ha mantenido','Ha bajado','Ha subido'],req:1},
+  {k:'peso_cambio_kg',t:'¿Cuántos kilos, más o menos?',tipo:'num',u:'kg',min:0,max:100,req:1,ph:'Por ejemplo, 3',si:['peso_cambio',['Ha bajado','Ha subido']]},
+  {k:'dieta',t:'¿Has seguido alguna dieta antes?',tipo:'op',ops:FI_YN,req:1},
+  {k:'dieta_txt',t:'¿Cuál y por qué la dejaste?',tipo:'area',req:1,si:['dieta','Sí']}]},
+ {t:'Tus hábitos',d:'Cómo comes ahora, sin juzgar.',c:[
+  {k:'comidas_dia',t:'¿Cuántas comidas principales haces al día?',tipo:'op',ops:['2','3','4','5 o más'],req:1},
+  {k:'entre',t:'¿Sueles comer entre horas?',tipo:'op',ops:['No','A veces','Frecuentemente'],req:1},
+  {k:'estilo',t:'¿Sigues algún estilo de alimentación?',tipo:'op',ops:['Omnívoro','Vegetariano','Vegano','Carnívoro','Otro'],req:1},
+  {k:'estilo_otro',t:'¿Cuál?',tipo:'txt',req:1,si:['estilo','Otro']},
+  {k:'antojos',t:'¿Tienes antojos frecuentes o sientes hambre emocional?',tipo:'op',ops:['No','A veces','Sí'],req:1},
+  {k:'hidrat',t:'¿Cómo calificarías tu hidratación diaria?',tipo:'esc',n:10,lo:'Baja',hi:'Excelente',req:1}]},
+ {t:'Tu actividad',d:'Lo que haces para moverte y entrenar.',c:[
+  {k:'ejer',t:'¿Haces ejercicio actualmente?',tipo:'op',ops:FI_YN,req:1},
+  {k:'ejer_txt',t:'¿Qué tipo y cuántas veces por semana?',tipo:'area',req:1,si:['ejer','Sí']},
+  {k:'ejer_tiempo',t:'¿Cuánto tiempo llevas con esa rutina?',tipo:'op',ops:['Menos de 1 mes','1-3 meses','Más de 3 meses'],req:1,si:['ejer','Sí']},
+  {k:'nivel',t:'¿Cuál es tu nivel de actividad física en general?',tipo:'esc',n:5,lo:'Sedentario',hi:'Muy activo',req:1},
+  {k:'deporte',t:'¿Cuál es tu deporte principal?',d:'Déjalo vacío si no practicas ninguno.',tipo:'txt',ph:'Por ejemplo, fútbol'},
+  {k:'deporte_nivel',t:'¿A qué nivel lo practicas?',tipo:'op',ops:['Recreativo','Federado','Competición'],req:1,si:['deporte','*']},
+  {k:'entrenos_sem',t:'¿Cuántos entrenamientos haces por semana?',tipo:'num',u:'por semana',min:0,max:21,ent:1,req:1,si:['deporte','*']},
+  {k:'entreno_dur',t:'¿Cuánto dura un entrenamiento normal?',tipo:'num',u:'minutos',min:5,max:600,ent:1,si:['deporte','*']},
+  {k:'horario',t:'¿A qué hora sueles entrenar?',tipo:'txt',ph:'Por ejemplo, por la tarde, sobre las 19:00',si:['deporte','*']}]},
+ {t:'Tu descanso',d:'El sueño y el estrés influyen mucho en tu plan.',c:[
+  {k:'sueno_h',t:'¿Cuántas horas duermes de media?',tipo:'num',u:'horas',min:1,max:16,req:1,ph:'Por ejemplo, 7,5'},
+  {k:'sueno_cal',t:'¿Cómo es la calidad de tu sueño?',tipo:'esc',n:5,lo:'Muy mala',hi:'Muy buena',req:1},
+  {k:'estres',t:'¿Qué nivel de estrés tienes en tu día a día?',tipo:'esc',n:5,lo:'Muy bajo',hi:'Muy alto',req:1}]},
+ {t:'Tus objetivos',d:'Qué quieres conseguir.',c:[
+  {k:'obj',t:'¿Cuál es tu principal objetivo nutricional?',d:'Elige uno o varios.',tipo:'multi',ops:['Perder grasa','Ganar masa muscular','Mejorar rendimiento deportivo','Mejorar salud general','Mejorar digestión','Otro'],req:1},
+  {k:'obj_otro',t:'¿Cuál?',tipo:'txt',req:1,si:['obj','Otro']},
+  {k:'evento',t:'¿Tienes una fecha o evento importante como meta?',tipo:'op',ops:FI_YN,req:1},
+  {k:'evento_txt',t:'¿Cuál y cuándo?',tipo:'area',req:1,si:['evento','Sí']},
+  {k:'reto',t:'¿Cuál crees que es tu mayor dificultad o reto?',d:'Opcional.',tipo:'area'}]},
+ {t:'Tus preferencias',d:'Para que tu plan sea fácil de seguir.',c:[
+  {k:'no_gusta',t:'¿Hay alimentos que no te gustan o que no tomas por elección personal?',d:'Si no hay ninguno, escribe «Ninguno».',tipo:'area',req:1},
+  {k:'gusta',t:'¿Hay alimentos o preparaciones que disfrutas especialmente?',d:'Opcional.',tipo:'area'},
+  {k:'supl',t:'¿Usas actualmente suplementos?',tipo:'op',ops:FI_YN,req:1},
+  {k:'supl_txt',t:'¿Cuáles y en qué dosis?',tipo:'area',req:1,si:['supl','Sí']}]},
+ {t:'Tu cocina',d:'Para adaptar el plan a tu día a día.',c:[
+  {k:'quien',t:'¿Quién cocina en casa?',tipo:'op',ops:['Yo','Pareja u otros'],req:1},
+  {k:'tiempo',t:'¿Cuánto tiempo tienes para cocinar?',tipo:'op',ops:['Menos de 15 minutos','Entre 15 y 45 minutos','Más de 45 minutos'],req:1},
+  {k:'electro',t:'¿Qué electrodomésticos tienes?',d:'Elige todos los que correspondan.',tipo:'multi',ops:['Horno','Microondas','Air Fryer','Fogones','Robot Thermomix','Otro'],req:1},
+  {k:'electro_otro',t:'¿Cuál?',tipo:'txt',req:1,si:['electro','Otro']},
+  {k:'cocinar',t:'¿Te gusta cocinar o buscas lo más práctico y rápido?',tipo:'op',ops:['Me gusta cocinar','Busco lo más práctico y rápido','Depende del día'],req:1}]},
+ {t:'Un día típico',d:'Cuéntanos qué comes en un día normal. Si no haces alguna comida, déjala vacía.',custom:'comidas'},
+ {t:'Tu relación con la comida',d:'Cinco preguntas rápidas. No hay respuestas buenas ni malas y solo las ve tu nutricionista. Si prefieres no contestar, puedes saltarlas.',custom:'scoff'},
+ {t:'Para terminar',d:'Último paso.',c:[
+  {k:'final_txt',t:'¿Hay algo más que debamos saber para ayudarte mejor?',d:'Opcional.',tipo:'area'}]}
+];
+const FI_IDX={}; FI_PASOS.forEach(p=>(p.c||[]).forEach(f=>FI_IDX[f.k]=f));
+let FI={r:{},paso:0,enviado:null,tmr:null,sucio:false};
+const fiOk=(r,s)=>{ if(!s) return true; const cur=r[s[0]]; if(s[1]==='*') return cur!=null&&String(cur).trim()!==''; const v=Array.isArray(s[1])?s[1]:[s[1]]; return Array.isArray(cur)?cur.some(x=>v.includes(x)):v.includes(cur); };
+const fiVis=f=>fiOk(FI.r,f.si);
+function fiLimpia(){ Object.keys(FI_IDX).forEach(k=>{ if(!fiVis(FI_IDX[k])) delete FI.r[k]; }); }
+async function abrirFicha(){
+  show('vficha'); $('fiBody').innerHTML='<div class="spin" style="margin-top:6vh"></div>';
+  let r=null, fallo=false;
+  try{ r=await rpc('cliente_mi_ficha_inicial'); }catch(e){ fallo=true; }
+  if(fallo){ $('fiBody').innerHTML='<div class="card">'+vacioC('<circle cx="12" cy="12" r="9"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>','No se pudo abrir','Comprueba tu conexión y vuelve a intentarlo. Si sigue igual, avisa a tu nutricionista.')+'</div>'; return; }
+  FI={r:(r&&r.respuestas)||{},paso:0,enviado:(r&&r.enviado_en)||null,tmr:null,sucio:false};
+  if(FI.enviado){ fiHecho(false); return; }
+  fiPintar(!!(r&&Object.keys(FI.r).length));
+}
+function fiPintar(retoma){
+  const n=FI_PASOS.length, p=FI_PASOS[FI.paso], ult=FI.paso===n-1;
+  let h=`<div class="fi-bar" role="progressbar" aria-valuemin="1" aria-valuemax="${n}" aria-valuenow="${FI.paso+1}" aria-label="Progreso de la ficha"><i style="width:${Math.round((FI.paso+1)/n*100)}%"></i></div>
+    <div class="fi-paso">Paso ${FI.paso+1} de ${n}</div>`;
+  if(FI.paso===0) h+=`<p class="seg-lead" style="margin-top:0">Esta ficha nos ayuda a conocerte para preparar un plan 100 % personalizado. Tarda unos 10 minutos, es confidencial y puedes dejarla a medias: se guarda sola.${retoma?' <b>Hemos recuperado lo que ya habías contestado.</b>':''}</p>`;
+  h+=`<h2 class="fi-h">${esc(p.t)}</h2><p class="seg-lead" style="margin-top:0">${esc(p.d)}</p>`;
+  if(p.custom==='comidas') h+=fiComidasHtml();
+  else if(p.custom==='scoff') h+=fiScoffHtml();
+  else h+=p.c.filter(fiVis).map(fiCampo).join('');
+  h+=`<p class="seg-err" id="fiErr" role="alert"></p><div class="fi-nav">${FI.paso>0?'<button class="btn soft" type="button" onclick="fiAtras()">Atrás</button>':''}<button class="btn" type="button" id="fiSig" onclick="${ult?'fiEnviar()':'fiSig()'}">${ult?'Enviar ficha':'Siguiente'}</button></div>`;
+  const y=window.scrollY; $('fiBody').innerHTML=h; window.scrollTo(0,FI._nuevoPaso?0:y); FI._nuevoPaso=false;
+}
+function fiCampo(f){
+  const k=f.k, v=FI.r[k], t=esc(f.t); let c='';
+  if(f.tipo==='op') c=`<div class="fi-ops" role="radiogroup" aria-label="${t}">${f.ops.map((o,i)=>`<button type="button" role="radio" aria-checked="${v===o}" class="fi-op${v===o?' on':''}" onclick="fiOp('${k}',${i})">${esc(o)}</button>`).join('')}</div>`;
+  else if(f.tipo==='multi') c=`<div class="fi-ops" role="group" aria-label="${t}">${f.ops.map((o,i)=>{ const on=Array.isArray(v)&&v.includes(o); return `<button type="button" role="checkbox" aria-checked="${on}" class="fi-op${on?' on':''}" onclick="fiMulti('${k}',${i})">${esc(o)}</button>`; }).join('')}</div>`;
+  else if(f.tipo==='esc') c=`<div class="fi-esc n${f.n}" role="radiogroup" aria-label="${t}">${Array.from({length:f.n},(_,i)=>`<button type="button" role="radio" aria-checked="${v===i+1}" class="fi-n${v===i+1?' on':''}" onclick="fiEsc('${k}',${i+1})">${i+1}</button>`).join('')}</div><div class="fi-ext"><span>${esc(f.lo)}</span><span>${esc(f.hi)}</span></div>`;
+  else if(f.tipo==='num') c=`<div class="fi-num"><input class="seg-inp" type="text" inputmode="${f.ent?'numeric':'decimal'}" autocomplete="off" aria-label="${t}" placeholder="${esc(f.ph||'')}" value="${v!=null?esc(String(v).replace('.',',')):''}" oninput="fiNum('${k}',this)"><span>${esc(f.u)}</span></div>`;
+  else if(f.tipo==='fecha') c=`<input class="seg-inp fi-date" type="date" aria-label="${t}" min="1900-01-01" max="${new Date().toISOString().slice(0,10)}" value="${esc(v||'')}" onchange="fiTxt('${k}',this.value)">`;
+  else if(f.tipo==='area') c=`<textarea class="seg-inp" rows="3" maxlength="600" aria-label="${t}" placeholder="${esc(f.ph||'Escribe aquí')}" oninput="fiTxt('${k}',this.value)">${esc(v||'')}</textarea>`;
+  else c=`<input class="seg-inp" type="text" maxlength="200" autocomplete="off" aria-label="${t}" placeholder="${esc(f.ph||'')}" value="${esc(v||'')}" oninput="fiTxt('${k}',this.value)">`;
+  return `<div class="sq" id="fq-${k}"><div class="sq-t">${t}${f.req?'':' <span class="empty" style="font-weight:500">(opcional)</span>'}</div>${f.d?`<div class="sq-d">${esc(f.d)}</div>`:'<div style="height:9px"></div>'}${c}</div>`;
+}
+function fiComidasHtml(){
+  const c=FI.r.comidas||{};
+  return FI_COMIDAS.map(([k,t])=>{ const x=c[k]||{}; return `<div class="sq"><div class="sq-t">${esc(t)}</div><div class="fi-com">
+    <label class="fi-l">Hora<input class="seg-inp fi-date" type="time" value="${esc(x.h||'')}" onchange="fiCom('${k}','h',this.value)"></label>
+    <label class="fi-l">Lugar<select class="seg-inp" onchange="fiCom('${k}','l',this.value)"><option value="">Elige</option>${FI_LUGARES.map(l=>`<option${x.l===l?' selected':''}>${esc(l)}</option>`).join('')}</select></label></div>
+    <label class="fi-l" style="margin-top:8px">¿Qué tomas?<textarea class="seg-inp" rows="2" maxlength="400" placeholder="Alimentos y cantidades aproximadas" oninput="fiCom('${k}','a',this.value)">${esc(x.a||'')}</textarea></label></div>`; }).join('');
+}
+function fiScoffHtml(){
+  if(FI.r.scoff_skip) return `<div class="sq"><div class="sq-t">Has elegido no contestar</div><div class="sq-d">No pasa nada. Puedes cambiarlo cuando quieras.</div><button type="button" class="btn soft" onclick="fiScoffSkip(false)">Prefiero contestar</button></div>`;
+  const s=FI.r.scoff||[null,null,null,null,null];
+  return FI_SCOFF.map((q,i)=>`<div class="sq"><div class="sq-t">${esc(q)}</div><div class="fi-ops" role="radiogroup" aria-label="${esc(q)}">${FI_YN.map(o=>`<button type="button" role="radio" aria-checked="${s[i]===o}" class="fi-op${s[i]===o?' on':''}" onclick="fiScoff(${i},'${o}')">${o}</button>`).join('')}</div></div>`).join('')
+    +`<button type="button" class="btn soft" onclick="fiScoffSkip(true)">Prefiero no contestar</button>`;
+}
+function fiSucio(){ FI.sucio=true; clearTimeout(FI.tmr); FI.tmr=setTimeout(()=>fiGuardar(false),1500); const e=$('fiErr'); if(e) e.textContent=''; }
+function fiOp(k,i){ FI.r[k]=FI_IDX[k].ops[i]; fiLimpia(); fiSucio(); fiPintar(); }
+function fiMulti(k,i){ const o=FI_IDX[k].ops[i], a=Array.isArray(FI.r[k])?FI.r[k].slice():[]; const j=a.indexOf(o); if(j>=0) a.splice(j,1); else a.push(o); if(a.length) FI.r[k]=a; else delete FI.r[k]; fiLimpia(); fiSucio(); fiPintar(); }
+function fiEsc(k,n){ FI.r[k]=n; fiSucio(); fiPintar(); }
+function fiNum(k,el){ const t=el.value.trim().replace(',','.'); if(t===''){ delete FI.r[k]; } else if(/^\d+(\.\d+)?$/.test(t)) FI.r[k]=Number(t); else FI.r[k]=NaN; fiSucio(); }
+function fiTxt(k,v){
+  const antes=!!FI.r[k]; if(String(v).trim()) FI.r[k]=v; else delete FI.r[k];
+  if(k==='deporte'&&antes!==!!FI.r[k]){   // al escribir o borrar el deporte aparecen o se ocultan las preguntas de entrenos
+    fiLimpia(); fiSucio();
+    const a=document.activeElement, lab=a&&a.getAttribute('aria-label'), pos=a&&a.selectionStart;
+    fiPintar(); const n=[...document.querySelectorAll('#fiBody [aria-label]')].find(x=>x.getAttribute('aria-label')===lab);
+    if(n){ n.focus(); try{ n.setSelectionRange(pos,pos); }catch(e){} }
+    return;
   }
-  pintarTileForms(); cerrarForm();
+  fiSucio();
+}
+function fiCom(k,c,v){ FI.r.comidas=FI.r.comidas||{}; const x=FI.r.comidas[k]=FI.r.comidas[k]||{}; if(String(v).trim()) x[c]=v; else delete x[c]; if(!Object.keys(x).length) delete FI.r.comidas[k]; fiSucio(); }
+function fiScoff(i,o){ const s=Array.isArray(FI.r.scoff)?FI.r.scoff.slice():[null,null,null,null,null]; s[i]=o; FI.r.scoff=s; delete FI.r.scoff_skip; fiSucio(); fiPintar(); }
+function fiScoffSkip(on){ if(on){ FI.r.scoff_skip=true; delete FI.r.scoff; } else delete FI.r.scoff_skip; fiSucio(); fiPintar(); }
+// Devuelve el primer fallo del paso (texto y id del bloque al que ir) o null
+function fiValida(ix){
+  const p=FI_PASOS[ix], r=FI.r;
+  if(p.custom==='comidas'){
+    const c=r.comidas||{}, con=FI_COMIDAS.filter(([k])=>c[k]&&c[k].a);
+    if(!con.length) return {m:'Cuéntanos al menos una comida de tu día.'};
+    const mal=con.find(([k])=>!c[k].h||!c[k].l); if(mal) return {m:'En «'+mal[1]+'» faltan la hora o el lugar.'};
+    return null;
+  }
+  if(p.custom==='scoff'){ if(r.scoff_skip) return null; const s=r.scoff||[]; if(s.length!==5||s.some(x=>x!=='Sí'&&x!=='No')) return {m:'Contesta las cinco preguntas o pulsa «Prefiero no contestar».'}; return null; }
+  for(const f of p.c){
+    if(!fiVis(f)) continue; const v=r[f.k];
+    if(f.tipo==='num'&&v!=null&&(isNaN(v)||v<f.min||v>f.max||(f.ent&&v!==Math.floor(v)))) return {m:'Revisa «'+f.t+'»: escribe un número entre '+f.min+' y '+f.max+'.',id:'fq-'+f.k};
+    if(f.req&&(v==null||v===''||(Array.isArray(v)&&!v.length))) return {m:'Falta contestar: '+f.t,id:'fq-'+f.k};
+    if(f.tipo==='fecha'&&v&&(v>new Date().toISOString().slice(0,10)||v<'1900-01-01')) return {m:'Revisa tu fecha de nacimiento.',id:'fq-'+f.k};
+  }
+  return null;
+}
+function fiFallo(f){ const e=$('fiErr'); if(e) e.textContent=f.m; const q=f.id&&$(f.id); if(q) q.scrollIntoView({behavior:'smooth',block:'center'}); }
+function fiSig(){ const f=fiValida(FI.paso); if(f){ fiFallo(f); return; } fiGuardar(false); FI.paso++; FI._nuevoPaso=true; fiPintar(); }
+function fiAtras(){ if(FI.paso>0){ FI.paso--; FI._nuevoPaso=true; fiPintar(); } }
+function fiSalir(){ if(FI.sucio&&!FI.enviado) fiGuardar(false); abrirForms(); }
+async function fiGuardar(enviar){
+  clearTimeout(FI.tmr); fiLimpia(); const r=JSON.parse(JSON.stringify(FI.r,(k,v)=>(typeof v==='number'&&isNaN(v))?undefined:v));
+  try{ await rpc('cliente_guardar_ficha_inicial',{p_respuestas:r,p_enviar:!!enviar}); if(!enviar) FI.sucio=false; return true; }catch(e){ if(enviar) throw e; return false; }
+}
+async function fiEnviar(){
+  for(let i=0;i<FI_PASOS.length;i++){ const f=fiValida(i); if(f){ FI.paso=i; FI._nuevoPaso=true; fiPintar(); fiFallo(f); return; } }
+  const b=$('fiSig'); b.disabled=true; b.textContent='Enviando…';
+  try{
+    await fiGuardar(true);
+    const f=await rpc('cliente_mi_ficha'); if(f) FICHA=f;
+  }catch(e){ b.disabled=false; b.textContent='Enviar ficha'; $('fiErr').textContent='No se pudo enviar. Comprueba tu conexión y vuelve a intentarlo (lo que has contestado está guardado).'; return; }
+  FI.enviado=new Date().toISOString(); pintarTileForms(); pintarMensajeDia(); fiHecho(true);
+}
+function fiHecho(celebra){
+  const nom=String(FICHA&&FICHA.nombre||'').trim().split(/\s+/)[0];
+  $('fiBody').innerHTML=(celebra?`<div class="card celebra" role="status"><span class="celebra-ic"><svg width="34" height="34" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span><div class="celebra-t">¡Gracias${nom?', '+esc(nom):''}!</div><div class="celebra-s">Tu ficha está enviada. Tu nutricionista la revisará para preparar tu plan.</div></div>`
+    :`<div class="card seg-ok"><span class="fchk on">${CHECK_SVG}</span><span style="flex:1;min-width:0"><b>Ficha inicial enviada</b><br><span class="empty">${FI.enviado?'El '+fmtF(String(FI.enviado).slice(0,10),true)+'. ':''}Si algo ha cambiado, cuéntaselo a tu nutricionista en la próxima revisión.</span></span></div>`)
+    +'<button class="btn" type="button" style="width:100%;margin-top:6px" onclick="abrirForms()">Volver a formularios</button>';
+  window.scrollTo(0,0);
 }
 
 // ═══ Seguimiento semanal propio: cuestionario corto + evolución (supabase_seguimiento.sql) ═══
