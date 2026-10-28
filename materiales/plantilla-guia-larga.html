@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<!--
+  GUÍA LARGA — NutriLogos (portada + páginas interiores)
+  Maqueta de estilo con contenido de muestra. Cada capítulo va en <section class="cap">; borra o repite componentes.
+  Incluye marca-base.css y guia-larga.css. Renderiza con: python3 generar.py plantilla-guia-larga.html
+-->
+<html lang="es"><head><meta charset="UTF-8">
+<link rel="stylesheet" href="marca-base.css">
+<link rel="stylesheet" href="guia-larga.css">
+</head><body>
+
+<section class="portada">
+  <div class="aro"></div>
+  <img class="logo" src="Logo_circular.png" alt="">
+  <p class="etiqueta">NutriLogos · Guía</p>
+  <h1>Título de la guía<br>en dos líneas</h1>
+  <p class="sub">Una frase que explique para qué sirve esta guía y a quién va dirigida.</p>
+  <div class="cajas">
+    <div class="caja"><b>Para</b><span>Deportistas</span></div>
+    <div class="caja"><b>Lectura</b><span>15 minutos</span></div>
+    <div class="caja"><b>Edición</b><span>Noviembre 2026</span></div>
+  </div>
+</section>
+
+<div class="cuerpo">
+<p class="titulo-corrido">Título de la guía</p>
+
+<section class="cap">
+  <p class="kicker">Capítulo 1</p>
+  <h2>Primer capítulo: de qué va</h2>
+  <p>Texto introductorio en párrafos cortos. Explica el porqué antes del cómo, con un lenguaje cercano y directo, hablándole de tú al lector.</p>
+  <div class="clave"><span class="rotulo">Idea clave</span><p>Resume el capítulo en una sola frase que el lector pueda recordar.</p></div>
+  <h3>Subtítulo dentro del capítulo</h3>
+  <p>Otro párrafo con <strong>palabras clave destacadas</strong> para que se pueda leer en diagonal. Mantén los párrafos de tres o cuatro líneas.</p>
+  <ul><li>Punto de una lista breve</li><li>Otro punto de la lista</li><li>Y un tercer punto</li></ul>
+  <div class="aviso"><p><strong>Consejo:</strong> usa este recuadro para una recomendación práctica o una precaución.</p></div>
+</section>
+
+<section class="cap">
+  <p class="kicker">Capítulo 2</p>
+  <h2>Segundo capítulo: cómo ponerlo en práctica</h2>
+  <p>Introducción breve al capítulo antes de los pasos.</p>
+  <div class="pasos">
+    <div class="paso"><div class="n">1</div><div class="t"><strong>Primer paso</strong>Descripción corta y concreta de lo que hay que hacer.</div></div>
+    <div class="paso"><div class="n">2</div><div class="t"><strong>Segundo paso</strong>Descripción corta y concreta de lo que hay que hacer.</div></div>
+    <div class="paso"><div class="n">3</div><div class="t"><strong>Tercer paso</strong>Descripción corta y concreta de lo que hay que hacer.</div></div>
+  </div>
+  <h3>Comparativa rápida</h3>
+  <table class="tabla">
+    <tr><th>Situación</th><th>Qué hacer</th><th>Cuándo</th></tr>
+    <tr><td>Primera situación</td><td>Acción recomendada</td><td>Momento</td></tr>
+    <tr><td>Segunda situación</td><td>Acción recomendada</td><td>Momento</td></tr>
+    <tr><td>Tercera situación</td><td>Acción recomendada</td><td>Momento</td></tr>
+  </table>
+  <div class="macro-row">
+    <div class="macro-card"><span class="num">[X]</span><span class="lbl">Dato destacado</span></div>
+    <div class="macro-card alt"><span class="num">[Y]</span><span class="lbl">Otro dato</span></div>
+  </div>
+</section>
+
+<section class="cap cierre">
+  <p class="kicker">Para terminar</p>
+  <h2>Resumen y siguientes pasos</h2>
+  <p>Cierra con un resumen en tres o cuatro puntos y con lo que el lector debería hacer a continuación.</p>
+  <div class="clave"><span class="rotulo">Lo esencial</span><p>La idea principal de toda la guía, otra vez en una frase.</p></div>
+  <div class="note"><strong>Recuerda:</strong> esta guía es orientativa. Tu plan personalizado y tus revisiones tienen siempre prioridad.</div>
+  <div class="fuentes"><h3>Fuentes</h3><ol><li>Autor, A. (Año). Título del trabajo. Revista, volumen, páginas. doi:...</li><li>Organización. (Año). Título del documento. Enlace o referencia.</li></ol></div>
+</section>
+</div>
+</body></html>

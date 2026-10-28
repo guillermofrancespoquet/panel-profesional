@@ -1,0 +1,275 @@
+/* ============================================================
+   NUTRILOGOS — BASE DE MARCA (CSS reutilizable para PDFs)
+   Paleta: petróleo / camel / crema. Estilo: tarjetas redondeadas,
+   sombras suaves, look limpio "estilo iOS".
+   Pensado para WeasyPrint + A4. NO usar emojis si dan problemas
+   de render; preferir iconos SVG o texto si hace falta.
+   ============================================================ */
+
+@page {
+  size: A4;
+  margin: 0;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  background: #f7f4ee;
+  color: #2b2b2b;
+}
+.page {
+  width: 210mm;
+  height: 297mm;
+  padding: 14mm 16mm;
+  background: #f7f4ee;
+  position: relative;
+}
+
+/* ---------- HERO (cabecera de marca) ---------- */
+.hero {
+  background: linear-gradient(135deg, #163a47 0%, #1f4d5e 100%);
+  border-radius: 22px;
+  padding: 22px 26px;
+  color: #f7f4ee;
+  box-shadow: 0 6px 18px rgba(22,58,71,0.25);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+.hero-text .brand {
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #d9b88c;
+  margin: 0 0 4px 0;
+  font-weight: 600;
+}
+.hero-text h1 {
+  font-size: 24px;
+  margin: 0 0 6px 0;
+  font-weight: 700;
+  line-height: 1.2;
+}
+.hero-text p {
+  margin: 0;
+  font-size: 12.5px;
+  color: #e7dfd2;
+}
+.hero-logo img {
+  height: 52px;
+  width: 52px;
+  border-radius: 50%;   /* el logo ya es circular (Logo_circular.png), esto es por seguridad */
+  display: block;
+}
+
+/* ---------- PILLS (metadatos rápidos) ---------- */
+.pills {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+.pill {
+  background: #ffffff;
+  border: 1px solid #e2d8c5;
+  border-radius: 999px;
+  padding: 7px 14px;
+  font-size: 11.5px;
+  color: #163a47;
+  font-weight: 600;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+}
+.pill strong { color: #c19a6b; }
+.pill.optional {
+  background: #fbf7ef;
+  border: 1px dashed #d9b88c;
+}
+
+/* ---------- SECTION TITLES ---------- */
+.section-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #163a47;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 0 0 10px 2px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.section-title .dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #c19a6b;
+  display: inline-block;
+}
+
+/* ---------- STAT / MACRO CARDS (fila de números destacados) ---------- */
+.macro-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.macro-card {
+  flex: 1;
+  background: #163a47;
+  border-radius: 16px;
+  padding: 14px 10px;
+  text-align: center;
+  color: #f7f4ee;
+  box-shadow: 0 4px 10px rgba(22,58,71,0.2);
+}
+.macro-card.alt {
+  background: #ffffff;
+  color: #163a47;
+  border: 1px solid #e2d8c5;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+}
+.macro-card .num {
+  font-size: 19px;
+  font-weight: 700;
+  display: block;
+}
+.macro-card.alt .num { color: #c19a6b; }
+.macro-card .lbl {
+  font-size: 9.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  opacity: 0.85;
+}
+
+/* ---------- LIST CARD (filas con etiqueta a la derecha) ---------- */
+/* Útil para: fuentes de alimentos, ingredientes, comparativas... */
+.sources {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 16px 18px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  border: 1px solid #ece4d6;
+}
+.source-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 9px 0;
+  border-bottom: 1px solid #f0ebe0;
+}
+.source-row:last-child { border-bottom: none; }
+.source-name {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #163a47;
+}
+.source-detail {
+  font-size: 11px;
+  color: #6b6b6b;
+}
+.source-tag {
+  background: #f7f4ee;
+  border: 1px solid #d9b88c;
+  color: #8a6d3f;
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+/* ---------- TIMELINE (pasos / bloques numerados o etiquetados) ---------- */
+/* Útil para: reparto por horas, pasos de preparación, fases de un plan... */
+.timeline {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 16px 18px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  border: 1px solid #ece4d6;
+}
+.hour-block {
+  display: flex;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid #f0ebe0;
+  align-items: flex-start;
+}
+.hour-block:last-child { border-bottom: none; }
+.hour-num {
+  background: #c19a6b;
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 11.5px;
+  border-radius: 10px;
+  padding: 5px 10px;
+  min-width: 44px;
+  text-align: center;
+  flex-shrink: 0;
+}
+.hour-content {
+  font-size: 11.8px;
+  color: #2b2b2b;
+  line-height: 1.5;
+}
+.hour-content strong { color: #163a47; }
+
+/* ---------- TWO COLUMN CARDS (comparativas / notas laterales) ---------- */
+.two-col {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.col-card {
+  flex: 1;
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 14px 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  border: 1px solid #ece4d6;
+}
+.col-card.optional {
+  background: #fbf7ef;
+  border: 1px dashed #d9b88c;
+}
+.col-card h3 {
+  font-size: 12px;
+  color: #163a47;
+  margin: 0 0 8px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.col-card p, .col-card li {
+  font-size: 11.3px;
+  color: #444;
+  line-height: 1.5;
+  margin: 0 0 4px 0;
+}
+.col-card ul {
+  margin: 0;
+  padding-left: 16px;
+}
+
+/* ---------- NOTE / CALLOUT (cierre o aviso importante) ---------- */
+.note {
+  background: linear-gradient(135deg, #163a47 0%, #1f4d5e 100%);
+  border-radius: 16px;
+  padding: 14px 18px;
+  color: #f7f4ee;
+  font-size: 11px;
+  line-height: 1.55;
+}
+.note strong { color: #d9b88c; }
+
+/* ---------- FOOTER ---------- */
+.footer-brand {
+  text-align: center;
+  margin-top: 10px;
+  font-size: 9.5px;
+  color: #a89c89;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* WeasyPrint dibuja líneas grises con box-shadow: nunca usar sombras en los PDF */
+*{box-shadow:none !important}
