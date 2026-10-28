@@ -253,6 +253,11 @@ body.dark-mode .btn-ok.danger,body.dark-mode .sb-badge{background:#B83232}
 .dep-avatar-fallback{font-size:22px;font-weight:700;color:var(--gold-dk)}
 .plan-chk{display:flex;gap:8px;align-items:flex-start;font-size:14px;line-height:1.4;cursor:pointer}.plan-chk input{margin-top:3px;width:18px;height:18px;flex:none;accent-color:var(--btn)}
 .est-acc{margin-top:6px}
+.rg-fila{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:.5px solid var(--bd);flex-wrap:wrap}.rg-fila:last-child{border-bottom:0}.rg-fila b{font-size:14px}.rg-sub{font-size:12.5px;color:var(--g400);margin-top:2px;line-height:1.4}
+.rg-acc{display:flex;gap:8px;flex-wrap:wrap}.rg-caja{border-radius:12px;padding:12px 14px;font-size:13.5px;line-height:1.5;margin:12px 0}.rg-caja.warn{background:rgba(184,149,106,.14);border:.5px solid var(--gold)}.rg-caja.info{background:var(--t50);border:.5px solid rgba(29,158,117,.25)}
+.cons-chk-p{display:flex;gap:8px;align-items:flex-start;margin:10px 0 2px;font-size:13px;line-height:1.4}.cons-chk-p input{margin-top:2px}
+.rg-lista{margin:8px 0 0;padding-left:18px;font-size:13px;line-height:1.55;color:var(--g700)}.rg-inp{width:100%;margin-top:6px}.rg-ta{width:100%;min-height:190px;resize:vertical;font-size:13px;line-height:1.5}
+.pill-baja{display:inline-block;margin-top:6px;padding:2px 10px;border-radius:20px;font-size:11.5px;font-weight:600;background:var(--g100);color:var(--g700)}
 .foto-pick{display:flex;align-items:center;gap:14px;margin-bottom:6px}.foto-pick .dep-avatar{margin:0;flex:none}.foto-pick-b{min-width:0}.foto-pick-r{display:flex;gap:8px;flex-wrap:wrap}.foto-pick-n{font-size:12px;color:var(--g400);margin:6px 0 0;line-height:1.4}
 .dep-name{font-size:13px;font-weight:600;color:var(--g900);margin-bottom:2px}
 .dep-sport{font-size:11px;color:var(--g400)}
@@ -497,10 +502,10 @@ body.dark-mode .btn-soft{color:var(--t100);border-color:rgba(159,225,203,.22)}
 .pay-toggle.upcoming{background:var(--g100);color:var(--g500)}
 /* En la agenda el botón de pago y los iconos comparten forma: cuadrado con esquinas redondeadas (igual que en móvil) */
 .agenda-actions .pay-toggle{border-radius:8px;min-height:28px;justify-content:center}
-.agenda-actions .agenda-cal,.agenda-actions .agenda-del,.agenda-actions .agenda-hecha{border-radius:8px}
+.agenda-actions .agenda-edit,.agenda-actions .agenda-del,.agenda-actions .agenda-hecha{border-radius:8px}
 .agenda-del{background:var(--g100);border:none;border-radius:6px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--g500)}
-.agenda-cal{background:var(--t50);border:none;border-radius:6px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--t600);text-decoration:none}
-.agenda-cal:hover{background:var(--t100)}
+.agenda-edit{background:var(--t50);border:none;border-radius:6px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--t600);text-decoration:none}
+.agenda-edit:hover{background:var(--t100)}
 .agenda-hecha{background:var(--t50);border:none;border-radius:8px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--t600);flex-shrink:0}
 .agenda-hecha:hover{background:var(--t100)}
 .agenda-empty-group{font-size:11px;font-weight:500;color:var(--g400);text-transform:uppercase;letter-spacing:.06em;margin:1.25rem 0 8px;padding-bottom:6px;border-bottom:.5px solid var(--bd)}
@@ -873,7 +878,7 @@ body.dark-mode .cmp-cell.b .cmp-track i{background:var(--t400)}
   .agenda-info{grid-column:2}
   .agenda-actions{grid-column:2;flex-wrap:nowrap;justify-content:flex-start}
   .agenda-actions .pay-toggle{flex:1 1 auto;justify-content:center;min-height:40px;border-radius:10px;font-size:12px;padding:0 12px}
-  .agenda-actions .agenda-cal,.agenda-actions .agenda-del,.agenda-actions .agenda-hecha{width:40px;height:40px;border-radius:10px;flex-shrink:0}
+  .agenda-actions .agenda-edit,.agenda-actions .agenda-del,.agenda-actions .agenda-hecha{width:40px;height:40px;border-radius:10px;flex-shrink:0}
   body.has-sidebar{padding-left:0;padding-top:calc(56px + env(safe-area-inset-top,0px));padding-bottom:env(safe-area-inset-bottom,0px)}
   body.has-sidebar .mobile-topbar{display:flex}
   .sidebar{width:270px;padding-top:calc(1.5rem + env(safe-area-inset-top,0px));transform:translateX(-100%);transition:transform .25s ease,box-shadow .25s ease;box-shadow:none}
@@ -1322,7 +1327,7 @@ body.dark-mode :focus-visible{outline-color:#5CC8A6}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
 .skip-link{position:fixed;left:12px;top:-60px;z-index:20000;background:#fff;color:#04342C;font:600 14px var(--f,system-ui);padding:10px 16px;border-radius:10px;box-shadow:0 4px 16px rgba(0,0,0,.25);text-decoration:none;transition:top .15s}
 .skip-link:focus{top:12px}
-@media(pointer:coarse){.btn-primary,.btn-add,.btn-action,.btn-unlock,.btn-save,.btn-ok,.btn-cancel,.btn-soft,.btn-plan,.btn-del{min-height:44px}.inp,select.inp{min-height:44px}.file-btn,.hist-del,.agenda-del,.agenda-cal,.tl-del,.btn-hist-add,.btn-rem-add{min-width:40px;min-height:40px}.tl-chip{min-height:38px}}
+@media(pointer:coarse){.btn-primary,.btn-add,.btn-action,.btn-unlock,.btn-save,.btn-ok,.btn-cancel,.btn-soft,.btn-plan,.btn-del{min-height:44px}.inp,select.inp{min-height:44px}.file-btn,.hist-del,.agenda-del,.agenda-edit,.tl-del,.btn-hist-add,.btn-rem-add{min-width:40px;min-height:40px}.tl-chip{min-height:38px}}
 .btn-primary,.btn-add,.btn-action,.btn-unlock,.btn-save,.btn-ok,.btn-cancel{min-height:var(--h-btn)}
 .inp{min-height:var(--h-field)}
 /* iPhone/iPad: los campos de fecha y hora ignoran el ancho y se salen de la ventana si no se les fuerza */
@@ -1926,6 +1931,7 @@ body.dark-mode .ref-src,body.dark-mode .sup-badge,body.dark-mode .depd-avatar-fa
         <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         <input type="text" id="depSearchInp" placeholder="Buscar por nombre…" oninput="filterDeportistas()">
       </div>
+      <button type="button" class="btn-soft" id="depBajasBtn" style="display:none" onclick="toggleBajas()"></button>
     </div>
     <div class="dep-grid" id="depgrid"></div>
   </div>
@@ -2023,15 +2029,8 @@ body.dark-mode .ref-src,body.dark-mode .sup-badge,body.dark-mode .depd-avatar-fa
     </div>
   </div>
 </div>
-<div class="mbg" id="mDelDep" style="display:none">
-  <div class="mc">
-    <p class="mt">Eliminar deportista</p>
-    <p class="ms" id="mDelDepSub"></p>
-    <div class="mact">
-      <button class="btn-cancel" onclick="closeDelDep()">Cancelar</button>
-      <button class="btn-ok danger" onclick="confirmDeleteDep()">Eliminar</button>
-    </div>
-  </div>
+<div class="mbg" id="mRgpd" style="display:none" role="dialog" aria-modal="true" aria-labelledby="rgTit" onclick="if(event.target===this)rgCerrar()">
+  <div class="mc" style="max-width:560px" id="rgCuerpo"></div>
 </div>
 
 <!-- DASHBOARD -->
@@ -2259,27 +2258,31 @@ body.dark-mode .ref-src,body.dark-mode .sup-badge,body.dark-mode .depd-avatar-fa
 <!-- MODAL: NUEVA CITA -->
 <div class="mbg" id="mAddCita" style="display:none">
   <div class="mc">
-    <p class="mt">Nueva cita</p>
-    <p class="ms">Añade una revisión o consulta a la agenda.</p>
+    <p class="mt" id="citaTitulo">Nueva cita</p>
+    <p class="ms" id="citaSub">Añade una revisión o consulta a la agenda.</p>
     <label class="mfl">Cliente *</label>
     <input type="text" class="inp" id="citaCliente" placeholder="Ej. Ana García">
-    <label class="mfl" style="margin-top:10px">Servicio</label>
-    <input type="text" class="inp" id="citaServicio" placeholder="Ej. Método 3M — Sesión 11">
+    <label class="mfl" style="margin-top:10px" for="citaServicio">Servicio *</label>
+    <select class="inp" id="citaServicio" onchange="citaServicioCambio()">
+      <option value="">Elige un servicio</option>
+      <option value="Método 3M">Método 3M</option>
+      <option value="Nutrición Deportiva">Nutrición Deportiva</option>
+    </select>
     <label class="mfl-check">
       <input type="checkbox" id="citaRequierePago" checked>
       <span>Esta cita requiere seguimiento de pago individual</span>
     </label>
     <p class="mfl-hint">Desactívalo para sesiones de Método 3M — ese pago ya se gestiona una vez al inicio del programa, no por sesión.</p>
-    <label class="mfl" style="margin-top:10px">Fecha *</label>
+    <label class="mfl" for="citaFecha" style="margin-top:10px">Fecha *</label>
     <input type="date" class="inp" id="citaFecha">
-    <label class="mfl" style="margin-top:10px">Hora</label>
+    <label class="mfl" for="citaHora" style="margin-top:10px">Hora</label>
     <input type="time" class="inp" id="citaHora">
     <label class="mfl" style="margin-top:10px">Nota (opcional)</label>
     <input type="text" class="inp" id="citaNota" placeholder="Cualquier detalle a recordar">
     <p class="merr" id="mAddCitaErr"></p>
     <div class="mact">
       <button class="btn-cancel" onclick="closeAddCita()">Cancelar</button>
-      <button class="btn-ok" onclick="createCita()">Añadir a la agenda</button>
+      <button class="btn-ok" id="citaGuardar" onclick="createCita()">Añadir a la agenda</button>
     </div>
   </div>
 </div>
@@ -3070,7 +3073,7 @@ function toast(msg,o={}){
   box.appendChild(el);
   while(box.children.length>3) box.firstChild.remove();
   tm=setTimeout(cerrar,o.ms||(o.tipo==='error'?5500:3500));
-  return {cerrar};
+  return {cerrar, texto:x=>{ t.textContent=x; }};
 }
 // ¿La respuesta de sb() es un error de PostgREST? (sb() no lanza con los errores HTTP, devuelve el JSON del error)
 function esErrorSb(r){ return !!(r&&typeof r==='object'&&!Array.isArray(r)&&(r.code||r.message||r.hint||r.details)); }
@@ -3258,7 +3261,7 @@ function accHtml(q, deps){
   const nq = _nrm(q), palabras = nq.split(/\s+/).filter(Boolean);
   const todas = ACC_BASE.slice();
   (deps||[]).forEach(d=>{
-    todas.push({t:'Nueva cita con '+d.nombre, k:'', f:()=>{ navTo('agenda'); openAddCita(); document.getElementById('citaCliente').value = d.nombre; }});
+    todas.push({t:'Nueva cita con '+d.nombre, k:'', f:()=>{ navTo('agenda'); openAddCita(); document.getElementById('citaCliente').value = d.nombre; citaServicioPon('Nutrición Deportiva'); }});
     todas.push({t:'Antropometría de '+d.nombre, k:'medidas valoracion', f:()=>abrirAntropometria(d.id)});
     todas.push({t:'Plan nutricional de '+d.nombre, k:'menu semanal dieta plan comidas compra planificacion', f:()=>abrirMenuSemanal(d.id)});
   });
@@ -4060,7 +4063,7 @@ async function loadDashboard(){
   renderFactOfDay();
   loadRecordatorios();
   let [dashClients,dashCitas,dashDeps]=await Promise.all([getAll(),getCitas(),getDeportistas()]);
-  dashClients=dashClients||[];dashCitas=dashCitas||[];dashDeps=dashDeps||[];
+  dashClients=dashClients||[];dashCitas=dashCitas||[];dashDeps=(dashDeps||[]).filter(d=>!d.fecha_baja);
 
   const today=new Date();today.setHours(0,0,0,0);
   const tomorrow=new Date(today);tomorrow.setDate(tomorrow.getDate()+1);
@@ -4752,9 +4755,14 @@ function filterDeportistas() {
   renderDeportistas();
 }
 
+let _verBajas = false;
+function toggleBajas() { _verBajas = !_verBajas; renderDeportistas(); }
 function renderDeportistas() {
+  // Los deportistas dados de baja se guardan (plazo legal de conservación) pero no estorban: se ven con «Ver bajas»
+  const nBajas = deportistas.filter(d => d.fecha_baja).length, bb = document.getElementById('depBajasBtn');
+  if (bb) { bb.style.display = nBajas ? '' : 'none'; bb.textContent = _verBajas ? 'Ocultar bajas' : `Ver bajas (${nBajas})`; }
   // Apply search filter
-  let filtered = deportistas;
+  let filtered = _verBajas ? deportistas : deportistas.filter(d => !d.fecha_baja);
   if (depSearchTerm) filtered = filtered.filter(d => d.nombre.toLowerCase().includes(depSearchTerm));
 
   // Sort by revision urgency: overdue/soonest first, then no-date, then furthest
@@ -4785,7 +4793,7 @@ function renderDeportistas() {
       <div class="dep-avatar">${avatarContent}</div>
       <div class="dep-name">${d.nombre}</div>
       <div class="dep-sport">${d.deporte || '—'}</div>
-      ${d.objetivo ? `<div class="dep-obj-badge">${d.objetivo}</div>` : ''}
+      ${d.objetivo ? `<div class="dep-obj-badge">${d.objetivo}</div>` : ''}${d.fecha_baja ? '<div class="pill-baja">De baja</div>' : ''}
       ${revisionBadge(d.proxima_revision)}
       <div class="accion-badge subtle${d.proxima_accion?'':' empty'}" onclick="event.stopPropagation();openAccion('deportista',${d.id},'${(d.proxima_accion||'').replace(/'/g,"\\'")}')">${d.proxima_accion || '+ próxima acción'}</div>
     </div>`;
@@ -4905,19 +4913,21 @@ async function syncDepCita(nombre, fecha, hora) {
   const servicioTag = 'Revisión · Nutrición Deportiva';
   const todayISO = localISO(new Date());
   try {
-    const existing = await sb(`citas?select=id,fecha&cliente=eq.${encodeURIComponent(nombre)}&servicio=eq.${encodeURIComponent(servicioTag)}`) || [];
+    const existing = await sb(`citas?select=*&cliente=eq.${encodeURIComponent(nombre)}&servicio=eq.${encodeURIComponent(servicioTag)}`) || [];
     const futuras = existing.filter(e => e.fecha >= todayISO).sort((a,b)=>a.fecha.localeCompare(b.fecha));
     if (!fecha) {
       // Solo borramos revisiones futuras aún no ocurridas; el histórico pasado se conserva
-      for (const e of futuras) await deleteCita(e.id);
+      for (const e of futuras) { await deleteCita(e.id); gcalBorrar(e.google_event_id); }
       return;
     }
     if (futuras.length) {
       // Reprogramar la próxima revisión pendiente en vez de crear otra
       await patchCita(futuras[0].id, { fecha, hora: hora || null });
+      gcalSubir(futuras[0].id);
     } else {
       // No hay ninguna futura (o la anterior ya pasó y quedó como histórico) → crear una nueva
-      await insertCita({ cliente: nombre, servicio: servicioTag, fecha, hora: hora || null, nota: null, pagado: false, requiere_pago: true, monto: 40 });
+      const ins = await insertCita({ cliente: nombre, servicio: servicioTag, fecha, hora: hora || null, nota: null, pagado: false, requiere_pago: true, monto: 40 });
+      gcalSubir(Array.isArray(ins) && ins[0] && ins[0].id);
     }
   } catch(e) { /* silencioso: no bloquear el guardado del deportista si falla la sync */ }
 }
@@ -4929,6 +4939,70 @@ const getCitas = () => sb('citas?select=*&order=fecha.asc,hora.asc');
 const insertCita = (d) => sb('citas', {method:'POST', body: JSON.stringify(d)});
 const patchCita = (id, d) => sb(`citas?id=eq.${id}`, {method:'PATCH', headers:{'Prefer':'return=minimal'}, body: JSON.stringify(d)});
 const deleteCita = (id) => sb(`citas?id=eq.${id}`, {method:'DELETE', headers:{'Prefer':'return=minimal'}});
+
+// ═══════════════ CALENDARIO DE GOOGLE (Edge Function «calendario-google» + sql/supabase_calendario_google.sql) ═══════════════
+// Panel → Google, en un solo sentido: al crear, mover o borrar una cita (o revisión) se crea, mueve o borra su evento
+// («REVISIÓN - ANA», color Tomate, 60 min; sin notas ni importes). Si la función no está instalada o configurada, no se hace nada.
+const GCAL = { estado: null };   // null = sin consultar · { configurado, motivo }
+const GCAL_MSG = {
+  no_instalada: 'La función «calendario-google» no está instalada en Supabase (pasos en sql/LEEME.md).',
+  no_configurado: 'Faltan los secretos GOOGLE_SA_JSON y GOOGLE_CALENDAR_ID en Supabase.',
+  credenciales: 'Google no acepta la clave: revisa el secreto GOOGLE_SA_JSON.',
+  calendario_no_compartido: 'No encuentro ese calendario: compártelo con el correo de la cuenta de servicio (permiso «Hacer cambios en eventos») y revisa GOOGLE_CALENDAR_ID.',
+  sin_permiso: 'Google rechaza el acceso: ¿está activada la Google Calendar API y el permiso es «Hacer cambios en eventos»?',
+  no_autorizado: 'Tu cuenta no está autorizada como profesional.',
+  red: 'Sin conexión con Supabase.'
+};
+const gcalMotivo = r => (GCAL_MSG[r && r.motivo] || 'Google devolvió un error.') + (r && r.detalle ? ' (' + r.detalle + ')' : '');
+async function gcalLlamar(cuerpo) {
+  let r; try { r = await authFetch(SURL + '/functions/v1/calendario-google', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(cuerpo) }); } catch (e) { return { ok: false, motivo: 'red' }; }
+  if (r.status === 404) return { ok: false, motivo: 'no_instalada' };
+  try { return await r.json(); } catch (e) { return { ok: false, motivo: 'error' }; }
+}
+async function gcalActivo(forzar) {
+  if (GCAL.estado === null || forzar) { const r = await gcalLlamar({ accion: 'estado' }); GCAL.estado = { configurado: !!(r && r.ok && r.configurado), motivo: r && r.ok ? 'no_configurado' : (r && r.motivo) }; }
+  return GCAL.estado.configurado;
+}
+let _gcalAvisoT = 0;
+function gcalAviso(r) { if (Date.now() - _gcalAvisoT < 60000) return; _gcalAvisoT = Date.now(); toast('No se pudo enviar la cita a Google Calendar. Revisa Ajustes → Calendario de Google.', { tipo: 'aviso', ms: 6000 }); }
+async function gcalSubir(citaId) {
+  try {
+    if (!citaId || !(await gcalActivo())) return null;
+    const r = await gcalLlamar({ accion: 'sync', cita_id: citaId });
+    if (r && r.ok) {
+      const c = citas.find(x => x.id == citaId); if (c && r.event_id) c.google_event_id = r.event_id;
+      if (r.aviso === 'sin_columna') toast('Falta ejecutar supabase_calendario_google.sql: sin él, al mover la cita se duplicaría en Google.', { tipo: 'aviso', ms: 8000 });
+      return r;
+    }
+    gcalAviso(r);
+  } catch (e) { /* nunca debe romper el guardado de la cita */ }
+  return null;
+}
+async function gcalBorrar(eventId) {
+  try { if (!eventId || !(await gcalActivo())) return; const r = await gcalLlamar({ accion: 'borrar', event_id: eventId }); if (!r || !r.ok) gcalAviso(r); } catch (e) {}
+}
+async function gcalPintarEstado() {
+  const el = document.getElementById('ajGcalEst'); if (!el) return;
+  await gcalActivo(true); const e = GCAL.estado;
+  el.textContent = e.configurado ? 'Conectado' : (e.motivo === 'no_instalada' ? 'No instalado' : 'Falta configurar');
+  el.title = e.configurado ? '' : gcalMotivo({ motivo: e.motivo });
+}
+async function gcalProbar() {
+  const b = document.getElementById('ajGcalProbar'); if (b) b.disabled = true;
+  const r = await gcalLlamar({ accion: 'probar' }); if (b) b.disabled = false;
+  if (r && r.ok) toast('Conectado con el calendario «' + r.calendario + '»' + (r.zona ? ' (' + r.zona + ')' : '') + '.'); else toast(gcalMotivo(r), { tipo: 'error', ms: 9000 });
+  gcalPintarEstado();
+}
+async function gcalEnviarProximas() {
+  const b = document.getElementById('ajGcalEnviar'); if (b) b.disabled = true;
+  const r = await gcalLlamar({ accion: 'sync_proximas' }); if (b) b.disabled = false;
+  if (r && r.ok) {
+    toast(r.enviadas + (r.enviadas === 1 ? ' cita enviada' : ' citas enviadas') + ' a Google Calendar' + (r.fallidas ? ' · ' + r.fallidas + ' con error' : '') + '.', { tipo: r.fallidas ? 'aviso' : undefined, ms: 6000 });
+    if (r.aviso === 'sin_columna') toast('Falta ejecutar supabase_calendario_google.sql.', { tipo: 'aviso', ms: 8000 });
+    try { await loadCitas(); } catch (e) {}
+  } else toast(gcalMotivo(r), { tipo: 'error', ms: 9000 });
+}
+
 
 async function loadCitas() {
   citas = await getCitas() || [];
@@ -5867,28 +5941,6 @@ function calcAll(){
   `;
 }
 
-function googleCalLink(c){
-  const pad = n => String(n).padStart(2,'0');
-  const [y,m,d] = c.fecha.split('-');
-  let datesParam, extra='';
-  if(c.hora){
-    const [hh,mm] = c.hora.split(':');
-    const start = `${y}${m}${d}T${pad(hh)}${pad(mm)}00`;
-    const endDate = new Date(`${c.fecha}T${c.hora}`);
-    endDate.setMinutes(endDate.getMinutes()+45);
-    const end = `${endDate.getFullYear()}${pad(endDate.getMonth()+1)}${pad(endDate.getDate())}T${pad(endDate.getHours())}${pad(endDate.getMinutes())}00`;
-    datesParam = `${start}/${end}`;
-    extra = '&ctz=Europe%2FMadrid';
-  } else {
-    const nd = new Date(c.fecha+'T00:00:00'); nd.setDate(nd.getDate()+1);
-    const endStr = `${nd.getFullYear()}${pad(nd.getMonth()+1)}${pad(nd.getDate())}`;
-    datesParam = `${y}${m}${d}/${endStr}`;
-  }
-  const text = encodeURIComponent(`${c.cliente} — ${c.servicio||'Revisión'}`.toUpperCase());
-  const details = encodeURIComponent(c.nota||'');
-  return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${text}&dates=${datesParam}&details=${details}${extra}`;
-}
-
 const citaPorId = id => citas.find(x => x.id == id);
 // Deportista de una cita (por nombre; el mismo vínculo que usa la revisión). `null` si es de otro servicio.
 const citaDepId = c => { const d = deportistas.find(x => x.nombre === c.cliente); return d ? d.id : 'null'; };
@@ -5914,9 +5966,9 @@ function renderCitaItem(c, isPast) {
     </div>
     <div class="agenda-actions">
       ${hechaBtn}${payHtml}
-      <a class="agenda-cal" href="${googleCalLink(c)}" target="_blank" title="Añadir a Google Calendar">
-        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="12" y1="14" x2="12" y2="18"/><line x1="10" y1="16" x2="14" y2="16"/></svg>
-      </a>
+      <button class="agenda-edit" onclick="openEditCita(${c.id})" aria-label="Editar la cita de ${sudEsc(c.cliente)}" title="Editar fecha, hora o datos">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>
+      </button>
       <button class="agenda-del" onclick="removeCita(${c.id})" aria-label="Eliminar la cita de ${sudEsc(c.cliente)}" title="Eliminar">
         <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>
       </button>
@@ -5939,17 +5991,53 @@ function removeCita(id) {
     texto: 'Cita de ' + c.cliente + ' eliminada',
     ocultar: () => { citas = citas.filter(x => x.id != id); renderCitas(); },
     restaurar: () => { citas = antes.filter(x => x.id == id || citas.some(y => y.id == x.id)); renderCitas(); },
-    ejecutar: () => deleteCita(id)
+    ejecutar: async () => { const r = await deleteCita(id); gcalBorrar(c.google_event_id); return r; }
   });
 }
 
+let citaEditId = null;
+// Método 3M se paga una vez al inicio del programa (sin seguimiento por sesión); Nutrición Deportiva sí.
+function citaServicioCambio() {
+  const v = document.getElementById('citaServicio').value;
+  if (citaEditId == null && v) document.getElementById('citaRequierePago').checked = (v !== 'Método 3M');
+}
+function citaServicioPon(v) {
+  const sel = document.getElementById('citaServicio');
+  sel.querySelectorAll('option[data-extra]').forEach(o => o.remove());
+  if (v && ![...sel.options].some(o => o.value === v)) {
+    const o = document.createElement('option'); o.value = v; o.textContent = v; o.dataset.extra = '1'; sel.appendChild(o);
+  }
+  sel.value = v || '';
+}
 function openAddCita() {
+  citaEditId = null;
+  document.getElementById('citaTitulo').textContent = 'Nueva cita';
+  document.getElementById('citaSub').textContent = 'Añade una revisión o consulta a la agenda.';
+  document.getElementById('citaGuardar').textContent = 'Añadir a la agenda';
   document.getElementById('mAddCita').style.display = 'flex';
   setTimeout(() => enfocar('citaCliente'), 100);
 }
+function openEditCita(id) {
+  const c = citaPorId(id); if (!c) return;
+  citaEditId = c.id;
+  document.getElementById('citaTitulo').textContent = 'Editar cita';
+  document.getElementById('citaSub').textContent = 'Cambia la fecha, la hora o los datos. Si está en Google Calendar, se mueve sola.';
+  document.getElementById('citaGuardar').textContent = 'Guardar cambios';
+  document.getElementById('citaCliente').value = c.cliente || '';
+  citaServicioPon(c.servicio || '');
+  document.getElementById('citaFecha').value = c.fecha || '';
+  document.getElementById('citaHora').value = c.hora ? String(c.hora).slice(0, 5) : '';
+  document.getElementById('citaNota').value = c.nota || '';
+  document.getElementById('citaRequierePago').checked = c.requiere_pago !== false;
+  document.getElementById('mAddCitaErr').textContent = '';
+  document.getElementById('mAddCita').style.display = 'flex';
+  setTimeout(() => enfocar('citaFecha'), 100);
+}
 function closeAddCita() {
   document.getElementById('mAddCita').style.display = 'none';
-  ['citaCliente','citaServicio','citaFecha','citaHora','citaNota'].forEach(id => document.getElementById(id).value = '');
+  citaEditId = null;
+  ['citaCliente','citaFecha','citaHora','citaNota'].forEach(id => document.getElementById(id).value = '');
+  citaServicioPon('');
   document.getElementById('citaRequierePago').checked = true;
   document.getElementById('mAddCitaErr').textContent = '';
 }
@@ -5970,20 +6058,41 @@ async function syncCitaRevisionADep(cliente, servicio, fecha, hora) {
 async function createCita() {
   const cliente = document.getElementById('citaCliente').value.trim();
   const fecha = document.getElementById('citaFecha').value;
-  if (!cliente || !fecha) { document.getElementById('mAddCitaErr').textContent = 'Cliente y fecha son obligatorios'; return; }
+  const servicioSel = document.getElementById('citaServicio').value;
+  if (!cliente || !fecha || !servicioSel) { document.getElementById('mAddCitaErr').textContent = 'Cliente, servicio y fecha son obligatorios'; return; }
+  if (citaEditId != null) {
+    const id = citaEditId, hora = document.getElementById('citaHora').value || null;
+    try {
+      const r = await patchCita(id, {
+        cliente, servicio: servicioSel, fecha, hora,
+        nota: document.getElementById('citaNota').value.trim() || null,
+        requiere_pago: document.getElementById('citaRequierePago').checked
+      });
+      if (esErrorSb(r)) throw new Error('patch');
+      await syncCitaRevisionADep(cliente, servicioSel, fecha, hora);
+      closeAddCita();
+      await loadCitas();
+      gcalSubir(id);
+      toast('Cita actualizada');
+    } catch(e) {
+      document.getElementById('mAddCitaErr').textContent = 'No se pudo guardar. Inténtalo de nuevo.';
+    }
+    return;
+  }
   try {
-    await insertCita({
+    const ins = await insertCita({
       cliente,
-      servicio: document.getElementById('citaServicio').value.trim() || null,
+      servicio: servicioSel,
       fecha,
       hora: document.getElementById('citaHora').value || null,
       nota: document.getElementById('citaNota').value.trim() || null,
       pagado: false,
       requiere_pago: document.getElementById('citaRequierePago').checked
     });
-    await syncCitaRevisionADep(cliente, document.getElementById('citaServicio').value, fecha, document.getElementById('citaHora').value || null);
+    await syncCitaRevisionADep(cliente, servicioSel, fecha, document.getElementById('citaHora').value || null);
     closeAddCita();
     await loadCitas();
+    gcalSubir(Array.isArray(ins) && ins[0] && ins[0].id);
   } catch(e) {
     document.getElementById('mAddCitaErr').textContent = 'Error al crear la cita. Inténtalo de nuevo.';
   }
@@ -6110,7 +6219,7 @@ function openDepDet(id) {
       <div class="depd-avatar">${avatarContent}</div>
       <div class="depd-info">
         <div class="depd-name" role="heading" aria-level="1">${d.nombre}</div>
-        <div class="depd-sport">${d.deporte || 'Modalidad sin especificar'}</div>
+        <div class="depd-sport">${d.deporte || 'Modalidad sin especificar'}</div>${d.fecha_baja ? `<span class="pill-baja">De baja desde ${fechaCorta(d.fecha_baja)}</span>` : ''}
         ${d.objetivo ? `<div class="dep-obj-badge" style="margin-top:6px">${d.objetivo}</div>` : ''}
       </div>
       <div class="depd-actions">
@@ -6272,6 +6381,10 @@ function openDepDet(id) {
       <p class="upload-progress" id="uploadProgress"></p>
       <div id="filesList">${renderFilesList(d.archivos || [], d.id)}</div>
     </div>
+    <div class="depd-section">
+      <p class="sec-title">Datos y privacidad</p>
+      <div class="med-box" id="privBox">${skel(2)}</div>
+    </div>
     </div>
     <div class="depd-panel${_depTab==='actividad' ? ' on' : ''}" role="tabpanel" id="depPanel-actividad" aria-labelledby="depTab-actividad" data-k="actividad" tabindex="0">
     <div class="depd-section">
@@ -6300,6 +6413,7 @@ function openDepDet(id) {
   loadPlanes(d.id);
   loadMenuBox(d.id);
   loadSuplementacion(d.id);
+  loadPrivacidad(d.id);
 }
 
 
@@ -6698,14 +6812,15 @@ async function revGuardar(depId, quitar){
 // ── Estado del cliente: resumen calculado con lo que ya hay (mediciones, seguimiento, peso, consultas, revisión y formularios) ──
 async function loadEstado(depId){
   const seguro = p => Promise.resolve(p).then(v => Array.isArray(v) ? v : []).catch(() => []);
-  const [meds, bios, segs, pesos, hist, comidas, objA, pubEst] = await Promise.all([
+  const [meds, bios, segs, pesos, hist, comidas, objA, pubEst, , , consEst] = await Promise.all([
     seguro(getMediciones(depId)), seguro(getBio(depId)),
     seguro(sb(`seguimientos?deportista_id=eq.${depId}&order=semana.desc&limit=6&select=semana,respuestas`)),
     seguro(sb(`pesos_cliente?deportista_id=eq.${depId}&order=fecha.desc&limit=1&select=fecha,peso`)),
     seguro(sb(`historial_deportista?deportista_id=eq.${depId}&order=fecha.desc&limit=1&select=fecha`)),
     seguro(sb(`comidas_cliente?deportista_id=eq.${depId}&fecha=gte.${localISO(new Date(Date.now() - 7*86400000))}&select=id,comentario`)),
     Promise.resolve(sb('rpc/objetivo_progreso', { method:'POST', body:JSON.stringify({ p_dep:depId }) })).then(v => (v && typeof v === 'object' && !esErrorSb(v)) ? v : null).catch(() => null),
-    Promise.resolve(sb(`menus_cliente?deportista_id=eq.${depId}&select=publicado_en`)).then(a => Array.isArray(a) && a[0] ? a[0].publicado_en : null).catch(() => null)
+    Promise.resolve(sb(`menus_cliente?deportista_id=eq.${depId}&select=publicado_en`)).then(a => Array.isArray(a) && a[0] ? a[0].publicado_en : null).catch(() => null),
+    rgCargarAjustes(), rgCargarTextos(), seguro(sb(`consentimientos?deportista_id=eq.${depId}&select=tipo,version,retirado_en`))
   ]);
   const el = document.getElementById('estBox'), d = deportistas.find(x => x.id == depId);
   if(!el || !d || currentDepId != depId) return;
@@ -6779,6 +6894,9 @@ async function loadEstado(depId){
   // Formularios iniciales
   const pend = [['inicial', 'Cuestionario inicial'], ['anamnesis', 'Anamnesis']].filter(([k]) => !(fm[k] && fm[k].hecho)).map(x => x[1]);
   if(pend.length) add('Formularios', 'Pendientes: ' + pend.join(' y ') + '.', true);
+
+  // Protección de datos: solo si el consentimiento está activado y el cliente no está de baja
+  if(rgActivo() && !d.fecha_baja && !rgConsentOk(consEst, 'tratamiento')) add('Consentimiento', 'Falta el consentimiento de tratamiento de datos: lo acepta el cliente al entrar en su área, o regístralo en papel en Archivos → Datos y privacidad.', true);
 
   const avisos = filas.filter(f => f.warn).length;
   el.innerHTML = `<div class="est-head"><span class="est-pill${avisos ? ' warn' : ''}">${avisos ? (avisos === 1 ? '1 cosa que mirar' : avisos + ' cosas que mirar') : 'Todo en orden'}</span></div>
@@ -8478,22 +8596,7 @@ function quitarNotaCliente(id){ const ta = document.getElementById('depNotaCli')
 
 function saveDepNote(id) { _autoDep.cambio(id, document.getElementById('depNotes').value); return _autoDep.ahora(); }
 
-function openDelDep(id) {
-  const d = deportistas.find(x => x.id === id);
-  if (!d) return;
-  document.getElementById('mDelDepSub').textContent = `¿Seguro que quieres eliminar a ${d.nombre}? Esta acción no se puede deshacer.`;
-  document.getElementById('mDelDep').style.display = 'flex';
-}
-function closeDelDep() { document.getElementById('mDelDep').style.display = 'none'; }
-async function confirmDeleteDep() {
-  const id = currentDepId;
-  const r = await deleteDep(id);
-  closeDelDep();
-  show('vdepdash');
-  loadDeportistas();
-  // Con la fila ya borrada, se quitan también sus fotos y archivos (si algo falla, «Limpiar archivos» los encuentra después)
-  if (!esErrorSb(r)) borrarArchivosDeDep(id).then(n => { if (n) toast(`Se han quitado también ${n} archivo${n!==1?'s':''} del deportista.`); }).catch(() => toast('El deportista se eliminó, pero no se pudieron borrar todos sus archivos. Usa «Limpiar archivos» en la barra lateral.', {tipo:'aviso', ms:7000}));
-}
+function openDelDep(id) { rgAbrirEliminar(id); }
 
 // ── Archivos en Storage: listar y borrar por carpeta (una carpeta por deportista: <id>/… en deportistas-docs y fotos-clientes) ──
 const BUCKETS_DEP = ['deportistas-docs', 'fotos-clientes'];
@@ -8528,6 +8631,302 @@ async function borrarArchivosDeDep(id) {
     if (l.length) { await storageBorrar(b, l.map(x => x.ruta)); n += l.length; }
   }
   return n;
+}
+
+// ═══════════════ PROTECCIÓN DE DATOS (sql/supabase_proteccion_datos.sql) ═══════════════
+// Consentimientos con versiones (el cliente acepta en su área; el profesional puede registrarlos en papel), baja del cliente con plazo de
+// conservación (art. 17 de la Ley 41/2002: mínimo 5 años desde el alta), exportación de todos sus datos y eliminación con justificante.
+// El consentimiento no se exige hasta que en Ajustes → Protección de datos se rellenan el responsable y el contacto.
+const RG = { cfg: undefined, textos: undefined };
+const RG_TIPOS = { tratamiento: 'Tratamiento de datos', fotos: 'Permiso de fotos' };
+const fechaCorta = f => new Date(String(f).slice(0, 10) + 'T00:00:00').toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' });
+async function rgCargarAjustes(forzar) {
+  if (RG.cfg !== undefined && !forzar) return RG.cfg;
+  const r = await Promise.resolve(sb('ajustes_app?select=clave,valor')).catch(() => null);
+  if (!Array.isArray(r)) { RG.cfg = null; return null; }   // sin el SQL: la función no existe
+  const o = {}; r.forEach(x => { o[x.clave] = x.valor || {}; }); RG.cfg = o; return o;
+}
+async function rgCargarTextos(forzar) {
+  if (RG.textos !== undefined && !forzar) return RG.textos;
+  const r = await Promise.resolve(sb('consentimiento_textos?select=tipo,version,titulo,texto,cambio_sustancial&order=version.desc')).catch(() => null);
+  RG.textos = Array.isArray(r) ? r : null; return RG.textos;
+}
+const rgResp = () => (RG.cfg && RG.cfg.responsable) || {};
+const rgAnios = () => Math.max(5, Math.round(+((RG.cfg && RG.cfg.retencion && RG.cfg.retencion.anios) || 5)) || 5);
+const rgActivo = () => !!(rgResp().nombre && rgResp().contacto);
+const rgUltimo = t => (RG.textos || []).filter(x => x.tipo === t).sort((a, b) => b.version - a.version)[0] || null;
+const rgRequerida = t => Math.max(0, ...(RG.textos || []).filter(x => x.tipo === t && x.cambio_sustancial).map(x => x.version));
+const rgConsentOk = (filas, t) => rgRequerida(t) === 0 || (filas || []).some(c => c.tipo === t && !c.retirado_en && c.version >= rgRequerida(t));
+function rgRender(txt) {
+  const r = rgResp();
+  return String(txt || '').replace(/\{\{responsable\}\}/g, r.nombre || '').replace(/\{\{nif\}\}/g, r.nif || '').replace(/\{\{direccion\}\}/g, r.direccion || '').replace(/\{\{contacto\}\}/g, r.contacto || '').replace(/\{\{anios\}\}/g, String(rgAnios()));
+}
+// Plazo de conservación: desde la baja (alta del proceso asistencial) o, si no hay baja, desde la última actividad
+function rgBase(d) { return d.fecha_baja ? String(d.fecha_baja).slice(0, 10) : (d.ultima_actividad ? String(d.ultima_actividad).slice(0, 10) : localISO(new Date())); }
+function rgConservarHasta(d) { const f = new Date(rgBase(d) + 'T00:00:00'); f.setFullYear(f.getFullYear() + rgAnios()); return localISO(f); }
+const rgEnPlazo = d => localISO(new Date()) < rgConservarHasta(d);
+function rgAbrir(html) { document.getElementById('rgCuerpo').innerHTML = html; document.getElementById('mRgpd').style.display = 'flex'; }
+function rgCerrar() { document.getElementById('mRgpd').style.display = 'none'; }
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { const m = document.getElementById('mRgpd'); if (m && m.style.display === 'flex') rgCerrar(); } });
+
+// ── Tarjeta «Datos y privacidad» de la ficha ──
+async function loadPrivacidad(depId) {
+  const box = document.getElementById('privBox'); if (!box) return;
+  const [cfg, textos, cons] = await Promise.all([rgCargarAjustes(), rgCargarTextos(), Promise.resolve(sb(`consentimientos?deportista_id=eq.${depId}&select=*&order=aceptado_en.desc`)).then(a => Array.isArray(a) ? a : null).catch(() => null)]);
+  const d = deportistas.find(x => x.id == depId); if (!d || currentDepId != depId || !document.getElementById('privBox')) return;
+  let h = '';
+  if (!cfg || cons === null) h += `<div class="rg-caja warn">Falta ejecutar <b>supabase_proteccion_datos.sql</b> en Supabase para llevar los consentimientos.</div>`;
+  else {
+    if (!rgActivo()) h += `<div class="rg-caja info">El consentimiento aún <b>no está activado</b>: rellena tus datos de responsable en Ajustes → Protección de datos. Hasta entonces los clientes no ven nada.</div>`;
+    ['tratamiento', 'fotos'].forEach(t => {
+      const ult = rgUltimo(t), filas = cons.filter(c => c.tipo === t), vig = filas.find(c => !c.retirado_en && c.version >= rgRequerida(t)), ret = filas.find(c => c.retirado_en);
+      let est, warn = false;
+      if (vig) est = `Aceptado el ${fechaCorta(vig.aceptado_en)} · versión ${vig.version}${vig.origen === 'profesional' ? ' · registrado por ti (papel)' : ''}`;
+      else if (ret && !filas.some(c => !c.retirado_en)) est = `Retirado el ${fechaCorta(ret.retirado_en)}`;
+      else { est = t === 'tratamiento' ? 'Pendiente' : 'No dado'; warn = t === 'tratamiento' && rgActivo(); }
+      h += `<div class="rg-fila"><div><b>${RG_TIPOS[t]}</b><div class="rg-sub"${warn ? ' style="color:var(--red)"' : ''}>${sudEsc(est)}</div></div><div class="rg-acc">${
+        !rgActivo() || !ult ? '' : vig ? `<button type="button" class="btn-soft" onclick="rgRetirar(${depId},'${t}',this)">Marcar como retirado</button>` : `<button type="button" class="btn-soft" onclick="rgPapel(${depId},'${t}')">Registrar aceptación en papel</button>`}</div></div>`;
+    });
+  }
+  const hasta = rgConservarHasta(d);
+  h += `<div class="rg-fila"><div><b>Conservación</b><div class="rg-sub">${d.fecha_baja ? `De baja desde ${fechaCorta(d.fecha_baja)}. ` : 'Sin baja. '}Documentación clínica a conservar hasta el <b>${fechaCorta(hasta)}</b> (${rgAnios()} años; art. 17 de la Ley 41/2002).</div></div>
+    <div class="rg-acc">${d.fecha_baja ? `<button type="button" class="btn-soft" onclick="rgReactivar(${depId})">Reactivar</button>` : `<button type="button" class="btn-soft" onclick="rgAbrirBaja(${depId})">Dar de baja</button>`}</div></div>
+    <div class="rg-fila"><div><b>Sus datos</b><div class="rg-sub">Descarga todo lo que hay de este cliente (datos, informes, fotos) en un solo archivo.</div></div><div class="rg-acc"><button type="button" class="btn-soft" id="rgExpBtn" onclick="rgExportar(${depId})">Exportar todos los datos</button></div></div>`;
+  box.innerHTML = h;
+}
+async function rgPapel(depId, tipo) {
+  const t = rgUltimo(tipo); if (!t || !rgActivo()) { toast('Primero activa el consentimiento en Ajustes → Protección de datos.', { tipo: 'aviso' }); return; }
+  const r = await sb('consentimientos', { method: 'POST', headers: { 'Prefer': 'return=minimal' }, body: JSON.stringify({ deportista_id: depId, tipo, version: t.version, texto: rgRender(t.texto), origen: 'profesional' }) });
+  if (esErrorSb(r)) { toast('No se pudo registrar.', { tipo: 'error' }); return; }
+  toast('Aceptación registrada (versión ' + t.version + ').'); loadPrivacidad(depId); loadEstado(depId);
+}
+async function rgRetirar(depId, tipo, btn) {
+  if (btn && btn.textContent === 'Marcar como retirado') { btn.textContent = '¿Seguro? Pulsa otra vez'; setTimeout(() => { if (btn.isConnected && btn.textContent.startsWith('¿Seguro')) btn.textContent = 'Marcar como retirado'; }, 4000); return; }
+  const r = await sb(`consentimientos?deportista_id=eq.${depId}&tipo=eq.${tipo}&retirado_en=is.null`, { method: 'PATCH', headers: { 'Prefer': 'return=minimal' }, body: JSON.stringify({ retirado_en: new Date().toISOString() }) });
+  if (esErrorSb(r)) { toast('No se pudo registrar.', { tipo: 'error' }); return; }
+  toast('Consentimiento marcado como retirado.'); loadPrivacidad(depId); loadEstado(depId);
+}
+
+// ── Baja y reactivación ──
+function rgAbrirBaja(depId) {
+  const d = deportistas.find(x => x.id == depId); if (!d) return;
+  rgAbrir(`<p class="mt" id="rgTit">Dar de baja a ${sudEsc(d.nombre)}</p>
+    <p class="ms">La baja es el <b>alta del proceso asistencial</b>: de esa fecha cuenta el plazo legal de conservación. No se borra nada.</p>
+    <ul class="rg-lista"><li>Se cierra su acceso al área de clientes.</li><li>Se quita su próxima revisión y su seguimiento semanal.</li><li>Deja de salir en el panel y en los avisos (se ve con «Ver bajas»).</li></ul>
+    <label class="mfl" for="rgFechaBaja" style="margin-top:14px">Fecha de la baja</label>
+    <input type="date" class="inp rg-inp" id="rgFechaBaja" value="${localISO(new Date())}" max="${localISO(new Date())}">
+    <p class="med-note" id="rgBajaHasta" style="margin-top:8px"></p>
+    <div class="mact"><button type="button" class="btn-cancel" onclick="rgCerrar()">Cancelar</button><button type="button" class="btn-ok" id="rgBajaBtn" onclick="rgDarDeBaja(${depId})">Dar de baja</button></div>`);
+  const f = document.getElementById('rgFechaBaja'), calc = () => { const h = rgConservarHasta({ fecha_baja: f.value || localISO(new Date()) }); document.getElementById('rgBajaHasta').textContent = 'Se conservará hasta el ' + fechaCorta(h) + '.'; };
+  f.addEventListener('input', calc); calc();
+}
+async function rgDarDeBaja(depId) {
+  const d = deportistas.find(x => x.id == depId); if (!d) return;
+  const fecha = document.getElementById('rgFechaBaja').value || localISO(new Date()), b = document.getElementById('rgBajaBtn'); b.disabled = true;
+  const fm = (d.formularios && typeof d.formularios === 'object') ? d.formularios : {};
+  const upd = { fecha_baja: fecha, proxima_revision: null };
+  if ('proxima_revision_hora' in d) upd.proxima_revision_hora = null;
+  if (fm.seguimiento && fm.seguimiento.activo) upd.formularios = { ...fm, seguimiento: { ...fm.seguimiento, activo: false } };
+  const r = await patchDep(depId, upd);
+  if (esErrorSb(r)) { toast('No se pudo dar de baja. ¿Has ejecutado supabase_proteccion_datos.sql?', { tipo: 'error', ms: 7000 }); b.disabled = false; return; }
+  Object.assign(d, upd);
+  try { await syncDepCita(d.nombre, null, null); } catch (e) {}
+  try { await sb('rpc/desvincular_acceso_cliente', { method: 'POST', body: JSON.stringify({ p_deportista: depId }) }); } catch (e) {}
+  rgCerrar(); toast('Dado de baja. Se conserva hasta el ' + fechaCorta(rgConservarHasta(d)) + '.', { ms: 6000 }); openDepDet(depId);
+}
+async function rgReactivar(depId) {
+  const d = deportistas.find(x => x.id == depId); if (!d) return;
+  const r = await patchDep(depId, { fecha_baja: null });
+  if (esErrorSb(r)) { toast('No se pudo reactivar.', { tipo: 'error' }); return; }
+  d.fecha_baja = null; toast('Reactivado. Si quieres que vuelva a entrar en su área, dale acceso de nuevo en Seguimiento → Acceso del cliente.', { ms: 8000 }); openDepDet(depId);
+}
+
+// ── Exportar todos los datos de un cliente (un .zip sin librerías: datos en JSON + sus archivos) ──
+const RG_TABLAS = [['ficha', 'clientes_deportivos?id=eq.{id}&select=*'], ['antropometria_perfil', 'antropometria_perfil?deportista_id=eq.{id}&select=*'],
+  ['antropometria_valoraciones', 'antropometria_valoraciones?deportista_id=eq.{id}&select=*&order=fecha.asc'], ['bioimpedancias', 'bioimpedancias?deportista_id=eq.{id}&select=*'],
+  ['tests_sudoracion', 'tests_sudoracion?deportista_id=eq.{id}&select=*'], ['planes_competicion', 'planes_competicion?deportista_id=eq.{id}&select=*'],
+  ['historial_deportista', 'historial_deportista?deportista_id=eq.{id}&select=*'], ['progresion_cargas', 'progresion_cargas?deportista_id=eq.{id}&select=*'],
+  ['seguimientos', 'seguimientos?deportista_id=eq.{id}&select=*'], ['pesos_cliente', 'pesos_cliente?deportista_id=eq.{id}&select=*'], ['fotos_cliente', 'fotos_cliente?deportista_id=eq.{id}&select=*'],
+  ['comidas_cliente', 'comidas_cliente?deportista_id=eq.{id}&select=*'], ['suplementos_cliente', 'suplementos_cliente?deportista_id=eq.{id}&select=*'], ['objetivos_cliente', 'objetivos_cliente?deportista_id=eq.{id}&select=*'],
+  ['menus_cliente', 'menus_cliente?deportista_id=eq.{id}&select=*'], ['consentimientos', 'consentimientos?deportista_id=eq.{id}&select=*'], ['acceso_area_clientes', 'clientes_acceso?deportista_id=eq.{id}&select=email,creado']];
+async function rgRecoger(d) {
+  const datos = {}, faltan = [];
+  const rutas = RG_TABLAS.map(([k, r]) => [k, r.replace('{id}', d.id)]).concat([['citas', `citas?cliente=eq.${encodeURIComponent(d.nombre)}&select=*&order=fecha.asc`]]);
+  await Promise.all(rutas.map(async ([k, r]) => { const v = await Promise.resolve(sb(r)).catch(() => null); if (Array.isArray(v)) datos[k] = v; else faltan.push(k); }));
+  return { datos, faltan };
+}
+const ZIP_T = (() => { const t = new Uint32Array(256); for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
+function zipCrc(b) { let c = -1; for (let i = 0; i < b.length; i++) c = ZIP_T[(c ^ b[i]) & 0xFF] ^ (c >>> 8); return (c ^ -1) >>> 0; }
+function zipCrear(archivos) { // [{nombre, datos: Uint8Array}] → Blob .zip (sin comprimir, nombres UTF-8)
+  const enc = new TextEncoder(), partes = [], central = [], f = new Date(); let offset = 0, tam = 0;
+  const hora = ((f.getHours() << 11) | (f.getMinutes() << 5) | (f.getSeconds() >> 1)) & 0xFFFF, dia = (((f.getFullYear() - 1980) << 9) | ((f.getMonth() + 1) << 5) | f.getDate()) & 0xFFFF;
+  archivos.forEach(a => {
+    const nom = enc.encode(a.nombre), crc = zipCrc(a.datos), n = a.datos.length;
+    const h = new DataView(new ArrayBuffer(30)); h.setUint32(0, 0x04034b50, true); h.setUint16(4, 20, true); h.setUint16(6, 0x0800, true); h.setUint16(10, hora, true); h.setUint16(12, dia, true); h.setUint32(14, crc, true); h.setUint32(18, n, true); h.setUint32(22, n, true); h.setUint16(26, nom.length, true);
+    partes.push(h.buffer, nom, a.datos);
+    const c = new DataView(new ArrayBuffer(46)); c.setUint32(0, 0x02014b50, true); c.setUint16(4, 20, true); c.setUint16(6, 20, true); c.setUint16(8, 0x0800, true); c.setUint16(12, hora, true); c.setUint16(14, dia, true); c.setUint32(16, crc, true); c.setUint32(20, n, true); c.setUint32(24, n, true); c.setUint16(28, nom.length, true); c.setUint32(42, offset, true);
+    central.push(c.buffer, nom); offset += 30 + nom.length + n; tam += 46 + nom.length;
+  });
+  const e = new DataView(new ArrayBuffer(22)); e.setUint32(0, 0x06054b50, true); e.setUint16(8, archivos.length, true); e.setUint16(10, archivos.length, true); e.setUint32(12, tam, true); e.setUint32(16, offset, true);
+  return new Blob([...partes, ...central, e.buffer], { type: 'application/zip' });
+}
+const rgSlug = t => String(t || '').normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-zA-Z0-9]+/g, '_').replace(/^_+|_+$/g, '').slice(0, 40) || 'cliente';
+function rgDescargar(blob, nombre) { const u = URL.createObjectURL(blob), a = document.createElement('a'); a.href = u; a.download = nombre; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(u), 10000); }
+async function rgArmarZip(d, progreso) {
+  const { datos, faltan } = await rgRecoger(d), enc = new TextEncoder(), arch = [], hoy = localISO(new Date()), noBajados = [];
+  for (const k of Object.keys(datos)) arch.push({ nombre: k + '.json', datos: enc.encode(JSON.stringify(datos[k], null, 2)) });
+  let n = 0, total = 0; const listas = {};
+  for (const b of BUCKETS_DEP) { try { listas[b] = await storageListar(b, String(d.id)); total += listas[b].length; } catch (e) { noBajados.push(b + ' (no se pudo listar)'); listas[b] = []; } }
+  for (const b of BUCKETS_DEP) for (const f of listas[b]) {
+    if (progreso) progreso(++n, total);
+    try { const r = await authFetch(`${SURL}/storage/v1/object/authenticated/${b}/${_rutaSt(f.ruta)}`); if (!r.ok) throw new Error(r.status); arch.push({ nombre: `archivos/${b}/${f.ruta}`, datos: new Uint8Array(await r.arrayBuffer()) }); }
+    catch (e) { noBajados.push(`${b}/${f.ruta}`); }
+  }
+  const r = rgResp();
+  const leeme = `EXPORTACIÓN DE DATOS DE UN CLIENTE
+Cliente: ${d.nombre}
+Fecha de la exportación: ${hoy}
+Responsable del tratamiento: ${r.nombre || '(sin indicar)'}${r.nif ? ' · ' + r.nif : ''}
+
+Contenido:
+- Un archivo .json por cada tabla (formato estructurado y de uso común, UTF-8): ficha, mediciones, seguimiento, consultas, citas, objetivos, planes, suplementación, consentimientos, etc.
+- La carpeta «archivos» con los documentos, informes y fotos del cliente (copia exacta de lo guardado).
+
+Tablas no disponibles en esta exportación: ${faltan.length ? faltan.join(', ') : 'ninguna'}
+Archivos que no se pudieron descargar: ${noBajados.length ? noBajados.join(', ') : 'ninguno'}
+
+Estos datos son confidenciales (datos de salud). Guárdalos y compártelos solo con el propio cliente o con quien la ley exija.
+`;
+  arch.unshift({ nombre: 'LEEME.txt', datos: enc.encode(leeme) });
+  return { blob: zipCrear(arch), datos, faltan, noBajados, archivos: total };
+}
+async function rgExportar(depId) {
+  const d = deportistas.find(x => x.id == depId); if (!d) return;
+  const b = document.getElementById('rgExpBtn'); if (b) { b.disabled = true; b.textContent = 'Preparando…'; }
+  try {
+    const t = toast('Reuniendo los datos…', { ms: 600000 });
+    const z = await rgArmarZip(d, (i, n) => { try { t.texto && t.texto(`Descargando archivos ${i} de ${n}…`); } catch (e) {} });
+    try { t.cerrar && t.cerrar(); } catch (e) {}
+    rgDescargar(z.blob, `NutriLogos_${rgSlug(d.nombre)}_${localISO(new Date())}.zip`);
+    toast('Exportación lista' + (z.noBajados.length ? ` (${z.noBajados.length} archivo${z.noBajados.length !== 1 ? 's' : ''} no se pudo descargar; consta en LEEME.txt)` : '') + '.', { tipo: z.noBajados.length ? 'aviso' : undefined, ms: 7000 });
+  } catch (e) { toast('No se pudo preparar la exportación. Inténtalo de nuevo.', { tipo: 'error' }); }
+  if (b) { b.disabled = false; b.textContent = 'Exportar todos los datos'; }
+}
+
+// ── Eliminar definitivamente (respeta el plazo de conservación; deja justificante) ──
+function rgAbrirEliminar(depId) {
+  const d = deportistas.find(x => x.id == depId); if (!d) return;
+  const plazo = rgEnPlazo(d), hasta = rgConservarHasta(d);
+  rgAbrir(`<p class="mt" id="rgTit">Eliminar a ${sudEsc(d.nombre)}</p>
+    ${plazo ? `<div class="rg-caja warn"><b>Todavía estás obligado a conservar su documentación.</b> Debe guardarse como mínimo ${rgAnios()} años desde el alta (art. 17 de la Ley 41/2002): hasta el <b>${fechaCorta(hasta)}</b>${d.fecha_baja ? '' : ' (contando desde su última actividad; si no ha terminado, es posterior)'}. Lo recomendable es <b>dar de baja</b> al cliente y eliminarlo cuando llegue esa fecha.</div>` : `<div class="rg-caja info">Ya ha pasado el plazo de conservación (hasta el ${fechaCorta(hasta)}).</div>`}
+    <p class="ms" style="margin-bottom:6px">Se eliminará <b>para siempre</b>: su ficha, mediciones, seguimiento, consultas, citas, planes, fotos y archivos, y su cuenta de acceso al área de clientes. No se puede deshacer.</p>
+    <div class="rg-acc" style="margin:10px 0"><button type="button" class="btn-soft" id="rgExpBtn" onclick="rgExportar(${depId})">Exportar antes todos sus datos</button>${plazo && !d.fecha_baja ? `<button type="button" class="btn-soft" onclick="rgAbrirBaja(${depId})">Dar de baja en su lugar</button>` : ''}</div>
+    ${plazo ? `<label class="mfl" for="rgMotivo" style="margin-top:10px">Motivo (queda en el justificante)</label><input type="text" class="inp rg-inp" id="rgMotivo" maxlength="300" placeholder="Ej. el cliente lo pide y se acepta asumir la obligación de conservación">` : ''}
+    <label class="mfl" for="rgConf" style="margin-top:12px">Escribe <b>ELIMINAR</b> para confirmar</label>
+    <input type="text" class="inp rg-inp" id="rgConf" autocomplete="off" autocapitalize="characters" oninput="document.getElementById('rgDelBtn').disabled=this.value.trim().toUpperCase()!=='ELIMINAR'">
+    <p class="merr" id="rgDelErr" role="alert"></p>
+    <div class="mact"><button type="button" class="btn-cancel" onclick="rgCerrar()">Cancelar</button><button type="button" class="btn-ok danger" id="rgDelBtn" disabled onclick="rgEliminar(${depId})">${plazo ? 'Eliminar de todos modos' : 'Eliminar definitivamente'}</button></div>`);
+}
+async function rgEliminar(depId) {
+  const d = deportistas.find(x => x.id == depId); if (!d) return;
+  const btn = document.getElementById('rgDelBtn'), err = document.getElementById('rgDelErr'); btn.disabled = true; err.textContent = '';
+  const plazo = rgEnPlazo(d), motivo = ((document.getElementById('rgMotivo') || {}).value || '').trim() || null, hasta = rgConservarHasta(d);
+  try {
+    btn.textContent = 'Eliminando…';
+    const { datos } = await rgRecoger(d);
+    const emails = (datos.acceso_area_clientes || []).map(x => x.email).filter(Boolean);
+    // 1) La cuenta de acceso se borra ANTES que la ficha (al borrar la ficha desaparece el vínculo que dice cuál es su cuenta)
+    let cuenta = 'sin cuenta de acceso';
+    if (emails.length) {
+      let r = null; try { r = await authFetch(SURL + '/functions/v1/eliminar-cuenta-cliente', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ deportista: depId }) }); } catch (e) {}
+      let j = null; if (r && r.status !== 404) { try { j = await r.json(); } catch (e) {} }
+      if (j && j.ok) cuenta = 'eliminada';
+      else if (!r || r.status === 404) cuenta = 'pendiente: elimínala a mano en Supabase → Authentication → Users (' + emails.join(', ') + ')';
+      else { err.textContent = 'No se pudo eliminar su cuenta de acceso (' + ((j && j.motivo) || r.status) + '). No se ha borrado nada.'; btn.disabled = false; btn.textContent = 'Eliminar de todos modos'; return; }
+    }
+    // 2) Lo que no cuelga de la ficha por clave: citas (por nombre, solo si no hay otro deportista con el mismo nombre), consultas y cargas
+    let citasN = 0, citasNota = 'sí';
+    if (deportistas.some(x => x.id != depId && String(x.nombre).trim().toLowerCase() === String(d.nombre).trim().toLowerCase())) citasNota = 'no (hay otro deportista con el mismo nombre)';
+    else { const cs = datos.citas || []; citasN = cs.length; if (cs.length) await sb(`citas?cliente=eq.${encodeURIComponent(d.nombre)}`, { method: 'DELETE', headers: { 'Prefer': 'return=minimal' } }); }
+    await sb(`historial_deportista?deportista_id=eq.${depId}`, { method: 'DELETE', headers: { 'Prefer': 'return=minimal' } });
+    await sb(`progresion_cargas?deportista_id=eq.${depId}`, { method: 'DELETE', headers: { 'Prefer': 'return=minimal' } });
+    // 3) La ficha (el resto se borra en cascada)
+    const r = await deleteDep(depId);
+    if (esErrorSb(r)) { err.textContent = 'No se pudo eliminar al deportista. Inténtalo de nuevo.'; btn.disabled = false; btn.textContent = 'Eliminar de todos modos'; return; }
+    // 4) Archivos y fotos
+    let archivos = 0, archivosOk = true; try { archivos = await borrarArchivosDeDep(depId); } catch (e) { archivosOk = false; }
+    // 5) Registro (sin datos de salud) y justificante
+    const resumen = {}; Object.keys(datos).forEach(k => { if (k !== 'ficha' && k !== 'acceso_area_clientes' && datos[k].length) resumen[k] = datos[k].length; });
+    resumen.archivos_y_fotos = archivos; resumen.citas_eliminadas = citasN; resumen.cuenta_de_acceso = cuenta.startsWith('pendiente') ? 'pendiente de eliminar a mano' : cuenta;
+    const ahora = new Date(), ini = String(d.nombre).trim().split(/\s+/).map(x => x[0] || '').join('').toUpperCase().slice(0, 8);
+    const reg = await sb('registro_eliminaciones', { method: 'POST', headers: { 'Prefer': 'return=minimal' }, body: JSON.stringify({ deportista_id: depId, iniciales: ini, fecha_baja: d.fecha_baja || null, ultima_actividad: d.ultima_actividad ? String(d.ultima_actividad).slice(0, 10) : null, conservar_hasta: hasta, antes_de_plazo: plazo, motivo, resumen }) });
+    rgDescargar(new Blob([rgJustificante({ depId, ini, ahora, d, hasta, plazo, motivo, resumen, cuenta, citasNota, archivosOk, regOk: !esErrorSb(reg) })], { type: 'text/html;charset=utf-8' }), `Justificante_eliminacion_${depId}_${localISO(ahora)}.html`);
+    rgCerrar(); deportistas = deportistas.filter(x => x.id != depId); show('vdepdash'); loadDeportistas();
+    toast('Eliminado. Se ha descargado el justificante.' + (cuenta.startsWith('pendiente') ? ' Falta borrar su cuenta a mano en Authentication → Users.' : '') + (archivosOk ? '' : ' Algunos archivos no se pudieron borrar: usa «Limpiar archivos».'), { ms: 9000, tipo: cuenta.startsWith('pendiente') || !archivosOk ? 'aviso' : undefined });
+  } catch (e) { err.textContent = 'Algo ha fallado. Comprueba en la lista si el deportista sigue y vuelve a intentarlo.'; btn.disabled = false; btn.textContent = 'Eliminar de todos modos'; }
+}
+function rgJustificante(o) {
+  const r = rgResp(), E = sudEsc, fila = (k, v) => `<tr><th>${E(k)}</th><td>${E(v)}</td></tr>`;
+  return `<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Justificante de eliminación de datos</title><style>body{font:15px/1.55 system-ui,sans-serif;max-width:720px;margin:40px auto;padding:0 20px;color:#1a1a18}h1{font-size:22px;color:#04342C}table{border-collapse:collapse;width:100%;margin:14px 0}th,td{text-align:left;padding:8px 10px;border-bottom:1px solid #ddd;vertical-align:top;font-size:14px}th{width:38%;color:#555;font-weight:600}.w{background:#faf3e8;border:1px solid #b8956a;padding:10px 14px;border-radius:8px}small{color:#666}</style></head><body>
+<h1>Justificante de eliminación de datos personales</h1>
+<p>Responsable del tratamiento: <b>${E(r.nombre || '(sin indicar)')}</b>${r.nif ? ' · ' + E(r.nif) : ''}</p>
+<table>${fila('Fecha y hora', o.ahora.toLocaleString('es-ES'))}${fila('Cliente', 'Iniciales ' + o.ini + ' · id interno ' + o.depId)}${fila('Baja (alta del proceso asistencial)', o.d.fecha_baja ? fechaCorta(o.d.fecha_baja) : 'sin baja registrada')}${fila('Última actividad', o.d.ultima_actividad ? fechaCorta(o.d.ultima_actividad) : '—')}${fila('Conservación obligatoria hasta', fechaCorta(o.hasta) + ' (' + rgAnios() + ' años, art. 17 de la Ley 41/2002)')}${fila('¿Eliminado antes de ese plazo?', o.plazo ? 'Sí' : 'No')}${o.motivo ? fila('Motivo', o.motivo) : ''}
+${fila('Cuenta de acceso al área de clientes', o.cuenta)}${fila('Citas eliminadas', Object.prototype.hasOwnProperty.call(o.resumen, 'citas_eliminadas') ? o.resumen.citas_eliminadas + ' · ' + o.citasNota : '—')}${fila('Archivos y fotos eliminados', String(o.resumen.archivos_y_fotos) + (o.archivosOk ? '' : ' (algunos no se pudieron borrar: revisar con «Limpiar archivos»)'))}</table>
+<p><b>Registros eliminados por tabla:</b></p><table>${Object.keys(o.resumen).filter(k => !['archivos_y_fotos', 'citas_eliminadas', 'cuenta_de_acceso'].includes(k)).map(k => fila(k.replace(/_/g, ' '), String(o.resumen[k]))).join('') || fila('—', 'sin registros')}</table>
+${o.plazo ? '<p class="w"><b>Atención:</b> la eliminación se hizo antes de que acabara el plazo legal de conservación de la documentación clínica, por decisión del responsable.</p>' : ''}
+<p><small>Este justificante no contiene datos de salud ni el nombre del cliente. Generado por el panel NutriLogos${o.regOk ? ' y anotado en el registro de eliminaciones.' : '. (No se pudo anotar en el registro de eliminaciones.)'}</small></p></body></html>`;
+}
+
+// ── Ajustes → Protección de datos ──
+async function ajRgPintar() {
+  const box = document.getElementById('ajRgBox'); if (!box) return;
+  const cfg = await rgCargarAjustes(true); await rgCargarTextos(true);
+  if (!document.getElementById('ajRgBox')) return;
+  if (!cfg) { box.innerHTML = `<p class="med-note" style="margin:0">Falta ejecutar <b>supabase_proteccion_datos.sql</b> en Supabase.</p>`; return; }
+  const r = rgResp(), I = (id, lbl, v, ph, tipo) => `<label class="mfl" for="${id}" style="margin-top:8px">${lbl}</label><input type="${tipo || 'text'}" class="inp rg-inp" id="${id}" value="${sudEsc(v || '')}" placeholder="${ph || ''}" maxlength="160">`;
+  box.innerHTML = `<div class="aj-row"><b>Estado</b><span class="v">${rgActivo() ? 'Activado' : 'Sin activar'}</span></div>
+    <p class="med-note" style="margin:6px 0 0">Tus clientes verán el consentimiento al entrar en su área cuando rellenes tu nombre y un contacto. <b>Los textos son un borrador:</b> revísalos con un profesional del derecho antes de activar.</p>
+    ${I('ajRgNom', 'Responsable (nombre o razón social)', r.nombre, 'Ej. Guillermo Francés Poquet')}${I('ajRgNif', 'NIF / DNI', r.nif, '')}${I('ajRgDir', 'Dirección', r.direccion, '')}${I('ajRgCon', 'Correo de contacto para ejercer derechos', r.contacto, 'tu@correo.com', 'email')}
+    <label class="mfl" for="ajRgAn" style="margin-top:8px">Años de conservación <span class="hd-opt">(mínimo 5)</span></label><input type="number" class="inp rg-inp" id="ajRgAn" min="5" max="50" value="${rgAnios()}">
+    ${rgActivo() ? '' : '<label class="cons-chk-p"><input type="checkbox" id="ajRgRev"> He revisado los textos legales con quien corresponda.</label>'}
+    <div class="aj-btns" style="margin-top:10px"><button type="button" class="btn-soft" onclick="ajRgGuardar()">${rgActivo() ? 'Guardar' : 'Guardar y activar'}</button><button type="button" class="btn-soft" onclick="rgAbrirTextos()">Ver y editar los textos</button><button type="button" class="btn-soft" onclick="rgAbrirRegistro()">Registro de eliminaciones</button></div>`;
+}
+async function ajRgGuardar() {
+  const v = id => (document.getElementById(id).value || '').trim();
+  const resp = { nombre: v('ajRgNom'), nif: v('ajRgNif'), direccion: v('ajRgDir'), contacto: v('ajRgCon') }, anios = Math.round(+v('ajRgAn'));
+  if (!(anios >= 5 && anios <= 50)) { toast('Los años de conservación deben ser 5 o más.', { tipo: 'error' }); return; }
+  const completo = !!(resp.nombre && resp.contacto), rev = document.getElementById('ajRgRev');
+  if (completo && !rgActivo() && !(rev && rev.checked)) { toast('Para activarlo, marca que has revisado los textos legales.', { tipo: 'aviso', ms: 6000 }); return; }
+  const r = await sb('ajustes_app?on_conflict=clave', { method: 'POST', headers: { 'Prefer': 'resolution=merge-duplicates,return=minimal' }, body: JSON.stringify([{ clave: 'responsable', valor: resp, actualizado: new Date().toISOString() }, { clave: 'retencion', valor: { anios }, actualizado: new Date().toISOString() }]) });
+  if (esErrorSb(r)) { toast('No se pudo guardar.', { tipo: 'error' }); return; }
+  toast(completo ? 'Guardado. El consentimiento está activado.' : 'Guardado. Aún falta el nombre o el contacto para activar el consentimiento.', { ms: 6000 }); ajRgPintar();
+}
+async function rgAbrirTextos(tipo) {
+  await rgCargarTextos(true); tipo = tipo || 'tratamiento'; const t = rgUltimo(tipo);
+  rgAbrir(`<p class="mt" id="rgTit">Textos legales</p>
+    <p class="ms">Cada cambio crea una <b>versión nueva</b>; las anteriores se conservan como prueba de lo que aceptó cada cliente. Marcadores: <code>{{responsable}}</code> <code>{{nif}}</code> <code>{{direccion}}</code> <code>{{contacto}}</code> <code>{{anios}}</code>.</p>
+    <label class="mfl" for="rgTipo">Texto</label><select class="inp rg-inp" id="rgTipo" onchange="rgAbrirTextos(this.value)"><option value="tratamiento"${tipo === 'tratamiento' ? ' selected' : ''}>Tratamiento de datos (obligatorio para usar el área)</option><option value="fotos"${tipo === 'fotos' ? ' selected' : ''}>Permiso de fotos (opcional)</option></select>
+    <p class="med-note" style="margin:8px 0">Versión actual: <b>${t ? t.version : '—'}</b></p>
+    <label class="mfl" for="rgTxTit">Título</label><input type="text" class="inp rg-inp" id="rgTxTit" maxlength="200" value="${sudEsc(t ? t.titulo : '')}">
+    <label class="mfl" for="rgTx" style="margin-top:8px">Texto (los párrafos se separan con una línea en blanco)</label><textarea class="inp rg-ta" id="rgTx">${sudEsc(t ? t.texto : '')}</textarea>
+    <label class="cons-chk-p"><input type="checkbox" id="rgSust" checked> Cambio importante: los clientes tendrán que volver a aceptarlo (quítalo solo para corregir erratas).</label>
+    <p class="merr" id="rgTxErr" role="alert"></p>
+    <div class="mact"><button type="button" class="btn-cancel" onclick="rgCerrar()">Cerrar</button><button type="button" class="btn-ok" onclick="rgPublicarTexto('${tipo}')">Publicar versión ${t ? t.version + 1 : 1}</button></div>`);
+}
+async function rgPublicarTexto(tipo) {
+  const t = rgUltimo(tipo), tit = document.getElementById('rgTxTit').value.trim(), tx = document.getElementById('rgTx').value.trim(), err = document.getElementById('rgTxErr');
+  if (!tit || !tx) { err.textContent = 'El título y el texto no pueden estar vacíos.'; return; }
+  if (t && t.titulo === tit && t.texto === tx) { err.textContent = 'No has cambiado nada.'; return; }
+  const r = await sb('consentimiento_textos', { method: 'POST', headers: { 'Prefer': 'return=minimal' }, body: JSON.stringify({ tipo, version: (t ? t.version : 0) + 1, titulo: tit, texto: tx, cambio_sustancial: document.getElementById('rgSust').checked }) });
+  if (esErrorSb(r)) { err.textContent = 'No se pudo publicar. Inténtalo de nuevo.'; return; }
+  await rgCargarTextos(true); toast('Versión publicada.' + (document.getElementById('rgSust').checked && rgActivo() ? ' Tus clientes la verán la próxima vez que entren.' : '')); rgCerrar();
+}
+async function rgAbrirRegistro() {
+  const r = await Promise.resolve(sb('registro_eliminaciones?select=*&order=eliminado_en.desc&limit=100')).catch(() => null);
+  const filas = Array.isArray(r) ? r : [];
+  rgAbrir(`<p class="mt" id="rgTit">Registro de eliminaciones</p><p class="ms">Sin datos de salud: solo iniciales, fechas y si fue antes del plazo.</p>
+    ${filas.length ? filas.map(x => `<div class="rg-fila"><div><b>${sudEsc(x.iniciales || '—')} · ${sudEsc(new Date(x.eliminado_en).toLocaleDateString('es-ES'))}</b><div class="rg-sub">Conservar hasta ${x.conservar_hasta ? fechaCorta(x.conservar_hasta) : '—'} · ${x.antes_de_plazo ? '<b>antes del plazo</b>' : 'tras el plazo'}${x.motivo ? ' · ' + sudEsc(x.motivo) : ''}</div></div></div>`).join('') : '<p class="med-note">Todavía no se ha eliminado a nadie.</p>'}
+    <div class="mact"><button type="button" class="btn-cancel" onclick="rgCerrar()">Cerrar</button></div>`);
 }
 
 // ── Limpiar archivos huérfanos: carpetas de deportistas que ya no existen ──
@@ -8614,9 +9013,15 @@ async function abrirAjustes(){
     <p class="med-note" style="margin:0 0 6px">Una frase por línea (máx. 12). Se guardan solo en este navegador.</p>
     <textarea class="notes-ta" id="ajFrasesTa" aria-label="Frases rápidas, una por línea" style="min-height:110px">${sudEsc(frasesNota().join('\n'))}</textarea>
     <div class="aj-btns" style="margin-top:8px"><button type="button" class="btn-soft" onclick="ajGuardarFrases()">Guardar frases</button><button type="button" class="btn-soft" onclick="ajRestaurarFrases()">Restaurar las de ejemplo</button></div>
+    <p class="aj-h">Protección de datos</p>
+    <div id="ajRgBox"><p class="med-note" style="margin:0">Cargando…</p></div>
     <p class="aj-h">Mantenimiento</p>
     <p class="med-note" style="margin:0 0 8px">La copia de seguridad descarga todos los datos del panel. Limpiar archivos busca fotos y documentos de deportistas que ya no existen.</p>
     <div class="aj-btns"><button type="button" class="btn-soft" onclick="cerrarAjustes();exportAllData()">Copia de seguridad</button><button type="button" class="btn-soft" onclick="cerrarAjustes();abrirHuerfanos()">Limpiar archivos</button></div>
+    <p class="aj-h">Calendario de Google</p>
+    <p class="med-note" style="margin:0 0 8px">Al crear, mover o borrar una cita o revisión, se crea, mueve o borra sola en tu Google Calendar («REVISIÓN - ANA», color Tomate, 60 min, sin notas ni importes). Solo va del panel a Google: lo que cambies en Google no vuelve aquí.</p>
+    <div class="aj-row"><b>Estado</b><span class="v" id="ajGcalEst">Comprobando…</span></div>
+    <div class="aj-btns" style="margin-top:8px"><button type="button" class="btn-soft" id="ajGcalProbar" onclick="gcalProbar()">Probar conexión</button><button type="button" class="btn-soft" id="ajGcalEnviar" onclick="gcalEnviarProximas()">Enviar las próximas citas</button></div>
     <p class="aj-h">Aplicación</p>
     <div class="aj-row"><b>Cuenta</b><span class="v">${mail?sudEsc(mail):'—'}</span></div>
     <div class="aj-row"><b>Versión</b><span class="v" id="ajVer">Comprobando…</span></div>
@@ -8626,7 +9031,7 @@ async function abrirAjustes(){
     <div class="aj-row"><span>Cerrar una ventana o el menú</span><span class="v"><span class="aj-kbd">Esc</span></span></div>
     <div class="aj-row"><span>Abrir la barra lateral (móvil)</span><span class="v">Deslizar desde el borde</span></div>
     <div class="mact"><button type="button" class="btn-cancel" onclick="cerrarAjustes()">Cerrar</button></div>`;
-  ajPintarModo();
+  ajPintarModo(); ajRgPintar(); gcalPintarEstado();
   document.getElementById('mAjustes').style.display='flex';
   document.querySelector('#ajCuerpo .aj-seg button').focus();
   try{ const r=await fetch(location.pathname,{method:'HEAD',cache:'no-store'}); const lm=r.headers.get('last-modified'); const el=document.getElementById('ajVer'); if(el) el.textContent=lm?new Date(lm).toLocaleString('es-ES',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}):'—'; }catch(e){ const el=document.getElementById('ajVer'); if(el) el.textContent='—'; }
