@@ -73,7 +73,8 @@ Qué se hace con la conservación: **dar de baja** al cliente (ficha → Archivo
 2. No hay nada más que instalar. En cuanto se publique el código, los clientes ven «Ficha inicial» en Formularios y los dos de Google desaparecen.
 3. **Clientes que ya contestaron los de Google:** si tienen marcados los dos como hechos, la ficha les sale como «Hecho» y no se les pide de nuevo. Si solo tienen uno hecho, la ficha les queda pendiente (se les pide completa). Para evitarlo, márcalos como hechos en su ficha → Seguimiento → «Formularios del cliente».
 4. Tú ves lo que contestan en la ficha del deportista → Seguimiento → **Ficha inicial** (alertas, hoja completa, imprimir en PDF, pasar sexo, fecha de nacimiento y estatura al perfil de antropometría, y **reabrirla** si el cliente tiene que corregir algo).
-5. Si cambias preguntas hay que tocar tres sitios: la lista blanca de `cliente_guardar_ficha_inicial`, `FI_PASOS` en `cliente.html` y `FI_HOJA` en `panel-profesional.html`.
+5. **Conexiones:** el planificador avisa si la ficha menciona alergias o alimentos que evitar (botón «Añadir a excluidos») y la hoja de la ficha permite «Usar como objetivo del cliente». Nada se aplica solo.
+6. Si cambias preguntas hay que tocar tres sitios: la lista blanca de `cliente_guardar_ficha_inicial`, `FI_PASOS` en `cliente.html` y `FI_HOJA` en `panel-profesional.html`.
 
 ## Calendario de Google (citas y revisiones → tu Google Calendar)
 

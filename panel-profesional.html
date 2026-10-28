@@ -6609,7 +6609,7 @@ async function loadSeguimientos(depId){
 
 // ═══ FICHA INICIAL (supabase_ficha_inicial.sql): lo que el cliente contesta en su área, en una hoja legible ═══
 // Los campos están también en el SQL (lista blanca) y en FI_PASOS de cliente.html: si se cambian preguntas, tocar los tres sitios.
-const FI_SCOFF_P=['Se provoca el vómito porque se siente incómodamente lleno/a','Le preocupa haber perdido el control sobre cuánto come','Ha perdido más de 6 kg en 3 meses','Cree que está gordo/a aunque otros digan que está demasiado delgado/a','Dice que la comida domina su vida'];
+const FI_SCOFF_P=['Tiene la sensación de estar enfermo/a porque siente el estómago tan lleno que le resulta incómodo','Está preocupado/a porque siente que tiene que controlar cuánto come','Ha perdido más de 6 kg en tres meses','Cree que está gordo/a aunque otros digan que está demasiado delgado/a','Dice que la comida domina su vida'];
 const FI_HOJA=[
  ['Sobre el cliente',[['fnac','Fecha de nacimiento','fecha'],['sexo','Sexo'],['estatura','Estatura','cm'],['peso','Peso actual (autodeclarado)','kg'],['ocupacion','Ocupación']]],
  ['Salud',[['enf','Enfermedad o condición','si:enf_txt'],['med','Medicación','si:med_txt'],['alerg','Alergia o intolerancia','si:alerg_txt'],['dig','Problemas digestivos','si:dig_txt'],['anal','Analítica en el último año'],['les','Lesión actual o reciente','si:les_txt']]],
@@ -6678,6 +6678,19 @@ async function loadFichaInicial(depId){
     ${al.length?`<ul class="fi-alert">${al.map(x=>`<li>${sudEsc(x)}</li>`).join('')}</ul>`:'<p class="med-note" style="margin:0 0 8px">Sin alertas en salud.</p>'}
     <div class="acc-row" style="gap:8px;flex-wrap:wrap">${btnSoft('Ver ficha',`fiAbrir(${depId})`,'doc',false)}${btnSoft('Reabrir para que la corrija',`fiReabrir(${depId})`,'plus',false)}</div>`;
 }
+// Objetivo que dice el cliente en la ficha, como texto para «Objetivo» de su ficha (lo lee la sugerencia de objetivo: perder, ganar…)
+function fiObjetivoTxt(r){
+  const l=(Array.isArray(r.obj)?r.obj:[]).map(x=>x==='Otro'&&r.obj_otro?r.obj_otro:x).filter(x=>x&&x!=='Otro');
+  if(!l.length) return '';
+  let t=l.join(', '); if(r.evento==='Sí'&&r.evento_txt) t+='. Meta: '+r.evento_txt;
+  return t.slice(0,300);
+}
+async function fiAplicarObjetivo(depId){
+  const x=_fichas[depId]; if(!x||!x.f) return; const t=fiObjetivoTxt(x.f.respuestas||{}); if(!t) return;
+  const r=await patchDep(depId,{objetivo:t}); if(esErrorSb(r)){ toast('No se pudo guardar el objetivo.',{tipo:'error'}); return; }
+  const d=deportistas.find(z=>z.id==depId); if(d) d.objetivo=t;
+  toast('Objetivo del cliente actualizado'); fiCerrar(); loadFichaInicial(depId);
+}
 function fiDifPerfil(depId){
   const x=_fichas[depId]; if(!x||!x.f||!x.f.enviado_en) return [];
   const r=x.f.respuestas||{}, p=x.perfil||{}, d=[];
@@ -6690,6 +6703,7 @@ function fiAbrir(depId){
   const x=_fichas[depId]; if(!x||!x.f) return; const d=deportistas.find(z=>z.id==depId);
   const dif=fiDifPerfil(depId);
   document.getElementById('fichaCuerpo').innerHTML=fiHoja(x.f.respuestas||{},d?d.nombre:'',x.f.enviado_en)
+    +(()=>{ const t=fiObjetivoTxt(x.f.respuestas||{}); if(!t||!x.f.enviado_en||(d&&String(d.objetivo||'').trim()===t)) return ''; return `<div style="margin-top:14px;padding:12px;border-radius:12px;background:var(--t50)"><b style="font-size:13px">Objetivo del cliente</b><p class="med-note" style="margin:4px 0 8px">En su ficha pone «${sudEsc((d&&d.objetivo)||'sin objetivo')}». El cliente dice: «${sudEsc(t)}». Solo se cambia si pulsas el botón.</p><button class="btn-soft" onclick="fiAplicarObjetivo(${depId})">Usar como objetivo del cliente</button></div>`; })()
     +(dif.length?`<div style="margin-top:18px;padding:12px;border-radius:12px;background:var(--t50)"><b style="font-size:13px">Perfil de antropometría</b><p class="med-note" style="margin:4px 0 8px">Lo que dice el cliente difiere de su perfil. Lo medido por ti manda: solo se cambia si pulsas el botón.</p>${dif.map(z=>`<div style="font-size:13px;margin-bottom:3px">${sudEsc(z[0])}: perfil <b>${sudEsc(z[1])}</b> · ficha <b>${sudEsc(z[2])}</b></div>`).join('')}<button class="btn-soft" style="margin-top:8px" onclick="fiAplicarPerfil(${depId})">Pasar al perfil</button></div>`:'')
     +`<div class="mbtns" style="margin-top:16px"><button class="btn-cancel" onclick="fiCerrar()">Cerrar</button><button class="btn-ok" onclick="fiImprimir(${depId})">Imprimir o guardar en PDF</button></div>`;
   document.getElementById('mFicha').style.display='flex';

@@ -1491,7 +1491,8 @@ function abrirForm(k){
 const FI_YN=['Sí','No'];
 const FI_LUGARES=['Casa','Trabajo o estudios','Restaurante','En la calle','Otro'];
 const FI_COMIDAS=[['desayuno','Desayuno'],['almuerzo','Almuerzo'],['comida','Comida'],['merienda','Merienda'],['cena','Cena'],['otros','Otros']];
-const FI_SCOFF=['¿Te provocas el vómito porque te sientes incómodamente lleno/a?','¿Te preocupa haber perdido el control sobre cuánto comes?','¿Has perdido recientemente más de 6 kg en un periodo de 3 meses?','¿Crees que estás gordo/a aunque otras personas digan que estás demasiado delgado/a?','¿Dirías que la comida domina tu vida?'];
+// Texto de la versión española validada (Garcia-Campayo 2005, apéndice A), pasado de «usted» a «tú» sin cambiar el sentido.
+const FI_SCOFF=['¿Tienes la sensación de estar enfermo/a porque sientes el estómago tan lleno que te resulta incómodo?','¿Estás preocupado/a porque sientes que tienes que controlar cuánto comes?','¿Has perdido recientemente más de 6 kg en un periodo de tres meses?','¿Crees que estás gordo/a aunque otros digan que estás demasiado delgado/a?','¿Dirías que la comida domina tu vida?'];
 const FI_PASOS=[
  {t:'Sobre ti',d:'Unos datos básicos para empezar.',c:[
   {k:'fnac',t:'¿Cuál es tu fecha de nacimiento?',tipo:'fecha',req:1},
