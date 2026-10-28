@@ -1,0 +1,75 @@
+/* ============================================================
+   NUTRILOGOS — GUÍA LARGA (varias páginas A4)
+   Se usa junto a marca-base.css. Portada de página completa,
+   páginas interiores con cabecera y pie corridos y componentes
+   para texto continuo: idea clave, pasos, tabla, aviso y fuentes.
+   ============================================================ */
+@page { size: A4; margin: 22mm 16mm 20mm 16mm; background: #f7f4ee;
+  @top-left { content: "NutriLogos"; font: 600 8.5px 'Helvetica Neue', Arial, sans-serif; letter-spacing: 1.6px; text-transform: uppercase; color: #c19a6b; margin-top: 10mm; }
+  @top-right { content: string(titulo-guia); font: 500 8.5px 'Helvetica Neue', Arial, sans-serif; color: #8a8173; margin-top: 10mm; }
+  @bottom-center { content: counter(page); font: 600 9px 'Helvetica Neue', Arial, sans-serif; color: #163a47; margin-bottom: 8mm; }
+}
+@page :first { margin: 0; @top-left { content: none; } @top-right { content: none; } @bottom-center { content: none; } }
+.titulo-corrido { string-set: titulo-guia content(); font-size: 0; line-height: 0; height: 0; margin: 0 !important; overflow: hidden; }
+
+/* ---------- PORTADA ---------- */
+.portada { width: 210mm; height: 297mm; page-break-after: always; position: relative; overflow: hidden;
+  background: linear-gradient(135deg, #163a47 0%, #1f4d5e 100%); color: #f7f4ee; padding: 26mm 22mm; }
+.portada .aro { position: absolute; right: -40mm; top: -40mm; width: 130mm; height: 130mm; border-radius: 50%; background: rgba(193,154,107,0.10); }
+.portada .logo { width: 22mm; height: 22mm; border-radius: 50%; display: block; margin-bottom: 70mm; }
+.portada .etiqueta { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: #d9b88c; font-weight: 600; margin: 0 0 10px 0; }
+.portada h1 { font-size: 40px; line-height: 1.12; margin: 0 0 12px 0; font-weight: 700; letter-spacing: -0.5px; }
+.portada .sub { font-size: 15px; line-height: 1.5; color: #e7dfd2; margin: 0; max-width: 135mm; }
+.portada .cajas { position: absolute; left: 22mm; right: 22mm; bottom: 26mm; display: flex; gap: 10px; }
+.portada .caja { flex: 1; border: 1px solid rgba(217,184,140,0.45); background: rgba(193,154,107,0.12); border-radius: 16px; padding: 12px 14px; }
+.portada .caja b { display: block; font-size: 9.5px; letter-spacing: 1.2px; text-transform: uppercase; color: #d9b88c; margin-bottom: 4px; font-weight: 600; }
+.portada .caja span { font-size: 12.5px; color: #f7f4ee; }
+
+/* ---------- TEXTO CONTINUO ---------- */
+.cuerpo h2 { font-size: 19px; color: #163a47; margin: 0 0 4px 0; letter-spacing: -0.2px; page-break-after: avoid; }
+.cuerpo h2 + .kicker, .cuerpo .kicker { font-size: 9.5px; letter-spacing: 1.4px; text-transform: uppercase; color: #c19a6b; font-weight: 700; margin: 0 0 4px 0; }
+.cuerpo h3 { font-size: 13px; color: #163a47; margin: 16px 0 5px 0; page-break-after: avoid; }
+.cuerpo p { font-size: 11.8px; line-height: 1.65; color: #333; margin: 0 0 9px 0; }
+.cuerpo ul, .cuerpo ol { margin: 0 0 10px 0; padding-left: 18px; }
+.cuerpo li { font-size: 11.8px; line-height: 1.6; color: #333; margin-bottom: 3px; }
+.cuerpo strong { color: #163a47; }
+.cuerpo .note { margin: 12px 0; }
+.cuerpo .note strong { color: #d9b88c; }
+.cuerpo .note p, .cuerpo .note { color: #f7f4ee; }
+.cap { margin-bottom: 22px; }
+.cap.salto { page-break-before: always; } /* añade class="salto" para empezar un capítulo en página nueva */
+
+/* ---------- IDEA CLAVE (resumen en una frase) ---------- */
+.clave { background: #ffffff; border: 1px solid #e2d8c5; border-left: 4px solid #c19a6b; border-radius: 14px; padding: 12px 16px; margin: 12px 0 14px 0; page-break-inside: avoid; }
+.clave .rotulo { font-size: 9.5px; letter-spacing: 1.2px; text-transform: uppercase; color: #c19a6b; font-weight: 700; display: block; margin-bottom: 4px; }
+.clave p { margin: 0; font-size: 12.5px; font-weight: 600; color: #163a47; line-height: 1.5; }
+
+/* ---------- PASOS NUMERADOS ---------- */
+.pasos { background: #ffffff; border: 1px solid #ece4d6; border-radius: 18px; padding: 8px 18px; margin: 10px 0 14px 0; }
+.paso { display: flex; gap: 12px; padding: 10px 0; border-bottom: 1px solid #f0ebe0; page-break-inside: avoid; }
+.paso:last-child { border-bottom: none; }
+.paso .n { background: #c19a6b; color: #fff; font-weight: 700; font-size: 11.5px; border-radius: 10px; width: 26px; height: 26px; line-height: 26px; text-align: center; flex-shrink: 0; }
+.paso .t { font-size: 11.8px; line-height: 1.55; color: #333; }
+.paso .t strong { display: block; margin-bottom: 1px; }
+
+/* ---------- TABLA ---------- */
+table.tabla { width: 100%; border-collapse: separate; border-spacing: 0; background: #fff; border: 1px solid #ece4d6; border-radius: 14px; margin: 10px 0 14px 0; page-break-inside: avoid; }
+.tabla th:first-child { border-top-left-radius: 13px; } .tabla th:last-child { border-top-right-radius: 13px; }
+.tabla tr:last-child td:first-child { border-bottom-left-radius: 13px; } .tabla tr:last-child td:last-child { border-bottom-right-radius: 13px; }
+.tabla th { background: #163a47; color: #f7f4ee; font-size: 9.5px; letter-spacing: 1px; text-transform: uppercase; text-align: left; padding: 8px 12px; font-weight: 600; }
+.tabla td { font-size: 11.3px; color: #333; padding: 8px 12px; border-top: 1px solid #f0ebe0; line-height: 1.45; }
+.tabla td:first-child { font-weight: 600; color: #163a47; }
+.tabla tr:nth-child(even) td { background: #fbf7ef; }
+
+/* ---------- AVISO (precaución o consejo) ---------- */
+.aviso { background: #fbf7ef; border: 1px dashed #d9b88c; border-radius: 14px; padding: 11px 15px; margin: 10px 0 14px 0; page-break-inside: avoid; }
+.aviso strong { color: #8a6d3f; }
+.aviso p { margin: 0; font-size: 11.3px; line-height: 1.55; color: #444; }
+
+/* ---------- FUENTES / REFERENCIAS ---------- */
+.fuentes { border-top: 1px solid #e2d8c5; margin-top: 16px; padding-top: 10px; }
+.fuentes h3 { font-size: 9.5px; letter-spacing: 1.2px; text-transform: uppercase; color: #c19a6b; margin: 0 0 6px 0; }
+.fuentes li { font-size: 9.5px; line-height: 1.5; color: #6b6b6b; margin-bottom: 3px; }
+
+/* ---------- CIERRE ---------- */
+.cierre { page-break-inside: avoid; }
