@@ -21,7 +21,7 @@
   --gold:#B8956A;--gold-dk:#7A5430;--beige:#EDE8DE;
   --p400:#534AB7;--p50:#EEEDFE;--p800:#3C3489;
   --a400:#BA7517;--a50:#FAEEDA;--a800:#633806;
-  --g900:#1a1a18;--g700:#444441;--g500:#5F5E5A;--g400:#888780;--g200:#D3D1C7;--g100:#F1EFE8;
+  --g900:#1a1a18;--g700:#444441;--g500:#5F5E5A;--g400:#6A6963;--g200:#D3D1C7;--g100:#F1EFE8;
   --bg:#FAFAF8;--sf:#fff;
   --bd:rgba(0,0,0,.09);--bdm:rgba(0,0,0,.15);
   --f:'Inter',system-ui,sans-serif;
@@ -166,6 +166,29 @@ body{font-family:var(--f);background:var(--bg);color:var(--g900);min-height:100v
   .cgrid{grid-template-columns:1fr}
   .hdr-logo{width:58px;height:58px}
 }
+
+/* ── Estilo común con el panel (nov 2026): degradado verde oscuro, etiquetas doradas y tarjetas más suaves ── */
+.hdr{background:linear-gradient(135deg,var(--t900) 0%,#1f4d5e 100%);border-radius:0 0 24px 24px}
+.hdr::before{background:rgba(184,149,106,.10)}
+.hdr-eyebrow{color:#D9B88C;letter-spacing:.14em}
+.hdr-logo{border:.5px solid rgba(217,184,140,.5);box-shadow:0 4px 16px rgba(0,0,0,.22)}
+.hdr-sub{color:rgba(255,255,255,.75)}
+.mpill{background:rgba(184,149,106,.16);border-color:rgba(217,184,140,.34);color:#F0D9B5}
+.prog-fill{background:linear-gradient(90deg,#9FE1CB,var(--t400))}
+.card{border-radius:16px;box-shadow:0 2px 10px rgba(4,52,44,.05)}
+.rcard{background:linear-gradient(135deg,var(--t900) 0%,#1f4d5e 100%);border:none;box-shadow:0 6px 18px rgba(4,52,44,.18)}
+.rcard .rhead{border-bottom-color:rgba(255,255,255,.16)}
+.rcard .rtag{background:rgba(184,149,106,.24);color:#F0D9B5;box-shadow:inset 0 0 0 .5px rgba(217,184,140,.5)}
+.rcard .rtitle{color:#fff}
+.rcard .rtxt{color:rgba(255,255,255,.9);opacity:1}
+.astrip{border-radius:0}
+.wrow{border-radius:14px;box-shadow:0 1px 6px rgba(4,52,44,.04)}
+.wrow.wact{border-color:var(--t400);background:linear-gradient(135deg,var(--t50) 0%,var(--sf) 70%)}
+.wnum{border-radius:10px}
+.dhero{background:linear-gradient(135deg,var(--t900) 0%,#1f4d5e 100%);border:none;border-radius:16px;box-shadow:0 6px 18px rgba(4,52,44,.18)}
+.dhero .dey{color:#D9B88C}
+.dhero .dtit{color:#fff}
+.pcard,.dreto{border-radius:14px}
 </style>
 </head>
 <body>

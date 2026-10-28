@@ -132,7 +132,8 @@ tr:hover td{background:var(--bg);}
 .pill.neutral{background:var(--g100);color:var(--g400);}
 .clientrow{cursor:pointer;}
 .clientrow .chev{display:inline-block;width:16px;color:var(--g400);font-size:11px;}
-.clientrow .cl-av{display:none;}
+.clientrow .cl-av{display:inline-flex;align-items:center;justify-content:center;flex:none;width:34px;height:34px;border-radius:11px;margin-right:10px;vertical-align:middle;background:linear-gradient(135deg,#04342C 0%,#1f4d5e 100%);border:.5px solid rgba(217,184,140,.5);color:#fff;font-size:12px;font-weight:700;letter-spacing:.02em;box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 3px 8px rgba(4,52,44,.18);}
+.cl-dep{display:inline-block;font-size:11px;font-weight:600;color:var(--gold-dk,#8A6A3F);background:var(--pill-au,#F3EADB);box-shadow:inset 0 0 0 .5px var(--pill-au-bd,rgba(184,149,106,.4));padding:2px 11px;border-radius:20px;line-height:1.5;}
 button,a,[role=button],select,summary{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 .clientrow.open td{background:var(--t50);border-bottom-color:transparent;}
 .detailrow:hover td{background:transparent;}
@@ -404,7 +405,7 @@ body.dark-mode canvas{background:#fff;border-radius:10px;}
   #clientTable tr.clientrow{gap:10px 10px;}
   /* Deporte como píldora y dos recuadros con los datos (en vez de la barra verde lateral) */
   #clientTable td:nth-child(2){grid-column:1/-1;margin-top:-2px;}
-  #clientTable td:nth-child(2):not(:empty){display:inline-block;justify-self:start;font-size:11px;font-weight:600;color:var(--gold-dk,#8A6A3F);background:var(--pill-au,#F3EADB);box-shadow:inset 0 0 0 .5px var(--pill-au-bd,rgba(184,149,106,.4));padding:3px 11px;border-radius:20px;line-height:1.4;}
+  #clientTable td:nth-child(2){justify-self:start;}
   #clientTable td:nth-child(4),#clientTable td:nth-child(5){background:var(--g100);border-radius:12px;padding:9px 12px;font-size:15px;font-weight:700;color:var(--g900);text-align:left;}
   #clientTable td:nth-child(4)::before,#clientTable td:nth-child(5)::before{display:block;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--g400);margin-bottom:2px;}
   #clientTable td:nth-child(4)::before{content:"Valoraciones";}
@@ -1319,7 +1320,7 @@ function viewClientes(){
     const abierto = CURRENT_CLIENT_ID==c.id;
     return `<tr class="clientrow${abierto?" open":""}" data-id="${c.id}">
       <td><span class="cl-av" aria-hidden="true">${esc(((c.nombre||"?").trim()[0]||"?")+((c.apellidos||"").trim()[0]||""))}</span><span class="chev" aria-hidden="true">${abierto?"▾":"▸"}</span><strong>${esc(c.nombre)} ${esc(c.apellidos||"")}</strong></td>
-      <td>${esc(c.deporte||"—")}</td>
+      <td>${c.deporte?`<span class="cl-dep">${esc(c.deporte)}</span>`:"—"}</td>
       <td>${c.sexo?esc(c.sexo):"—"}</td>
       <td>${nVal} <span class="small-note">${nVal===1?"valoración":"valoraciones"}</span></td>
       <td>${last?fmtDate(last.fecha):"—"}</td>
