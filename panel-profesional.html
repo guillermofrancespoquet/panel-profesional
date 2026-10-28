@@ -4851,12 +4851,13 @@ async function toggleVisibleCliente(depId, index) {
   await patchDep(depId, { archivos });
   d.archivos = archivos;
   document.getElementById('filesList').innerHTML = renderFilesList(archivos, depId);
+  if (MAT.lib) loadMateriales(depId);
 }
 
 function deleteFile(depId, index) {
   const d = deportistas.find(x => x.id == depId); if (!d) return;
   const borrado = (d.archivos || [])[index]; if (!borrado) return;
-  const pinta = () => { const el = document.getElementById('filesList'); if (el) el.innerHTML = renderFilesList(d.archivos || [], depId); };
+  const pinta = () => { const el = document.getElementById('filesList'); if (el) el.innerHTML = renderFilesList(d.archivos || [], depId); if (MAT.lib) loadMateriales(depId); };
   deshacerBorrado({
     texto: 'Archivo eliminado',
     ocultar: () => { d.archivos = (d.archivos || []).filter((_, i) => i !== index); pinta(); },
@@ -4865,7 +4866,7 @@ function deleteFile(depId, index) {
       const r = await patchDep(depId, { archivos: d.archivos });
       if (esErrorSb(r)) return r;
       const ruta = archivoPath(borrado);
-      if (ruta) authFetch(`${SURL}/storage/v1/object/${STORAGE_BUCKET}/${ruta.split('/').map(encodeURIComponent).join('/')}`, { method: 'DELETE' }).catch(() => {});
+      if (ruta && !/^materiales\//.test(ruta)) authFetch(`${SURL}/storage/v1/object/${STORAGE_BUCKET}/${ruta.split('/').map(encodeURIComponent).join('/')}`, { method: 'DELETE' }).catch(() => {});
     }
   });
 }
@@ -6530,6 +6531,10 @@ function openDepDet(id) {
     </div>
     <div class="depd-panel${_depTab==='archivos' ? ' on' : ''}" role="tabpanel" id="depPanel-archivos" aria-labelledby="depTab-archivos" data-k="archivos" tabindex="0">
     <div class="depd-section">
+      <p class="sec-title">Materiales · guías en PDF</p>
+      <div class="med-box" id="matBox">${skel(2)}</div>
+    </div>
+    <div class="depd-section">
       <p class="sec-title">Archivos · antropometrías, bioimpedancias, informes</p>
       <div class="files-box" id="filesDropZone" onclick="document.getElementById('fileInput').click()">
         <svg class="files-box-icon" width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
@@ -6566,6 +6571,7 @@ function openDepDet(id) {
   loadRegCliente(d.id);
   loadDiario(d.id);
   loadFichaInicial(d.id);
+  loadMateriales(d.id);
   loadMediciones(d.id);
   loadEstado(d.id);
   loadObjetivo(d.id);
@@ -8916,6 +8922,109 @@ async function borrarArchivosDeDep(id) {
     if (l.length) { await storageBorrar(b, l.map(x => x.ruta)); n += l.length; }
   }
   return n;
+}
+
+// ═══════════════ MATERIALES PARA CLIENTES (guías en PDF) ═══════════════
+// Biblioteca única en `ajustes_app` (clave `materiales` → {items:[{id,titulo,path,fecha}]}) y los PDF en el bucket privado `deportistas-docs`,
+// carpeta `materiales/` (no numérica: «Limpiar archivos» no la toca). Dar un material a un cliente = añadir a sus `archivos` una entrada con esa
+// ruta, `tipo:'material'` y `visible_cliente:true` (así el cliente puede firmarla y verla en su «Materiales»). Quitárselo borra solo la entrada;
+// el archivo se borra únicamente al quitarlo de la biblioteca (y entonces se retira a todos los clientes). Sin SQL nuevo.
+const MAT = { lib: undefined, confirmar: null };
+async function matCargar(forzar) {
+  if (MAT.lib !== undefined && !forzar) return MAT.lib;
+  const r = await Promise.resolve(sb('ajustes_app?clave=eq.materiales&select=valor')).catch(() => null);
+  if (!Array.isArray(r)) { MAT.lib = null; return null; }   // la tabla no existe (falta supabase_proteccion_datos.sql)
+  const it = r[0] && r[0].valor && Array.isArray(r[0].valor.items) ? r[0].valor.items : [];
+  MAT.lib = it; return it;
+}
+async function matGuardar(items) {
+  const r = await sb('ajustes_app?on_conflict=clave', { method: 'POST', headers: { 'Prefer': 'resolution=merge-duplicates,return=minimal' }, body: JSON.stringify([{ clave: 'materiales', valor: { items }, actualizado: new Date().toISOString() }]) });
+  if (esErrorSb(r)) return false;
+  MAT.lib = items; return true;
+}
+function matRutaUrl(path) { return path.split('/').map(encodeURIComponent).join('/'); }
+async function loadMateriales(depId) {
+  const box = document.getElementById('matBox'); if (!box) return;
+  const lib = await matCargar();
+  if (currentDepId != depId || !document.getElementById('matBox')) return;
+  if (lib === null) { box.innerHTML = '<p class="med-empty">Esta función guarda la biblioteca en la tabla <b>ajustes_app</b> (SQL <b>supabase_proteccion_datos.sql</b>), que aún no está en Supabase.</p>'; return; }
+  const d = deportistas.find(x => x.id == depId) || {}, arch = d.archivos || [];
+  const filas = lib.map(m => {
+    const dado = arch.some(a => a && a.path === m.path && a.visible_cliente);
+    const conf = MAT.confirmar === m.id;
+    return `<div class="file-item" style="flex-wrap:wrap"><div class="file-icon"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div>
+      <div class="file-info" style="flex:1;min-width:150px"><div class="file-name">${sudEsc(m.titulo)}</div><div class="file-date">${m.fecha ? sudEsc(fechaCorta(m.fecha)) : ''}${dado ? ' · <span class="file-vis">Lo ve el cliente</span>' : ''}</div></div>
+      <div class="file-actions" style="margin-left:auto">${btnSoft(dado ? 'Quitar al cliente' : 'Dar al cliente', `matDar(${depId},'${m.id}',${!dado})`, dado ? 'trash' : 'plus', dado)}
+        <button class="file-btn" title="Ver el PDF" aria-label="Ver el PDF" onclick="matVer('${m.id}')"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></button>
+        <button class="file-btn del${conf ? ' on' : ''}" title="${conf ? 'Pulsa otra vez para quitarlo de la biblioteca' : 'Quitar de la biblioteca'}" aria-label="Quitar de la biblioteca" onclick="matEliminar('${m.id}',${depId})">${conf ? '<b style="font-size:11px">¿Seguro?</b>' : '<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>'}</button></div></div>`;
+  }).join('');
+  box.innerHTML = (lib.length ? filas : '<p class="med-empty">La biblioteca está vacía. Añade tu primera guía en PDF: después decides a qué clientes se la das.</p>')
+    + `<div class="acc-row" style="gap:8px;flex-wrap:wrap;margin-top:10px"><input type="text" class="inp" id="matTit" maxlength="80" placeholder="Título de la guía (opcional)" aria-label="Título de la guía" style="flex:1;min-width:180px">${btnSoft('Añadir PDF a la biblioteca', "document.getElementById('matFile').click()", 'plus', false)}</div>
+    <input type="file" id="matFile" accept="application/pdf,.pdf" style="display:none" onchange="matSubir(${depId})">
+    <p class="med-note" style="margin:8px 0 0">Los materiales los preparas aparte (plantillas de la carpeta <b>materiales/</b>) con contenido contrastado. El cliente los ve en su área, en «Materiales», solo si se los das.</p>`;
+}
+async function matSubir(depId) {
+  const inp = document.getElementById('matFile'), file = inp && inp.files[0]; if (!file) return;
+  if (!/\.pdf$/i.test(file.name) && file.type !== 'application/pdf') { toast('Solo se pueden añadir archivos PDF.', { tipo: 'aviso' }); inp.value = ''; return; }
+  const titEl = document.getElementById('matTit');
+  const titulo = ((titEl && titEl.value.trim()) || file.name.replace(/\.pdf$/i, '').replace(/[_-]+/g, ' ')).slice(0, 80);
+  const id = 'm' + Date.now().toString(36);
+  const path = `materiales/${Date.now()}_${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
+  toast('Subiendo…');
+  try {
+    const up = await authFetch(`${SURL}/storage/v1/object/${STORAGE_BUCKET}/${matRutaUrl(path)}`, { method: 'POST', headers: { 'Content-Type': 'application/pdf' }, body: file });
+    if (!up.ok) throw new Error('subida');
+    const lib = (await matCargar(true)) || [];
+    if (!(await matGuardar(lib.concat([{ id, titulo, path, fecha: new Date().toISOString().slice(0, 10) }])))) {
+      authFetch(`${SURL}/storage/v1/object/${STORAGE_BUCKET}/${matRutaUrl(path)}`, { method: 'DELETE' }).catch(() => {});
+      throw new Error('biblioteca');
+    }
+    toast('Guía añadida a la biblioteca');
+  } catch (e) { toast('No se pudo añadir la guía. Inténtalo de nuevo.', { tipo: 'error' }); }
+  inp.value = '';
+  loadMateriales(depId);
+}
+async function matDar(depId, id, dar) {
+  const m = (MAT.lib || []).find(x => x.id === id), d = deportistas.find(x => x.id == depId); if (!m || !d) return;
+  const previo = d.archivos || [];
+  let nuevo;
+  if (dar) {
+    nuevo = previo.filter(a => !(a && a.path === m.path)).concat([{ nombre: m.titulo + '.pdf', path: m.path, fecha: new Date().toISOString(), visible_cliente: true, tipo: 'material' }]);
+  } else nuevo = previo.filter(a => !(a && a.path === m.path));
+  const r = await patchDep(depId, { archivos: nuevo });
+  if (esErrorSb(r)) { toast('No se pudo guardar. Inténtalo de nuevo.', { tipo: 'error' }); return; }
+  d.archivos = nuevo;
+  toast(dar ? 'Material dado: el cliente ya lo ve' : 'Material quitado al cliente');
+  const fl = document.getElementById('filesList'); if (fl && currentDepId == depId) fl.innerHTML = renderFilesList(nuevo, depId);
+  loadMateriales(depId);
+}
+async function matVer(id) {
+  const m = (MAT.lib || []).find(x => x.id === id); if (!m) return;
+  const i = { path: m.path };
+  const w = window.open('', '_blank');
+  try {
+    const r = await authFetch(`${SURL}/storage/v1/object/sign/${STORAGE_BUCKET}/${matRutaUrl(i.path)}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ expiresIn: 300 }) });
+    const j = await r.json(); if (!r.ok || !j.signedURL) throw new Error('firma');
+    const u = SURL + '/storage/v1' + j.signedURL; if (w) w.location.href = u; else window.location.href = u;
+  } catch (e) { if (w) w.close(); toast('No se pudo abrir el archivo.', { tipo: 'error' }); }
+}
+// Quitar de la biblioteca: dos pulsaciones. Retira el material a todos los clientes que lo tengan y borra el PDF.
+async function matEliminar(id, depId) {
+  if (MAT.confirmar !== id) { MAT.confirmar = id; loadMateriales(depId); setTimeout(() => { if (MAT.confirmar === id) { MAT.confirmar = null; loadMateriales(depId); } }, 4000); return; }
+  MAT.confirmar = null;
+  const m = (MAT.lib || []).find(x => x.id === id); if (!m) return;
+  if (!(await matGuardar(MAT.lib.filter(x => x.id !== id)))) { toast('No se pudo quitar de la biblioteca.', { tipo: 'error' }); return; }
+  let fallos = 0;
+  for (const d of deportistas) {
+    if (!(d.archivos || []).some(a => a && a.path === m.path)) continue;
+    const nuevo = d.archivos.filter(a => !(a && a.path === m.path));
+    const r = await patchDep(d.id, { archivos: nuevo });
+    if (esErrorSb(r)) fallos++; else d.archivos = nuevo;
+  }
+  if (!fallos) authFetch(`${SURL}/storage/v1/object/${STORAGE_BUCKET}/${matRutaUrl(m.path)}`, { method: 'DELETE' }).catch(() => {});
+  toast(fallos ? 'Quitado de la biblioteca, pero a ' + fallos + ' cliente(s) no se les pudo retirar.' : 'Material quitado de la biblioteca', fallos ? { tipo: 'aviso', ms: 7000 } : undefined);
+  const fl = document.getElementById('filesList'), cd = deportistas.find(x => x.id == depId); if (fl && cd) fl.innerHTML = renderFilesList(cd.archivos || [], depId);
+  loadMateriales(depId);
 }
 
 // ═══════════════ PROTECCIÓN DE DATOS (sql/supabase_proteccion_datos.sql) ═══════════════

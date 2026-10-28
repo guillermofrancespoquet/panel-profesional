@@ -608,6 +608,11 @@ body>*:not(#mnPrint){display:none !important}
     <span><span class="tile-t">Suplementación</span><br><span class="tile-d" id="tileSuplD">Qué tomar y cuándo</span></span>
     <span class="tile-go"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></span>
   </button>
+  <button class="tile" id="tileMat" style="display:none" onclick="abrirMat()">
+    <span class="tile-ic au"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span>
+    <span><span class="tile-t">Materiales</span><br><span class="tile-d" id="tileMatD">Guías para leer y consultar</span></span>
+    <span class="tile-go"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></span>
+  </button>
   <button class="tile" onclick="abrirReg()">
     <span class="tile-ic au"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></span>
     <span><span class="tile-t">Mi peso y mis fotos</span><br><span class="tile-d">Anota tu peso y compara tu progreso</span></span>
@@ -643,6 +648,12 @@ body>*:not(#mnPrint){display:none !important}
   <button class="back" onclick="show('vhome')"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Inicio</button>
   <h1 class="h2">Planificación nutricional</h1>
   <div id="menuBody"></div>
+</div></div>
+
+<div id="vmat" class="view" role="main"><div class="wrap">
+  <button class="back" onclick="show('vhome')"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Inicio</button>
+  <h1 class="h2">Materiales</h1>
+  <div id="matBody"></div>
 </div></div>
 
 <div id="vsupl" class="view" role="main"><div class="wrap">
@@ -738,7 +749,7 @@ const BUCKET='deportistas-docs';
 let FICHA=null, DATOS=null, CONS=null;
 
 // ═══ Vistas ═══
-const APP_VIEWS=['vhome','vdatos','vreg','vplan','vforms','vficha','vseg','vcomp','vsin','vmenu','vpriv'];
+const APP_VIEWS=['vhome','vdatos','vmat','vreg','vplan','vforms','vficha','vseg','vcomp','vsin','vmenu','vpriv'];
 function show(v){
   document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));
   $(v).classList.add('active');
@@ -854,7 +865,7 @@ async function guardarPassword(){
 function logout(){
   const s=authLoad();
   if(s) fetch(SURL+'/auth/v1/logout',{method:'POST',headers:{'apikey':SKEY,'Authorization':'Bearer '+s.access_token}}).catch(()=>{});
-  authClear(); FICHA=DATOS=REG=CONS=null; PLANES=[]; SUPL=[]; OBJ=null; DIA=null; DIA_FILE=null; REG_CMP=null; 
+  authClear(); FICHA=DATOS=REG=CONS=null; PLANES=[]; SUPL=[]; MATS=[]; OBJ=null; DIA=null; DIA_FILE=null; REG_CMP=null; 
   $('lpass').value=''; $('lerr').textContent='';
   show('vlogin');
 }
@@ -920,7 +931,7 @@ async function entrar(){
   show('vload');
   // Las peticiones opcionales salen a la vez que la ficha (antes iban una detrás de otra: 5 viajes seguidos). Si fallan, simplemente no salen sus tarjetas.
   const opc=fn=>rpc(fn).catch(()=>null);
-  const pCons=opc('cliente_consentimientos'), pPl=opc('cliente_mis_planes'), pDd=opc('cliente_mis_comidas'), pMm=opc('cliente_mi_menu'), pSu=opc('cliente_mi_suplementacion'), pOb=opc('cliente_mi_objetivo');
+  const pCons=opc('cliente_consentimientos'), pPl=opc('cliente_mis_planes'), pDd=opc('cliente_mis_comidas'), pMm=opc('cliente_mi_menu'), pSu=opc('cliente_mi_suplementacion'), pOb=opc('cliente_mi_objetivo'), pMa=opc('cliente_mis_archivos');
   try{
     FICHA=await rpc('cliente_mi_ficha');
   }catch(e){
@@ -935,13 +946,14 @@ async function entrar(){
   const hh=new Date().getHours(), saludo=hh>=6&&hh<14?'Buenos días':hh>=14&&hh<21?'Buenas tardes':'Buenas noches';
   $('hello').textContent=nombre?(saludo+', '+nombre):saludo;
   $('helloSub').textContent=[FICHA.deporte,FICHA.objetivo].filter(Boolean).join(' · ')||'Aquí tienes tu información.';
-  const [pl,dd,mm,su,ob]=await Promise.all([pPl,pDd,pMm,pSu,pOb]);
+  const [pl,dd,mm,su,ob,ma]=await Promise.all([pPl,pDd,pMm,pSu,pOb,pMa]);
   PLANES=Array.isArray(pl)?pl:[];
   DIA=dd&&Array.isArray(dd.comidas)?dd:null;   // opcional: sin su SQL no sale la tarjeta
   MENU_DATA=mm&&mm.menu&&Array.isArray(mm.menu.semanas)&&mm.menu.semanas.length?mm:null;   // opcional: sin su SQL, o sin menú publicado, no sale la tarjeta
+  MATS=(Array.isArray(ma)?ma:[]).filter(esMaterial);   // materiales: guías en PDF que el profesional comparte; sin ninguno, no sale la opción
   SUPL=Array.isArray(su)?su:[];   // opcional: sin su SQL, o sin nada asignado, no sale la opción
   OBJ=ob&&typeof ob==='object'&&ob.objetivo!=null?ob:null;   // opcional: sin su SQL, o sin objetivo puesto por el profesional, no sale nada
-  pintarNota(); pintarRevision(); pintarObjetivo(); pintarInstTip(); pintarTileForms(); pintarTileComp(); pintarTileSupl(); pintarTileDia(); pintarMensajeDia(); pintarPush(); $('privLink').style.display=CONS?'block':'none';
+  pintarNota(); pintarRevision(); pintarObjetivo(); pintarInstTip(); pintarTileForms(); pintarTileComp(); pintarTileSupl(); pintarTileMat(); pintarTileDia(); pintarMensajeDia(); pintarPush(); $('privLink').style.display=CONS?'block':'none';
   show('vhome');
   abrirDesdeAviso();
 }
@@ -1045,7 +1057,7 @@ async function abrirDatos(){
   $('datosBody').innerHTML='<div class="spin" style="margin-top:6vh"></div>';
   try{
     const [v,a,bi,su]=await Promise.all([rpc('cliente_mis_valoraciones'),rpc('cliente_mis_archivos'),rpc('cliente_mis_bioimpedancias').catch(()=>[]),rpc('cliente_mis_tests_sudoracion').catch(()=>[])]);   // báscula y test de sudoración son opcionales: sin su SQL, simplemente no salen
-    DATOS={vals:Array.isArray(v)?v:[],archivos:Array.isArray(a)?a:[],bio:Array.isArray(bi)?bi:[],sud:Array.isArray(su)?su:[]};
+    DATOS={vals:Array.isArray(v)?v:[],archivos:Array.isArray(a)?a.filter(f=>!esMaterial(f)):[],bio:Array.isArray(bi)?bi:[],sud:Array.isArray(su)?su:[]};
   }catch(e){ $('datosBody').innerHTML='<p class="empty">No se pudieron cargar tus datos. Comprueba tu conexión y vuelve a entrar.</p>'; return; }
   pintarDatos();
 }
@@ -1114,8 +1126,9 @@ function pintarDatos(){
   $('datosBody').innerHTML=h;
 }
 // El bucket es privado: se pide una URL firmada de 5 minutos con la sesión (solo funciona con los archivos que el profesional ha marcado como visibles).
-async function abrirArchivo(i){
-  const f=DATOS&&DATOS.archivos[i]; if(!f||!f.path) return;
+async function abrirArchivo(i){ abrirRuta(DATOS&&DATOS.archivos[i]); }
+async function abrirRuta(f){
+  if(!f||!f.path) return;
   const w=window.open('','_blank');
   try{
     const r=await authFetch(`${SURL}/storage/v1/object/sign/${BUCKET}/${String(f.path).split('/').map(encodeURIComponent).join('/')}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({expiresIn:300})});
@@ -1124,6 +1137,18 @@ async function abrirArchivo(i){
     const u=SURL+'/storage/v1'+j.signedURL;
     if(w) w.location.href=u; else window.location.href=u;
   }catch(e){ if(w) w.close(); toast('No se pudo abrir el documento. Vuelve a intentarlo.',{tipo:'error'}); }
+}
+// Materiales: guías en PDF de la biblioteca del profesional (ruta `materiales/…` en el bucket privado); el profesional decide a quién se las da.
+function esMaterial(f){ return !!f&&String(f.path||'').startsWith('materiales/'); }
+function pintarTileMat(){
+  const t=$('tileMat'); if(!t) return; const n=MATS.length;
+  t.style.display=n?'flex':'none';
+  if(n) $('tileMatD').textContent=n===1?'1 guía para leer y consultar':n+' guías para leer y consultar';
+}
+function abrirMat(){
+  const ic='<svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>';
+  $('matBody').innerHTML='<div class="card">'+MATS.map((f,i)=>`<div class="file"><span class="file-ic">${ic}</span><div class="file-info"><div class="file-n">${esc(String(f.nombre||'Guía').replace(/\.pdf$/i,''))}</div><div class="file-d">${f.fecha?'Añadida el '+fmtF(String(f.fecha).slice(0,10)):''}</div></div><button class="btn soft" onclick="abrirRuta(MATS[${i}])">Abrir</button></div>`).join('')+'</div><p class="note" style="margin:12px 2px 0">Son guías en PDF: se abren en una pestaña nueva y puedes guardarlas en tu móvil.</p>';
+  show('vmat');
 }
 
 // ═══ Mi peso y mis fotos ═══
@@ -1754,7 +1779,7 @@ function evolucionSeg(){
 }
 
 // ═══ Plan de competición (copia ya calculada por el profesional; solo hasta el día siguiente a la competición) ═══
-let PLANES=[], SUPL=[], OBJ=null;
+let PLANES=[], SUPL=[], MATS=[], OBJ=null;
 // ═══ Mi menú semanal: copia ya publicada por el profesional (nunca el borrador ni el catálogo) ═══
 // El bloque mnv*/mnImpr* es el mismo de planificador-nutricional.html (vista del cliente): si cambia allí, copiarlo aquí.
 let MENU=null, MENU_DATA=null; const MNV={sem:null,dia:0,tab:'hoy',rec:null,f:1};
