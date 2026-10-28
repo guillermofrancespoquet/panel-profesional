@@ -878,28 +878,20 @@ body.dark-mode .cmp-cell.b .cmp-track i{background:var(--t400)}
 .dash-qa-b.pri:hover{filter:brightness(1.08)}
 .dash-persbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:12px;padding:10px 14px;border-radius:12px;background:var(--gold-50);border:.5px dashed var(--gold);font-size:12.5px;color:var(--g700);line-height:1.45}
 .dash-persbar-b{display:flex;gap:8px}
-.dash-prox{display:flex;align-items:center;gap:18px;flex-wrap:wrap;background:var(--sf);border:.5px solid var(--bd);border-left:4px solid var(--t400);border-radius:16px;padding:1.1rem 1.4rem;margin-bottom:1.25rem;box-shadow:0 2px 10px rgba(0,0,0,.04)}
-.dash-prox.ya{border-left-color:var(--gold)}
-.dash-prox-h{flex:none;min-width:84px;text-align:center;background:var(--pill-g);border:.5px solid var(--pill-g-bd);border-radius:14px;padding:8px 12px}
-.dash-prox.ya .dash-prox-h{background:var(--pill-au);border-color:var(--pill-au-bd)}
-.dash-prox-h b{display:block;font-size:24px;line-height:1.1;letter-spacing:-.02em;color:var(--t800)}
-.dash-prox.ya .dash-prox-h b{color:var(--gold-dk)}
-.dash-prox-h span{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--t800)}
-.dash-prox.ya .dash-prox-h span{color:var(--gold-dk)}
-.dash-prox-c{flex:1 1 220px;min-width:0}
-.dash-prox-k{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--g400)}
-.dash-prox-n{font-size:18px;font-weight:700;letter-spacing:-.02em;margin:2px 0 3px}
-.dash-prox-s{font-size:13px;color:var(--g500);line-height:1.45}
-.dash-prox-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.dash-prox{display:flex;align-items:center;gap:12px;background:var(--sf);border:.5px solid var(--bdm,var(--bd));border-radius:999px;padding:7px 8px 7px 8px;margin-bottom:1.1rem;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.dash-prox-h{flex:none;display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:62px;height:44px;border-radius:999px;background:var(--pill-g);box-shadow:inset 0 0 0 .5px var(--pill-g-bd);color:var(--t800)}
+.dash-prox.ya .dash-prox-h{background:var(--pill-au);box-shadow:inset 0 0 0 .5px var(--pill-au-bd);color:var(--gold-dk)}
+.dash-prox-h b{font-size:15px;line-height:1.1;letter-spacing:-.01em}
+.dash-prox-h span{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;line-height:1.2}
+.dash-prox-c{flex:1 1 auto;min-width:0}
+.dash-prox-k{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--g400);line-height:1.2}
+.dash-prox-n{font-size:14.5px;font-weight:700;letter-spacing:-.01em;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dash-prox-s{font-size:12px;color:var(--g500);line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dash-prox-chips{display:flex;gap:6px;flex:none}
 .dash-chip{font-size:11px;font-weight:600;padding:2px 10px;border-radius:20px;background:var(--pill-n);box-shadow:inset 0 0 0 .5px var(--pill-n-bd);color:var(--g700);white-space:nowrap}
 .dash-chip.warn{background:var(--pill-au);box-shadow:inset 0 0 0 .5px var(--pill-au-bd);color:var(--gold-dk)}
-.dash-prox-a{display:flex;gap:8px;flex-wrap:wrap}
-.dash-prox-a .btn-soft{height:38px}
-.pick-list{margin-top:10px;max-height:min(46dvh,340px);overflow-y:auto;border-radius:12px;border:.5px solid var(--bd)}
-.pick-it{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;padding:11px 14px;background:var(--sf);border:none;border-bottom:.5px solid var(--bd);text-align:left;cursor:pointer;font:inherit;color:inherit}
-.pick-it:last-child{border-bottom:none}.pick-it:hover{background:var(--g100)}
-.pick-it b{font-size:13.5px;font-weight:600}.pick-it span{font-size:11.5px;color:var(--g400)}
-.pick-it .hoy{color:var(--t600);font-weight:700}
+.dash-prox-a{display:flex;gap:6px;flex:none}
+.dash-prox-a .btn-soft{height:32px;padding:0 13px;border-radius:999px;font-size:12px}
 .dash-cols{display:flex;flex-direction:column;gap:14px;margin-bottom:1.5rem}
 .dash-col{display:flex;flex-direction:column;gap:14px;min-width:0}
 @media(min-width:1150px){.dash-cols{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);align-items:start}}
@@ -910,12 +902,6 @@ body.dark-mode .cmp-cell.b .cmp-track i{background:var(--t400)}
 .dash-ok-t{font-size:16px;font-weight:700;letter-spacing:-.015em}
 .dash-ok-s{font-size:13px;color:var(--g500);margin-top:2px;line-height:1.5}
 .dash-ok>div:nth-child(2){flex:1 1 220px;min-width:0}
-button.dash-stat{font:inherit;color:inherit;cursor:pointer;width:100%;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;min-height:104px;transition:border-color .15s,transform .15s}
-button.dash-stat:hover{border-color:var(--t400)}
-.dash-stat-s{font-size:11px;color:var(--g400);margin-top:6px;line-height:1.35}
-.dash-stat-d{font-size:11px;font-weight:600;margin-top:6px;color:var(--g500)}
-.dash-stat-d.up{color:var(--t600)}
-.dash-stat-d.dn{color:var(--gold-dk)}
 .dc-bar{display:none}
 .dash-edit [data-dc]{position:relative;outline:1.5px dashed var(--gold);outline-offset:3px}
 .dash-edit .dc-bar{display:flex;position:absolute;top:-19px;right:14px;z-index:5;gap:2px;padding:2px;border-radius:10px;background:var(--sf);border:.5px solid var(--bdm,var(--bd));box-shadow:0 2px 8px rgba(0,0,0,.12)}
@@ -923,12 +909,11 @@ button.dash-stat:hover{border-color:var(--t400)}
 .dc-bar button:hover{background:var(--g100)}
 .dc-off{display:none !important}
 .dash-edit .dc-off{display:block !important;outline-color:var(--g400);outline-style:dotted}
-.dash-edit .dc-off.dash-stats{display:grid !important}
 .dash-edit .dc-off.fact-card{display:flex !important}
 @media(max-width:860px){
   .dash-qa-b{flex:1 1 auto;justify-content:center;padding:0 12px}
   .dash-pers span{display:none}.dash-pers{width:36px;padding:0;justify-content:center}
-  .dash-prox{padding:1rem 1.1rem;gap:12px}.dash-prox-a{width:100%}.dash-prox-a .btn-soft{flex:1;justify-content:center}
+  .dash-prox{flex-wrap:wrap;border-radius:22px;padding:8px 10px 10px 8px;gap:8px 10px}.dash-prox-c{flex:1 1 140px}.dash-prox-chips{order:3}.dash-prox-a{order:4;width:100%}.dash-prox-a .btn-soft{flex:1;justify-content:center}.dash-prox-n,.dash-prox-s{white-space:normal}
 }
 .dash-greet{font-size:22px;font-weight:700;letter-spacing:-.02em;margin-bottom:3px}
 .dash-date{font-size:13px;color:var(--g400)}
@@ -1675,8 +1660,6 @@ body.dark-mode .ref-src,body.dark-mode .sup-badge,body.dark-mode .depd-avatar-fa
     </div>
 
     <div id="dashProxima"></div>
-
-    <div class="dash-stats" id="dashStats" data-dc="stats" style="margin-bottom:1.5rem"></div>
 
     <div class="fact-card" id="factCard" data-dc="fact"></div>
 
@@ -4252,22 +4235,6 @@ async function loadDashboard(){
   if(totalAvisos>0){badgeEl.textContent=totalAvisos>9?'9+':totalAvisos;badgeEl.style.display='inline-block';}
   else{badgeEl.style.display='none';}
 
-  // ── Cifras (cada una abre su sección; las citas se comparan con la semana pasada) ──
-  const activosM3M=dashClients.filter(c=>(c.semana||0)<12).length;
-  const lun=new Date(today);lun.setDate(lun.getDate()-((lun.getDay()+6)%7));
-  const rango=(d0,n)=>{const x=new Date(d0);x.setDate(x.getDate()+n);return localISO(x);};
-  const sem0=localISO(lun),sem1=rango(lun,6),pas0=rango(lun,-7),pas1=rango(lun,-1);
-  const citasSemana=dashCitas.filter(c=>{const f=String(c.fecha).slice(0,10);return f>=sem0&&f<=sem1;}).length;
-  const citasPasada=dashCitas.filter(c=>{const f=String(c.fecha).slice(0,10);return f>=pas0&&f<=pas1;}).length;
-  const dif=citasSemana-citasPasada;
-  const deltaTxt=dif>0?`▲ ${dif} más que la semana pasada`:dif<0?`▼ ${-dif} menos que la semana pasada`:'= igual que la semana pasada';
-  const conSeg=dashDeps.filter(d=>d.formularios&&d.formularios.seguimiento&&d.formularios.seguimiento.activo).length;
-  const stat=(n,l,sub,go,cls)=>`<button type="button" class="dash-stat" onclick="${go}" title="Abrir ${l.toLowerCase()}"><div class="dash-stat-n">${n}</div><div class="dash-stat-l">${l}</div>${sub?`<div class="${cls||'dash-stat-s'}">${sub}</div>`:''}</button>`;
-  document.getElementById('dashStats').innerHTML=
-    stat(dashDeps.length,'Deportistas',conSeg?`${conSeg} con seguimiento semanal`:'',"navTo('deportiva')")+
-    stat(activosM3M,'Método 3M activos',`de ${dashClients.length} en total`,"navTo('metodo')")+
-    stat(citasSemana,'Citas esta semana',deltaTxt,"navTo('agenda')",'dash-stat-d '+(dif>0?'up':dif<0?'dn':''))+
-    stat(revs.length,'Revisiones por hacer','próximos 7 días',"navTo('agenda')");
   dashPintarEstado();
 }
 
@@ -4297,7 +4264,7 @@ function pintarProximaDash(lista, deps) {
   const el = document.getElementById('dashProxima'); if (!el) return;
   const ahora = new Date(), ini = c => c.hora ? new Date(String(c.fecha).slice(0, 10) + 'T' + String(c.hora).slice(0, 5) + ':00') : null;
   const c = lista.filter(x => !x.hecha && !citaArchivada(x)).sort((a, b) => (String(a.fecha).slice(0, 10) + (a.hora || '')).localeCompare(String(b.fecha).slice(0, 10) + (b.hora || '')))[0];
-  if (!c) { el.innerHTML = `<div class="dash-prox"><div class="dash-prox-c"><p class="dash-prox-k">Tu próxima cita</p><p class="dash-prox-n">No tienes citas próximas</p><p class="dash-prox-s">Cuando añadas una, saldrá aquí con su hora y lo que falta para empezar.</p></div><div class="dash-prox-a"><button type="button" class="btn-soft" onclick="navTo('agenda');openAddCita()">Nueva cita</button></div></div>`; return; }
+  if (!c) { el.innerHTML = `<div class="dash-prox"><div class="dash-prox-h"><b>—</b><span>Sin hora</span></div><div class="dash-prox-c"><p class="dash-prox-k">Tu próxima cita</p><p class="dash-prox-n">No tienes citas próximas</p><p class="dash-prox-s">Cuando añadas una, saldrá aquí.</p></div><div class="dash-prox-a"><button type="button" class="btn-soft" onclick="navTo('agenda');openAddCita()">Nueva cita</button></div></div>`; return; }
   const f = String(c.fecha).slice(0, 10), d0 = ini(c), hoyISO = localISO(ahora), man = new Date(ahora); man.setDate(man.getDate() + 1);
   const ya = !!(d0 && ahora >= d0), mins = d0 ? Math.round((d0 - ahora) / 60000) : null;
   const dur = m => m >= 60 ? Math.floor(m / 60) + ' h' + (m % 60 ? ' ' + (m % 60) + ' min' : '') : m + ' min';
@@ -4308,12 +4275,12 @@ function pintarProximaDash(lista, deps) {
   else cuando = 'En ' + Math.round((new Date(f + 'T00:00:00') - new Date(hoyISO + 'T00:00:00')) / 86400000) + ' días';
   const dia = f === hoyISO ? 'Hoy' : f === localISO(man) ? 'Mañana' : new Date(f + 'T00:00:00').toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric', month: 'short' }).replace('.', '');
   const dep = deps.find(x => String(x.nombre || '').trim().toLowerCase() === String(c.cliente || '').trim().toLowerCase());
-  const chips = [c.servicio || 'Revisión'].map(x => `<span class="dash-chip">${sudEsc(x)}</span>`);
+  const chips = [];
   if (c.requiere_pago !== false && !c.pagado) chips.push(`<span class="dash-chip warn">${citaYaPaso(c) ? 'Pago pendiente' : 'Por cobrar'}</span>`);
-  if (c.nota) chips.push(`<span class="dash-chip">${sudEsc(String(c.nota).slice(0, 40))}</span>`);
   el.innerHTML = `<div class="dash-prox${ya ? ' ya' : ''}">
     <div class="dash-prox-h"><b>${c.hora ? sudEsc(String(c.hora).slice(0, 5)) : '—'}</b><span>${sudEsc(dia)}</span></div>
-    <div class="dash-prox-c"><p class="dash-prox-k">${ya ? 'En curso' : 'Tu próxima cita'}</p><p class="dash-prox-n">${sudEsc(c.cliente)}</p><p class="dash-prox-s">${sudEsc(cuando)}</p><div class="dash-prox-chips">${chips.join('')}</div></div>
+    <div class="dash-prox-c"><p class="dash-prox-k">${ya ? 'En curso' : 'Tu próxima cita'}</p><p class="dash-prox-n">${sudEsc(c.cliente)}</p><p class="dash-prox-s">${sudEsc(cuando)} · ${sudEsc(c.servicio || 'Revisión')}</p></div>
+    ${chips.length ? `<div class="dash-prox-chips">${chips.join('')}</div>` : ''}
     <div class="dash-prox-a">${dep ? `<button type="button" class="btn-soft" onclick="abrirFichaDash(${dep.id})">Abrir ficha</button>` : ''}${ya ? `<button type="button" class="btn-soft" onclick="dashRegistrar(${c.id})">Registrar consulta</button>` : ''}<button type="button" class="btn-soft" onclick="openEditCita(${c.id})">Editar cita</button></div>
   </div>`;
 }
@@ -4340,7 +4307,7 @@ const mnNormLite = s => String(s == null ? '' : s).normalize('NFD').replace(/[̀
 function pickElegir(id) { pickCerrar(); abrirConsulta(id); }
 
 // Personalizar: ocultar y mover las tarjetas (solo dentro de su columna). Se guarda en este navegador.
-const DC_KEY = 'nl_dash_layout', DC_TIT = { stats: 'las cifras', fact: 'el dato del día' };
+const DC_KEY = 'nl_dash_layout', DC_TIT = { fact: 'el dato del día' };
 let _dcDef = null;
 function dcLeer() { try { const v = JSON.parse(localStorage.getItem(DC_KEY) || 'null'); return v && typeof v === 'object' ? v : {}; } catch (e) { return {}; } }
 function dcCols() { return { main: document.getElementById('dashColMain'), side: document.getElementById('dashColSide') }; }
