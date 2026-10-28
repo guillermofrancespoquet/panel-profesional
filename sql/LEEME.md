@@ -68,7 +68,7 @@ Qué se hace con la conservación: **dar de baja** al cliente (ficha → Archivo
 
 ## Calendario de Google (citas y revisiones → tu Google Calendar)
 
-Qué hace: cuando creas, mueves o borras una cita o revisión en el panel, aparece, se mueve o se borra sola en tu Google Calendar. Título «REVISIÓN - ANA» o «CONSULTA - ANA» (primer nombre, en mayúsculas), color Tomate, 60 min (sin hora: todo el día). No lleva notas, importes ni datos de salud. Va solo del panel a Google.
+Qué hace: cuando creas, mueves o borras una cita o revisión en el panel, aparece, se mueve o se borra sola en tu Google Calendar. Título siempre «REVISIÓN - ANA» (primer nombre, en mayúsculas), color Tomate, 60 min (sin hora: todo el día). No lleva notas, importes ni datos de salud. Va solo del panel a Google.
 
 Cómo funciona por dentro: una **cuenta de servicio** de Google (un «usuario robot» sin buzón) a la que compartes tu calendario con permiso para editar eventos. Su clave vive solo como secreto de Supabase. No hay pantalla de permisos de Google ni caducidad de sesión.
 
