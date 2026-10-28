@@ -257,6 +257,15 @@ body.dark-mode :focus-visible{outline-color:#5CC8A6}
 .mn-h1{font-size:28px;font-weight:700;letter-spacing:-.025em;line-height:1.15;color:var(--g900)}
 .mn-cli{font-size:14.5px;color:var(--g500);margin-top:4px}
 .mn-acc{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+/* Banner del editor (mismo sello que el panel: degradado verde oscuro, etiqueta dorada, botones translúcidos) */
+.mn-head.hero{align-items:center;background:linear-gradient(135deg,#04342C 0%,#1f4d5e 100%);color:#fff;border-radius:16px;padding:1.35rem 1.5rem;box-shadow:0 6px 18px rgba(4,52,44,.18)}
+.mn-head.hero .mn-k-hero{display:block;font-size:9.5px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:#D9B88C;margin-bottom:6px}
+.mn-head.hero .mn-h1{color:#fff;font-size:26px}
+.mn-head.hero .mn-cli{color:rgba(255,255,255,.82)}
+.mn-head.hero .mn-btn{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.28);color:#fff}
+.mn-head.hero .mn-btn:hover{background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.4)}
+.mn-head.hero .mn-btn.pri{background:#F4F2ED;border-color:#F4F2ED;color:#04342C}
+.mn-head.hero .mn-btn.pri:hover{background:#fff}
 @media(max-width:640px){
   .mn-acc{display:grid;grid-template-columns:1fr 1fr;gap:8px;align-items:stretch}
   .mn-acc>.mn-btn{width:100%;min-width:0;height:auto;min-height:38px;padding:6px 10px;gap:6px;white-space:normal;line-height:1.2;text-align:center}
@@ -954,7 +963,7 @@ async function mnBibGeneralAbrir() {
 }
 function mnBibGeneralPintar() {
   document.getElementById('mnPage').innerHTML = `<div class="mn-bar"><button type="button" class="mn-back" onclick="mnSalir()">${mnI('back')}Clientes</button></div>
-    <div class="mn-head"><div><h1 class="mn-h1">Biblioteca</h1><p class="mn-cli">Platos, recetas, comidas y alimentos de todos tus clientes</p></div></div>
+    <div class="mn-head hero"><div><span class="mn-k-hero">Planificador nutricional</span><h1 class="mn-h1">Biblioteca</h1><p class="mn-cli">Platos, recetas, comidas y alimentos de todos tus clientes</p></div></div>
     <div id="mnCuerpo">${mnBibHtml()}</div>`;
   if (MN_BIB.sub === 'p') mnBibPintar(); cargarFotos(document.getElementById('mnPage'));
 }
@@ -1342,7 +1351,7 @@ function mnPintar() {
   const tabs = [['menu', 'Menú'], ['compra', 'Lista de la compra'], ['recetas', 'Recetas', c.recetas.length], ['platos', 'Comidas guardadas', c.platos.length], ['biblioteca', 'Biblioteca', MN_BIBLIOTECA.length], ['objetivo', 'Objetivo e impresiones'], ['cliente', 'Vista del cliente']];
   document.getElementById('mnPage').innerHTML = `
     <div class="mn-bar"><button type="button" class="mn-back" onclick="mnSalir()">${mnI('back')}Clientes</button><div id="mnEstado">${mnEstadoHtml()}</div></div>
-    <div class="mn-head"><div><h1 class="mn-h1">Planificador nutricional</h1><p class="mn-cli">${sudEsc(MN.nombre)}</p></div>
+    <div class="mn-head hero"><div><span class="mn-k-hero">Planificador nutricional</span><h1 class="mn-h1">${sudEsc(MN.nombre)}</h1>${c.titulo ? `<p class="mn-cli">${sudEsc(c.titulo)}</p>` : ''}</div>
       <div class="mn-acc">${faltan ? mnBtn('Completar catálogo (' + faltan + ')', 'mnAutoAbrir()', { icon: 'wand' }) : ''}${mnBtn('Generar semana', 'mnGenAbrir()', { icon: 'wand' })}${mnBtn('Catálogo', 'mnCatAbrir()', { icon: 'book' })}${pub ? mnBtn('Retirar', 'mnRetirar()', { icon: 'undo' }) : ''}${mnBtn(pub ? 'Publicar cambios' : 'Publicar', 'mnPublicar()', { pri: true, icon: 'send' })}</div></div>
     <div class="mn-tabs" role="tablist" aria-label="Secciones del menú">${tabs.map(t => `<button type="button" role="tab" class="mn-tab${t[0] === 'menu' ? ' main' : ''}${MN.tab === t[0] ? ' on' : ''}" aria-selected="${MN.tab === t[0]}" onclick="mnTab('${t[0]}')">${t[0] === 'menu' ? mnI('cal') : ''}${t[1]}${t[2] ? `<span class="mn-n">${t[2]}</span>` : ''}</button>`).join('')}</div>
     <div id="mnCuerpo">${MN.tab === 'menu' ? mnMenuHtml() : MN.tab === 'recetas' ? mnRecetasHtml() : MN.tab === 'platos' ? mnPlatosHtml() : MN.tab === 'compra' ? mnCompraHtml() : MN.tab === 'biblioteca' ? mnBibHtml() : MN.tab === 'objetivo' ? mnObjetivoHtml() : mnClienteHtml()}</div>`;
