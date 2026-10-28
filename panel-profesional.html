@@ -251,6 +251,8 @@ body.dark-mode .btn-ok.danger,body.dark-mode .sb-badge{background:#B83232}
 .dep-avatar{width:64px;height:64px;border-radius:50%;overflow:hidden;margin:0 auto 10px;background:var(--gold-50);display:flex;align-items:center;justify-content:center;border:2px solid var(--gold-50)}
 .dep-avatar img{width:100%;height:100%;object-fit:cover}
 .dep-avatar-fallback{font-size:22px;font-weight:700;color:var(--gold-dk)}
+.plan-chk{display:flex;gap:8px;align-items:flex-start;font-size:14px;line-height:1.4;cursor:pointer}.plan-chk input{margin-top:3px;width:18px;height:18px;flex:none;accent-color:var(--btn)}
+.est-acc{margin-top:6px}
 .foto-pick{display:flex;align-items:center;gap:14px;margin-bottom:6px}.foto-pick .dep-avatar{margin:0;flex:none}.foto-pick-b{min-width:0}.foto-pick-r{display:flex;gap:8px;flex-wrap:wrap}.foto-pick-n{font-size:12px;color:var(--g400);margin:6px 0 0;line-height:1.4}
 .dep-name{font-size:13px;font-weight:600;color:var(--g900);margin-bottom:2px}
 .dep-sport{font-size:11px;color:var(--g400)}
@@ -2204,6 +2206,11 @@ body.dark-mode .ref-src,body.dark-mode .sup-badge,body.dark-mode .depd-avatar-fa
       <input type="date" class="inp" id="consFecha">
       <label class="mfl" for="consNota" style="margin-top:12px">Lo hablado y los acuerdos <span class="hd-opt">(opcional)</span></label>
       <textarea class="notes-ta" id="consNota" maxlength="600" style="min-height:110px" placeholder="Ej. Sube hidratos antes de entrenar, revisamos el desayuno en la próxima visita."></textarea>
+      <div id="consPlanBox" style="margin-top:14px">
+        <label class="plan-chk" for="consPlan"><input type="checkbox" id="consPlan" checked onchange="document.getElementById('consPlanFechaBox').style.display=this.checked?'':'none'"><span><b>Plan por preparar</b><br><span class="med-note" style="margin:0">Te lo recuerda en «Por atender» hasta que publiques su plan.</span></span></label>
+        <div id="consPlanFechaBox" style="margin-top:8px"><label class="mfl" for="consPlanPara">Quiero tenerlo para el día</label><input type="date" class="inp" id="consPlanPara"></div>
+        <p class="med-note" id="consPlanNota" style="margin:8px 0 0"></p>
+      </div>
     </div>
     <label class="mfl" id="consPagoBox" style="display:none;gap:8px;align-items:center;margin-top:12px;font-weight:600"><input type="checkbox" id="consPago"> Marcar la cita como cobrada</label>
     <div class="mbtns" style="margin-top:16px">
@@ -4135,11 +4142,12 @@ async function pintarAvisosDash(deps, citasAll, todayISO){
   //    y clientes que antes anotaban su peso y llevan días sin hacerlo (si las tablas no existen, simplemente no se avisa)
   const conSeg = deps.filter(d => d.formularios && d.formularios.seguimiento && d.formularios.seguimiento.activo);
   const lunes = lunesMadridISO(), hace = n => { const x = new Date(lunes+'T00:00:00'); x.setDate(x.getDate()-n); return localISO(x); };
-  const [segs, pesos, comidas, objVenc] = await Promise.all([
+  const [segs, pesos, comidas, objVenc, pubs] = await Promise.all([
     Promise.resolve(sb(`seguimientos?semana=gte.${hace(21)}&select=deportista_id,semana,respuestas&order=semana.desc`)).then(a=>Array.isArray(a)?a:null).catch(()=>null),
     Promise.resolve(sb(`pesos_cliente?fecha=gte.${hace(60)}&select=deportista_id,fecha&order=fecha.desc`)).then(a=>Array.isArray(a)?a:null).catch(()=>null),
     Promise.resolve(sb(`comidas_cliente?fecha=gte.${localISO(new Date(Date.now() - 7*86400000))}&comentario=is.null&select=deportista_id`)).then(a=>Array.isArray(a)?a:null).catch(()=>null),
-    Promise.resolve(sb(`objetivos_cliente?estado=eq.activo&fecha_limite=lt.${todayISO}&select=deportista_id`)).then(a=>Array.isArray(a)?a:null).catch(()=>null)
+    Promise.resolve(sb(`objetivos_cliente?estado=eq.activo&fecha_limite=lt.${todayISO}&select=deportista_id`)).then(a=>Array.isArray(a)?a:null).catch(()=>null),
+    deps.some(d => d.plan_pendiente) ? Promise.resolve(sb('menus_cliente?publicado_en=not.is.null&select=deportista_id,publicado_en')).then(a=>Array.isArray(a)?a:[]).catch(()=>[]) : Promise.resolve([])
   ]);
   const aviso = (d, tag, cls) => avisos.push({id:d.id, n:d.nombre, sub:d.deporte||'', tag, cls});
   if(segs){
@@ -4172,6 +4180,10 @@ async function pintarAvisosDash(deps, citasAll, todayISO){
     if(f < todayISO) avisos.push({id:d.id, n:d.nombre, sub:d.deporte||'', tag:'Poner nueva fecha de revisión', cls:'red'});
     else if(!citasAll.some(c=>c.cliente===d.nombre && String(c.fecha).slice(0,10)===f)) avisos.push({id:d.id, n:d.nombre, sub:d.deporte||'', tag:'Revisión sin cita en la agenda', cls:'red'});
   });
+  // 3) Plan por preparar (tras una consulta) hasta que se publica el plan: lo primero de la lista
+  const pub = {}; (pubs || []).forEach(x => { pub[String(x.deportista_id)] = x.publicado_en; });
+  const planes = deps.map(d => ({ d, pp: planPendienteVivo(d, pub[String(d.id)]) })).filter(x => x.pp).sort((a, b) => a.pp.para.localeCompare(b.pp.para));
+  avisos.unshift(...planes.map(({ d, pp }) => ({ id: d.id, n: d.nombre, sub: d.deporte || '', tag: 'Plan por preparar · ' + planPendienteTxt(pp), cls: daysUntil(pp.para) <= 0 ? 'red' : 'gold' })));
   document.getElementById('dashAvisosCount').textContent = avisos.length;
   card.style.display = avisos.length ? '' : 'none';
   document.getElementById('dashAvisos').innerHTML = avisos.map(a=>`<div class="dash-row dash-row-link" role="button" tabindex="0" onclick="abrirFichaDash(${a.id})" onkeydown="if(event.key==='Enter')abrirFichaDash(${a.id})"><div class="dash-row-dot ${a.cls}"></div><div class="dash-row-txt"><div class="dash-row-name">${sudEsc(a.n)}</div><div class="dash-row-sub">${sudEsc(a.sub)}</div></div><span class="dash-row-tag">${a.tag}</span></div>`).join('');
@@ -6686,13 +6698,14 @@ async function revGuardar(depId, quitar){
 // ── Estado del cliente: resumen calculado con lo que ya hay (mediciones, seguimiento, peso, consultas, revisión y formularios) ──
 async function loadEstado(depId){
   const seguro = p => Promise.resolve(p).then(v => Array.isArray(v) ? v : []).catch(() => []);
-  const [meds, bios, segs, pesos, hist, comidas, objA] = await Promise.all([
+  const [meds, bios, segs, pesos, hist, comidas, objA, pubEst] = await Promise.all([
     seguro(getMediciones(depId)), seguro(getBio(depId)),
     seguro(sb(`seguimientos?deportista_id=eq.${depId}&order=semana.desc&limit=6&select=semana,respuestas`)),
     seguro(sb(`pesos_cliente?deportista_id=eq.${depId}&order=fecha.desc&limit=1&select=fecha,peso`)),
     seguro(sb(`historial_deportista?deportista_id=eq.${depId}&order=fecha.desc&limit=1&select=fecha`)),
     seguro(sb(`comidas_cliente?deportista_id=eq.${depId}&fecha=gte.${localISO(new Date(Date.now() - 7*86400000))}&select=id,comentario`)),
-    Promise.resolve(sb('rpc/objetivo_progreso', { method:'POST', body:JSON.stringify({ p_dep:depId }) })).then(v => (v && typeof v === 'object' && !esErrorSb(v)) ? v : null).catch(() => null)
+    Promise.resolve(sb('rpc/objetivo_progreso', { method:'POST', body:JSON.stringify({ p_dep:depId }) })).then(v => (v && typeof v === 'object' && !esErrorSb(v)) ? v : null).catch(() => null),
+    Promise.resolve(sb(`menus_cliente?deportista_id=eq.${depId}&select=publicado_en`)).then(a => Array.isArray(a) && a[0] ? a[0].publicado_en : null).catch(() => null)
   ]);
   const el = document.getElementById('estBox'), d = deportistas.find(x => x.id == depId);
   if(!el || !d || currentDepId != depId) return;
@@ -6701,7 +6714,11 @@ async function loadEstado(depId){
   const hace = n => n <= 0 ? 'hoy' : n === 1 ? 'hace 1 día' : n < 60 ? `hace ${n} días` : `hace ${Math.round(n / 30.4)} meses`;
   const fmt = f => new Date(dia(f) + 'T00:00:00').toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
   const filas = [];
-  const add = (k, t, warn) => filas.push({ k, t, warn: !!warn });
+  const add = (k, t, warn, acc) => filas.push({ k, t, warn: !!warn, acc });
+
+  // Plan por preparar: primera fila, con su botón para quitarlo
+  const ppv = planPendienteVivo(d, pubEst);
+  if(ppv) add('Plan por preparar', planPendienteTxt(ppv).replace(/^./, c => c.toUpperCase()) + '. Se quita solo cuando publicas su plan.', daysUntil(ppv.para) <= 0, `<button type="button" class="btn-soft est-acc" onclick="planPendienteQuitar(${depId})">Quitar recordatorio</button>`);
 
   // Mediciones (antropometría; si no hay, la báscula)
   const pts = meds.map(medPunto).sort((a, b) => a.fecha.localeCompare(b.fecha));
@@ -6765,7 +6782,7 @@ async function loadEstado(depId){
 
   const avisos = filas.filter(f => f.warn).length;
   el.innerHTML = `<div class="est-head"><span class="est-pill${avisos ? ' warn' : ''}">${avisos ? (avisos === 1 ? '1 cosa que mirar' : avisos + ' cosas que mirar') : 'Todo en orden'}</span></div>
-    <div class="est-grid">${filas.map(f => `<div class="est-row${f.warn ? ' warn' : ''}"><div class="est-k">${f.k}</div><div class="est-v">${sudEsc(f.t)}</div></div>`).join('')}</div>`;
+    <div class="est-grid">${filas.map(f => `<div class="est-row${f.warn ? ' warn' : ''}"><div class="est-k">${f.k}</div><div class="est-v">${sudEsc(f.t)}${f.acc || ''}</div></div>`).join('')}</div>`;
 }
 
 async function loadMediciones(depId){
@@ -8341,6 +8358,23 @@ async function touchActividad(depId){
   if(d) d.ultima_actividad = now;
 }
 
+// «Plan por preparar» (supabase_plan_pendiente.sql): {desde, para}. Se considera hecho cuando se publica un plan nuevo (menus_cliente.publicado_en ≥ desde).
+const fechaPlan = f => new Date(String(f).slice(0,10) + 'T00:00:00').toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
+function planPendienteVivo(d, publicadoEn){
+  const pp = d && d.plan_pendiente; if(!pp || typeof pp !== 'object' || !pp.para) return null;
+  if(publicadoEn && String(publicadoEn).slice(0,10) >= String(pp.desde || '0000-00-00').slice(0,10)) return null;
+  return { desde: String(pp.desde || '').slice(0,10), para: String(pp.para).slice(0,10) };
+}
+function planPendienteTxt(pp){
+  const dias = daysUntil(pp.para);
+  return dias < 0 ? `vencido hace ${-dias} día${dias === -1 ? '' : 's'} (era para el ${fechaPlan(pp.para)})` : dias === 0 ? 'para hoy' : dias === 1 ? 'para mañana' : 'para el ' + fechaPlan(pp.para);
+}
+async function planPendienteQuitar(depId){
+  const d = deportistas.find(x => x.id == depId); if(!d) return;
+  const r = await patchDep(depId, { plan_pendiente: null });
+  if(esErrorSb(r)){ toast('No se pudo quitar el recordatorio.', {tipo:'error'}); return; }
+  d.plan_pendiente = null; toast('Recordatorio quitado.'); loadEstado(depId); if(typeof loadDashboard === 'function' && document.getElementById('vdash') && document.getElementById('vdash').classList.contains('active')) loadDashboard();
+}
 // Registrar una consulta: pide opcionalmente lo hablado y los acuerdos. También se abre desde una cita pasada de la agenda («Hecha»).
 let _cons = null;
 function registrarConsulta(depId){ abrirConsulta(depId); }
@@ -8353,6 +8387,14 @@ async function abrirConsulta(depId, cita){
   document.getElementById('consCampos').style.display = d ? '' : 'none';
   document.getElementById('consFecha').value = cita ? String(cita.fecha).slice(0,10) : localISO(new Date());
   document.getElementById('consNota').value = '';
+  // «Plan por preparar»: solo si la columna existe (supabase_plan_pendiente.sql) y hay deportista
+  const pb = document.getElementById('consPlanBox'), pe = d ? planPendienteVivo(d, null) : null, hayCol = !!(d && 'plan_pendiente' in d);
+  pb.style.display = d ? '' : 'none';
+  document.getElementById('consPlan').disabled = !hayCol; document.getElementById('consPlan').checked = hayCol;
+  document.getElementById('consPlanFechaBox').style.display = hayCol ? '' : 'none';
+  const dos = new Date(); dos.setDate(dos.getDate() + 2);
+  document.getElementById('consPlanPara').value = pe && pe.para ? pe.para : localISO(dos);
+  document.getElementById('consPlanNota').textContent = !hayCol ? 'Para usar este recordatorio, ejecuta supabase_plan_pendiente.sql en Supabase.' : pe ? 'Ya tenías un plan pendiente para el ' + fechaPlan(pe.para) + ': se actualiza la fecha.' : '';
   const pagable = !!(cita && cita.requiere_pago !== false && !cita.pagado);
   document.getElementById('consPagoBox').style.display = pagable ? 'flex' : 'none';
   document.getElementById('consPago').checked = false;
@@ -8370,6 +8412,13 @@ async function guardarConsulta(){
       const r = await insertHistorial({deportista_id: C.depId, fecha, nota: nota || 'Consulta registrada'});
       if(esErrorSb(r)) throw new Error('historial');
       await touchActividad(C.depId);
+      const dd = deportistas.find(x => x.id == C.depId), marcar = document.getElementById('consPlan');
+      if(dd && 'plan_pendiente' in dd && marcar && marcar.checked){
+        const para = document.getElementById('consPlanPara').value || localISO(new Date()), ant = planPendienteVivo(dd, null);
+        const pp = { desde: ant && ant.desde && ant.desde < fecha ? ant.desde : fecha, para };
+        const rp = await patchDep(C.depId, { plan_pendiente: pp });
+        if(esErrorSb(rp)) toast('Consulta guardada, pero no se pudo anotar el plan por preparar.', {tipo:'aviso', ms:6000}); else dd.plan_pendiente = pp;
+      }
     }
     if(C.cita){
       const upd = { hecha: true };

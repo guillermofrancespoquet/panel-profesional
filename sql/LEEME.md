@@ -23,6 +23,7 @@ Todos se ejecutan a mano en Supabase → SQL Editor → New query → Run. Son s
    - `supabase_banco_recetas.sql` (plan nutricional: banco compartido de recetas y comidas guardadas; requiere solo `supabase_clientes_acceso.sql`)
    - `supabase_objetivos.sql` (objetivos del cliente con seguimiento, opcional, y peso reciente para reajustar las kcal del plan; requiere `supabase_clientes_acceso.sql`, `supabase_seguimiento.sql`, `supabase_bioimpedancia.sql` y `supabase_registro_cliente.sql`)
    - `supabase_notificaciones.sql` (avisos al móvil del cliente: seguimiento semanal; requiere `supabase_seguimiento.sql`; **además hay que crear la Edge Function y programarla**, ver «Avisos al móvil» más abajo)
+   - `supabase_plan_pendiente.sql` (recordatorio «Plan por preparar» tras una consulta; una columna, opcional)
 8. `supabase_seguridad_3_endurecer.sql`, **el último** (endurecimiento tras la revisión de seguridad del 26 oct 2026: rutas de archivos, límites, direcciones de avisos, privilegios; sustituye tres funciones por su versión endurecida, que ya llevan también sus archivos originales). Después, `supabase_diagnostico_seguridad.sql` (solo lectura): todo debe salir «OK».
 
 ## Ojo
