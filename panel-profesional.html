@@ -249,11 +249,11 @@ body.dark-mode .btn-ok.danger,body.dark-mode .sb-badge{background:#B83232}
 
 /* DEPORTISTAS DASHBOARD */
 .dep-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:14px}
-.dep-card{background:var(--sf);border-radius:14px;border:.5px solid var(--bd);padding:1.25rem 1rem;cursor:pointer;transition:border-color .15s,box-shadow .15s;text-align:center}
+.dep-card{background:linear-gradient(135deg,var(--t50) 0%,var(--sf) 62%);border-radius:16px;border:.5px solid var(--bd);padding:1.25rem 1rem;cursor:pointer;transition:border-color .15s,box-shadow .15s;text-align:center}
 .dep-card:hover{border-color:var(--gold);box-shadow:0 2px 16px rgba(184,149,106,.18)}
-.dep-avatar{width:64px;height:64px;border-radius:50%;overflow:hidden;margin:0 auto 10px;background:var(--gold-50);display:flex;align-items:center;justify-content:center;border:2px solid var(--gold-50)}
+.dep-avatar{width:64px;height:64px;border-radius:20px;overflow:hidden;margin:0 auto 10px;background:linear-gradient(135deg,#04342C 0%,#1f4d5e 100%);display:flex;align-items:center;justify-content:center;border:.5px solid rgba(217,184,140,.5);box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 4px 12px rgba(4,52,44,.2)}
 .dep-avatar img{width:100%;height:100%;object-fit:cover}
-.dep-avatar-fallback{font-size:22px;font-weight:700;color:var(--gold-dk)}
+.dep-avatar-fallback{font-size:22px;font-weight:700;color:#fff}
 .fi-alert{margin:0 0 10px;padding:10px 12px 10px 28px;border-radius:10px;background:rgba(184,149,106,.14);border:.5px solid var(--gold);font-size:13px;line-height:1.5}
 .plan-chk{display:flex;gap:8px;align-items:flex-start;font-size:14px;line-height:1.4;cursor:pointer}.plan-chk input{margin-top:3px;width:18px;height:18px;flex:none;accent-color:var(--btn)}
 .est-acc{margin-top:6px}
@@ -267,7 +267,7 @@ body.dark-mode .btn-ok.danger,body.dark-mode .sb-badge{background:#B83232}
 .dep-sport{font-size:11px;color:var(--g400)}
 
 /* DEPORTISTA DETAIL */
-.depd-hero{background:var(--sf);border-radius:14px;border:.5px solid var(--bd);padding:1.5rem;margin-bottom:1.25rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
+.depd-hero{background:linear-gradient(135deg,var(--t900) 0%,#1f4d5e 100%);color:#fff;border-radius:16px;padding:1.5rem;margin-bottom:1.25rem;display:flex;align-items:center;gap:1.1rem;flex-wrap:wrap;box-shadow:0 6px 18px rgba(4,52,44,.18)}
 .depd-actions{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .depd-actions .btn-action{padding:10px 16px}
 @media(max-width:700px){
@@ -275,12 +275,19 @@ body.dark-mode .btn-ok.danger,body.dark-mode .sb-badge{background:#B83232}
   .depd-actions .btn-action{justify-content:center;white-space:nowrap;padding:10px 8px}
   .depd-actions .btn-action.primary,.depd-actions .btn-action:nth-child(2){grid-column:1/-1}
 }
-.depd-avatar{width:76px;height:76px;border-radius:50%;overflow:hidden;background:var(--gold-50);display:flex;align-items:center;justify-content:center;flex-shrink:0;border:2px solid var(--gold-50)}
+.depd-avatar{width:84px;height:84px;border-radius:22px;overflow:hidden;background:rgba(184,149,106,.16);display:flex;align-items:center;justify-content:center;flex-shrink:0;border:.5px solid rgba(217,184,140,.34);box-shadow:inset 0 1px 0 rgba(255,255,255,.07)}
 .depd-avatar img{width:100%;height:100%;object-fit:cover}
-.depd-avatar-fallback{font-size:26px;font-weight:700;color:var(--gold-dk)}
+.depd-avatar-fallback{font-size:28px;font-weight:700;color:#fff}
 .depd-info{flex:1;min-width:180px}
-.depd-name{font-size:22px;font-weight:700;letter-spacing:-.02em;margin-bottom:3px}
-.depd-sport{font-size:13px;color:var(--gold-dk);font-weight:500}
+.depd-name{font-size:24px;font-weight:700;letter-spacing:-.02em;margin-bottom:3px;color:#fff}
+.depd-sport{font-size:13px;color:rgba(255,255,255,.82);font-weight:500}
+.depd-hero .dep-obj-badge{background:rgba(184,149,106,.24);box-shadow:inset 0 0 0 .5px rgba(217,184,140,.5);color:#F0D9B5;font-size:11px;padding:3px 11px}
+.depd-hero .pill-baja{background:rgba(255,255,255,.14);color:#fff}
+.depd-hero .btn-action{background:rgba(255,255,255,.1) !important;border:.5px solid rgba(255,255,255,.28);color:#fff !important}
+.depd-hero .btn-action:hover{background:rgba(255,255,255,.18) !important;opacity:1}
+.depd-hero .btn-action.primary{background:#F4F2ED !important;border-color:#F4F2ED;color:var(--t900) !important}
+.depd-hero .btn-action.primary:hover{background:#fff !important}
+.depd-hero .btn-action.danger{color:#F4B5B3 !important;background:rgba(242,133,131,.12) !important;border-color:rgba(242,133,131,.35)}
 .depd-section{margin-bottom:2rem;min-width:0}
 @media(max-width:860px){.depd-section{margin-bottom:1.75rem}}
 .depd-cols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:1.25rem;align-items:start}
@@ -633,14 +640,15 @@ body::before{content:'';position:fixed;top:0;left:0;right:0;height:env(safe-area
 .gsearch-item-sub{font-size:11.5px;color:var(--g400)}
 .gsearch-empty{padding:2rem 1rem;text-align:center;font-size:13px;color:var(--g400)}
 .sb-foot{position:relative;flex:none;padding:.75rem .75rem 0;margin-top:.5rem;border-top:.5px solid rgba(255,255,255,.08)}
-.sb-acct{display:flex;align-items:center;gap:2px;padding:5px;border-radius:18px;background:rgba(255,255,255,.06);border:.5px solid rgba(255,255,255,.1)}
+.sb-acct{display:flex;align-items:center;gap:2px;padding:5px;border-radius:12px;background:rgba(255,255,255,.06);border:.5px solid rgba(255,255,255,.1)}
 .sb-acct-btn{flex:1;min-width:0;display:flex;align-items:center;gap:8px;background:transparent;border:none;border-radius:14px;padding:2px 2px;cursor:pointer;font-family:var(--f);text-align:left;color:#fff;transition:background .15s}
 .sb-acct-btn:hover,.sb-acct-btn[aria-expanded="true"]{background:transparent}
-.sb-av{flex:none;width:34px;height:34px;border-radius:11px;background:var(--gold);color:var(--t900);font-size:12px;font-weight:800;letter-spacing:.02em;display:flex;align-items:center;justify-content:center}
+.sb-av{flex:none;width:34px;height:34px;border-radius:8px;overflow:hidden;background:var(--gold);color:var(--t900);font-size:12px;font-weight:800;letter-spacing:.02em;display:flex;align-items:center;justify-content:center}
+.sb-av img{width:100%;height:100%;object-fit:cover;display:block}
 .sb-acct-t{flex:1;min-width:0;line-height:1.2}
 .sb-acct-n{display:block;font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sb-acct-s{display:block;font-size:11px;color:rgba(255,255,255,.65);margin-top:1px}
-.sb-acct-btn .sb-chev{box-sizing:content-box;flex:none;width:14px;height:14px;padding:6px;border-radius:9px;border:.5px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06);opacity:.85}
+.sb-acct-btn .sb-chev{box-sizing:content-box;flex:none;width:14px;height:14px;padding:6px;border-radius:7px;border:.5px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06);opacity:.85}
 .sb-acct-btn:hover .sb-chev,.sb-acct-btn[aria-expanded="true"] .sb-chev{background:rgba(255,255,255,.12);opacity:1}
 .sb-icon-btn{flex:none;width:34px;height:34px;display:flex;align-items:center;justify-content:center;background:transparent;border:none;border-radius:10px;color:rgba(255,255,255,.8);cursor:pointer;transition:background .15s,color .15s}
 .sb-icon-btn:hover{background:rgba(255,255,255,.1);color:#fff}
@@ -1614,6 +1622,9 @@ body.dark-mode .ref-src,body.dark-mode .sup-badge,body.dark-mode .depd-avatar-fa
   <div class="sb-foot">
     <div class="sb-menu" id="sbAcctMenu" role="menu" aria-label="Cuenta" hidden>
       <button type="button" class="sb-mi" role="menuitem" onclick="abrirAjustes()"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Ajustes</button>
+      <button type="button" class="sb-mi" role="menuitem" onclick="cuentaFotoElegir()"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg><span>Cambiar foto</span></button>
+      <button type="button" class="sb-mi" role="menuitem" id="sbFotoQuitar" style="display:none" onclick="cuentaFotoQuitar()"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg><span>Quitar foto</span></button>
+      <input type="file" id="sbFotoFile" accept="image/*" hidden onchange="cuentaFotoSubir(this)">
       <div class="sb-mi-sep" role="separator"></div>
       <button type="button" class="sb-mi" role="menuitem" onclick="cerrarAcctMenu();exportAllData();closeMobileSidebar()"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Copia de seguridad</button>
       <button type="button" class="sb-mi" role="menuitem" onclick="cerrarAcctMenu();abrirHuerfanos();closeMobileSidebar()"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>Limpiar archivos</button>
@@ -1624,7 +1635,7 @@ body.dark-mode .ref-src,body.dark-mode .sup-badge,body.dark-mode .depd-avatar-fa
     <p class="sb-export-status" id="exportStatus" role="status"></p>
     <div class="sb-acct">
       <button type="button" class="sb-acct-btn" id="sbAcctBtn" aria-haspopup="menu" aria-expanded="false" aria-controls="sbAcctMenu" onclick="toggleAcctMenu()">
-        <span class="sb-av" aria-hidden="true">NL</span>
+        <span class="sb-av" id="sbAv" aria-hidden="true">NL</span>
         <span class="sb-acct-t"><span class="sb-acct-n">NutriLogos</span><span class="sb-acct-s">Profesional</span></span>
         <svg class="sb-chev" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><polyline points="7 15 12 20 17 15"/><polyline points="7 9 12 4 17 9"/></svg>
       </button>
@@ -4481,6 +4492,7 @@ function enterApp(){
   document.body.classList.add('has-sidebar');
   document.getElementById('sidebar').classList.add('show');
   navTo('home');
+  cuentaFotoCargar();
 }
 function toggleMobileSidebar(){
   document.getElementById('sidebar').classList.toggle('mobile-open');
@@ -4641,7 +4653,6 @@ function openDet(id){
     <p class="sec-title" style="margin-top:1.25rem">Notas del cliente</p>
     <textarea class="notes-ta" id="nta" oninput="_autoM3.cambio(${id},this.value)" placeholder="Observaciones, ajustes al programa, notas personales del cliente…">${c.notas||''}</textarea>
     <div class="notes-foot">
-      <button class="btn-save" onclick="saveNote(${id})">Guardar notas</button>
       <span class="save-ok" id="sok">✓ Guardado</span>
     </div>`;
   show('vdet');
@@ -4652,7 +4663,6 @@ function copyUrl(url){
     setTimeout(()=>b.textContent='Copiar enlace',2000);
   });
 }
-function saveNote(id){ _autoM3.cambio(id,document.getElementById('nta').value); return _autoM3.ahora(); }
 
 // ── ADD CLIENT ──
 function openAdd(){document.getElementById('mAdd').style.display='flex';setTimeout(()=>enfocar('mNombre'),100);}
@@ -6425,7 +6435,6 @@ function openDepDet(id) {
       <p class="sec-title">Notas privadas</p>
       <textarea class="notes-ta" id="depNotes" oninput="_autoDep.cambio(${d.id},this.value)" placeholder="Objetivos, ajustes, observaciones de seguimiento…">${d.notas || ''}</textarea>
       <div class="notes-foot">
-        <button class="btn-save" onclick="saveDepNote(${d.id})">Guardar notas</button>
         <span class="save-ok" id="depSaveOk">✓ Guardado</span>
       </div>
     </div>
@@ -8867,7 +8876,6 @@ async function guardarNotaCliente(id, texto){
 function publicarNotaCliente(id){ const t = document.getElementById('depNotaCli').value.trim(); if(!t){ toast('Escribe la nota primero.', {tipo:'aviso'}); return; } return guardarNotaCliente(id, t); }
 function quitarNotaCliente(id){ const ta = document.getElementById('depNotaCli'); if(ta) ta.value = ''; return guardarNotaCliente(id, ''); }
 
-function saveDepNote(id) { _autoDep.cambio(id, document.getElementById('depNotes').value); return _autoDep.ahora(); }
 
 function openDelDep(id) { rgAbrirEliminar(id); }
 
@@ -9271,6 +9279,34 @@ document.addEventListener('keydown',e=>{
     const i=it.indexOf(document.activeElement); it[(i+(e.key==='ArrowDown'?1:-1)+it.length)%it.length].focus();
   }
 });
+// Foto de la cuenta (barra lateral): una sola imagen en el bucket privado, en `cuenta/perfil.jpg` (carpeta no numérica: «Limpiar archivos» no la toca y los clientes no tienen acceso)
+const CUENTA_FOTO = 'cuenta/perfil.jpg';
+function cuentaFotoPintar(url){
+  const a=document.getElementById('sbAv'), q=document.getElementById('sbFotoQuitar'); if(!a) return;
+  if(url){ a.innerHTML=''; const im=new Image(); im.alt=''; im.onerror=()=>cuentaFotoPintar(null); im.src=url; a.appendChild(im); a.style.background='transparent'; }
+  else { a.textContent='NL'; a.style.background=''; }
+  if(q) q.style.display=url?'':'none';
+}
+async function cuentaFotoCargar(){
+  try{ delete _fpUrls[CUENTA_FOTO]; cuentaFotoPintar(await urlFotoPerfil(CUENTA_FOTO)); }catch(e){ cuentaFotoPintar(null); }
+}
+function cuentaFotoElegir(){ const f=document.getElementById('sbFotoFile'); if(f) f.click(); }
+async function cuentaFotoSubir(inp){
+  const f=inp.files&&inp.files[0]; if(!f) return;
+  if(!/^image\//.test(f.type)){ toast('Elige una imagen.',{tipo:'aviso'}); inp.value=''; return; }
+  try{
+    const blob=await fotoPerfilReducir(f);
+    const r=await authFetch(`${SURL}/storage/v1/object/${STORAGE_BUCKET}/${_rutaSt(CUENTA_FOTO)}`,{method:'POST',headers:{'Content-Type':'image/jpeg','x-upsert':'true'},body:blob});
+    if(!r.ok) throw new Error('subida');
+    cerrarAcctMenu(); await cuentaFotoCargar(); toast('Foto actualizada');
+  }catch(e){ toast('No se pudo subir la foto. Inténtalo de nuevo.',{tipo:'error'}); }
+  inp.value='';
+}
+async function cuentaFotoQuitar(){
+  cerrarAcctMenu();
+  try{ await authFetch(`${SURL}/storage/v1/object/${STORAGE_BUCKET}/${_rutaSt(CUENTA_FOTO)}`,{method:'DELETE'}); }catch(e){}
+  delete _fpUrls[CUENTA_FOTO]; cuentaFotoPintar(null); toast('Foto quitada');
+}
 function cuentaEmail(){ try{ const t=(authLoad()||{}).access_token; const j=JSON.parse(atob(t.split('.')[1].replace(/-/g,'+').replace(/_/g,'/'))); return j.email||''; }catch(e){ return ''; } }
 function ajPintarModo(){
   const c=document.getElementById('ajSeg'); if(!c) return; const p=modoPref();
