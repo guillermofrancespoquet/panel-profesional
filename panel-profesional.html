@@ -4143,7 +4143,7 @@ async function loadDashboard(){
   const todayISO=fmtISO(today),tomorrowISO=fmtISO(tomorrow);
 
   // ── Sesiones hoy/mañana ──
-  const sesiones=dashCitas.filter(c=>(c.fecha===todayISO||c.fecha===tomorrowISO)&&!citaArchivada(c))
+  const sesiones=dashCitas.filter(c=>(c.fecha===todayISO||c.fecha===tomorrowISO)&&!c.hecha&&!citaArchivada(c))
     .sort((a,b)=>(a.fecha+  (a.hora||'')).localeCompare(b.fecha+(b.hora||'')));
   _dash.hoy=sesiones.filter(c=>c.fecha===todayISO).length;
   pintarProximaDash(dashCitas,dashDeps);
