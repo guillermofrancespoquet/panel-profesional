@@ -23,6 +23,7 @@ Todos se ejecutan a mano en Supabase → SQL Editor → New query → Run. Son s
    - `supabase_banco_recetas.sql` (plan nutricional: banco compartido de recetas y comidas guardadas; requiere solo `supabase_clientes_acceso.sql`)
    - `supabase_objetivos.sql` (objetivos del cliente con seguimiento, opcional, y peso reciente para reajustar las kcal del plan; requiere `supabase_clientes_acceso.sql`, `supabase_seguimiento.sql`, `supabase_bioimpedancia.sql` y `supabase_registro_cliente.sql`)
    - `supabase_notificaciones.sql` (avisos al móvil del cliente: seguimiento semanal; requiere `supabase_seguimiento.sql`; **además hay que crear la Edge Function y programarla**, ver «Avisos al móvil» más abajo)
+   - `supabase_calendario_google.sql` (columna `citas.google_event_id` para el Calendario de Google; opcional, va con la Edge Function `calendario-google`, ver «Calendario de Google» más abajo)
 8. `supabase_seguridad_3_endurecer.sql`, **el último** (endurecimiento tras la revisión de seguridad del 26 oct 2026: rutas de archivos, límites, direcciones de avisos, privilegios; sustituye tres funciones por su versión endurecida, que ya llevan también sus archivos originales). Después, `supabase_diagnostico_seguridad.sql` (solo lectura): todo debe salir «OK».
 
 ## Ojo
@@ -33,6 +34,7 @@ Todos se ejecutan a mano en Supabase → SQL Editor → New query → Run. Son s
 ## No es SQL
 
 - `supabase_funcion_invitar_cliente.ts` es la Edge Function `invitar-cliente`: se pega en Supabase → Edge Functions → Via Editor.
+- `supabase_funcion_calendario_google.ts` es la Edge Function `calendario-google` (ver «Calendario de Google» más abajo).
 
 ## Avisos al móvil (notificaciones del seguimiento semanal)
 
@@ -51,6 +53,30 @@ Pasos, una sola vez y en este orden (hasta el paso 5 el cliente no ve nada nuevo
 4. Edge Functions → Secrets: `AVISOS_SECRET` (una clave larga cualquiera), `VAPID_PRIVADA_JWK` (el JSON de la privada), `VAPID_PUBLICA` (la pública) y `VAPID_CONTACTO` (`mailto:tu@correo`).
 5. Database → Extensions: activar `pg_cron` y `pg_net`; después ejecutar en el SQL Editor el bloque «PROGRAMACIÓN» del final de `supabase_notificaciones.sql` (con tu `AVISOS_SECRET`).
 6. Prueba: con un cliente de pruebas con el seguimiento activo y el aviso activado, llamar a la función con `?forzar=1` (salta la comprobación de lunes) y la cabecera `x-cron-secret`; debe llegar el aviso al móvil.
+
+## Calendario de Google (citas y revisiones → tu Google Calendar)
+
+Qué hace: cuando creas, mueves o borras una cita o revisión en el panel, aparece, se mueve o se borra sola en tu Google Calendar. Título «REVISIÓN - ANA» o «CONSULTA - ANA» (primer nombre, en mayúsculas), color Tomate, 60 min (sin hora: todo el día). No lleva notas, importes ni datos de salud. Va solo del panel a Google.
+
+Cómo funciona por dentro: una **cuenta de servicio** de Google (un «usuario robot» sin buzón) a la que compartes tu calendario con permiso para editar eventos. Su clave vive solo como secreto de Supabase. No hay pantalla de permisos de Google ni caducidad de sesión.
+
+Pasos (una sola vez, ~15 min):
+
+1. **Google Cloud** (console.cloud.google.com), con tu cuenta de Google:
+   - Crear un proyecto nuevo (por ejemplo «NutriLogos Panel»).
+   - «APIs y servicios» → «Biblioteca» → buscar **Google Calendar API** → «Habilitar».
+   - «APIs y servicios» → «Credenciales» → «Crear credenciales» → «Cuenta de servicio» → ponle nombre (por ejemplo `panel-calendario`) → crear (no hace falta darle ningún rol).
+   - Abre la cuenta de servicio creada → pestaña «Claves» → «Agregar clave» → «Crear clave nueva» → **JSON**. Se descarga un archivo: **guárdalo en un sitio privado y no lo compartas ni lo subas a ningún sitio** (da acceso a editar ese calendario).
+   - Apunta el correo de la cuenta de servicio (acaba en `…iam.gserviceaccount.com`).
+2. **Google Calendar** (calendar.google.com, en ordenador): junto a tu calendario → ⋮ → «Configuración y uso compartido» → «Compartir con determinadas personas o grupos» → «Añadir personas» → pega el correo de la cuenta de servicio → permiso **«Hacer cambios en eventos»** → Enviar. Más abajo, en «Integrar el calendario», copia el **ID del calendario** (para el calendario principal es tu propio correo de Google).
+3. **Supabase** → Edge Functions → «Secrets» (o «Manage secrets») → crear dos:
+   - `GOOGLE_SA_JSON` = el contenido **completo** del archivo JSON (ábrelo con un editor de texto, copia todo y pégalo).
+   - `GOOGLE_CALENDAR_ID` = el ID del calendario del paso anterior.
+4. **Supabase** → Edge Functions → «Deploy a new function» → «Via Editor» → nombre `calendario-google` → pega TODO `supabase_funcion_calendario_google.ts` → «Deploy function». Déjala con «Verify JWT» **activado**.
+5. **SQL Editor** → ejecuta `supabase_calendario_google.sql` (una columna).
+6. En el panel: Ajustes → «Calendario de Google» → «Probar conexión» (debe decir «Conectado con el calendario …») → «Enviar las próximas citas» para meter las que ya tienes.
+
+Si algo falla, «Probar conexión» dice qué: calendario no compartido (paso 2), API no activada o permiso insuficiente (pasos 1 y 2), clave no válida (paso 3) o función no instalada (paso 4). Para dejar de enviar citas a Google basta con borrar el secreto `GOOGLE_SA_JSON`. Los eventos ya creados se quedan en tu calendario.
 
 ## Convención
 
