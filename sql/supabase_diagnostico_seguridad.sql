@@ -16,7 +16,9 @@ pol_no_profesional as (
   select string_agg(p.tablename || ' («' || p.policyname || '»)', ', ' order by p.tablename) as d
     from pg_policies p
    where p.schemaname = 'public'
-     and not (coalesce(p.qual, '') like '%es_profesional()%' and coalesce(p.with_check, '') like '%es_profesional()%')
+     and not (   (p.cmd = 'ALL'    and coalesce(p.qual, '') like '%es_profesional()%' and coalesce(p.with_check, '') like '%es_profesional()%')
+              or (p.cmd = 'SELECT' and coalesce(p.qual, '') like '%es_profesional()%')
+              or (p.cmd = 'INSERT' and coalesce(p.with_check, '') like '%es_profesional()%'))   -- las tablas de solo lectura/solo alta (textos legales, registro de eliminaciones) usan una política por acción
 ),
 anon_tablas as (
   select string_agg(distinct g.table_name, ', ') as d
@@ -33,7 +35,7 @@ fn_internas_auth as (
   select string_agg(p.proname, ', ' order by p.proname) as d
     from pg_proc p join pg_namespace n on n.oid = p.pronamespace
    where n.nspname = 'public' and p.prokind = 'f'
-     and (p.proname like 'objetivos\_%' or p.proname like 'push\_%' or p.proname = 'cliente_deportista_id' or p.proname = 'cliente_ruta_valida' or p.proname = 'comidas_cliente_comentario')
+     and (p.proname like 'objetivos\_%' or p.proname like 'push\_%' or p.proname like 'consent\_%' or p.proname like 'trg\_consent\_%' or p.proname = 'cliente_deportista_id' or p.proname = 'cliente_ruta_valida' or p.proname = 'comidas_cliente_comentario')
      and has_function_privilege('authenticated', p.oid, 'execute')
 ),
 fn_sin_search_path as (
