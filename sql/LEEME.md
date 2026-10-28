@@ -24,6 +24,7 @@ Todos se ejecutan a mano en Supabase → SQL Editor → New query → Run. Son s
    - `supabase_objetivos.sql` (objetivos del cliente con seguimiento, opcional, y peso reciente para reajustar las kcal del plan; requiere `supabase_clientes_acceso.sql`, `supabase_seguimiento.sql`, `supabase_bioimpedancia.sql` y `supabase_registro_cliente.sql`)
    - `supabase_notificaciones.sql` (avisos al móvil del cliente: seguimiento semanal; requiere `supabase_seguimiento.sql`; **además hay que crear la Edge Function y programarla**, ver «Avisos al móvil» más abajo)
    - `supabase_plan_pendiente.sql` (recordatorio «Plan por preparar» tras una consulta; una columna, opcional)
+   - `supabase_ficha_inicial.sql` (ficha inicial propia, sustituye a los dos Google Forms; requiere `supabase_formularios.sql` y `supabase_clientes_acceso.sql`; aditivo: una tabla y dos funciones, sin tocar `cliente_mi_ficha`)
    - `supabase_calendario_google.sql` (columna `citas.google_event_id` para el Calendario de Google; opcional, va con la Edge Function `calendario-google`, ver «Calendario de Google» más abajo)
 8. `supabase_seguridad_3_endurecer.sql`, **el último** (endurecimiento tras la revisión de seguridad del 26 oct 2026: rutas de archivos, límites, direcciones de avisos, privilegios; sustituye tres funciones por su versión endurecida, que ya llevan también sus archivos originales). Después, `supabase_diagnostico_seguridad.sql` (solo lectura): todo debe salir «OK».
 9. `supabase_proteccion_datos.sql` (protección de datos: consentimientos, baja del cliente y registro de eliminaciones; **después del paso 8**, no cambia sus funciones; ver «Protección de datos» más abajo)
@@ -65,6 +66,14 @@ Pasos, una sola vez y en este orden (hasta el paso 5 el cliente no ve nada nuevo
 4. Clientes sin acceso al área (o que firmaron en papel): en la ficha → Archivos → Datos y privacidad → «Registrar aceptación en papel».
 
 Qué se hace con la conservación: **dar de baja** al cliente (ficha → Archivos → Datos y privacidad) fija la fecha de alta del proceso asistencial; el panel te dice hasta cuándo conservarlo. **Eliminar** antes de esa fecha es posible (escribiendo ELIMINAR y con un motivo), pero queda anotado como «antes del plazo» en el registro y en el justificante.
+
+## Ficha inicial (sustituye al Cuestionario inicial y a la Anamnesis de Google)
+
+1. Ejecuta `supabase_ficha_inicial.sql`. Es seguro repetirlo. Luego `supabase_diagnostico_seguridad.sql`: debe seguir todo «OK».
+2. No hay nada más que instalar. En cuanto se publique el código, los clientes ven «Ficha inicial» en Formularios y los dos de Google desaparecen.
+3. **Clientes que ya contestaron los de Google:** si tienen marcados los dos como hechos, la ficha les sale como «Hecho» y no se les pide de nuevo. Si solo tienen uno hecho, la ficha les queda pendiente (se les pide completa). Para evitarlo, márcalos como hechos en su ficha → Seguimiento → «Formularios del cliente».
+4. Tú ves lo que contestan en la ficha del deportista → Seguimiento → **Ficha inicial** (alertas, hoja completa, imprimir en PDF, pasar sexo, fecha de nacimiento y estatura al perfil de antropometría, y **reabrirla** si el cliente tiene que corregir algo).
+5. Si cambias preguntas hay que tocar tres sitios: la lista blanca de `cliente_guardar_ficha_inicial`, `FI_PASOS` en `cliente.html` y `FI_HOJA` en `panel-profesional.html`.
 
 ## Calendario de Google (citas y revisiones → tu Google Calendar)
 
