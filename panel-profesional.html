@@ -177,6 +177,10 @@ body.dark-mode .login-btn:hover{background:var(--t600)}
 .notes-ta:focus{border-color:var(--t400)}
 .notes-foot{position:relative;height:0}
 .notes-foot .save-ok{position:absolute;right:2px;top:7px;line-height:1}
+.nota-acc{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:14px}
+.nota-acc .btn-save,.nota-acc .btn-soft{height:38px;padding:0 18px;border-radius:10px;font-size:13px;line-height:1;display:inline-flex;align-items:center;justify-content:center}
+.nota-acc .med-note{flex:1 1 200px;margin:0;min-width:0}
+.frases-l{margin:18px 0 0;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--g400)}
 .btn-save{padding:9px 18px;background:var(--btn);border:none;border-radius:8px;color:#fff;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--f)}
 .save-ok{font-size:12px;color:var(--t600);opacity:0;transition:opacity .3s}
 .save-ok.show{opacity:1}
@@ -431,6 +435,8 @@ body:not(.dark-mode) .sup-av.rojo{color:#8F2323}
 @media(max-width:860px){.rev-in{font-size:16px;height:36px;padding:0 6px}.rev-in[type=date]{width:auto;flex:1 1 0;min-width:0}.rev-in[type=time]{width:92px;flex:0 0 auto}.rev-ok{height:36px;padding:0 12px}}
 @media(max-width:560px){.depd-rev-side{flex-basis:100%;margin-left:48px;flex-wrap:wrap}}
 .obj-card{min-width:0}
+.obj-card+.obj-card{margin-top:12px}
+.obj-n{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--g400);margin-bottom:6px}
 .obj-vacio{margin:0 0 10px;font-size:13px;color:var(--g500);line-height:1.5}
 .obj-top{display:flex;gap:10px;align-items:flex-start;justify-content:space-between}
 .obj-t{font-size:15px;font-weight:700;color:var(--g900);line-height:1.3}
@@ -1095,7 +1101,7 @@ body.dark-mode .ref-formula{background:rgba(29,158,117,.16)}
 .frm .mfl .hd-opt{text-transform:none;letter-spacing:0;font-weight:400;color:var(--g400)}
 .frm .inp{height:46px;padding:0 14px;margin-bottom:0;border-radius:12px;font-size:14.5px;background:var(--bg);transition:border-color .15s,box-shadow .15s,background .15s}
 .frm .inp:hover{border-color:var(--g400)}
-.frm .inp:focus{border-color:var(--t400);background:var(--sf);box-shadow:0 0 0 3px rgba(29,158,117,.15)}
+.frm .inp:focus{border-color:var(--t400);background-color:var(--sf);box-shadow:0 0 0 3px rgba(29,158,117,.15)}
 .frm .inp::placeholder{color:var(--g400)}
 body.dark-mode .frm .inp,body.dark-mode .frm .notes-ta{color-scheme:dark}
 .frm select.inp option{background:var(--sf);color:var(--g900)}
@@ -1329,7 +1335,7 @@ button,a,[role=button],select,summary,label.btn{-webkit-tap-highlight-color:tran
 .tl-filtros{display:flex;gap:6px;overflow-x:auto;margin:12px 0 4px;padding-bottom:2px;scrollbar-width:none}
 .tl-filtros::-webkit-scrollbar{display:none}
 .tl-chip{flex:0 0 auto;padding:6px 13px;border-radius:20px;border:.5px solid var(--bdm);background:var(--sf);color:var(--g500);font:600 12px var(--f);cursor:pointer;min-height:32px}
-.frases-fila{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.frases-fila{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
 .frase-chip{padding:6px 12px;border-radius:20px;border:.5px solid var(--bdm);background:var(--sf);color:var(--g500);font:600 12px var(--f);cursor:pointer;min-height:32px;max-width:100%;text-align:left}
 .frase-chip:last-child{color:var(--t600)}
 .frase-chip:focus-visible{outline:2px solid var(--t400);outline-offset:1px}
@@ -2235,7 +2241,7 @@ body.dark-mode .ref-src,body.dark-mode .sup-badge,body.dark-mode .depd-avatar-fa
     <p class="mt" id="objMTit">Proponer objetivo</p>
     <p class="ms" id="objSub"></p>
     <label class="mfl" for="objTipo">Tipo</label>
-    <select class="inp" id="objTipo" onchange="objTipoCambio()"><option value="peso">Peso</option><option value="pct_grasa">% de grasa</option><option value="rendimiento">Rendimiento (lo anotas tú)</option></select>
+    <select class="inp" id="objTipo" onchange="objTipoCambio()"><option value="peso">Peso</option><option value="pct_grasa">% de grasa</option><option value="sum6">Σ 6 pliegues (mm)</option><option value="rendimiento">Rendimiento (lo anotas tú)</option></select>
     <div id="objTituloBox"><label class="mfl" for="objTitulo" style="margin-top:10px">Título <span class="hd-opt">(opcional)</span></label><input type="text" class="inp" id="objTitulo" maxlength="80" placeholder="Ej. Bajar a 68 kg para la temporada"></div>
     <div id="objUniBox" style="display:none"><label class="mfl" for="objUni" style="margin-top:10px">Unidad <span class="hd-opt">(opcional)</span></label><input type="text" class="inp" id="objUni" maxlength="16" placeholder="Ej. min, kg, W"></div>
     <div class="obj-mgrid">
@@ -4374,7 +4380,7 @@ async function pintarAvisosDash(deps, citasAll, todayISO){
     const n = {}; comidas.forEach(x => { const k = String(x.deportista_id); n[k] = (n[k] || 0) + 1; });
     deps.forEach(d => { const c = n[String(d.id)]; if(c) aviso(d, `${c} comida${c!==1?'s':''} del diario sin comentar`, 'gold'); });
   }
-  if(objVenc) objVenc.forEach(x => { const d = deps.find(y => y.id == x.deportista_id); if(d) aviso(d, 'Objetivo con la fecha límite pasada', 'gold'); });
+  if(objVenc) [...new Set(objVenc.map(x => String(x.deportista_id)))].forEach(id => { const x = { deportista_id:id }; const d = deps.find(y => y.id == x.deportista_id); if(d) aviso(d, 'Objetivo con la fecha límite pasada', 'gold'); });
   // 2) Revisión sin cita en la agenda (fecha próxima) o con la fecha ya pasada y sin nueva
   deps.forEach(d=>{
     const f = d.proxima_revision ? String(d.proxima_revision).slice(0,10) : '';
@@ -6447,11 +6453,12 @@ function openDepDet(id) {
     <div class="depd-section">
       <p class="sec-title">Nota para el cliente</p>
       <textarea class="notes-ta" id="depNotaCli" maxlength="500" placeholder="Un mensaje corto que verá arriba en su área, por ejemplo tras la revisión…" style="min-height:90px">${sudEsc(d.nota_cliente || '')}</textarea>
-      <div class="notes-foot">
-        <button class="btn-save" onclick="publicarNotaCliente(${d.id})">Publicar nota</button>
+      <div class="nota-acc">
+        <button type="button" class="btn-save" onclick="publicarNotaCliente(${d.id})">Publicar nota</button>
         <button type="button" class="btn-soft" onclick="quitarNotaCliente(${d.id})">Quitar nota</button>
-        <span class="med-note" id="depNotaCliInfo" style="margin:0">${notaClienteInfo(d)}</span>
+        <span class="med-note" id="depNotaCliInfo">${notaClienteInfo(d)}</span>
       </div>
+      <p class="frases-l" id="depNotaFrasesL">Frases rápidas</p>
       <div class="frases-fila" id="depNotaFrases" role="group" aria-label="Frases rápidas">${frasesChips()}</div>
       <div id="depNotaFrasesEd"></div>
     </div>
@@ -7106,7 +7113,7 @@ async function loadEstado(depId){
     seguro(sb(`pesos_cliente?deportista_id=eq.${depId}&order=fecha.desc&limit=1&select=fecha,peso`)),
     seguro(sb(`historial_deportista?deportista_id=eq.${depId}&order=fecha.desc&limit=1&select=fecha`)),
     seguro(sb(`comidas_cliente?deportista_id=eq.${depId}&fecha=gte.${localISO(new Date(Date.now() - 7*86400000))}&select=id,comentario`)),
-    Promise.resolve(sb('rpc/objetivo_progreso', { method:'POST', body:JSON.stringify({ p_dep:depId }) })).then(v => (v && typeof v === 'object' && !esErrorSb(v)) ? v : null).catch(() => null),
+    objCargarActivos(depId).then(r => r ? r.lista : []).catch(() => []),
     Promise.resolve(sb(`menus_cliente?deportista_id=eq.${depId}&select=publicado_en`)).then(a => Array.isArray(a) && a[0] ? a[0].publicado_en : null).catch(() => null),
     rgCargarAjustes(), rgCargarTextos(), seguro(sb(`consentimientos?deportista_id=eq.${depId}&select=tipo,version,retirado_en`)),
     seguro(sb(`fichas_iniciales?deportista_id=eq.${depId}&select=respuestas,enviado_en`))
@@ -7163,10 +7170,10 @@ async function loadEstado(depId){
   }
 
   // Objetivo (solo si hay uno activo)
-  if(objA){
-    const e = objEstado(objA), p = Math.round(objA.progreso * 100);
-    add('Objetivo', `${objTit(objA.tipo, objA.titulo, objA.inicial, objA.objetivo, objA.unidad)} · ${p} %${objA.dias != null ? ' · ' + objDiasTxt(objA.dias) : ''}${e.t ? ' — ' + e.t : ''}`, e.aviso);
-  }
+  objA.forEach(o => {
+    const e = objEstado(o), p = Math.round(o.progreso * 100);
+    add(objA.length > 1 ? `Objetivo ${o.posicion || 1}` : 'Objetivo', `${objTit(o.tipo, o.titulo, o.inicial, o.objetivo, o.unidad)} · ${p} %${o.dias != null ? ' · ' + objDiasTxt(o.dias) : ''}${e.t ? ' — ' + e.t : ''}`, e.aviso);
+  });
 
   // Diario de comidas (últimos 7 días)
   if(comidas.length){ const sinCom = comidas.filter(x => !x.comentario).length;
@@ -8441,9 +8448,17 @@ function supEliminar(id, depId, btn){
 // Un objetivo activo por cliente (peso, % de grasa o rendimiento), con fecha límite y barra de avance. Es opcional: sin objetivo, el
 // cliente no ve nada. Lo propone el profesional o acepta una sugerencia de la app; el avance sale de las mediciones (RPC objetivo_progreso)
 // y los objetivos anteriores quedan como historial (cumplido, cancelado o sustituido). Nada llega al cliente sin que lo pongas tú.
-let _obj = null, _objAct = null;
+let _obj = null, _objActs = [], _objMulti = false;
 const _objSugNo = {};
-const OBJ_TIPOS = { peso:{ n:'Peso', u:'kg' }, pct_grasa:{ n:'% de grasa', u:'%' }, rendimiento:{ n:'Rendimiento', u:'' } };
+const OBJ_TIPOS = { peso:{ n:'Peso', u:'kg' }, pct_grasa:{ n:'% de grasa', u:'%' }, sum6:{ n:'Σ 6 pliegues', u:'mm' }, rendimiento:{ n:'Rendimiento', u:'' } };
+// Lista de objetivos activos del deportista (hasta dos). Con supabase_objetivos_2.sql sale de `objetivos_progreso`; sin él, del de siempre (uno solo).
+async function objCargarActivos(depId){
+  const l = await Promise.resolve(sb('rpc/objetivos_progreso', { method:'POST', body:JSON.stringify({ p_dep:depId }) })).catch(() => undefined);
+  if(Array.isArray(l)) return { lista:l, multi:true };
+  const a = await Promise.resolve(sb('rpc/objetivo_progreso', { method:'POST', body:JSON.stringify({ p_dep:depId }) })).catch(() => undefined);
+  if(esErrorSb(a) || a === undefined) return null;
+  return { lista:(a && typeof a === 'object') ? [a] : [], multi:false };
+}
 const objNum = v => { const x = parseFloat(String(v == null ? '' : v).replace(',', '.')); return isFinite(x) ? x : null; };
 const objFmt = (n, u) => medNum(+n, Math.abs(n - Math.round(n)) < 0.05 ? 0 : 1) + (u ? (u === '%' ? ' %' : ' ' + u) : '');
 const objFecha = f => f ? new Date(String(f).slice(0, 10) + 'T00:00:00').toLocaleDateString('es-ES', { day:'numeric', month:'short', year:'numeric' }) : '';
@@ -8451,6 +8466,7 @@ function objTit(tipo, titulo, ini, obj, u){
   if(titulo) return titulo;
   if(tipo === 'peso') return `${obj < ini ? 'Bajar' : 'Subir'} a ${objFmt(obj, 'kg')}`;
   if(tipo === 'pct_grasa') return `${obj < ini ? 'Bajar' : 'Subir'} al ${objFmt(obj, '%')} de grasa`;
+  if(tipo === 'sum6') return `${obj < ini ? 'Bajar' : 'Subir'} el Σ 6 pliegues a ${objFmt(obj, 'mm')}`;
   return `Llegar a ${objFmt(obj, u)}`;
 }
 // Sugerencia prudente a partir del objetivo escrito en la ficha: solo peso, nunca en menores de 18 ni si el texto no deja clara la dirección.
@@ -8477,41 +8493,46 @@ function objEstado(a){
 }
 function objDiasTxt(dias){ return dias == null ? '' : dias > 1 ? `quedan ${dias} días` : dias === 1 ? 'queda 1 día' : dias === 0 ? 'es hoy' : dias === -1 ? 'hace 1 día' : `hace ${-dias} días`; }
 
+function objCardHtml(a, depId, n){
+  const tit = objTit(a.tipo, a.titulo, a.inicial, a.objetivo, a.unidad), pct = Math.round(a.progreso * 100), est = objEstado(a);
+  const dia = a.fecha_limite ? `${objFecha(a.fecha_limite)} · ${objDiasTxt(a.dias)}` : 'Sin fecha límite';
+  const rend = a.tipo === 'rendimiento';
+  return `<div class="obj-card">
+    ${n ? `<div class="obj-n">Objetivo ${n}</div>` : ''}
+    <div class="obj-top"><div><div class="obj-t">${sudEsc(tit)}</div><div class="obj-sub">${sudEsc(dia)}</div></div><div class="obj-pct">${pct} %</div></div>
+    <div class="obj-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct}" aria-label="Avance del objetivo${n ? ' ' + n : ''}"><i style="width:${pct}%"></i>${a.esperado != null ? `<b style="left:${Math.round(a.esperado * 100)}%" title="Dónde debería ir por fecha"></b>` : ''}</div>
+    <div class="obj-vals"><div><span>Inicio</span><b>${objFmt(a.inicial, a.unidad)}</b></div><div><span>Ahora</span><b>${objFmt(a.actual, a.unidad)}</b></div><div><span>Objetivo</span><b>${objFmt(a.objetivo, a.unidad)}</b></div></div>
+    ${est.t ? `<p class="obj-est ${est.c}">${sudEsc(est.t)}</p>` : ''}
+    <p class="obj-meta">${a.sin_datos && !rend ? 'Aún no hay mediciones desde que se puso el objetivo.' : (rend ? 'Valor que anotas tú.' : `Según ${sudEsc(a.actual_origen || '')}${a.actual_fecha ? ' · ' + objFecha(a.actual_fecha) : ''}.`)}</p>
+    <div class="obj-chips"><span class="obj-chip">${a.visible_cliente ? 'Visible para el cliente' : 'Oculto para el cliente'}</span>${a.origen === 'sugerido' ? '<span class="obj-chip">Sugerido por la app</span>' : ''}</div>
+    ${a.nota ? `<p class="obj-meta">Nota privada: ${sudEsc(a.nota)}</p>` : ''}
+    ${rend ? `<div class="obj-act"><label class="mfl" for="objValAct${a.id}" style="margin:0">Valor actual</label><input type="text" inputmode="decimal" class="inp" id="objValAct${a.id}" value="${a.sin_datos ? '' : String(a.actual).replace('.', ',')}" style="max-width:110px"><button type="button" class="btn-soft sm" onclick="objSetActual(${a.id},${depId})">Actualizar</button></div>` : ''}
+    <div class="med-actions">${btnSoft('Marcar cumplido', `objCerrar(${depId},'cumplido',${a.id})`, 'doc')}${btnSoft('Editar', `objAbrir(${depId},'editar',${a.id})`, 'doc')}${btnSoft(a.visible_cliente ? 'Ocultar al cliente' : 'Mostrar al cliente', `objVisible(${a.id},${depId},${!a.visible_cliente})`, 'doc')}${btnSoft('Cancelar objetivo', `objCerrar(${depId},'cancelado',${a.id})`, 'trash')}</div>
+  </div>`;
+}
 async function loadObjetivo(depId){
   const el = document.getElementById('objBox'); if(!el) return;
   const [act, hist] = await Promise.all([
-    Promise.resolve(sb('rpc/objetivo_progreso', { method:'POST', body:JSON.stringify({ p_dep:depId }) })).catch(() => undefined),
+    objCargarActivos(depId),
     Promise.resolve(sb(`objetivos_cliente?deportista_id=eq.${depId}&estado=neq.activo&order=creado.desc,id.desc&select=*`)).catch(() => null)
   ]);
   if(!document.getElementById('objBox') || currentDepId != depId) return;
-  if(!Array.isArray(hist) || esErrorSb(act)){ _objAct = null; el.innerHTML = '<p class="med-empty">Esta función necesita el SQL <b>supabase_objetivos.sql</b> ejecutado en Supabase.</p>'; return; }
-  const a = (act && typeof act === 'object') ? act : null;
-  _objAct = a;
+  if(!Array.isArray(hist) || !act){ _objActs = []; el.innerHTML = '<p class="med-empty">Esta función necesita el SQL <b>supabase_objetivos.sql</b> ejecutado en Supabase.</p>'; return; }
+  _objActs = act.lista; _objMulti = act.multi;
   const histHtml = hist.length ? `<details class="obj-hist"><summary>Historial (${hist.length})</summary><div class="obj-hl">${hist.map(r => {
     const tit = objTit(r.tipo, r.titulo, +r.valor_inicial, +r.valor_objetivo, r.unidad);
     const est = { cumplido:'Cumplido', cancelado:'Cancelado', sustituido:'Sustituido por otro' }[r.estado] || r.estado;
     const fin = r.valor_final != null ? ` → ${objFmt(+r.valor_final, r.unidad)}` : '';
     return `<div class="obj-hr"><div class="obj-hr-t">${sudEsc(tit)}</div><div class="obj-hr-d">${objFmt(+r.valor_inicial, r.unidad)}${fin} (objetivo ${objFmt(+r.valor_objetivo, r.unidad)})</div><div class="obj-hr-d"><span class="obj-chip${r.estado === 'cumplido' ? ' ok' : ''}">${est}</span> ${objFecha(r.fecha_inicio)} – ${objFecha(r.cerrado_en)}${r.origen === 'sugerido' ? ' · sugerido por la app' : ''}${r.nota ? ' · ' + sudEsc(r.nota) : ''}</div></div>`;
   }).join('')}</div></details>` : '';
-  if(!a){
+  if(!_objActs.length){
     el.innerHTML = `<div class="obj-card"><p class="obj-vacio">Sin objetivo. Es opcional: mientras no haya uno, el cliente no ve nada.</p><div id="objSug"></div><div class="med-actions">${btnSoft('Proponer objetivo', `objAbrir(${depId})`, 'plus')}</div></div>${histHtml}`;
     objSugerir(depId);
     return;
   }
-  const tit = objTit(a.tipo, a.titulo, a.inicial, a.objetivo, a.unidad), pct = Math.round(a.progreso * 100), est = objEstado(a);
-  const dia = a.fecha_limite ? `${objFecha(a.fecha_limite)} · ${objDiasTxt(a.dias)}` : 'Sin fecha límite';
-  const rend = a.tipo === 'rendimiento';
-  el.innerHTML = `<div class="obj-card">
-    <div class="obj-top"><div><div class="obj-t">${sudEsc(tit)}</div><div class="obj-sub">${sudEsc(dia)}</div></div><div class="obj-pct">${pct} %</div></div>
-    <div class="obj-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct}" aria-label="Avance del objetivo"><i style="width:${pct}%"></i>${a.esperado != null ? `<b style="left:${Math.round(a.esperado * 100)}%" title="Dónde debería ir por fecha"></b>` : ''}</div>
-    <div class="obj-vals"><div><span>Inicio</span><b>${objFmt(a.inicial, a.unidad)}</b></div><div><span>Ahora</span><b>${objFmt(a.actual, a.unidad)}</b></div><div><span>Objetivo</span><b>${objFmt(a.objetivo, a.unidad)}</b></div></div>
-    ${est.t ? `<p class="obj-est ${est.c}">${sudEsc(est.t)}</p>` : ''}
-    <p class="obj-meta">${a.sin_datos && !rend ? 'Aún no hay mediciones desde que se puso el objetivo.' : (rend ? 'Valor que anotas tú.' : `Según ${sudEsc(a.actual_origen || '')}${a.actual_fecha ? ' · ' + objFecha(a.actual_fecha) : ''}.`)}</p>
-    <div class="obj-chips"><span class="obj-chip">${a.visible_cliente ? 'Visible para el cliente' : 'Oculto para el cliente'}</span>${a.origen === 'sugerido' ? '<span class="obj-chip">Sugerido por la app</span>' : ''}</div>
-    ${a.nota ? `<p class="obj-meta">Nota privada: ${sudEsc(a.nota)}</p>` : ''}
-    ${rend ? `<div class="obj-act"><label class="mfl" for="objValAct" style="margin:0">Valor actual</label><input type="text" inputmode="decimal" class="inp" id="objValAct" value="${a.sin_datos ? '' : String(a.actual).replace('.', ',')}" style="max-width:110px"><button type="button" class="btn-soft sm" onclick="objSetActual(${a.id},${depId})">Actualizar</button></div>` : ''}
-    <div class="med-actions">${btnSoft('Marcar cumplido', `objCerrar(${depId},'cumplido')`, 'doc')}${btnSoft('Editar', `objAbrir(${depId},'editar')`, 'doc')}${btnSoft(a.visible_cliente ? 'Ocultar al cliente' : 'Mostrar al cliente', `objVisible(${a.id},${depId},${!a.visible_cliente})`, 'doc')}${btnSoft('Cancelar objetivo', `objCerrar(${depId},'cancelado')`, 'trash')}</div>
-  </div>${histHtml}`;
+  const dos = _objActs.length > 1;
+  el.innerHTML = _objActs.map((a, i) => objCardHtml(a, depId, dos ? (a.posicion || i + 1) : 0)).join('')
+    + (_objMulti && !dos ? `<div class="med-actions" style="margin-top:10px">${btnSoft('Añadir un segundo objetivo', `objAbrir(${depId})`, 'plus')}</div>` : '') + histHtml;
 }
 // Sugerencia de la app (solo cuando no hay objetivo): se calcula aparte para no retrasar la ficha.
 async function objSugerir(depId){
@@ -8528,6 +8549,11 @@ async function objSugerir(depId){
 // Valor actual del cliente según el tipo, para rellenar el «inicio».
 async function objValorInicio(depId, tipo){
   if(tipo === 'peso'){ const c = await supContexto(depId); return c.peso ? { v:c.peso, o:c.fuente } : null; }
+  if(tipo === 'sum6'){
+    const meds = await Promise.resolve(getMediciones(depId)).then(v => Array.isArray(v) ? v : []).catch(() => []);
+    const pm = meds.map(medPunto).filter(m => m.sum6 != null).sort((a, b) => String(a.fecha).localeCompare(String(b.fecha)));
+    return pm.length ? { v:pm[pm.length - 1].sum6, o:'antropometría' } : null;
+  }
   if(tipo === 'pct_grasa'){
     const seguro = p => Promise.resolve(p).then(v => Array.isArray(v) ? v : []).catch(() => []);
     const [meds, bios] = await Promise.all([seguro(getMediciones(depId)), seguro(getBio(depId))]);
@@ -8538,14 +8564,16 @@ async function objValorInicio(depId, tipo){
   }
   return null;
 }
-async function objAbrir(depId, modo){
+async function objAbrir(depId, modo, id){
   const d = deportistas.find(x => x.id == depId); if(!d) return;
-  const a = modo === 'editar' ? _objAct : null;
+  const a = modo === 'editar' ? (_objActs.find(x => x.id == id) || null) : null;
+  const libre = [1, 2].find(n => !_objActs.some(x => (x.posicion || 1) === n)) || 1;
   let sug = null;
   if(modo === 'sugerido'){ try{ sug = JSON.parse(document.getElementById('objSug').dataset.s); }catch(e){} }
-  _obj = { depId, editId: a ? a.id : null, origen: sug ? 'sugerido' : (a ? a.origen : 'profesional'), iniTocado: !!(a || sug), inicioInfo: {} };
+  _obj = { depId, editId: a ? a.id : null, posicion: a ? (a.posicion || 1) : libre, origen: sug ? 'sugerido' : (a ? a.origen : 'profesional'), iniTocado: !!(a || sug), inicioInfo: {} };
   const tipo = a ? a.tipo : 'peso';
-  document.getElementById('objMTit').textContent = a ? 'Editar objetivo' : 'Proponer objetivo';
+  document.getElementById('objMTit').textContent = a ? 'Editar objetivo' : (_objActs.length ? 'Añadir un segundo objetivo' : 'Proponer objetivo');
+  Array.from(document.getElementById('objTipo').options).forEach(o => { if(o.value === 'sum6'){ o.disabled = !_objMulti; o.hidden = !_objMulti; } });
   document.getElementById('objSub').textContent = d.nombre;
   document.getElementById('objMsg').textContent = '';
   const sel = document.getElementById('objTipo'); sel.value = tipo; sel.disabled = !!a;
@@ -8579,7 +8607,7 @@ async function objTipoCambio(inicial){
   if(v){
     document.getElementById('objIniSrc').textContent = `Último valor: ${objFmt(v.v, tt.u)} (${v.o}).`;
     if(!_obj.iniTocado && !document.getElementById('objIni').value) document.getElementById('objIni').value = String(Math.round(v.v * 10) / 10).replace('.', ',');
-  } else document.getElementById('objIniSrc').textContent = t === 'peso' ? 'No hay ningún peso registrado: escríbelo.' : 'No hay ningún % de grasa medido: escríbelo.';
+  } else document.getElementById('objIniSrc').textContent = t === 'peso' ? 'No hay ningún peso registrado: escríbelo.' : t === 'sum6' ? 'No hay ningún Σ 6 pliegues medido: escríbelo.' : 'No hay ningún % de grasa medido: escríbelo.';
 }
 async function objGuardar(){
   if(!_obj) return;
@@ -8587,14 +8615,14 @@ async function objGuardar(){
   const ini = objNum(document.getElementById('objIni').value), obj = objNum(document.getElementById('objObj').value);
   const titulo = document.getElementById('objTitulo').value.trim(), unidad = t === 'rendimiento' ? document.getElementById('objUni').value.trim() : OBJ_TIPOS[t].u;
   const lim = document.getElementById('objFechaLim').value, hoy = localISO(new Date());
-  const rango = { peso:[20, 400], pct_grasa:[3, 60] }[t];
+  const rango = { peso:[20, 400], pct_grasa:[3, 60], sum6:[15, 400] }[t];
   if(t === 'rendimiento' && !titulo){ msg.textContent = 'Escribe qué quieres conseguir.'; return; }
   if(ini == null || obj == null){ msg.textContent = 'Escribe el valor de partida y el objetivo.'; return; }
   if(ini === obj){ msg.textContent = 'El objetivo tiene que ser distinto del valor de partida.'; return; }
   if(rango && (ini < rango[0] || ini > rango[1] || obj < rango[0] || obj > rango[1])){ msg.textContent = `Los valores tienen que estar entre ${rango[0]} y ${rango[1]}.`; return; }
   if(lim && !_obj.editId && lim < hoy){ msg.textContent = 'La fecha límite no puede estar en el pasado.'; return; }
   const cuerpo = { tipo:t, titulo:titulo || null, unidad, valor_inicial:ini, valor_objetivo:obj, fecha_limite:lim || null,
-    fuente: t === 'rendimiento' ? 'manual' : t === 'pct_grasa' ? document.getElementById('objFuente').value : 'cualquiera',
+    fuente: t === 'rendimiento' ? 'manual' : t === 'pct_grasa' ? document.getElementById('objFuente').value : t === 'sum6' ? 'antropometria' : 'cualquiera',
     valor_actual: t === 'rendimiento' ? objNum(document.getElementById('objAct').value) : null,
     nota: document.getElementById('objNota').value.trim() || null, visible_cliente: document.getElementById('objVisibleCk').checked, actualizado: new Date().toISOString() };
   const btn = document.getElementById('objBtnGuardar'); btn.disabled = true;
@@ -8606,22 +8634,15 @@ async function objGuardar(){
     fin(); if(esErrorSb(r)){ msg.textContent = 'No se pudo guardar. Inténtalo de nuevo.'; return; }
     objCerrarModal(); loadObjetivo(depId); loadEstado(depId); toast('Objetivo actualizado'); return;
   }
-  // Un solo objetivo activo: el anterior pasa a «sustituido» (y se restaura si falla el alta).
-  const previo = _objAct;
-  if(previo){
-    const r0 = await sb(`objetivos_cliente?id=eq.${previo.id}`, { method:'PATCH', headers:hdr, body:JSON.stringify({ estado:'sustituido', cerrado_en:hoy, valor_final:previo.actual, actualizado:new Date().toISOString() }) });
-    if(esErrorSb(r0)){ fin(); msg.textContent = 'No se pudo sustituir el objetivo anterior.'; return; }
-  }
-  const r = await sb('objetivos_cliente', { method:'POST', headers:hdr, body:JSON.stringify({ ...cuerpo, deportista_id:depId, origen:_obj.origen, fecha_inicio:hoy }) });
-  if(esErrorSb(r)){
-    if(previo) await sb(`objetivos_cliente?id=eq.${previo.id}`, { method:'PATCH', headers:hdr, body:JSON.stringify({ estado:'activo', cerrado_en:null, valor_final:null }) });
-    fin(); msg.textContent = 'No se pudo guardar. Inténtalo de nuevo.'; return;
-  }
+  // Hasta dos objetivos activos (uno por posición). Sin supabase_objetivos_2.sql solo hay uno y no se manda la posición.
+  const extra = _objMulti ? { posicion:_obj.posicion } : {};
+  const r = await sb('objetivos_cliente', { method:'POST', headers:hdr, body:JSON.stringify({ ...cuerpo, ...extra, deportista_id:depId, origen:_obj.origen, fecha_inicio:hoy }) });
+  if(esErrorSb(r)){ fin(); msg.textContent = 'No se pudo guardar. Inténtalo de nuevo.'; return; }
   fin(); objCerrarModal(); loadObjetivo(depId); loadEstado(depId);
   toast(cuerpo.visible_cliente ? 'Objetivo guardado: el cliente ya lo ve' : 'Objetivo guardado (oculto para el cliente)');
 }
-async function objCerrar(depId, estado){
-  const a = _objAct; if(!a) return;
+async function objCerrar(depId, estado, id){
+  const a = _objActs.find(x => x.id == id); if(!a) return;
   const hdr = { 'Prefer':'return=minimal' };
   const r = await sb(`objetivos_cliente?id=eq.${a.id}`, { method:'PATCH', headers:hdr, body:JSON.stringify({ estado, cerrado_en:localISO(new Date()), valor_final:a.actual, actualizado:new Date().toISOString() }) });
   if(esErrorSb(r)){ toast('No se pudo guardar. Inténtalo de nuevo.', { tipo:'error' }); return; }
@@ -8638,7 +8659,7 @@ async function objVisible(id, depId, visible){
   loadObjetivo(depId); toast(visible ? 'El cliente vuelve a ver el objetivo' : 'El cliente ya no ve el objetivo');
 }
 async function objSetActual(id, depId){
-  const v = objNum(document.getElementById('objValAct').value);
+  const v = objNum((document.getElementById('objValAct' + id) || {}).value);
   if(v == null){ toast('Escribe un número.', { tipo:'aviso' }); return; }
   const r = await sb(`objetivos_cliente?id=eq.${id}`, { method:'PATCH', headers:{ 'Prefer':'return=minimal' }, body:JSON.stringify({ valor_actual:v, actualizado:new Date().toISOString() }) });
   if(esErrorSb(r)){ toast('No se pudo guardar. Inténtalo de nuevo.', { tipo:'error' }); return; }
