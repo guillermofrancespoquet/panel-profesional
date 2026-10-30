@@ -481,6 +481,22 @@ body.dark-mode .mn-fch.on{background:var(--t400);border-color:var(--t400);color:
 .mn-hu-e.cerca{background:var(--pill-au);color:var(--gold-dk)}
 body.dark-mode .mn-hu-e.ok{color:var(--t800)}
 .mn-hu-a{margin-top:8px;display:flex;justify-content:flex-end}
+.mn-selbar{background:var(--sf);border:.5px solid var(--bd);border-radius:14px;padding:12px 14px;margin-top:12px}
+.mn-selbar-h{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.mn-selbar-h b{flex:1 1 auto;font-size:14px}
+.mn-sel{width:18px;height:18px;flex:0 0 auto;accent-color:var(--t600);margin:0 2px 0 0;cursor:pointer}
+.mn-bib-c.sel{border-color:var(--t400);box-shadow:0 0 0 1px var(--t400)}
+.mn-rev-res{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 12px}
+.mn-rev-n{display:inline-flex;align-items:center;font-size:12px;font-weight:600;line-height:1.2;padding:4px 10px;border-radius:20px;white-space:nowrap}
+.mn-rev-n.warn{background:#FBEFD6;color:#7A4B00}.mn-rev-n.ok{background:#DDF1E8;color:#0B5A44}
+.dark-mode .mn-rev-n.warn{background:#3d3118;color:#F0C777}.dark-mode .mn-rev-n.ok{background:#12372d;color:#8EDDBF}
+.mn-rev-s{border-top:.5px solid var(--bd);padding:14px 0 4px}.mn-rev-sh{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:space-between}
+.mn-rev-f{display:flex;gap:10px;justify-content:space-between;align-items:center;flex-wrap:wrap;padding:9px 0;border-top:.5px dashed var(--bd)}
+.mn-rev-t{flex:1 1 240px;min-width:0;display:flex;flex-direction:column;gap:3px}.mn-rev-t b{font-size:14px}
+.mn-rev-c{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.mn-rev-c .inp{width:auto;min-width:170px}
+.mn-rev-ch{display:flex;gap:5px;flex-wrap:wrap}
+.mn-rev-ok{font-size:12px;font-weight:600;color:var(--t600)}
+.mn-rev-g{border:.5px solid var(--bd);border-radius:14px;padding:12px 14px;margin-bottom:10px;background:var(--sf)}
+.mn-rev-op{display:flex;gap:10px;align-items:flex-start;padding:8px 0;cursor:pointer;border-top:.5px dashed var(--bd)}.mn-rev-op input{margin-top:3px;accent-color:var(--t600)}
 .mn-bib-nut .mn-f:not([style]){flex:0 0 120px}
 body.dark-mode .mn-bib-b.veg{color:var(--t800)}
 .mn-bib-t{background:var(--pill-au);color:var(--gold-dk)}
@@ -634,6 +650,9 @@ body.dark-mode .mn-bib-b.veg{color:var(--t800)}
 </div>
 <div class="mbg" id="mMnImpr" style="display:none;z-index:325" role="dialog" aria-modal="true" aria-labelledby="mnImprTit" onclick="if(event.target===this)mnImprCerrar()">
   <div class="mc" style="max-width:540px;max-height:calc(100dvh - var(--vvt,0px) - var(--vvb,0px) - 2rem);overflow-y:auto" id="mnImprCuerpo"></div>
+</div>
+<div class="mbg" id="mMnRev" style="display:none;z-index:322" role="dialog" aria-modal="true" aria-labelledby="mnRevTit" onclick="if(event.target===this)mnRevCerrar()">
+  <div class="mc" style="max-width:820px;max-height:calc(100dvh - var(--vvt,0px) - var(--vvb,0px) - 2rem);overflow-y:auto" id="mnRevCuerpo"></div>
 </div>
 <div class="mbg" id="mMnHueco" style="display:none;z-index:321" role="dialog" aria-modal="true" aria-labelledby="mnHuecoTit" onclick="if(event.target===this)mnHuecoCerrar()">
   <div class="mc" style="max-width:780px;max-height:calc(100dvh - var(--vvt,0px) - var(--vvb,0px) - 2rem);overflow-y:auto" id="mnHuecoCuerpo"></div>
@@ -1362,7 +1381,9 @@ const MN_ICO = {
   send: '<line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>',
   undo: '<polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>',
   wand: '<path d="m3 21 9-9"/><path d="M15 4V2"/><path d="M15 16v-2"/><path d="M8 9h2"/><path d="M20 9h2"/><path d="M17.8 11.8 19 13"/><path d="M17.8 6.2 19 5"/><path d="M12.2 6.2 11 5"/>',
-  back: '<polyline points="15 18 9 12 15 6"/>'
+  back: '<polyline points="15 18 9 12 15 6"/>',
+  check: '<polyline points="20 6 9 17 4 12"/>',
+  list: '<line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>'
 };
 const mnI = k => `<svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">${MN_ICO[k]}</svg>`;
 const mnBtn = (label, onclick, o = {}) => `<button type="button" class="mn-btn${o.scan ? ' scan' : ''}${o.pri ? ' pri' : ''}${o.ghost ? ' ghost' : ''}${o.sm ? ' sm' : ''}${o.dan ? ' dan' : ''}" onclick="${onclick}"${o.title ? ` title="${o.title}" aria-label="${o.title}"` : ''}>${o.icon ? mnI(o.icon) : ''}${label ? `<span>${label}</span>` : ''}</button>`;
@@ -2368,7 +2389,7 @@ async function mnBibCargar() {
   if (MN_BIB_LEG === undefined) { MN_BIB_LEG = []; if (!hecho && MN_BIB_DB !== false) { try { const r = await sb('platos_biblioteca?select=*&order=nombre.asc&limit=2000'); if (Array.isArray(r)) MN_BIB_LEG = r; } catch (e) {} } }
   mnBibMezcla();
 }
-const mnBibRefrescar = async () => { await mnBibCargar(); if (MN && MN.tab === 'biblioteca') mnBibPintar(true); else mnPintar(); };
+const mnBibRefrescar = async () => { await mnBibCargar(); if (MN && MN.tab === 'biblioteca') mnBibPintar(true); else mnPintar(); if (_mnR && document.getElementById('mMnRev').style.display === 'flex') { mnRevDiag(); mnRevPintar(true); } };
 function mnBibEditar(ix, previo) { // ix = plato de la lista (editar o copiar uno de partida) · null = nuevo · previo = datos de una comida
   if (MN_BIB_DB === false) { toast('Falta ejecutar supabase_banco_recetas.sql en Supabase para guardar comidas.', { tipo: 'error' }); return; }
   const p = ix != null ? MN_BIBLIOTECA[ix] : null, d = p || previo || { n: '', m: 'C', i: [], d: [], nt: '' };
@@ -2376,12 +2397,13 @@ function mnBibEditar(ix, previo) { // ix = plato de la lista (editar o copiar un
   document.getElementById('mnBibECuerpo').innerHTML = `<p class="mt" id="mnBibETit">${p && p.id ? 'Editar comida' : p ? 'Copiar a mi biblioteca' : 'Comida nueva'}</p>
     <div class="mn-g2"><div class="mn-f"><label class="mn-l" for="mnBibEN">Nombre</label><input class="inp" id="mnBibEN" maxlength="160" value="${sudEsc(d.n)}"></div>
       <div class="mn-f"><label class="mn-l" for="mnBibEM">Momento</label><select class="inp" id="mnBibEM" style="width:100%">${MN_TIPOS.filter(t => t[0] !== 'O').map(t => `<option value="${t[0]}"${d.m === t[0] ? ' selected' : ''}>${t[1]}</option>`).join('')}${d.m === '' ? '<option value="" selected>Sin momento</option>' : ''}</select></div></div>
-    <div class="mn-f" style="margin-top:12px"><label class="mn-l" for="mnBibEI">Ingredientes <span class="hd-opt">(uno por línea)</span></label><textarea class="inp" id="mnBibEI" rows="6" placeholder="80 g avena&#10;1 plátano&#10;250 ml bebida de soja">${sudEsc((d.i || []).join('\n'))}</textarea></div>
+    <div class="mn-f" style="margin-top:12px"><label class="mn-l" for="mnBibEI">Ingredientes <span class="hd-opt">(uno por línea)</span></label><textarea class="inp" id="mnBibEI" rows="6" placeholder="80 g avena&#10;1 plátano&#10;250 ml bebida de soja" oninput="mnBibEInfo()">${sudEsc((d.i || []).join('\n'))}</textarea>
+      <div class="mn-bib-r" style="margin-top:6px;align-items:center;gap:8px"><span class="mn-ayuda" id="mnBibEIN" style="flex:1 1 200px;margin:0"></span>${mnBtn('Ordenar texto pegado', 'mnBibEOrdenar()', { sm: true, ghost: true, icon: 'wand', title: 'Ordenar texto pegado: una línea por ingrediente, con la cantidad delante' })}<span id="mnBibEDes" style="display:none">${mnBtn('Deshacer', 'mnBibEDeshacer()', { sm: true, ghost: true, icon: 'undo' })}</span></div></div>
     <p class="mn-l" style="margin:14px 0 6px">Tipos de día en los que lo usas</p><div class="mn-checks">${MN_BIB_DIAS.map(t => `<label class="mn-chk2"><input type="checkbox" data-bd="${t[0]}"${(d.d || []).indexOf(t[0]) >= 0 ? ' checked' : ''}> ${t[1]}</label>`).join('')}</div>
     <div class="mn-f" style="margin-top:12px"><label class="mn-l" for="mnBibETg">Etiquetas <span class="hd-opt">(opcional, separadas por comas)</span></label><input class="inp" id="mnBibETg" maxlength="120" list="mnBibETgL" placeholder="rápida, tupper, sin cocinar" value="${sudEsc((d.tg || []).join(', '))}"><datalist id="mnBibETgL">${mnBibTags().map(t => `<option value="${sudEsc(t)}">`).join('')}</datalist></div>
     <div class="mn-f" style="margin-top:12px"><label class="mn-l" for="mnBibENt">Nota <span class="hd-opt">(opcional)</span></label><input class="inp" id="mnBibENt" maxlength="300" value="${sudEsc(d.nt || '')}"></div>
     <div class="mbtns" style="margin-top:16px"><button type="button" class="btn-cancel" onclick="mnBibECerrar()">Cancelar</button><button type="button" class="btn-ok" onclick="mnBibEGuardar()">Guardar en mi biblioteca</button></div>`;
-  document.getElementById('mMnBibE').style.display = 'flex'; if (!esTactil()) document.getElementById('mnBibEN').focus();
+  document.getElementById('mMnBibE').style.display = 'flex'; mnBibEInfo(); if (!esTactil()) document.getElementById('mnBibEN').focus();
 }
 function mnBibECerrar() { document.getElementById('mMnBibE').style.display = 'none'; }
 async function mnBibEGuardar() {
@@ -2431,7 +2453,7 @@ const MN_BASE_RE = [['carne', /\b(pollo|pavo|ternera|cerdo|jam[oó]n|solomillo|l
   ['huevo', /\b(huevos?|tortilla de huevo|clara)\b/i], ['lácteo', /\b(queso|filadelfia|k[eé]fir|nata|mantequilla|yogur(?! (de )?(soja|vegetal|coco|avena|almendra))|leche(?! (de )?(soja|avena|almendra|coco)))/i]];
 function mnBase(p) { const t = (p.i || []).join(' ') + ' ' + p.n; return MN_BASE_RE.filter(x => x[1].test(t)).map(x => x[0]); }
 const MN_BIB_DIAS = [['entreno', 'Entreno'], ['descanso', 'Descanso'], ['partido', 'Partido / prueba'], ['libre', 'Libre']];
-const MN_BIB = { q: '', m: '', t: '', veg: false, dia: null, sub: 'p', aq: '', pmin: '', kmax: '', ord: '', fav: false, tag: '', exc: null };
+const MN_BIB = { q: '', m: '', t: '', veg: false, dia: null, sub: 'p', aq: '', pmin: '', kmax: '', ord: '', fav: false, tag: '', exc: null, sel: new Set(), selModo: false };
 // Etiquetas libres de las comidas (contenido.tags): las que ya existen, para sugerirlas y para los chips de filtro
 const mnBibTags = () => [...new Set(MN_BIBLIOTECA.flatMap(p => p.tg || []))].sort((a, b) => a.localeCompare(b, 'es'));
 function mnBibParseTags(t) { const vistos = new Set(), r = []; String(t || '').split(/[,;]/).map(x => x.trim().slice(0, 24)).filter(Boolean).forEach(x => { const k = mnNorm(x); if (!vistos.has(k) && r.length < 8) { vistos.add(k); r.push(x); } }); return r; }
@@ -2477,7 +2499,7 @@ function mnBibLista() {
 // se estima con BEDCA (si el texto dice cocido o crudo, solo con el estado que toca). Solo se muestra; nada se guarda. «Sin calcular» = sin cantidad, sin gramos o sin dato.
 let _mnBedD = null, _mnBedPedido = false;
 function mnBibMacros(p) {
-  const t = MN_CERO(); t.bed = 0;
+  const t = MN_CERO(); t.bed = 0; t.det = [];
   (p.i || []).forEach(linea => {
     const ings = mnParseTexto(linea);
     ings.forEach(i => {
@@ -2489,6 +2511,7 @@ function mnBibMacros(p) {
         const a = g !== null && isFinite(g) ? mnBedBuscar(_mnBedD, i.n + ' ' + est, 1)[0] : null;
         if (a) { const k = g / 100; m = { g, kcal: a.k * k, prot: a.p * k, hc: a.h * k, grasa: a.f * k, aviso: false }; t.bed++; }
       }
+      if (m.sin) t.det.push({ n: i.n, sin: m.sin });
       mnSumar(t, m);
     });
   });
@@ -2501,7 +2524,7 @@ function mnBibTarjeta({ p, ix }) {
   const base = mnBase(p), tipo = MN_TIPOS.find(t => t[0] === p.m), mac = mnBibMac(p);
   const nota = [mac.fuera ? mac.fuera + ' sin calcular' : '', mac.bed ? mac.bed + ' con BEDCA' : ''].filter(Boolean).join(' · ');
   const tot = mac.calc ? `<div class="mn-tot" style="margin-top:0" title="Estimación con tu catálogo y, si falta, con BEDCA (por comida)"><span class="mn-tot-v"><b>≈ ${mnF(mac.kcal)}</b> kcal</span><span>P ${mnF(mac.prot)}</span><span>HC ${mnF(mac.hc)}</span><span>G ${mnF(mac.grasa)}</span>${nota ? `<span class="mn-tot-n">${sudEsc(nota)}</span>` : ''}</div>` : '';
-  return `<article class="mn-bib-c" data-ix="${ix}"><div class="mn-bib-h"><span class="mn-bib-m t-${p.m}">${sudEsc(tipo ? tipo[1] : (p.m || 'Sin momento'))}</span><h3>${sudEsc(p.n)}</h3>${p.id ? `<button type="button" class="mn-fav${p.fav ? ' on' : ''}" aria-pressed="${!!p.fav}" aria-label="${p.fav ? 'Quitar de favoritas' : 'Marcar como favorita'}: ${sudEsc(p.n)}" title="${p.fav ? 'Quitar de favoritas' : 'Marcar como favorita'}" onclick="mnBibFav(${ix})"><svg width="16" height="16" viewBox="0 0 24 24" fill="${p.fav ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></button>` : ''}</div>
+  return `<article class="mn-bib-c${p.id && MN_BIB.selModo && MN_BIB.sel.has(String(p.id)) ? ' sel' : ''}" data-ix="${ix}"><div class="mn-bib-h">${p.id && MN_BIB.selModo ? `<input type="checkbox" class="mn-sel" data-id="${sudEsc(String(p.id))}" aria-label="Seleccionar «${sudEsc(p.n)}»"${MN_BIB.sel.has(String(p.id)) ? ' checked' : ''} onchange="mnBibSelTog(this)">` : ''}<span class="mn-bib-m t-${p.m}">${sudEsc(tipo ? tipo[1] : (p.m || 'Sin momento'))}</span><h3>${sudEsc(p.n)}</h3>${p.id ? `<button type="button" class="mn-fav${p.fav ? ' on' : ''}" aria-pressed="${!!p.fav}" aria-label="${p.fav ? 'Quitar de favoritas' : 'Marcar como favorita'}: ${sudEsc(p.n)}" title="${p.fav ? 'Quitar de favoritas' : 'Marcar como favorita'}" onclick="mnBibFav(${ix})"><svg width="16" height="16" viewBox="0 0 24 24" fill="${p.fav ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></button>` : ''}</div>
     <ul class="mn-bib-i">${p.i.slice(0, 6).map(l => `<li>${sudEsc(l)}</li>`).join('')}${p.i.length > 6 ? `<li class="mas">+${p.i.length - 6} más</li>` : ''}</ul>
     ${tot}<div class="mn-bib-f"><span class="mn-bib-b ${base.length ? '' : 'veg'}">${base.length ? sudEsc(base.map(mnMayus).join(' · ')) : 'Vegetal'}</span>${p.d.map(x => `<span class="mn-bib-t">${sudEsc((MN_BIB_DIAS.find(y => y[0] === x) || [0, x])[1])}</span>`).join('')}${(p.tg || []).map(x => `<span class="mn-bib-t tg">${sudEsc(mnMayus(x))}</span>`).join('')}<span class="mn-bib-o">${sudEsc(p.o.join(', '))}</span>
     <span class="mn-bib-a">${MN.general ? '' : `<button type="button" class="mn-btn sm" onclick="mnBibUsar(${ix})">${mnI('plus')}Añadir</button>`}${p.id ? `<button type="button" class="mn-ib" aria-label="Editar «${sudEsc(p.n)}»" title="Editar" onclick="mnBibEditar(${ix})">${mnI('edit')}</button><button type="button" class="mn-ib" aria-label="Eliminar «${sudEsc(p.n)}»" title="Eliminar" onclick="mnBibBorrar(${ix})">${mnI('trash')}</button>` : `<button type="button" class="mn-ib" aria-label="Copiar «${sudEsc(p.n)}» a mi biblioteca para editarlo" title="Copiar para editar" onclick="mnBibEditar(${ix})">${mnI('copy')}</button>`}</span></div></article>`;
@@ -2510,14 +2533,14 @@ function mnBibHtmlP() {
   const s = MN.general ? null : mnSem(); if (s && (MN_BIB.dia === null || MN_BIB.dia >= s.dias.length)) MN_BIB.dia = MN.dia || 0;
   const chip = (k, v, l) => `<button type="button" class="mn-fch${MN_BIB[k] === v ? ' on' : ''}" aria-pressed="${MN_BIB[k] === v}" onclick="mnBibSet('${k}','${v}')">${l}</button>`;
   return `${mnBibAviso()}<section class="mn-card mn-bib-bar"><div class="mn-bib-r"><div class="mn-f" style="flex:1 1 220px"><label class="mn-l" for="mnBibQ">Buscar</label><input class="inp" id="mnBibQ" type="search" value="${sudEsc(MN_BIB.q)}" placeholder="Ej. lentejas, tofu, porridge…" oninput="MN_BIB.q=this.value;mnBibPintar()"></div>
-      <div class="mn-f mn-bib-acc">${mnBtn('Comida nueva', 'mnBibEditar(null)', { icon: 'plus' })}${mnBtn('Traer las de mis clientes', "mnBibMigrar('c')", { ghost: true, icon: 'copy' })}</div>${s ? `<div class="mn-f"><label class="mn-l" for="mnBibD">Añadir a</label><select class="inp" id="mnBibD" onchange="MN_BIB.dia=+this.value">${s.dias.map((d, i) => `<option value="${i}"${i === MN_BIB.dia ? ' selected' : ''}>${sudEsc(d.n)}</option>`).join('')}</select></div>` : ''}</div>
+      <div class="mn-f mn-bib-acc">${mnBtn('Comida nueva', 'mnBibEditar(null)', { icon: 'plus' })}${mnBtn('Traer las de mis clientes', "mnBibMigrar('c')", { ghost: true, icon: 'copy' })}${mnBtn('Revisar', 'mnRevAbrir()', { ghost: true, icon: 'check', title: 'Revisar la biblioteca: comidas sin momento, sin calcular o repetidas' })}${mnBtn(MN_BIB.selModo ? 'Terminar selección' : 'Seleccionar', 'mnBibSelModo()', { ghost: true, icon: 'list' })}</div>${s ? `<div class="mn-f"><label class="mn-l" for="mnBibD">Añadir a</label><select class="inp" id="mnBibD" onchange="MN_BIB.dia=+this.value">${s.dias.map((d, i) => `<option value="${i}"${i === MN_BIB.dia ? ' selected' : ''}>${sudEsc(d.n)}</option>`).join('')}</select></div>` : ''}</div>
     <div class="mn-bib-ch" role="group" aria-label="Momento">${chip('m', '', 'Todos')}${MN_TIPOS.filter(t => t[0] !== 'O').map(t => chip('m', t[0], t[1])).join('')}</div>
     <div class="mn-bib-ch" role="group" aria-label="Tipo de día">${chip('t', '', 'Cualquier día')}${MN_BIB_DIAS.map(t => chip('t', t[0], t[1])).join('')}<button type="button" class="mn-fch${MN_BIB.veg ? ' on' : ''}" aria-pressed="${MN_BIB.veg}" onclick="MN_BIB.veg=!MN_BIB.veg;mnBibPintar(true)">Solo vegetal</button></div>
     <div class="mn-bib-r mn-bib-nut"><div class="mn-f"><label class="mn-l" for="mnBibPm">Proteína mín. <span class="hd-opt">(g)</span></label><input class="inp" id="mnBibPm" inputmode="decimal" placeholder="25" value="${sudEsc(MN_BIB.pmin)}" oninput="MN_BIB.pmin=this.value;mnBibPintar()"></div>
       <div class="mn-f"><label class="mn-l" for="mnBibKm">Máx. kcal</label><input class="inp" id="mnBibKm" inputmode="decimal" placeholder="500" value="${sudEsc(MN_BIB.kmax)}" oninput="MN_BIB.kmax=this.value;mnBibPintar()"></div>
       <div class="mn-f" style="flex:1 1 200px"><label class="mn-l" for="mnBibOr">Ordenar</label><select class="inp" id="mnBibOr" onchange="MN_BIB.ord=this.value;mnBibPintar()">${[['', 'Como están'], ['az', 'Nombre (A–Z)'], ['fav', 'Favoritas primero'], ['kcal_asc', 'Menos kcal primero'], ['kcal_desc', 'Más kcal primero'], ['prot_desc', 'Más proteína primero']].map(o => `<option value="${o[0]}"${MN_BIB.ord === o[0] ? ' selected' : ''}>${o[1]}</option>`).join('')}</select></div></div>
     <div class="mn-bib-ch" role="group" aria-label="Favoritas, etiquetas y exclusiones"><button type="button" class="mn-fch${MN_BIB.fav ? ' on' : ''}" aria-pressed="${MN_BIB.fav}" onclick="MN_BIB.fav=!MN_BIB.fav;mnBibPintar(true)">★ Favoritas</button>${mnBibTags().map(t => `<button type="button" class="mn-fch${MN_BIB.tag === t ? ' on' : ''}" aria-pressed="${MN_BIB.tag === t}" onclick="MN_BIB.tag=MN_BIB.tag===this.dataset.t?'':this.dataset.t;mnBibPintar(true)" data-t="${sudEsc(t)}">${sudEsc(mnMayus(t))}</button>`).join('')}${mnBibExcl().length ? `<button type="button" class="mn-fch${mnBibExcActivo() ? ' on' : ''}" aria-pressed="${mnBibExcActivo()}" title="${sudEsc(mnBibExcl().join(', '))}" onclick="MN_BIB.exc=!mnBibExcActivo();mnBibPintar(true)">Sin lo que no come ${sudEsc(MN.nombre ? MN.nombre.split(' ')[0] : 'el cliente')} (${mnBibExcl().length})</button>` : ''}</div></section>
-    <p class="mn-ayuda" id="mnBibN" style="margin:12px 2px"></p><div class="mn-bib-g" id="mnBibG"></div>`;
+    <div id="mnBibSelBar"></div><p class="mn-ayuda" id="mnBibN" style="margin:12px 2px"></p><div class="mn-bib-g" id="mnBibG"></div>`;
 }
 function mnBibSubBar() {
   const S = [['p', 'Comidas'], ['r', 'Recetas'], ['a', 'Alimentos']];
@@ -2680,6 +2703,210 @@ function mnBibUsar(ix) { // abre el ajuste de kcal; «Sin ajustar» lo añade ta
   document.getElementById('mMnBanco').style.display = 'flex'; mnBancoPintar();
 }
 
+// ═══ Revisar biblioteca: problemas, parecidas, acciones en bloque y texto → ingredientes ═══
+const mnBibPropias = () => MN_BIBLIOTECA.filter(p => p.id);
+const mnBibFila = id => (MN_BIB_DB || []).find(r => r.id == id);
+// Cambia el contenido de varias comidas tuyas a la vez (de 6 en 6). fn recibe una copia del contenido y devuelve el nuevo (o null para no tocar)
+async function mnBibPatchMuchos(ids, fn) {
+  const ahora = new Date().toISOString(); let ok = 0, fallo = 0;
+  for (let k = 0; k < ids.length; k += 6) {
+    await Promise.all(ids.slice(k, k + 6).map(async id => {
+      const fila = mnBibFila(id); if (!fila) return;
+      const cont = fn({ ...(fila.contenido || {}) }); if (!cont) return;
+      let r; try { r = await sb(`comidas_banco?id=eq.${id}`, { method: 'PATCH', headers: { 'Prefer': 'return=minimal' }, body: JSON.stringify({ contenido: cont, actualizado: ahora }) }); } catch (e) { r = { code: 'red' }; }
+      if (esErrorSb(r)) fallo++; else { fila.contenido = cont; ok++; }
+    }));
+  }
+  mnBibMezcla(); return { ok, fallo };
+}
+const mnBibIdx = id => MN_BIBLIOTECA.findIndex(p => p.id == id);
+
+// ── Acciones en bloque (seleccionar varias tarjetas) ──
+function mnBibSelModo() { MN_BIB.selModo = !MN_BIB.selModo; if (!MN_BIB.selModo) MN_BIB.sel.clear(); mnBibPintar(true); }
+function mnBibSelTog(el) { const id = String(el.dataset.id); if (el.checked) MN_BIB.sel.add(id); else MN_BIB.sel.delete(id); const c = el.closest('.mn-bib-c'); if (c) c.classList.toggle('sel', el.checked); mnBibSelPintar(); }
+function mnBibSelTodas() { mnBibLista().forEach(({ p }) => { if (p.id) MN_BIB.sel.add(String(p.id)); }); mnBibPintar(); mnBibSelPintar(); }
+function mnBibSelNinguna() { MN_BIB.sel.clear(); mnBibPintar(); mnBibSelPintar(); }
+function mnBibSelPintar() {
+  const el = document.getElementById('mnBibSelBar'); if (!el) return; if (!MN_BIB.selModo) { el.innerHTML = ''; return; }
+  const n = MN_BIB.sel.size, op = (v, l) => `<option value="${v}">${l}</option>`;
+  el.innerHTML = `<div class="mn-selbar" role="group" aria-label="Acciones sobre las comidas seleccionadas"><div class="mn-selbar-h"><b>${n ? n + (n === 1 ? ' seleccionada' : ' seleccionadas') : 'Marca las comidas que quieras cambiar'}</b>
+      ${mnBtn('Todas las visibles', 'mnBibSelTodas()', { sm: true, ghost: true })}${n ? mnBtn('Ninguna', 'mnBibSelNinguna()', { sm: true, ghost: true }) : ''}</div>
+    ${n ? `<div class="mn-bib-r" style="margin-top:10px;align-items:flex-end"><div class="mn-f" style="flex:1 1 150px"><label class="mn-l" for="mnSelM">Momento</label><select class="inp" id="mnSelM" onchange="mnBibSelAccion('m',this.value);this.value=''">${op('', 'Cambiar a…')}${MN_TIPOS.filter(t => t[0] !== 'O').map(t => op(t[0], t[1])).join('')}</select></div>
+      <div class="mn-f" style="flex:1 1 150px"><label class="mn-l" for="mnSelD1">Tipo de día</label><select class="inp" id="mnSelD1" onchange="mnBibSelAccion('d+',this.value);this.value=''">${op('', 'Añadir…')}${MN_BIB_DIAS.map(t => op(t[0], t[1])).join('')}</select></div>
+      <div class="mn-f" style="flex:1 1 150px"><label class="mn-l" for="mnSelD2">&nbsp;</label><select class="inp" id="mnSelD2" aria-label="Quitar tipo de día" onchange="mnBibSelAccion('d-',this.value);this.value=''">${op('', 'Quitar…')}${MN_BIB_DIAS.map(t => op(t[0], t[1])).join('')}</select></div>
+      <div class="mn-f" style="flex:1 1 170px"><label class="mn-l" for="mnSelT">Etiqueta</label><input class="inp" id="mnSelT" maxlength="24" list="mnSelTL" placeholder="rápida"><datalist id="mnSelTL">${mnBibTags().map(t => `<option value="${sudEsc(t)}">`).join('')}</datalist></div>
+      <div class="mn-f mn-bib-acc">${mnBtn('Añadir', "mnBibSelAccion('t+',document.getElementById('mnSelT').value)", { sm: true, icon: 'plus' })}${mnBtn('Quitar', "mnBibSelAccion('t-',document.getElementById('mnSelT').value)", { sm: true, ghost: true })}${mnBtn('Eliminar', 'mnBibSelBorrar()', { sm: true, dan: true, icon: 'trash' })}</div></div>` : ''}</div>`;
+}
+async function mnBibSelAccion(k, v) {
+  v = String(v || '').trim(); const ids = [...MN_BIB.sel]; if (!ids.length || !v) return;
+  let fn, txt;
+  if (k === 'm') { fn = c => { c.m = v; return c; }; txt = 'Momento cambiado'; }
+  else if (k === 'd+') { fn = c => { c.d = [...new Set([...(c.d || []), v])]; return c; }; txt = 'Tipo de día añadido'; }
+  else if (k === 'd-') { fn = c => { c.d = (c.d || []).filter(x => x !== v); return c; }; txt = 'Tipo de día quitado'; }
+  else if (k === 't+') { const nuevas = mnBibParseTags(v); if (!nuevas.length) return; fn = c => { const t = mnBibParseTags((c.tags || []).concat(nuevas).join(',')); if (t.length) c.tags = t; return c; }; txt = 'Etiqueta añadida'; }
+  else { const q = mnNorm(v); fn = c => { const t = (c.tags || []).filter(x => mnNorm(x) !== q); if (t.length) c.tags = t; else delete c.tags; return c; }; txt = 'Etiqueta quitada'; }
+  const { ok, fallo } = await mnBibPatchMuchos(ids, fn);
+  mnBibPintar(true); mnBibSelPintar();
+  toast(fallo ? `${ok} comidas actualizadas y ${fallo} que no se pudieron guardar.` : `${txt} en ${ok} ${ok === 1 ? 'comida' : 'comidas'}.`, { tipo: fallo ? 'error' : undefined });
+}
+function mnBibSelBorrar() {
+  const ids = [...MN_BIB.sel], n = ids.length; if (!n) return;
+  const els = () => ids.map(id => document.querySelector(`.mn-bib-c[data-ix="${mnBibIdx(id)}"]`)).filter(Boolean);
+  deshacerBorrado({ texto: n + (n === 1 ? ' comida eliminada' : ' comidas eliminadas'), ocultar: () => els().forEach(e => { e.style.display = 'none'; }), restaurar: () => els().forEach(e => { e.style.display = ''; }),
+    ejecutar: async () => { const r = await sb(`comidas_banco?id=in.(${ids.join(',')})`, { method: 'DELETE', headers: { 'Prefer': 'return=minimal' } }); if (!esErrorSb(r)) { MN_BIB.sel.clear(); await mnBibRefrescar(); mnBibSelPintar(); } return r; } });
+}
+
+// ── Texto pegado → ingredientes con cantidad ──
+const MN_UNI_FIN = '(?:g|gr|grs|gramos?|kg|ml|l|lt|litros?|ud|uds|u|unidad(?:es)?|cditas?|cdas?|cdtas?|cucharad[ao]s?|cucharitas?|vasos?|lonchas?|rebanadas?|puñados?|latas?|botes?|tarros?|rodajas?|dientes?|ramas?|tazas?|piezas?|sobres?|barras?|paquetes?|tortitas?|filetes?|hojas?|trozos?|chorritos?)';
+const MN_RE_INI = /^\s*(?:\d|[¼½¾]|(?:un|una|medio|media)\s)/i;
+const MN_RE_FIN = new RegExp('^(.*?[^\\d\\s:\\-–x])\\s*([:\\-–]\\s*|\\s+x\\s*|\\s+)?(' + MN_RE_N + '(?:\\s*[-–]\\s*' + MN_RE_N + ')?)\\s*(' + MN_UNI_FIN + ')?\\.?\\s*$', 'i');
+// «Avena 80 g» → «80 g avena» · «Plátano x2» → «2 plátano» · «Aceite: 1 cda» → «1 cda aceite». Sin unidad solo se acepta tras «x» o «:».
+function mnTxtCantFinal(l) {
+  let nota = ''; const pn = /\s*(\([^)]*\))\s*$/.exec(l); if (pn) { nota = ' ' + pn[1]; l = l.slice(0, pn.index); }
+  const m = MN_RE_FIN.exec(l.trim()); if (!m) return null;
+  const sep = (m[2] || '').trim(), unidad = m[m.length - 1];
+  if (!unidad && !/^[:x]/i.test(sep)) return null;
+  return (m[3] + (unidad ? ' ' + unidad : '')).trim() + ' ' + m[1].trim() + nota;
+}
+function mnTxtPartir(l) {
+  let partes = l.split(/\s+\+\s+|\s+(?:y|e)\s+(?=(?:\d|[¼½¾]|(?:un|una|medio|media)\s))/i);
+  const tieneCant = p => MN_RE_INI.test(p) || !!mnTxtCantFinal(p);
+  return partes.flatMap(p => { const c = mnSplitTop(p, ','); return c.length > 1 && c.every(tieneCant) ? c : [p]; });
+}
+function mnTxtOrdenar(raw) {
+  const lineas = [];
+  String(raw || '').split(/\r?\n|;/).forEach(l0 => {
+    let l = l0.replace(/\t/g, ' ').replace(/^[\s•·*▪◦●○■□✓✔\-–—]+/, '').replace(/^\d{1,2}[.)]\s+/, '').replace(/\s+/g, ' ').trim();
+    if (!l || /:\s*$/.test(l) || /^ingredientes?\b[^\d]*$/i.test(l)) return;
+    mnTxtPartir(l).forEach(p => {
+      p = p.trim().replace(/^[,.\s]+|[,.\s]+$/g, ''); if (!p) return;
+      const f = !MN_RE_INI.test(p) ? mnTxtCantFinal(p) : null;
+      const ing = mnParseLinea(f || p); if (ing) lineas.push(mnIngEdit(ing));
+    });
+  });
+  return lineas;
+}
+function mnBibEInfo() {
+  const el = document.getElementById('mnBibEIN'), ta = document.getElementById('mnBibEI'); if (!el || !ta) return;
+  const ings = mnParseTexto(ta.value), sin = ings.filter(i => !i.cant || i.cant.modo === 'libre').length;
+  el.textContent = ings.length ? ings.length + (ings.length === 1 ? ' ingrediente' : ' ingredientes') + (sin ? ' · ' + sin + ' sin cantidad (no cuentan en los macros)' : ' · todos con cantidad') : '';
+}
+function mnBibEOrdenar() {
+  const ta = document.getElementById('mnBibEI'); if (!ta || !ta.value.trim()) return;
+  const antes = ta.value, nuevas = mnTxtOrdenar(antes); if (!nuevas.length) { toast('No he encontrado ingredientes en el texto.', { tipo: 'aviso' }); return; }
+  const t = nuevas.join('\n'); if (t === antes.trim()) { toast('El texto ya está ordenado.'); return; }
+  window._mnBibEPrev = antes; ta.value = t; ta.rows = Math.min(14, Math.max(6, nuevas.length + 1)); mnBibEInfo();
+  document.getElementById('mnBibEDes').style.display = ''; toast('Texto ordenado: una línea por ingrediente, con la cantidad delante.');
+}
+function mnBibEDeshacer() { const ta = document.getElementById('mnBibEI'); if (ta && window._mnBibEPrev != null) { ta.value = window._mnBibEPrev; mnBibEInfo(); } document.getElementById('mnBibEDes').style.display = 'none'; }
+
+// ── Catálogo: ingredientes de toda la biblioteca que BEDCA puede cubrir ──
+function mnRevCatalogoPend() {
+  if (!_mnBedD) return []; const vistos = new Set(), r = [];
+  mnBibPropias().forEach(p => (p.i || []).forEach(linea => mnParseTexto(linea).forEach(i => {
+    if (mnLink(i.n) || !i.cant || i.cant.modo === 'libre' || mnGramos(i) === null) return; const k = mnNorm(i.n); if (vistos.has(k)) return; vistos.add(k);
+    const a = mnBedBuscar(_mnBedD, i.n + ' ' + ((mnNorm(i.nota || '').match(/\b(crud\w*|cocid\w*|hervid\w*|asad\w*|seco\w*)/) || [''])[0]), 1)[0]; if (a) r.push({ i, a });
+  })));
+  return r;
+}
+async function mnRevCatalogar() {
+  const pend = mnRevCatalogoPend(); if (!pend.length) return; const { n, dup } = await mnCatalogarBedca(pend);
+  if (MN.c) mnRelinkTodo(); mnRevDiag(); mnRevPintar(); if (MN.tab === 'biblioteca') mnBibPintar(true);
+  toast(n ? n + (n === 1 ? ' alimento añadido' : ' alimentos añadidos') + ' al catálogo desde BEDCA' : 'No se ha añadido ninguno' + (dup ? ' (ya estaban)' : ''), { tipo: n ? undefined : 'aviso' });
+}
+
+// ── Parecidas ──
+const MN_STOPD = new Set(['de', 'del', 'la', 'el', 'las', 'los', 'con', 'y', 'a', 'en', 'al', 'un', 'una', 'para', 'sin', 'o']);
+const mnToks = s => new Set(mnNorm(s).replace(/\([^)]*\)/g, ' ').split(/[^a-z0-9]+/).filter(w => w.length > 1 && !MN_STOPD.has(w)).map(w => w.replace(/(es|s)$/, '')));
+const mnJac = (a, b) => { if (!a.size || !b.size) return 0; let n = 0; a.forEach(x => { if (b.has(x)) n++; }); return n / (a.size + b.size - n); };
+function mnRevParecidas() {
+  const l = mnBibPropias(), nt = l.map(p => mnToks(p.n)), it = l.map(p => new Set(p.i.flatMap(x => mnParseTexto(x)).map(i => [...mnToks(i.n)].sort().join(' ')).filter(Boolean)));
+  const pad = l.map((_, i) => i), raiz = i => { while (pad[i] !== i) { pad[i] = pad[pad[i]]; i = pad[i]; } return i; }, motivo = new Map();
+  for (let a = 0; a < l.length; a++) for (let b = a + 1; b < l.length; b++) {
+    const nj = mnJac(nt[a], nt[b]), ij = mnJac(it[a], it[b]); let why = '';
+    if (nj >= 0.99 && nt[a].size) why = 'Mismo nombre'; else if (nj >= 0.75 && Math.min(nt[a].size, nt[b].size) >= 2) why = 'Nombre parecido'; else if (ij >= 0.85 && Math.min(it[a].size, it[b].size) >= 3) why = 'Mismos ingredientes';
+    if (why) { pad[raiz(a)] = raiz(b); motivo.set(a, motivo.get(a) || why); motivo.set(b, motivo.get(b) || why); }
+  }
+  const g = new Map(); l.forEach((p, i) => { if (!motivo.has(i)) return; const r = raiz(i); if (!g.has(r)) g.set(r, []); g.get(r).push(i); });
+  let no = []; try { no = JSON.parse(localStorage.getItem('nl_dup_no') || '[]'); } catch (e) {}
+  return [...g.values()].filter(x => x.length > 1).map(ix => {
+    const ps = ix.map(i => l[i]), why = motivo.get(ix[0]), puntos = p => (p.fav ? 5 : 0) + p.d.length + (p.m ? 2 : 0) + (p.tg || []).length + Math.min(p.i.length, 10) / 10;
+    const keep = ps.slice().sort((a, b) => puntos(b) - puntos(a))[0].id, clave = ps.map(p => p.id).sort().join(',');
+    return { ids: ps.map(p => p.id), why, keep, clave, conf: false };
+  }).filter(g => no.indexOf(g.clave) < 0);
+}
+function mnRevNoDup(gi) { const g = _mnR.dups[gi]; if (!g) return; let no = []; try { no = JSON.parse(localStorage.getItem('nl_dup_no') || '[]'); } catch (e) {} no.push(g.clave); try { localStorage.setItem('nl_dup_no', JSON.stringify(no.slice(-300))); } catch (e) {} _mnR.dups.splice(gi, 1); mnRevPintar(true); }
+function mnRevKeep(gi, id) { _mnR.dups[gi].keep = id; _mnR.dups[gi].conf = false; mnRevPintar(true); }
+async function mnRevFusionar(gi) {
+  const g = _mnR.dups[gi]; if (!g) return; if (!g.conf) { g.conf = true; mnRevPintar(true); return; }
+  const otros = g.ids.filter(id => id != g.keep), filas = otros.map(mnBibFila).filter(Boolean);
+  const { ok, fallo } = await mnBibPatchMuchos([g.keep], c => {
+    filas.forEach(f => { const o = f.contenido || {}; c.d = [...new Set([...(c.d || []), ...(o.d || [])])]; if (o.fav) c.fav = true; if (!c.m && o.m) c.m = o.m; if (!c.nota && o.nota) c.nota = o.nota;
+      const t = mnBibParseTags((c.tags || []).concat(o.tags || []).join(',')); if (t.length) c.tags = t; });
+    return c;
+  });
+  if (fallo || !ok) { g.conf = false; mnRevPintar(true); toast('No se pudo fusionar: no se ha eliminado nada.', { tipo: 'error' }); return; }
+  const r = await sb(`comidas_banco?id=in.(${otros.join(',')})`, { method: 'DELETE', headers: { 'Prefer': 'return=minimal' } });
+  if (esErrorSb(r)) { g.conf = false; toast('Se unieron los datos pero no se pudieron eliminar las repetidas.', { tipo: 'error' }); }
+  else toast(otros.length + (otros.length === 1 ? ' comida repetida fusionada' : ' comidas repetidas fusionadas') + ' (días, etiquetas y favorita se conservan).');
+  await mnBibRefrescar();
+}
+
+// ── Diagnóstico ──
+const MN_LIBRE_OK = /\b(sal|pimienta|agua|especias?|hierbas?|oregano|perejil|albahaca|canela|comino|curcuma|pimenton|ajo en polvo|vinagre|limon|laurel|romero|tomillo|cilantro|menta|hielo|cafe|te|infusion|verdura|verduras|ensalada|hortalizas?|lechuga|rucula|canonigos|espinacas?)\b/;
+function mnRevDiag() {
+  const propias = mnBibPropias(), R = { total: propias.length, sinM: [], sinD: [], sinCalc: [], sinCant: [] };
+  propias.forEach(p => {
+    if (!p.m) R.sinM.push(p); if (!p.d.length) R.sinD.push(p);
+    const mac = mnBibMac(p), mal = (mac.det || []).filter(x => x.sin !== 'libre'), libres = (mac.det || []).filter(x => x.sin === 'libre' && !MN_LIBRE_OK.test(mnNorm(x.n)));
+    if (mal.length || (!mac.calc && p.i.length)) R.sinCalc.push({ p, det: mal.length ? mal : (mac.det || []) });
+    if (libres.length) R.sinCant.push({ p, det: libres });
+  });
+  _mnR.R = R; _mnR.pend = mnRevCatalogoPend(); _mnR.dups = mnRevParecidas(); return R;
+}
+const MN_SIN_TXT = { libre: 'sin cantidad', gramos: 'no sé pasarla a gramos', catalogo: 'no está en el catálogo', nutri: 'sin nutrición en el catálogo' };
+async function mnRevAbrir() {
+  _mnR = { ver: {}, hechas: new Set(), tab: 'prob' }; document.getElementById('mMnRev').style.display = 'flex';
+  document.getElementById('mnRevCuerpo').innerHTML = '<p class="mt">Revisar biblioteca</p><p class="ms">Revisando tus comidas…</p>';
+  if (!_mnBedD) { try { _mnBedD = await mnBedca(); } catch (e) {} }
+  mnRevDiag(); mnRevPintar();
+}
+function mnRevCerrar() { document.getElementById('mMnRev').style.display = 'none'; if (MN && MN.tab === 'biblioteca') mnBibPintar(true); }
+function mnRevTab(k) { _mnR.tab = k; mnRevPintar(); }
+function mnRevMas(k) { _mnR.ver[k] = true; mnRevPintar(true); }
+function mnRevEditar(id) { const ix = mnBibIdx(id); if (ix >= 0) mnBibEditar(ix); }
+async function mnRevSetM(id, v) {
+  if (!v) return; const { ok } = await mnBibPatchMuchos([id], c => { c.m = v; return c; });
+  if (ok) { _mnR.hechas.add(String(id)); mnRevPintar(true); } else toast('No se pudo guardar el momento.', { tipo: 'error' });
+}
+async function mnRevSetD(id, k, on) {
+  const { ok } = await mnBibPatchMuchos([id], c => { const d = new Set(c.d || []); if (on) d.add(k); else d.delete(k); c.d = [...d]; return c; });
+  if (ok) { _mnR.hechas.add(String(id)); mnRevPintar(true); } else { toast('No se pudo guardar el tipo de día.', { tipo: 'error' }); mnRevPintar(true); }
+}
+function mnRevPintar(sinFoco) {
+  const el = document.getElementById('mnRevCuerpo'); if (!el || !_mnR || !_mnR.R) return; const R = _mnR.R, t = _mnR.tab;
+  const foco = !sinFoco && document.activeElement && document.activeElement.closest && document.activeElement.closest('#mnRevCuerpo') ? document.activeElement.id : null, sc = el.parentElement.scrollTop;
+  const lista = (k, items, fila) => { const v = _mnR.ver[k], vis = v ? items : items.slice(0, 25); return vis.map(fila).join('') + (items.length > vis.length ? `<p style="margin:8px 0 0">${mnBtn('Ver las ' + items.length, `mnRevMas('${k}')`, { sm: true, ghost: true })}</p>` : ''); };
+  const sec = (k, titulo, ayuda, items, fila, extra) => `<section class="mn-rev-s"><div class="mn-rev-sh"><b>${titulo}</b><span class="mn-rev-n ${items.length ? 'warn' : 'ok'}">${items.length ? items.length : 'Todo bien'}</span></div><p class="mn-ayuda" style="margin:2px 0 8px">${ayuda}</p>${extra || ''}${lista(k, items, fila)}</section>`;
+  const nomf = p => `<b>${sudEsc(p.n)}</b>`, hecha = p => _mnR.hechas.has(String(p.id)) ? '<span class="mn-rev-ok">Guardado</span>' : '';
+  const fresca = p => MN_BIBLIOTECA.find(x => x.id == p.id) || p;
+  const fM = p => { p = fresca(p); return `<div class="mn-rev-f"><div class="mn-rev-t">${nomf(p)}<span class="mn-ayuda">${sudEsc(p.i.slice(0, 2).join(' · '))}</span></div><div class="mn-rev-c">${hecha(p)}<select class="inp" id="mnRevM_${sudEsc(String(p.id))}" aria-label="Momento de ${sudEsc(p.n)}" onchange="mnRevSetM('${sudEsc(String(p.id))}',this.value)"><option value="">Elegir momento…</option>${MN_TIPOS.filter(x => x[0] !== 'O').map(x => `<option value="${x[0]}"${p.m === x[0] ? ' selected' : ''}>${x[1]}</option>`).join('')}</select></div></div>`; };
+  const fD = p => { p = fresca(p); return `<div class="mn-rev-f"><div class="mn-rev-t">${nomf(p)}<span class="mn-ayuda">${sudEsc(p.i.slice(0, 2).join(' · '))}</span></div><div class="mn-rev-c">${hecha(p)}${MN_BIB_DIAS.map(d => `<label class="mn-chk2"><input type="checkbox" id="mnRevD_${sudEsc(String(p.id))}_${d[0]}"${p.d.indexOf(d[0]) >= 0 ? ' checked' : ''} onchange="mnRevSetD('${sudEsc(String(p.id))}','${d[0]}',this.checked)"> ${d[1]}</label>`).join('')}</div></div>`; };
+  const fC = x => `<div class="mn-rev-f"><div class="mn-rev-t">${nomf(x.p)}<span class="mn-rev-ch">${x.det.slice(0, 4).map(d => `<span class="mn-bib-t">${sudEsc(mnMayus(d.n))}: ${MN_SIN_TXT[d.sin] || d.sin}</span>`).join('')}${x.det.length > 4 ? `<span class="mn-ayuda">+${x.det.length - 4} más</span>` : ''}</span></div><div class="mn-rev-c">${mnBtn('Editar', `mnRevEditar('${sudEsc(String(x.p.id))}')`, { sm: true, ghost: true, icon: 'edit' })}</div></div>`;
+  const nPend = _mnR.pend.length, bedBtn = nPend ? `<p class="mn-bib-av" style="margin:0 0 8px">${nPend} ${nPend === 1 ? 'ingrediente tiene' : 'ingredientes tienen'} cantidad pero no están en tu catálogo, y BEDCA los cubre: ${mnBtn('Añadirlos al catálogo (' + nPend + ')', 'mnRevCatalogar()', { sm: true, icon: 'plus' })}</p>` : '';
+  const D = _mnR.dups, fG = (g, gi) => { const ps = g.ids.map(id => MN_BIBLIOTECA.find(p => p.id == id)).filter(Boolean); return `<div class="mn-rev-g"><div class="mn-rev-sh"><b>${sudEsc(g.why)}</b><span class="mn-ayuda">Elige cuál conservar; se unen días, etiquetas y favorita.</span></div>${ps.map(p => { const mm = mnBibMac(p); return `<label class="mn-rev-op"><input type="radio" name="mnRevK${gi}" id="mnRevK${gi}_${sudEsc(String(p.id))}"${p.id == g.keep ? ' checked' : ''} onchange="mnRevKeep(${gi},'${sudEsc(String(p.id))}')"><span><b>${sudEsc(p.n)}</b> <span class="mn-ayuda">${sudEsc((MN_TIPOS.find(x => x[0] === p.m) || [0, 'Sin momento'])[1])} · ${p.i.length} ingr.${mm.calc ? ' · ≈ ' + mnF(mm.kcal) + ' kcal' : ''}${p.fav ? ' · ★' : ''}</span><br><span class="mn-ayuda">${sudEsc(p.i.slice(0, 3).join(' · '))}${p.i.length > 3 ? ' …' : ''}</span></span></label>`; }).join('')}
+    <div class="mn-rev-c" style="justify-content:flex-end;margin-top:8px">${mnBtn('No son la misma', `mnRevNoDup(${gi})`, { sm: true, ghost: true })}${mnBtn(g.conf ? 'Confirmar: se eliminan ' + (g.ids.length - 1) : 'Fusionar', `mnRevFusionar(${gi})`, { sm: true, pri: g.conf, dan: g.conf, icon: 'copy' })}</div></div>`; };
+  const resumen = `<div class="mn-rev-res"><span class="mn-rev-n ${R.sinM.length ? 'warn' : 'ok'}">${R.sinM.length} sin momento</span><span class="mn-rev-n ${R.sinD.length ? 'warn' : 'ok'}">${R.sinD.length} sin tipo de día</span><span class="mn-rev-n ${R.sinCalc.length ? 'warn' : 'ok'}">${R.sinCalc.length} sin calcular</span><span class="mn-rev-n ${R.sinCant.length ? 'warn' : 'ok'}">${R.sinCant.length} sin cantidades</span><span class="mn-rev-n ${D.length ? 'warn' : 'ok'}">${D.length} ${D.length === 1 ? 'grupo parecido' : 'grupos parecidos'}</span></div>`;
+  const cuerpo = t === 'dup' ? (D.length ? D.map(fG).join('') : `<div class="mn-vacio"><b>No veo comidas repetidas</b><span class="mn-ayuda">Comparo nombres e ingredientes de tus comidas.</span></div>`)
+    : (R.total ? sec('m', 'Sin momento', 'Sin momento no salen al filtrar por desayuno, comida, cena…, y el generador no las usa.', R.sinM, fM) + sec('d', 'Sin tipo de día', 'Marca en qué días las usas (entreno, descanso…) para que el generador y «Qué encaja» las prefieran.', R.sinD, fD)
+      + sec('c', 'Sin calcular', 'Ingredientes con cantidad que no cuentan en kcal y macros. Lo habitual: no están en el catálogo o la medida no se puede pasar a gramos.', R.sinCalc, fC, bedBtn)
+      + sec('q', 'Ingredientes sin cantidad', 'Aparecen «al gusto» y no suman. Sal, especias, agua y verdura libre no se avisan.', R.sinCant, fC) : `<div class="mn-vacio"><b>Aún no tienes comidas propias</b><span class="mn-ayuda">Copia las de partida o crea una comida nueva y vuelve a revisar.</span></div>`);
+  el.innerHTML = `<p class="mt" id="mnRevTit">Revisar biblioteca</p><p class="ms">${R.total} ${R.total === 1 ? 'comida tuya' : 'comidas tuyas'}. Aquí se arregla lo que impide que el filtro por macros, el generador y «Qué encaja» las usen bien.</p>${resumen}
+    <div class="mn-bib-sub" role="tablist" aria-label="Qué revisar"><button type="button" role="tab" id="mnRevT_prob" aria-selected="${t !== 'dup'}" class="mn-fch${t !== 'dup' ? ' on' : ''}" onclick="mnRevTab('prob')">Problemas</button><button type="button" role="tab" id="mnRevT_dup" aria-selected="${t === 'dup'}" class="mn-fch${t === 'dup' ? ' on' : ''}" onclick="mnRevTab('dup')">Parecidas${D.length ? ' (' + D.length + ')' : ''}</button></div>
+    ${cuerpo}<div class="mbtns" style="margin-top:16px">${mnBtn('Volver a revisar', 'mnRevDiag();mnRevPintar()', { ghost: true, icon: 'undo' })}<button type="button" class="btn-ok" onclick="mnRevCerrar()">Cerrar</button></div>`;
+  el.parentElement.scrollTop = sc; if (foco) { const f = document.getElementById(foco); if (f) f.focus(); }
+}
+
 // ═══ Qué encaja en este hueco ═══
 // Propone comidas de tu biblioteca para completar el día que estás viendo: toma lo que falta frente al objetivo de ese tipo de día (o, si ese momento aún no está, su parte
 // del reparto: D 22 %, A 10 %, C 33 %, Me 12 %, Ce 23 %) y ordena por cercanía en kcal y proteína. Con «Ajustar cantidades» escala los ingredientes para llegar a la meta
@@ -2738,14 +2965,18 @@ function mnHuecoPendientes(c) { // ingredientes del día que no cuentan en los t
   }));
   return r;
 }
-async function mnHuecoCatalogar() {
-  const c = mnHuecoCtx(), pend = mnHuecoPendientes(c); if (!pend.length) return; let n = 0, dup = 0;
+async function mnCatalogarBedca(pend) { // añade al catálogo (como manual, con la referencia de BEDCA) lo que aún no está
+  let n = 0, dup = 0;
   for (const { i, a } of pend) {
     const nombre = mnMayus(i.n.trim()).slice(0, 80), cur = MN.cat.find(x => mnNorm(x.nombre) === mnNorm(nombre) && (x.estado || '') === (a._c || '')); if (cur) { dup++; continue; }
     const r = await sb('alimentos', { method: 'POST', body: JSON.stringify({ nombre, categoria: mnCategoria(nombre) || null, estado: a._c || null, medidas: [], nutri: mnBedNutri(a), fuente: 'manual', fuente_ref: ('BEDCA: ' + a.n).slice(0, 120) }) });
     if (esErrorSb(r)) { if (r.code === '23505') dup++; continue; } if (Array.isArray(r) && r[0]) { MN.cat.push(r[0]); n++; }
   }
-  MN.cat.sort((x, y) => x.nombre.localeCompare(y.nombre, 'es')); mnRelinkTodo(); mnCambio(); mnPintar(); mnHuecoPintar();
+  MN.cat.sort((x, y) => x.nombre.localeCompare(y.nombre, 'es')); return { n, dup };
+}
+async function mnHuecoCatalogar() {
+  const c = mnHuecoCtx(), pend = mnHuecoPendientes(c); if (!pend.length) return; const { n, dup } = await mnCatalogarBedca(pend);
+  mnRelinkTodo(); mnCambio(); mnPintar(); mnHuecoPintar();
   toast(n ? n + (n === 1 ? ' alimento añadido' : ' alimentos añadidos') + ' al catálogo desde BEDCA: el día ya los cuenta' : 'No se ha añadido ninguno' + (dup ? ' (ya estaban)' : ''), { tipo: n ? undefined : 'aviso' });
 }
 function mnHuecoPintar(sinFoco) {
