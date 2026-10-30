@@ -1842,7 +1842,7 @@ body.dark-mode .ref-src,body.dark-mode .sup-badge,body.dark-mode .depd-avatar-fa
 <div id="vcomp" class="view" role="main">
   <div class="page">
     <div class="page-header hero">
-      <div data-k="Herramienta"><p class="page-title" role="heading" aria-level="1">Comparador de alimentos</p><p class="page-sub">Open Food Facts (productos de supermercado) + USDA FoodData Central (alimentos genéricos)</p></div>
+      <div data-k="Herramienta"><p class="page-title" role="heading" aria-level="1">Comparador de alimentos</p><p class="page-sub">Open Food Facts (productos de supermercado), BEDCA (genéricos de España) y USDA FoodData Central (genéricos)</p></div>
     </div>
 
     <div class="cmp-bar-top">
@@ -1857,6 +1857,7 @@ body.dark-mode .ref-src,body.dark-mode .sup-badge,body.dark-mode .depd-avatar-fa
         <span class="cmp-ctl-l">Fuente</span>
         <div class="cmp-seg">
           <button class="cmp-seg-b on" id="compSrcOff" onclick="setCompSource('off')">Supermercado</button>
+          <button class="cmp-seg-b" id="compSrcBedca" onclick="setCompSource('bedca')">Genéricos BEDCA</button>
           <button class="cmp-seg-b" id="compSrcUsda" onclick="setCompSource('usda')">Genéricos USDA</button>
         </div>
       </div>
@@ -3611,12 +3612,15 @@ function setCompSource(src){
   compSource = src;
   document.getElementById('compSrcOff').classList.toggle('on', src==='off');
   document.getElementById('compSrcUsda').classList.toggle('on', src==='usda');
+  document.getElementById('compSrcBedca').classList.toggle('on', src==='bedca');
   compPie();
   ['A','B'].forEach(s=>{ compReq[s]++; document.getElementById('compResults'+s).innerHTML=''; });
 }
 function compPie(){
   const propia = compUsdaKey() !== 'DEMO_KEY';
-  document.getElementById('compFootnote').textContent = compSource==='off'
+  document.getElementById('compFootnote').textContent = compSource==='bedca'
+    ? 'Valores por 100 g de porción comestible según BEDCA, Consorcio BEDCA y AESAN (www.bedca.net): base de composición de alimentos de España, genéricos y en español. Los datos están en la propia app: funciona sin conexión a internet. No incluye azúcares ni la mayoría de vitaminas (solo hierro).'
+    : compSource==='off'
     ? 'Valores por 100g/100mL reportados por el fabricante o el usuario que subió el producto a Open Food Facts (primero los productos vendidos en España).'
     : 'Valores por 100g según USDA FoodData Central (base de datos oficial del gobierno de EE.UU.; alimentos genéricos, en inglés: lo que escribes en español se traduce). ' + (propia ? 'Usando tu clave de USDA.' : 'Usando la clave de prueba, que permite muy pocas consultas por hora: añade la tuya en «Clave de USDA».');
 }
@@ -3682,6 +3686,39 @@ async function compOffCompleto(raw){
   if(typeof n['energy-kcal_100g'] === 'number' || typeof n['proteins_100g'] === 'number' || !raw.code) return raw;
   try{ const d = await compFetchJson(`https://world.openfoodfacts.org/api/v2/product/${encodeURIComponent(raw.code)}.json?fields=${OFF_CAMPOS}`); return d.product ? { ...raw, ...d.product } : raw; }catch(e){ return raw; }
 }
+// ── BEDCA (base de composición de alimentos de España, instantánea local datos/bedca.json) ──
+// Misma búsqueda que el planificador (copia: si cambia allí `mnBedBuscar`, cambiarlo aquí): todas las palabras del nombre deben aparecer, gana el más corto y,
+// si pides crudo o cocido, solo valen las entradas de ese estado.
+const CMP_BED_STOP = new Set(['de','del','la','el','los','las','en','con','y','o','a','al','para','un','una','por','sin','copos','copo']);
+const CMP_BED_SIN = [['brocoli','brecol'],['broculi','brecol'],['espagueti','pasta alimenticia'],['espaguetis','pasta alimenticia'],['macarron','pasta alimenticia'],['macarrones','pasta alimenticia'],['fideo','pasta alimenticia'],['fideos','pasta alimenticia'],['tallarin','pasta alimenticia'],['tallarines','pasta alimenticia'],['pechuga de pavo','pavo'],['alubia','judia blanca'],['alubias','judias blancas'],['frijol','judia'],['frijoles','judias'],['cacahuetes','cacahuete'],['aove','aceite de oliva virgen extra'],['pasta','pasta alimenticia'],['pastas','pasta alimenticia'],['huevo','huevo gallina'],['huevos','huevo gallina']];
+const CMP_BED_CRUDO = /^(crud|seco|seca|fresc)/, CMP_BED_COCIDO = /^(cocid|hervid|cocin|asad|plancha|frit|horno|vapor|guisad|estofad|rehogad|saltead)/;
+const compBedStem = t => t.length > 3 ? t.replace(/ces$/,'z').replace(/(es|s)$/,'') : t;
+const compBedTok = n => compNorm(n).split(/[^a-z0-9ñ]+/).filter(t => t && !CMP_BED_STOP.has(t)).map(compBedStem);
+let compBedP = null, compBedGrupos = {};
+function compBedCargar(){
+  if(!compBedP) compBedP = fetch('datos/bedca.json').then(r => r.ok ? r.json() : Promise.reject(new Error('bedca')))
+    .then(d => { (d.alimentos||[]).forEach(a => { a._t = compBedTok(a.n); a._set = new Set(a._t); a._c = a._t.some(t => /^crud/.test(t)) ? 'crudo' : a._t.some(t => CMP_BED_COCIDO.test(t)) ? 'cocinado' : ''; }); return d; })
+    .catch(e => { compBedP = null; throw e; });
+  return compBedP;
+}
+async function compBuscarBedca(q){
+  const d = await compBedCargar(); compBedGrupos = d.grupos || {};
+  let txt = ' ' + compNorm(q) + ' '; for(const [x,y] of CMP_BED_SIN) if(txt.indexOf(' '+x+' ') >= 0){ txt = txt.replace(' '+x+' ', ' '+y+' '); break; }
+  const tAll = compBedTok(txt), tq = tAll.filter(t => !CMP_BED_CRUDO.test(t) && !CMP_BED_COCIDO.test(t));
+  if(!tq.length) return { items: [] };
+  const pide = tAll.some(t => CMP_BED_COCIDO.test(t)) ? 'cocinado' : tAll.some(t => /^(crud|seco|seca|fresc)/.test(t)) ? 'crudo' : '';
+  const sal = [];
+  for(const a of d.alimentos){
+    if(!tq.every(x => a._set.has(x))) continue;
+    let c = a._t.length - tq.length;
+    if(tq.indexOf(a._t[0]) < 0) c += 4;
+    if(pide){ if(a._c && a._c !== pide) continue; if(!a._c && pide === 'cocinado') c += 1.5; }
+    else if(a._c === 'cocinado') c += 0.8;
+    sal.push([c, a]);
+  }
+  sal.sort((x,y) => x[0]-y[0] || x[1].n.length - y[1].n.length);
+  return { items: sal.slice(0, 12).map(x => x[1]), grupos: d.grupos || {} };
+}
 async function compBuscarUsda(q){
   const en = compEn(q), consulta = en || q, clave = compUsdaKey();
   const url = dt => `https://api.nal.usda.gov/fdc/v1/foods/search?api_key=${encodeURIComponent(clave)}&query=${encodeURIComponent(consulta)}&pageSize=10` + (dt ? '&dataType=Foundation,SR%20Legacy' : '');
@@ -3693,9 +3730,10 @@ async function compBuscarUsda(q){
   return { items, traducido: en };
 }
 function compErrorHtml(e, side, src){
-  const nombre = src==='off' ? 'Open Food Facts' : 'USDA';
+  const nombre = src==='off' ? 'Open Food Facts' : src==='bedca' ? 'BEDCA' : 'USDA';
   let msg, clave = false;
-  if(e.limite){ msg = src==='usda' ? 'USDA ha alcanzado el límite de consultas por hora (la clave de prueba permite muy pocas).' : 'Open Food Facts pide esperar un poco antes de volver a buscar.'; clave = src==='usda' && compUsdaKey()==='DEMO_KEY'; }
+  if(src==='bedca'){ msg = 'No se han podido cargar los datos de BEDCA (datos/bedca.json). Recarga la página; si sigue igual, usa otra fuente.'; }
+  else if(e.limite){ msg = src==='usda' ? 'USDA ha alcanzado el límite de consultas por hora (la clave de prueba permite muy pocas).' : 'Open Food Facts pide esperar un poco antes de volver a buscar.'; clave = src==='usda' && compUsdaKey()==='DEMO_KEY'; }
   else if(e.clave){ msg = 'La clave de USDA no es válida. Revísala o quítala para usar la de prueba.'; clave = true; }
   else if(e.name === 'AbortError'){ msg = nombre + ' tarda demasiado en responder.'; }
   else if(e instanceof TypeError){ msg = navigator.onLine === false ? 'Sin conexión a internet.' : nombre + ' no ha respondido: a veces se satura o limita las búsquedas seguidas. Espera unos segundos y pulsa Reintentar.'; }
@@ -3708,7 +3746,7 @@ function compSearch(side){
   const inp = document.getElementById('compSearch'+side), q = inp.value.trim();
   document.getElementById('compClear'+side).style.display = inp.value ? 'block' : 'none';
   if(q.length < 3){ compReq[side]++; document.getElementById('compResults'+side).innerHTML = ''; return; }
-  compTimers[side] = setTimeout(() => compBuscar(side, q), compSource === 'off' ? 1100 : 600);
+  compTimers[side] = setTimeout(() => compBuscar(side, q), compSource === 'off' ? 1100 : compSource === 'bedca' ? 250 : 600);
 }
 function compSearchAhora(side){ const q = document.getElementById('compSearch'+side).value.trim(); if(q.length >= 3) compBuscar(side, q); }
 async function compBuscar(side, q){
@@ -3716,17 +3754,17 @@ async function compBuscar(side, q){
   resEl.innerHTML = '<p class="dash-empty" style="padding:10px">Buscando…</p>';
   try{
     let r = compCache.get(clave);
-    if(!r){ r = src==='off' ? await compBuscarOff(q) : await compBuscarUsda(q); if(r.items.length) compCache.set(clave, r); }
+    if(!r){ r = src==='off' ? await compBuscarOff(q) : src==='bedca' ? await compBuscarBedca(q) : await compBuscarUsda(q); if(r.items.length) compCache.set(clave, r); }
     if(tok !== compReq[side] || src !== compSource) return;   // llegó tarde: ya se ha buscado otra cosa
     const items = r.items;
     compRawResults[side] = items;
     if(!items.length){
-      resEl.innerHTML = `<p class="dash-empty" style="padding:10px">Sin resultados${src==='usda' && !r.traducido ? '. USDA está en inglés: prueba el nombre en inglés (por ejemplo «lentils»)' : ''}.</p>`;
+      resEl.innerHTML = `<p class="dash-empty" style="padding:10px">Sin resultados${src==='bedca' ? '. Prueba con otra palabra (por ejemplo «lenteja», «pollo», «arroz»)' : ''}${src==='usda' && !r.traducido ? '. USDA está en inglés: prueba el nombre en inglés (por ejemplo «lentils»)' : ''}.</p>`;
       return;
     }
     resEl.innerHTML = (r.traducido ? `<p class="cmp-nota">USDA está en inglés: buscando «${sudEsc(r.traducido)}»</p>` : '') + items.map((p,i)=>{
-      const name = src==='off' ? compOffNombre(p) : p.description;
-      const brand = src==='off' ? compOffMarca(p) : (p.brandOwner||p.dataType||'');
+      const name = src==='off' ? compOffNombre(p) : src==='bedca' ? p.n : p.description;
+      const brand = src==='off' ? compOffMarca(p) : src==='bedca' ? ((r.grupos||{})[p.g] || '') : (p.brandOwner||p.dataType||'');
       const img = src==='off' ? (p.image_small_url||p.image_front_small_url) : null;
       return `<div class="cmp-res" role="button" tabindex="0" onclick="compSelect('${side}',${i})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();compSelect('${side}',${i})}">
         ${img ? `<img src="${sudEsc(img)}" alt="">` : `<span class="cmp-ph">${sudEsc(String(name).charAt(0).toUpperCase())}</span>`}
@@ -3796,6 +3834,14 @@ function compNormalize(raw, source){
       ingredientes: String(raw.ingredients_text_es || raw.ingredients_text || '').trim(),
       alergenos: (raw.allergens_tags || []).map(t => String(t).replace(/^[a-z]{2}:/, '')).map(t => CMP_ALERGENOS[t] || t.replace(/-/g,' ')),
       nova: raw.nova_group ? String(raw.nova_group) : '', fuente: 'Open Food Facts'
+    };
+  } else if(source === 'bedca'){
+    const num = v => typeof v === 'number' && isFinite(v) ? v : undefined;
+    return {
+      name: raw.n, brand: (compBedGrupos[raw.g] || ''), extra: raw._c ? (raw._c === 'crudo' ? 'Crudo' : 'Cocinado') : '', nutri: '', img: '',
+      kcal: num(raw.k), protein: num(raw.p), carbs: num(raw.h), sugars: undefined, fat: num(raw.f), satfat: num(raw.sa),
+      fiber: num(raw.fi), sodium_mg: num(raw.na), micros: num(raw.fe) !== undefined ? [{k:'iron', label:'Hierro', unit:'mg', v:raw.fe}] : [],
+      ingredientes: '', alergenos: [], nova: '', fuente: 'BEDCA (Consorcio BEDCA y AESAN)'
     };
   } else {
     const get = (id) => {
