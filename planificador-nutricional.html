@@ -651,6 +651,9 @@ body.dark-mode .mn-bib-b.veg{color:var(--t800)}
 <div class="mbg" id="mMnImpr" style="display:none;z-index:325" role="dialog" aria-modal="true" aria-labelledby="mnImprTit" onclick="if(event.target===this)mnImprCerrar()">
   <div class="mc" style="max-width:540px;max-height:calc(100dvh - var(--vvt,0px) - var(--vvb,0px) - 2rem);overflow-y:auto" id="mnImprCuerpo"></div>
 </div>
+<div class="mbg" id="mMnPlt" style="display:none;z-index:323" role="dialog" aria-modal="true" aria-labelledby="mnPltTit" onclick="if(event.target===this)mnCerrarPt()">
+  <div class="mc" style="max-width:820px;max-height:calc(100dvh - var(--vvt,0px) - var(--vvb,0px) - 2rem);overflow-y:auto" id="mnPltCuerpo"></div>
+</div>
 <div class="mbg" id="mMnRev" style="display:none;z-index:322" role="dialog" aria-modal="true" aria-labelledby="mnRevTit" onclick="if(event.target===this)mnRevCerrar()">
   <div class="mc" style="max-width:820px;max-height:calc(100dvh - var(--vvt,0px) - var(--vvb,0px) - 2rem);overflow-y:auto" id="mnRevCuerpo"></div>
 </div>
@@ -1445,7 +1448,7 @@ function mnMenuHtml() {
       <div style="height:16px"></div>
       <div id="mnDiaTot">${mnTotDiaHtml(d)}</div>
       <div id="mnComidas">${comidas}</div>
-      <div class="mn-add">${mnBtn('Añadir comida', 'mnNuevaComida()', { icon: 'plus', pri: true })}${c.platos.length ? `<select class="inp" aria-label="Usar una comida guardada" onchange="mnUsarPlato(this.value);this.value=''"><option value="">Usar una comida guardada…</option>${c.platos.map(p => `<option value="${p.id}">${sudEsc(p.nombre || 'Sin nombre')}</option>`).join('')}</select>` : ''}${mnBtn('Qué encaja', 'mnHuecoAbrir()', { icon: 'wand' })}${mnBtn('Copiar este día a…', 'mnCopiarAbrir()', { icon: 'copy' })}${d.comidas.length ? mnBtn('Vaciar día', 'mnVaciarDia()', { icon: 'trash', ghost: true, dan: true }) : ''}</div>
+      <div class="mn-add">${mnBtn('Añadir comida', 'mnNuevaComida()', { icon: 'plus', pri: true })}${c.platos.length ? `<select class="inp" aria-label="Usar una comida guardada" onchange="mnUsarPlato(this.value);this.value=''"><option value="">Usar una comida guardada…</option>${c.platos.map(p => `<option value="${p.id}">${sudEsc(p.nombre || 'Sin nombre')}</option>`).join('')}</select>` : ''}${mnBtn('Qué encaja', 'mnHuecoAbrir()', { icon: 'wand' })}${mnBtn('Copiar este día a…', 'mnCopiarAbrir()', { icon: 'copy' })}${mnBtn('Días y semanas tipo', 'mnPtAbrir()', { icon: 'book' })}${d.comidas.length ? mnBtn('Vaciar día', 'mnVaciarDia()', { icon: 'trash', ghost: true, dan: true }) : ''}</div>
     </div></div>`;
 }
 
@@ -2543,7 +2546,7 @@ function mnBibHtmlP() {
     <div id="mnBibSelBar"></div><p class="mn-ayuda" id="mnBibN" style="margin:12px 2px"></p><div class="mn-bib-g" id="mnBibG"></div>`;
 }
 function mnBibSubBar() {
-  const S = [['p', 'Comidas'], ['r', 'Recetas'], ['a', 'Alimentos']];
+  const S = [['p', 'Comidas'], ['r', 'Recetas'], ['a', 'Alimentos'], ['t', 'Días y semanas']];
   return `<div class="mn-bib-sub" role="group" aria-label="Qué guardas en la biblioteca">${S.map(x => `<button type="button" class="mn-fch${MN_BIB.sub === x[0] ? ' on' : ''}" aria-pressed="${MN_BIB.sub === x[0]}" onclick="mnBibSub('${x[0]}')">${x[1]}</button>`).join('')}</div>
     <p class="mn-ayuda" style="margin:0 2px 12px">Tu biblioteca general, compartida entre todos los clientes. ${MN.general ? 'Aquí guardas y ordenas lo suelto; luego, dentro del plan de cada cliente, lo eliges y se añade como copia suya.' : 'Aquí guardas lo suelto y desde aquí lo añades a ' + sudEsc(MN.nombre || 'este cliente') + ', como copia suya.'}</p>`;
 }
@@ -2551,6 +2554,7 @@ function mnBibHtml() {
   const k = MN_BIB.sub;
   if (k === 'r' || k === 'c') { mnBibBancoAsegurar(k); return mnBibSubBar() + mnBibBancoHtml(); }
   if (k === 'a') return mnBibSubBar() + mnBibAlimHtml();
+  if (k === 't') return mnBibSubBar() + '<div id="mnPltInline"></div>';
   return mnBibSubBar() + mnBibHtmlP();
 }
 function mnBibSub(k) { MN_BIB.sub = k; mnBibSubPintar(); }
@@ -2558,6 +2562,7 @@ function mnBibSubPintar() {
   const t = document.getElementById('mnCuerpo'); if (!t || !MN || MN.tab !== 'biblioteca') return;
   const q = document.querySelector('#mnCuerpo [data-bq]'), f = q && document.activeElement === q, id = q && q.id; t.innerHTML = mnBibHtml(); cargarFotos(t);
   if (MN_BIB.sub === 'p') mnBibPintar();
+  if (MN_BIB.sub === 't') { mnPtPintar(); mnPtCargar().then(() => { if (MN && MN.tab === 'biblioteca' && MN_BIB.sub === 't') mnPtPintar(); }); }
   if (f) { const n = document.getElementById(id); if (n) { n.focus(); try { n.setSelectionRange(n.value.length, n.value.length); } catch (e) {} } }
 }
 // Recetas y comidas del banco, dentro de la biblioteca (el estado es el mismo _mnB que usa la ventana)
@@ -2906,6 +2911,105 @@ function mnRevPintar(sinFoco) {
     ${cuerpo}<div class="mbtns" style="margin-top:16px">${mnBtn('Volver a revisar', 'mnRevDiag();mnRevPintar()', { ghost: true, icon: 'undo' })}<button type="button" class="btn-ok" onclick="mnRevCerrar()">Cerrar</button></div>`;
   el.parentElement.scrollTop = sc; if (foco) { const f = document.getElementById(foco); if (f) f.focus(); }
 }
+
+// ═══ Días y semanas tipo ═══
+// Un día o una semana completos guardados una vez y listos para añadir a cualquier cliente. Viven en `ajustes_app` (una fila por plantilla,
+// clave «pt-<id>»; mismo almacén que los materiales, sin SQL nuevo). Se guardan «portables»: las comidas guardadas se copian dentro, las recetas
+// enlazadas viajan sin foto (la foto vive en la carpeta del cliente) y al añadir se crean ids nuevos.
+let _mnPT = { lista: null, filtro: '', ren: null };
+const MN_PT_MAX = 90000;
+async function mnPtCargar(forzar) {
+  if (_mnPT.lista && !forzar) return;
+  let r; try { r = await sb('ajustes_app?clave=like.pt-*&select=clave,valor,actualizado&order=actualizado.desc&limit=300'); } catch (e) { r = null; }
+  _mnPT.lista = Array.isArray(r) ? r.map(x => ({ id: String(x.clave).slice(3), ...(x.valor || {}), actualizado: x.actualizado })) : false;
+}
+function mnPtPortable(dias) { // copia de los días con las comidas guardadas «dentro» + las recetas que usan
+  const cp = mnClonar(dias), rec = new Map();
+  cp.forEach(d => d.comidas.forEach(m => {
+    if (m.plato) { const s = mnSrc(m); m.nombre = s.nombre || ''; m.nota = s.nota || ''; m.ing = mnClonar(s.ing || []); m.plato = null; }
+    if (m.receta) { const r = (MN.c.recetas || []).find(x => x.id === m.receta); if (r) { if (!rec.has(r.id)) { const c = mnClonar(r); c.foto = null; delete c.banco; delete c.factor; rec.set(r.id, c); } } else m.receta = null; }
+  }));
+  return { dias: cp, recetas: [...rec.values()] };
+}
+async function mnPtGuardar(tipo) {
+  const nomEl = document.getElementById('mnPtNom'); if (!MN || !MN.c || !MN.c.semanas.length) return;
+  const s = mnSem(), d = mnDia(), dias = tipo === 'semana' ? s.dias : [d];
+  if (!dias.some(x => x.comidas.length)) { toast(tipo === 'semana' ? 'Esta semana aún no tiene comidas.' : 'Este día aún no tiene comidas.', { tipo: 'aviso' }); return; }
+  const nombre = ((nomEl && nomEl.value.trim()) || (tipo === 'semana' ? s.nombre : d.n + (d.ctx && d.ctx.texto ? ' · ' + d.ctx.texto : ''))).slice(0, 60);
+  const cont = mnPtPortable(dias), nCom = cont.dias.reduce((a, x) => a + x.comidas.length, 0);
+  const valor = { tipo, nombre, creado: new Date().toISOString(), dias: dias.length, comidas: nCom, contenido: tipo === 'semana' ? { semana: { nombre: s.nombre, nota: s.nota || '', dias: cont.dias }, recetas: cont.recetas } : { dia: cont.dias[0], recetas: cont.recetas } };
+  if (JSON.stringify(valor).length > MN_PT_MAX) { toast('Es demasiado grande para guardarlo (muchas recetas o comidas).', { tipo: 'error' }); return; }
+  const id = (tipo === 'semana' ? 's' : 'd') + Math.random().toString(36).slice(2, 8);
+  let r; try { r = await sb('ajustes_app?on_conflict=clave', { method: 'POST', headers: { 'Prefer': 'resolution=merge-duplicates,return=minimal' }, body: JSON.stringify([{ clave: 'pt-' + id, valor, actualizado: new Date().toISOString() }]) }); } catch (e) { r = { code: 'red' }; }
+  if (esErrorSb(r)) { toast(r && (r.code === '23514' || r.code === '22P02') ? 'Es demasiado grande para guardarlo.' : 'No se pudo guardar. ¿Está ejecutado supabase_proteccion_datos.sql?', { tipo: 'error' }); return; }
+  _mnPT.lista = false === _mnPT.lista ? false : (_mnPT.lista || []); if (_mnPT.lista) _mnPT.lista.unshift({ id, ...valor, actualizado: new Date().toISOString() });
+  if (nomEl) nomEl.value = ''; toast((tipo === 'semana' ? 'Semana' : 'Día') + ' tipo guardado: «' + nombre + '»'); mnPtPintar();
+}
+// Crea copias con ids nuevos y las recetas que faltan; devuelve lo necesario para deshacer
+function mnPtInstanciar(cont) {
+  const mapa = new Map(), nuevas = [];
+  (cont.recetas || []).forEach(r => {
+    const ya = MN.c.recetas.find(x => mnNorm(x.nombre) === mnNorm(r.nombre) && mnNorm(r.nombre));
+    if (ya) { mapa.set(r.id, ya.id); return; }
+    const c = mnClonar(r), id = mnId('r'); mapa.set(r.id, id); c.id = id; c.foto = null; (c.ing || []).forEach(i => { i.id = mnId('i'); }); MN.c.recetas.push(c); nuevas.push(c);
+  });
+  const fresca = d => { const x = mnClonar(d); x.id = mnId('d'); x.comidas.forEach(m => { m.id = mnId('m'); m.plato = null; if (m.receta) m.receta = mapa.get(m.receta) || null; (m.ing || []).forEach(i => { i.id = mnId('i'); }); }); return x; };
+  return { dia: cont.dia ? fresca(cont.dia) : null, semana: cont.semana ? { id: mnId('s'), nombre: String(cont.semana.nombre || 'Semana').slice(0, 40), nota: cont.semana.nota || '', dias: cont.semana.dias.map(fresca) } : null, nuevas };
+}
+function mnPtUsar(id) {
+  const t = (_mnPT.lista || []).find(x => x.id === id); if (!t || !MN || MN.general || !t.contenido) return;
+  if (t.tipo === 'semana') {
+    const n = mnPtInstanciar(t.contenido), s = n.semana; MN.c.semanas.push(s); const antes = MN.sem; MN.sem = s.id; mnRelinkTodo(); mnCambio(); mnCerrarPt(); mnPintar();
+    toast('Semana «' + s.nombre + '» añadida', { accion: { texto: 'Deshacer', fn: () => { MN.c.semanas = MN.c.semanas.filter(x => x !== s); n.nuevas.forEach(r => { MN.c.recetas = MN.c.recetas.filter(x => x !== r); }); MN.sem = antes; mnCambio(); mnPintar(); } } });
+    return;
+  }
+  const sel = document.getElementById('mnPtD_' + id), s = mnSem(), d = s.dias[sel ? +sel.value : MN.dia] || mnDia(), n = mnPtInstanciar(t.contenido), antes = { comidas: d.comidas, ctx: d.ctx };
+  d.comidas = n.dia.comidas; d.ctx = n.dia.ctx; MN.dia = s.dias.indexOf(d); mnRelinkTodo(); mnCambio(); mnCerrarPt(); mnPintar();
+  toast('«' + t.nombre + '» añadido a ' + d.n, { accion: { texto: 'Deshacer', fn: () => { d.comidas = antes.comidas; d.ctx = antes.ctx; n.nuevas.forEach(r => { MN.c.recetas = MN.c.recetas.filter(x => x !== r); }); mnCambio(); mnPintar(); } } });
+}
+async function mnPtRenombrar(id, nombre) {
+  const t = (_mnPT.lista || []).find(x => x.id === id); nombre = String(nombre || '').trim().slice(0, 60); _mnPT.ren = null; if (!t || !nombre || nombre === t.nombre) { mnPtPintar(); return; }
+  const { id: _i, actualizado, ...valor } = t, nuevo = { ...valor, nombre };
+  let r; try { r = await sb('ajustes_app?clave=eq.pt-' + id, { method: 'PATCH', headers: { 'Prefer': 'return=minimal' }, body: JSON.stringify({ valor: nuevo, actualizado: new Date().toISOString() }) }); } catch (e) { r = { code: 'red' }; }
+  if (esErrorSb(r)) toast('No se pudo cambiar el nombre.', { tipo: 'error' }); else t.nombre = nombre; mnPtPintar();
+}
+function mnPtBorrar(id) {
+  const t = (_mnPT.lista || []).find(x => x.id === id); if (!t) return; const el = document.getElementById('mnPtC_' + id);
+  deshacerBorrado({ texto: 'Eliminado: «' + t.nombre + '»', ocultar: () => { if (el) el.style.display = 'none'; }, restaurar: () => { if (el) el.style.display = ''; },
+    ejecutar: async () => { const r = await sb('ajustes_app?clave=eq.pt-' + id, { method: 'DELETE', headers: { 'Prefer': 'return=minimal' } }); if (!esErrorSb(r)) { _mnPT.lista = _mnPT.lista.filter(x => x.id !== id); mnPtPintar(); } return r; } });
+}
+const mnPtFiltro = k => { _mnPT.filtro = _mnPT.filtro === k ? '' : k; mnPtPintar(); };
+function mnPtResumen(t) {
+  const c = t.contenido || {}, tl = x => (MN_TIPOS.find(y => y[0] === x.tipo) || [0, 'Otra'])[1];
+  if (t.tipo === 'semana') return ((c.semana && c.semana.dias) || []).map(d => d.n + ' (' + d.comidas.length + ')').join(' · ');
+  return ((c.dia && c.dia.comidas) || []).map(m => tl(m) + ': ' + (m.nombre || (m.ing || []).slice(0, 2).map(i => i.n).join(', ') || '—')).join(' · ');
+}
+function mnPtHtml() {
+  if (_mnPT.lista === null) return '<p class="mn-ayuda">Cargando…</p>';
+  if (_mnPT.lista === false) return '<p class="mn-bib-av warn">Esto guarda las plantillas en la tabla <b>ajustes_app</b> (SQL <b>supabase_proteccion_datos.sql</b>), que aún no está en Supabase.</p>';
+  const guardar = !MN.general && MN.c && MN.c.semanas.length ? (() => { const s = mnSem(), d = mnDia(); return `<section class="mn-card" style="margin-bottom:12px"><p class="mn-k">Guardar lo que tienes</p>
+    <div class="mn-bib-r" style="align-items:flex-end"><div class="mn-f" style="flex:1 1 220px"><label class="mn-l" for="mnPtNom">Nombre <span class="hd-opt">(opcional)</span></label><input class="inp" id="mnPtNom" maxlength="60" placeholder="Ej. Día de entreno de tarde"></div>
+      <div class="mn-f mn-bib-acc">${mnBtn('Guardar ' + sudEsc(d.n), "mnPtGuardar('dia')", { sm: true, icon: 'plus' })}${mnBtn('Guardar «' + sudEsc(s.nombre) + '»', "mnPtGuardar('semana')", { sm: true, ghost: true, icon: 'plus' })}</div></div>
+    <p class="mn-ayuda" style="margin:8px 0 0">Las comidas guardadas se copian dentro y las recetas viajan sin foto. Al usarlo en otro cliente, todo es una copia suya.</p></section>`; })() : '';
+  const f = _mnPT.filtro, l = _mnPT.lista.filter(t => !f || t.tipo === f), chip = (k, n) => `<button type="button" class="mn-fch${f === k ? ' on' : ''}" aria-pressed="${f === k}" onclick="mnPtFiltro('${k}')">${n}</button>`;
+  const s = MN.general || !MN.c.semanas.length ? null : mnSem();
+  const card = t => `<article class="mn-bib-c" id="mnPtC_${sudEsc(t.id)}"><div class="mn-bib-h" style="padding-right:0"><span class="mn-bib-m ${t.tipo === 'semana' ? 't-Ce' : 't-C'}">${t.tipo === 'semana' ? 'Semana' : 'Día'}</span>${_mnPT.ren === t.id ? `<input class="inp" id="mnPtRen" maxlength="60" value="${sudEsc(t.nombre)}" aria-label="Nombre" style="flex:1" onkeydown="if(event.key==='Enter')mnPtRenombrar('${sudEsc(t.id)}',this.value);if(event.key==='Escape'){_mnPT.ren=null;mnPtPintar()}">` : `<h3>${sudEsc(t.nombre)}</h3>`}</div>
+    <p class="mn-ayuda" style="margin:0">${t.dias > 1 ? t.dias + ' días · ' : ''}${t.comidas} ${t.comidas === 1 ? 'comida' : 'comidas'}${t.contenido && t.contenido.recetas && t.contenido.recetas.length ? ' · ' + t.contenido.recetas.length + (t.contenido.recetas.length === 1 ? ' receta' : ' recetas') : ''}${t.creado ? ' · ' + sudEsc(mnFecha(t.creado)) : ''}</p>
+    <p class="mn-ayuda" style="margin:0;font-size:12.5px">${sudEsc(mnPtResumen(t))}</p>
+    <div class="mn-rev-c" style="margin-top:2px">${s && t.tipo !== 'semana' ? `<select class="inp" id="mnPtD_${sudEsc(t.id)}" aria-label="Día al que añadirlo" style="width:auto;min-width:130px">${s.dias.map((d, i) => `<option value="${i}"${i === MN.dia ? ' selected' : ''}>${sudEsc(d.n)}</option>`).join('')}</select>` : ''}${s ? mnBtn(t.tipo === 'semana' ? 'Añadir como semana nueva' : 'Añadir a ese día', `mnPtUsar('${sudEsc(t.id)}')`, { sm: true, pri: true, icon: 'plus' }) : ''}
+      ${_mnPT.ren === t.id ? mnBtn('Guardar nombre', `mnPtRenombrar('${sudEsc(t.id)}',document.getElementById('mnPtRen').value)`, { sm: true, ghost: true }) : mnBtn('Renombrar', `_mnPT.ren='${sudEsc(t.id)}';mnPtPintar()`, { sm: true, ghost: true, icon: 'edit' })}${mnBtn('', `mnPtBorrar('${sudEsc(t.id)}')`, { sm: true, ghost: true, dan: true, icon: 'trash', title: 'Eliminar «' + sudEsc(t.nombre) + '»' })}</div></article>`;
+  return guardar + `<div class="mn-bib-ch" role="group" aria-label="Filtrar" style="margin:0 0 10px">${chip('dia', 'Días')}${chip('semana', 'Semanas')}</div>`
+    + (l.length ? `<div class="mn-bib-g">${l.map(card).join('')}</div>` : `<div class="mn-vacio"><b>${_mnPT.lista.length ? 'Nada con ese filtro' : 'Aún no tienes días ni semanas tipo'}</b><span class="mn-ayuda">${MN.general ? 'Guárdalos desde el plan de un cliente: ya con las comidas puestas, los reutilizas con un clic.' : 'Monta un día o una semana y pulsa «Guardar»: luego lo añades a cualquier cliente.'}</span></div>`);
+}
+async function mnPtPintar() {
+  const modal = document.getElementById('mMnPlt'), enModal = modal && modal.style.display === 'flex', el = enModal ? document.getElementById('mnPltCuerpo') : document.getElementById('mnPltInline'); if (!el) return;
+  const foco = document.activeElement && el.contains(document.activeElement) ? document.activeElement.id : null, sc = enModal ? modal.firstElementChild.scrollTop : 0;
+  el.innerHTML = (enModal ? '<p class="mt" id="mnPltTit">Días y semanas tipo</p><p class="ms">Guarda un día o una semana ya montados y añádelos a cualquier cliente.</p>' : '') + mnPtHtml() + (enModal ? `<div class="mbtns" style="margin-top:14px"><button type="button" class="btn-ok" onclick="mnCerrarPt()">Cerrar</button></div>` : '');
+  if (enModal) modal.firstElementChild.scrollTop = sc; if (foco) { const f = document.getElementById(foco); if (f) f.focus(); }
+  if (_mnPT.ren) { const r = document.getElementById('mnPtRen'); if (r && !foco) { r.focus(); r.select(); } }
+}
+async function mnPtAbrir() { document.getElementById('mMnPlt').style.display = 'flex'; mnPtPintar(); await mnPtCargar(); mnPtPintar(); }
+function mnCerrarPt() { document.getElementById('mMnPlt').style.display = 'none'; document.getElementById('mnPltCuerpo').innerHTML = ''; }
 
 // ═══ Qué encaja en este hueco ═══
 // Propone comidas de tu biblioteca para completar el día que estás viendo: toma lo que falta frente al objetivo de ese tipo de día (o, si ese momento aún no está, su parte
