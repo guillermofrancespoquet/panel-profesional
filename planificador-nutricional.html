@@ -443,6 +443,7 @@ body.dark-mode .mn-tag{color:var(--t800)}
 .mn-bib-r .mn-f{margin:0}
 .mn-bib-r .inp{margin-bottom:0}
 .mn-bib-acc{display:flex;flex-direction:row;gap:8px;flex:0 0 auto;flex-wrap:nowrap;align-items:center}
+@media(max-width:600px){.mn-bib-acc{flex-wrap:wrap;flex:1 1 100%}}
 input[type=search].inp{-webkit-appearance:none;appearance:none}
 .mn-bib-r .mn-btn{height:var(--h-field,42px)}
 .mn-bib-ch{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
@@ -1590,10 +1591,10 @@ async function mnUsdaNutri(nombre) {
 // del catálogo. Citar siempre la fuente: «BEDCA, Consorcio BEDCA y AESAN» (www.bedca.net). En la tabla `alimentos` se guarda con fuente «manual» y `fuente_ref` «BEDCA: nombre».
 let _mnBed = null;
 const MN_BED_STOP = new Set(['de', 'del', 'la', 'el', 'los', 'las', 'en', 'con', 'y', 'o', 'a', 'al', 'para', 'un', 'una', 'por', 'sin', 'copos', 'copo']);
-const MN_BED_SIN = [['brocoli', 'brecol'], ['broculi', 'brecol'], ['espagueti', 'pasta alimenticia'], ['espaguetis', 'pasta alimenticia'], ['macarron', 'pasta alimenticia'], ['macarrones', 'pasta alimenticia'], ['fideo', 'pasta alimenticia'], ['fideos', 'pasta alimenticia'], ['tallarin', 'pasta alimenticia'], ['tallarines', 'pasta alimenticia'], ['penne', 'pasta alimenticia'], ['fusilli', 'pasta alimenticia'], ['pechuga de pavo', 'pavo'], ['judia verde', 'judia verde'], ['alubia', 'judia blanca'], ['alubias', 'judias blancas'], ['frijol', 'judia'], ['frijoles', 'judias'], ['cacahuetes', 'cacahuete'], ['pasta', 'pasta alimenticia'], ['pastas', 'pasta alimenticia'], ['huevo', 'huevo gallina'], ['huevos', 'huevo gallina']];
+const MN_BED_SIN = [['brocoli', 'brecol'], ['broculi', 'brecol'], ['espagueti', 'pasta alimenticia'], ['espaguetis', 'pasta alimenticia'], ['macarron', 'pasta alimenticia'], ['macarrones', 'pasta alimenticia'], ['fideo', 'pasta alimenticia'], ['fideos', 'pasta alimenticia'], ['tallarin', 'pasta alimenticia'], ['tallarines', 'pasta alimenticia'], ['penne', 'pasta alimenticia'], ['fusilli', 'pasta alimenticia'], ['pechuga de pavo', 'pavo'], ['judia verde', 'judia verde'], ['alubia', 'judia blanca'], ['alubias', 'judias blancas'], ['frijol', 'judia'], ['frijoles', 'judias'], ['cacahuetes', 'cacahuete'], ['aove', 'aceite de oliva virgen extra'], ['pasta', 'pasta alimenticia'], ['pastas', 'pasta alimenticia'], ['huevo', 'huevo gallina'], ['huevos', 'huevo gallina']];
 // Palabras que dicen el estado (crudo / cocinado): no se exigen en el nombre, solo orientan qué entrada de BEDCA conviene
 const MN_BED_CRUDO = /^(crud|seco|seca|fresc)/, MN_BED_COCIDO = /^(cocid|hervid|cocin|asad|plancha|frit|horno|vapor|guisad|estofad|rehogad|saltead)/;
-const mnBedStem = t => t.length > 3 ? t.replace(/(es|s)$/, '') : t;
+const mnBedStem = t => t.length > 3 ? t.replace(/ces$/, 'z').replace(/(es|s)$/, '') : t;
 const mnBedTok = n => mnNorm(n).split(/[^a-z0-9ñ]+/).filter(t => t && !MN_BED_STOP.has(t)).map(mnBedStem);
 function mnBedca() {
   if (!_mnBed) _mnBed = fetch('datos/bedca.json').then(r => r.ok ? r.json() : Promise.reject(new Error('bedca'))).then(d => { (d.alimentos || []).forEach(a => { a._t = mnBedTok(a.n); a._set = new Set(a._t); a._c = a._t.some(t => /^crud/.test(t)) ? 'crudo' : a._t.some(t => MN_BED_COCIDO.test(t)) ? 'cocinado' : ''; }); return d; }).catch(() => { _mnBed = null; return null; });
@@ -2411,11 +2412,35 @@ function mnBibLista() {
   const q = mnNorm(MN_BIB.q);
   return MN_BIBLIOTECA.map((p, ix) => ({ p, ix })).filter(({ p }) => (!MN_BIB.m || p.m === MN_BIB.m) && (!MN_BIB.t || p.d.indexOf(MN_BIB.t) >= 0) && (!MN_BIB.veg || !mnBase(p).length) && (!q || mnNorm(p.n + ' ' + p.i.join(' ')).indexOf(q) >= 0));
 }
+// Macros estimados de una comida de la biblioteca (que guarda los ingredientes como texto, sin enlazar): cada ingrediente se enlaza por nombre con tu catálogo y, si no está,
+// se estima con BEDCA (si el texto dice cocido o crudo, solo con el estado que toca). Solo se muestra; nada se guarda. «Sin calcular» = sin cantidad, sin gramos o sin dato.
+let _mnBedD = null, _mnBedPedido = false;
+function mnBibMacros(p) {
+  const t = MN_CERO(); t.bed = 0;
+  (p.i || []).forEach(linea => {
+    const ings = mnParseTexto(linea);
+    ings.forEach(i => {
+      // «Alubias cocidas (≈150g escurridas)»: si la cantidad va entre paréntesis, se toma de ahí
+      if ((!i.cant || i.cant.modo === 'libre') && ings.length === 1) { const q = /\(\s*[^)]*?(\d+(?:[.,]\d+)?)\s*(g|gr|ml)\b/i.exec(linea); if (q) i.cant = { modo: 'g', min: parseFloat(q[1].replace(',', '.')), max: null, u: q[2].toLowerCase() === 'ml' ? 'ml' : 'g' }; }
+      i.a = mnLink(i.n); let m = mnMacrosIng(i);
+      if ((m.sin === 'catalogo' || m.sin === 'nutri') && _mnBedD) {
+        const g = mnGramos(i), est = (mnNorm(i.nota || '').match(/\b(crud\w*|cocid\w*|hervid\w*|asad\w*|seco\w*)/) || [''])[0];
+        const a = g !== null && isFinite(g) ? mnBedBuscar(_mnBedD, i.n + ' ' + est, 1)[0] : null;
+        if (a) { const k = g / 100; m = { g, kcal: a.k * k, prot: a.p * k, hc: a.h * k, grasa: a.f * k, aviso: false }; t.bed++; }
+      }
+      mnSumar(t, m);
+    });
+  });
+  return t;
+}
+const mnMayus = x => String(x || '').charAt(0).toUpperCase() + String(x || '').slice(1);
 function mnBibTarjeta({ p, ix }) {
-  const base = mnBase(p), tipo = MN_TIPOS.find(t => t[0] === p.m);
+  const base = mnBase(p), tipo = MN_TIPOS.find(t => t[0] === p.m), mac = mnBibMacros(p);
+  const nota = [mac.fuera ? mac.fuera + ' sin calcular' : '', mac.bed ? mac.bed + ' con BEDCA' : ''].filter(Boolean).join(' · ');
+  const tot = mac.calc ? `<div class="mn-tot" style="margin-top:0" title="Estimación con tu catálogo y, si falta, con BEDCA (por comida)"><span class="mn-tot-v"><b>≈ ${mnF(mac.kcal)}</b> kcal</span><span>P ${mnF(mac.prot)}</span><span>HC ${mnF(mac.hc)}</span><span>G ${mnF(mac.grasa)}</span>${nota ? `<span class="mn-tot-n">${sudEsc(nota)}</span>` : ''}</div>` : '';
   return `<article class="mn-bib-c" data-ix="${ix}"><div class="mn-bib-h"><span class="mn-bib-m t-${p.m}">${sudEsc(tipo ? tipo[1] : (p.m || 'Sin momento'))}</span><h3>${sudEsc(p.n)}</h3></div>
     <ul class="mn-bib-i">${p.i.slice(0, 6).map(l => `<li>${sudEsc(l)}</li>`).join('')}${p.i.length > 6 ? `<li class="mas">+${p.i.length - 6} más</li>` : ''}</ul>
-    <div class="mn-bib-f"><span class="mn-bib-b ${base.length ? '' : 'veg'}">${base.length ? sudEsc(base.join(' · ')) : 'Vegetal'}</span>${p.d.map(x => `<span class="mn-bib-t">${sudEsc((MN_BIB_DIAS.find(y => y[0] === x) || [0, x])[1])}</span>`).join('')}<span class="mn-bib-o">${sudEsc(p.o.join(', '))}</span>
+    ${tot}<div class="mn-bib-f"><span class="mn-bib-b ${base.length ? '' : 'veg'}">${base.length ? sudEsc(base.map(mnMayus).join(' · ')) : 'Vegetal'}</span>${p.d.map(x => `<span class="mn-bib-t">${sudEsc((MN_BIB_DIAS.find(y => y[0] === x) || [0, x])[1])}</span>`).join('')}<span class="mn-bib-o">${sudEsc(p.o.join(', '))}</span>
     <span class="mn-bib-a">${MN.general ? '' : `<button type="button" class="mn-btn sm" onclick="mnBibUsar(${ix})">${mnI('plus')}Añadir</button>`}${p.id ? `<button type="button" class="mn-ib" aria-label="Editar «${sudEsc(p.n)}»" title="Editar" onclick="mnBibEditar(${ix})">${mnI('edit')}</button><button type="button" class="mn-ib" aria-label="Eliminar «${sudEsc(p.n)}»" title="Eliminar" onclick="mnBibBorrar(${ix})">${mnI('trash')}</button>` : `<button type="button" class="mn-ib" aria-label="Copiar «${sudEsc(p.n)}» a mi biblioteca para editarlo" title="Copiar para editar" onclick="mnBibEditar(${ix})">${mnI('copy')}</button>`}</span></div></article>`;
 }
 function mnBibHtmlP() {
@@ -2569,6 +2594,7 @@ function mnBibAlimHtml() {
 function mnBibPintar(chips) {
   if (MN_BIB.sub !== 'p') { mnBibSubPintar(); return; }
   if (chips) { const t = document.getElementById('mnCuerpo'), q = document.getElementById('mnBibQ'), f = q && document.activeElement === q; t.innerHTML = mnBibHtml(); if (f) { const n = document.getElementById('mnBibQ'); n.focus(); n.setSelectionRange(n.value.length, n.value.length); } }
+  if (!_mnBedPedido) { _mnBedPedido = true; mnBedca().then(d => { if (d) { _mnBedD = d; if (MN && MN.tab === 'biblioteca' && MN_BIB.sub === 'p') mnBibPintar(); } }); }
   const l = mnBibLista(); document.getElementById('mnBibN').textContent = l.length + (l.length === 1 ? ' comida' : ' comidas') + ' · compartidas entre tus clientes, con sus ingredientes tal cual';
   document.getElementById('mnBibG').innerHTML = l.length ? l.map(mnBibTarjeta).join('') : `<div class="mn-vacio"><b>Ninguna comida con esos filtros</b><span class="mn-ayuda">Prueba con otra búsqueda o quita algún filtro.</span></div>`;
 }
