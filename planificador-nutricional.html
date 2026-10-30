@@ -471,6 +471,16 @@ body.dark-mode .mn-fch.on{background:var(--t400);border-color:var(--t400);color:
 .mn-fav.on{color:var(--gold-dk)}
 .mn-bib-t.tg{background:var(--pill-au);color:var(--gold-dk)}
 .mn-bib-nut{margin-top:12px;margin-bottom:0}
+.mn-hu{border:.5px solid var(--bd);border-radius:14px;padding:12px 14px;margin-bottom:8px;background:var(--sf)}
+.mn-hu.ok{border-color:var(--t400);background:var(--t50)}
+.mn-hu-h{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.mn-hu-h b{display:block;font-size:14px}
+.mn-hu-s{display:block;font-size:12px;color:var(--g500);margin-top:2px}
+.mn-hu-e{flex:none;font-size:11px;font-weight:700;padding:2px 9px;border-radius:20px;background:var(--g100);color:var(--g700)}
+.mn-hu-e.ok{background:var(--pill-g);color:var(--t900)}
+.mn-hu-e.cerca{background:var(--pill-au);color:var(--gold-dk)}
+body.dark-mode .mn-hu-e.ok{color:var(--t800)}
+.mn-hu-a{margin-top:8px;display:flex;justify-content:flex-end}
 .mn-bib-nut .mn-f:not([style]){flex:0 0 120px}
 body.dark-mode .mn-bib-b.veg{color:var(--t800)}
 .mn-bib-t{background:var(--pill-au);color:var(--gold-dk)}
@@ -624,6 +634,9 @@ body.dark-mode .mn-bib-b.veg{color:var(--t800)}
 </div>
 <div class="mbg" id="mMnImpr" style="display:none;z-index:325" role="dialog" aria-modal="true" aria-labelledby="mnImprTit" onclick="if(event.target===this)mnImprCerrar()">
   <div class="mc" style="max-width:540px;max-height:calc(100dvh - var(--vvt,0px) - var(--vvb,0px) - 2rem);overflow-y:auto" id="mnImprCuerpo"></div>
+</div>
+<div class="mbg" id="mMnHueco" style="display:none;z-index:321" role="dialog" aria-modal="true" aria-labelledby="mnHuecoTit" onclick="if(event.target===this)mnHuecoCerrar()">
+  <div class="mc" style="max-width:780px;max-height:calc(100dvh - var(--vvt,0px) - var(--vvb,0px) - 2rem);overflow-y:auto" id="mnHuecoCuerpo"></div>
 </div>
 <div class="mbg" id="mMnObj" style="display:none;z-index:315" role="dialog" aria-modal="true" aria-labelledby="mnObjTit" onclick="if(event.target===this)mnObjCerrar()">
   <div class="mc" style="max-width:720px;max-height:calc(100dvh - var(--vvt,0px) - var(--vvb,0px) - 2rem);overflow-y:auto" id="mnObjCuerpo"></div>
@@ -1411,7 +1424,7 @@ function mnMenuHtml() {
       <div style="height:16px"></div>
       <div id="mnDiaTot">${mnTotDiaHtml(d)}</div>
       <div id="mnComidas">${comidas}</div>
-      <div class="mn-add">${mnBtn('Añadir comida', 'mnNuevaComida()', { icon: 'plus', pri: true })}${c.platos.length ? `<select class="inp" aria-label="Usar una comida guardada" onchange="mnUsarPlato(this.value);this.value=''"><option value="">Usar una comida guardada…</option>${c.platos.map(p => `<option value="${p.id}">${sudEsc(p.nombre || 'Sin nombre')}</option>`).join('')}</select>` : ''}${mnBtn('Copiar este día a…', 'mnCopiarAbrir()', { icon: 'copy' })}${d.comidas.length ? mnBtn('Vaciar día', 'mnVaciarDia()', { icon: 'trash', ghost: true, dan: true }) : ''}</div>
+      <div class="mn-add">${mnBtn('Añadir comida', 'mnNuevaComida()', { icon: 'plus', pri: true })}${c.platos.length ? `<select class="inp" aria-label="Usar una comida guardada" onchange="mnUsarPlato(this.value);this.value=''"><option value="">Usar una comida guardada…</option>${c.platos.map(p => `<option value="${p.id}">${sudEsc(p.nombre || 'Sin nombre')}</option>`).join('')}</select>` : ''}${mnBtn('Qué encaja', 'mnHuecoAbrir()', { icon: 'wand' })}${mnBtn('Copiar este día a…', 'mnCopiarAbrir()', { icon: 'copy' })}${d.comidas.length ? mnBtn('Vaciar día', 'mnVaciarDia()', { icon: 'trash', ghost: true, dan: true }) : ''}</div>
     </div></div>`;
 }
 
@@ -2665,6 +2678,105 @@ function mnBibUsar(ix) { // abre el ajuste de kcal; «Sin ajustar» lo añade ta
   const p = MN_BIBLIOTECA[ix], s = mnSem(), d = s.dias[MN_BIB.dia] || s.dias[0]; if (!p || !d) return;
   _mnB = { tipo: 'p', lista: [], q: '', sel: { id: ix, nombre: p.n, contenido: { ing: mnParseTexto(p.i.join('\n')), nota: p.nt || '' } }, obj: 'kcal', val: '', fase: 'ajuste', msg: '', desdeBib: true, ix, dia: d.n };
   document.getElementById('mMnBanco').style.display = 'flex'; mnBancoPintar();
+}
+
+// ═══ Qué encaja en este hueco ═══
+// Propone comidas de tu biblioteca para completar el día que estás viendo: toma lo que falta frente al objetivo de ese tipo de día (o, si ese momento aún no está, su parte
+// del reparto: D 22 %, A 10 %, C 33 %, Me 12 %, Ce 23 %) y ordena por cercanía en kcal y proteína. Con «Ajustar cantidades» escala los ingredientes para llegar a la meta
+// (×0,6 a ×1,6). Respeta lo que no come el cliente y su base vegetal; penaliza lo que ya está en la semana y lo pensado para otro tipo de día. Son estimaciones.
+let _mnH = null;
+const mnHuecoTipo = t => t === 'competicion' ? 'partido' : t;
+function mnHuecoCtx() {
+  const d = mnDia(), tipo = mnTipoDia(d), obj = mnObjDia(tipo), tot = mnTotDia(d);
+  return { d, tipo, obj, tot, falta: obj ? { kcal: obj.kcal - tot.kcal, prot: obj.prot - tot.prot, hc: obj.hc - tot.hc, grasa: obj.grasa - tot.grasa } : null };
+}
+function mnHuecoMomento(d) { return ['D', 'A', 'C', 'Me', 'Ce'].find(t => !d.comidas.some(x => x.tipo === t)) || 'C'; }
+// Meta de una comida: si ese momento está libre, lo que falta (entre la mitad y 1,4 veces su parte del reparto); si ya está, su parte
+function mnHuecoMeta(m, c) {
+  if (!c.obj) return { k: '', p: '' };
+  const rep = MN_GEN_REP[m] || 0.15, libre = !c.d.comidas.some(x => x.tipo === m), kS = c.obj.kcal * rep, pS = c.obj.prot * rep, cl = (v, a, b) => Math.max(a, Math.min(b, v));
+  return libre ? { k: Math.round(cl(c.falta.kcal, kS * 0.5, kS * 1.4) / 10) * 10, p: Math.round(cl(c.falta.prot, pS * 0.5, pS * 1.5)) } : { k: Math.round(kS / 10) * 10, p: Math.round(pS) };
+}
+function mnHuecoAbrir() {
+  if (!MN || MN.general) return; const c = mnHuecoCtx(), m = mnHuecoMomento(c.d), meta = mnHuecoMeta(m, c);
+  _mnH = { m, k: meta.k, p: meta.p, esc: true, otros: false, max: 8 };
+  document.getElementById('mMnHueco').style.display = 'flex'; mnHuecoPintar();
+  mnBedca().then(d => { if (d && !_mnBedD) { _mnBedD = d; if (_mnH) mnHuecoPintar(); } });
+}
+function mnHuecoCerrar() { _mnH = null; document.getElementById('mMnHueco').style.display = 'none'; }
+function mnHuecoSet(k, v) { if (!_mnH) return; _mnH[k] = v; if (k === 'm') { const meta = mnHuecoMeta(v, mnHuecoCtx()); _mnH.k = meta.k; _mnH.p = meta.p; _mnH.max = 8; } mnHuecoPintar(true); }
+function mnHuecoSugerencias(c) {
+  const h = _mnH, K = parseFloat(String(h.k).replace(',', '.')), P = parseFloat(String(h.p).replace(',', '.'));
+  if (!isFinite(K) || K <= 0) return { lista: [], sinMeta: true };
+  const excl = mnBibExcl(), g = MN.c.gen || {}, usados = new Set(), tipo = mnHuecoTipo(c.tipo);
+  mnSem().dias.forEach(d => d.comidas.forEach(m => { usados.add(m.bib); usados.add(mnNorm(m.nombre || '')); }));
+  let sinCifras = 0, ocultas = 0; const lista = [];
+  MN_BIBLIOTECA.forEach((p, ix) => {
+    if (p.m !== h.m && !(h.otros && p.m === '')) return;
+    const x = mnNorm(p.n + ' ' + p.i.join(' '));
+    if (excl.length && excl.some(w => mnGenTiene(x, w))) { ocultas++; return; }
+    const base = mnBase(p); if (g.base === 'solo' && base.length) { ocultas++; return; }
+    const mac = mnBibMac(p); if (!mac.calc || mac.fuera > mac.calc) { sinCifras++; return; }
+    let f = 1; if (h.esc) f = Math.max(0.6, Math.min(1.6, K / mac.kcal));
+    const k = mac.kcal * f, pr = mac.prot * f, hc = mac.hc * f, gr = mac.grasa * f;
+    let sc = Math.abs(k - K) / K + Math.abs(Math.log(f)) * 0.5;
+    if (isFinite(P) && P > 0) sc += Math.max(0, P - pr) / P * 0.8 + Math.max(0, pr - P * 1.6) / P * 0.2;
+    if (p.d.length && tipo && tipo !== 'base' && tipo !== 'otro' && p.d.indexOf(tipo) < 0 && !(tipo === 'partido' && p.d.indexOf('entreno') >= 0)) sc += 0.15;
+    if (usados.has(ix) || usados.has(mnNorm(p.n))) sc += 0.25;
+    if (g.base === 'prefer' && base.length) sc += 0.1;
+    const dk = (k - K) / K, ok = Math.abs(dk) <= 0.12 && (!isFinite(P) || pr >= P * 0.9), cerca = Math.abs(dk) <= 0.25 && (!isFinite(P) || pr >= P * 0.75);
+    lista.push({ ix, p, mac, f, k, pr, hc, gr, sc, est: ok ? 'ok' : cerca ? 'cerca' : 'lejos', usada: usados.has(ix) || usados.has(mnNorm(p.n)) });
+  });
+  lista.sort((a, b) => a.sc - b.sc);
+  return { lista, sinCifras, ocultas };
+}
+function mnHuecoPendientes(c) { // ingredientes del día que no cuentan en los totales (sin catálogo) pero BEDCA puede cubrir
+  if (!_mnBedD) return []; const vistos = new Set(), r = [];
+  c.d.comidas.forEach(m => (mnSrc(m).ing || []).forEach(i => {
+    if (i.a || !i.cant || i.cant.modo === 'libre' || mnGramos(i) === null) return; const k = mnNorm(i.n); if (vistos.has(k)) return; vistos.add(k);
+    const a = mnBedBuscar(_mnBedD, i.n + ' ' + ((mnNorm(i.nota || '').match(/\b(crud\w*|cocid\w*|hervid\w*|asad\w*|seco\w*)/) || [''])[0]), 1)[0]; if (a) r.push({ i, a });
+  }));
+  return r;
+}
+async function mnHuecoCatalogar() {
+  const c = mnHuecoCtx(), pend = mnHuecoPendientes(c); if (!pend.length) return; let n = 0, dup = 0;
+  for (const { i, a } of pend) {
+    const nombre = mnMayus(i.n.trim()).slice(0, 80), cur = MN.cat.find(x => mnNorm(x.nombre) === mnNorm(nombre) && (x.estado || '') === (a._c || '')); if (cur) { dup++; continue; }
+    const r = await sb('alimentos', { method: 'POST', body: JSON.stringify({ nombre, categoria: mnCategoria(nombre) || null, estado: a._c || null, medidas: [], nutri: mnBedNutri(a), fuente: 'manual', fuente_ref: ('BEDCA: ' + a.n).slice(0, 120) }) });
+    if (esErrorSb(r)) { if (r.code === '23505') dup++; continue; } if (Array.isArray(r) && r[0]) { MN.cat.push(r[0]); n++; }
+  }
+  MN.cat.sort((x, y) => x.nombre.localeCompare(y.nombre, 'es')); mnRelinkTodo(); mnCambio(); mnPintar(); mnHuecoPintar();
+  toast(n ? n + (n === 1 ? ' alimento añadido' : ' alimentos añadidos') + ' al catálogo desde BEDCA: el día ya los cuenta' : 'No se ha añadido ninguno' + (dup ? ' (ya estaban)' : ''), { tipo: n ? undefined : 'aviso' });
+}
+function mnHuecoPintar(sinFoco) {
+  const h = _mnH, el = document.getElementById('mnHuecoCuerpo'); if (!h || !el) return;
+  const foco = !sinFoco && document.activeElement && document.activeElement.closest && document.activeElement.closest('#mnHuecoCuerpo') ? document.activeElement.id : null;
+  const c = mnHuecoCtx(), sg = mnHuecoSugerencias(c), t = (MN_TIPOS.find(x => x[0] === h.m) || ['', 'esta comida'])[1].toLowerCase();
+  const nombreDia = c.d.n + ((MN_TIPOS_DIA.find(x => x[0] === c.tipo) || ['', ''])[1] && c.tipo !== 'base' ? ' · ' + MN_TIPOS_DIA.find(x => x[0] === c.tipo)[1] : '');
+  const ctxTxt = c.obj ? `Objetivo del día <b>${mnF(c.obj.kcal)} kcal</b> · llevas <b>${mnF(c.tot.kcal)}</b> · ${c.falta.kcal >= 0 ? 'faltan' : 'te pasas en'} <b>${mnF(Math.abs(c.falta.kcal))} kcal</b>. Proteína: objetivo ${mnF(c.obj.prot)} g, llevas ${mnF(c.tot.prot)} g (${c.falta.prot >= 0 ? 'faltan' : 'sobran'} ${mnF(Math.abs(c.falta.prot))} g).` : `Este cliente aún no tiene objetivos de kcal para este tipo de día: escribe tú la meta de la comida o <button type="button" class="btn-link" style="background:none;border:0;padding:0;font:inherit;color:var(--t600);text-decoration:underline;cursor:pointer" onclick="mnHuecoCerrar();mnObjAbrir()">define los objetivos</button>.`;
+  const pend = mnHuecoPendientes(c);
+  const fila = r => `<article class="mn-hu ${r.est}"><div class="mn-hu-h"><div><b>${sudEsc(r.p.n)}</b><span class="mn-hu-s">${r.p.i.slice(0, 3).map(sudEsc).join(' · ')}${r.p.i.length > 3 ? ' …' : ''}</span></div><span class="mn-hu-e ${r.est}">${r.est === 'ok' ? 'Encaja' : r.est === 'cerca' ? 'Cerca' : 'Lejos'}</span></div>
+    <div class="mn-tot" style="margin:6px 0 0;padding-top:6px"><span class="mn-tot-v"><b>≈ ${mnF(r.k)}</b> kcal</span><span>P ${mnF(r.pr)}</span><span>HC ${mnF(r.hc)}</span><span>G ${mnF(r.gr)}</span>${h.esc && Math.abs(r.f - 1) > 0.02 ? `<span class="mn-tot-n" style="flex-basis:auto">cantidades ×${mnF(r.f, 2)}</span>` : ''}${r.usada ? '<span class="mn-tot-n" style="flex-basis:auto">ya está esta semana</span>' : ''}</div>
+    <div class="mn-hu-a">${mnBtn('Añadir a ' + sudEsc(c.d.n), `mnHuecoAnadir(${r.ix})`, { sm: true, icon: 'plus', pri: r.est === 'ok' })}</div></article>`;
+  el.innerHTML = `<p class="mt" id="mnHuecoTit">Qué encaja en este hueco</p><p class="ms">${sudEsc(nombreDia)}. ${ctxTxt}</p>
+    <div class="mn-bib-r" style="margin-bottom:6px"><div class="mn-f" style="flex:1 1 150px"><label class="mn-l" for="mnHuM">Comida</label><select class="inp" id="mnHuM" onchange="mnHuecoSet('m',this.value)">${MN_TIPOS.filter(x => x[0] !== 'O').map(x => `<option value="${x[0]}"${h.m === x[0] ? ' selected' : ''}>${x[1]}${c.d.comidas.some(y => y.tipo === x[0]) ? ' (ya hay)' : ''}</option>`).join('')}</select></div>
+      <div class="mn-f" style="flex:0 0 110px"><label class="mn-l" for="mnHuK">Meta kcal</label><input class="inp" id="mnHuK" inputmode="decimal" value="${sudEsc(h.k)}" oninput="_mnH.k=this.value;mnHuecoPintar()"></div>
+      <div class="mn-f" style="flex:0 0 130px"><label class="mn-l" for="mnHuP">Proteína (g)</label><input class="inp" id="mnHuP" inputmode="decimal" value="${sudEsc(h.p)}" oninput="_mnH.p=this.value;mnHuecoPintar()"></div></div>
+    <div class="mn-bib-ch" role="group" aria-label="Opciones"><label class="mn-chk2"><input type="checkbox"${h.esc ? ' checked' : ''} onchange="mnHuecoSet('esc',this.checked)"> Ajustar cantidades a la meta</label><label class="mn-chk2"><input type="checkbox"${h.otros ? ' checked' : ''} onchange="mnHuecoSet('otros',this.checked)"> Incluir comidas sin momento</label></div>
+    ${pend.length ? `<div class="mn-aviso" role="note" style="margin-top:12px"><p>${pend.length} ${pend.length === 1 ? 'ingrediente de este día no está' : 'ingredientes de este día no están'} en tu catálogo y los totales no ${pend.length === 1 ? 'lo cuentan' : 'los cuentan'}: ${pend.slice(0, 5).map(x => sudEsc(x.i.n)).join(', ')}${pend.length > 5 ? '…' : ''}. <button type="button" class="btn-soft sm" onclick="mnHuecoCatalogar()">Añadirlos desde BEDCA</button></p></div>` : ''}
+    <div style="margin-top:14px">${sg.sinMeta ? '<p class="mn-ayuda">Escribe la meta de kcal de la comida para ver propuestas.</p>' : sg.lista.length ? `<p class="mn-ayuda" style="margin:0 2px 8px">Para ${t}, de más a menos cercana a la meta${sg.ocultas ? ` · ${sg.ocultas} ocultas por lo que no come` : ''}${sg.sinCifras ? ` · ${sg.sinCifras} sin cifras suficientes` : ''}.</p>${sg.lista.slice(0, h.max).map(fila).join('')}${sg.lista.length > h.max ? `<div class="mn-add" style="margin-top:8px">${mnBtn('Ver más (' + (sg.lista.length - h.max) + ')', 'mnHuecoSet(\'max\',' + (h.max + 8) + ')', { ghost: true, sm: true })}</div>` : ''}` : `<div class="mn-vacio"><b>Nada que encaje</b><span class="mn-ayuda">No hay comidas de ${t} con cifras que cumplan lo que no come el cliente${sg.sinCifras ? ` (${sg.sinCifras} sin cifras suficientes: ábrelas en la Biblioteca para completarlas)` : ''}. Prueba a incluir las sin momento o a crear más en la Biblioteca.</span></div>`}</div>
+    <div class="mbtns" style="margin-top:14px"><button type="button" class="btn-cancel" onclick="mnHuecoCerrar()">Cerrar</button></div>`;
+  if (foco) { const e = document.getElementById(foco); if (e) { e.focus(); try { e.setSelectionRange(e.value.length, e.value.length); } catch (x) {} } }
+}
+function mnHuecoAnadir(ix) {
+  const h = _mnH, p = MN_BIBLIOTECA[ix]; if (!h || !p) return;
+  const c = mnHuecoCtx(), K = parseFloat(String(h.k).replace(',', '.')), mac = mnBibMac(p), f = h.esc && mac.calc && K > 0 ? Math.max(0.6, Math.min(1.6, K / mac.kcal)) : 1;
+  const ing = mnParseTexto(p.i.join('\n')).map(i => { const n = mnEscala({ ...i }, f); n.id = mnId('i'); n.a = null; return n; });
+  c.d.comidas.push({ id: mnId('m'), tipo: h.m, hora: '', nombre: p.n, nota: p.nt || '', libre: false, receta: null, plato: null, bib: ix, ing });
+  mnRelinkTodo(); mnCambio(); mnPintar();
+  const dia = c.d, id = dia.comidas[dia.comidas.length - 1].id;
+  toast('Añadido a ' + dia.n + ': «' + p.n + '»' + (f !== 1 ? ' (×' + mnF(f, 2) + ')' : ''), { accion: { texto: 'Deshacer', fn: () => { const j = dia.comidas.findIndex(x => x.id === id); if (j >= 0) { dia.comidas.splice(j, 1); mnCambio(); mnPintar(); if (_mnH) mnHuecoPintar(); } } } });
+  const c2 = mnHuecoCtx(), nm = mnHuecoMomento(c2.d), meta = mnHuecoMeta(nm, c2); _mnH.m = nm; _mnH.k = meta.k; _mnH.p = meta.p; _mnH.max = 8; mnHuecoPintar(true);
 }
 
 // ── Generador de semana (borrador) ──
