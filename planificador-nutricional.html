@@ -399,6 +399,7 @@ body.dark-mode .mn-tag{color:var(--t800)}
 .mn-auto-t td{vertical-align:top}
 .mn-auto-t td:first-child{padding-top:14px}
 .mn-fuente{font-size:11.5px;color:var(--g400)}
+.mn-ext-i .hd-opt{color:var(--g500)}
 .mn-tot{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:baseline;font-size:12.5px;color:var(--g500);margin-top:10px;padding-top:10px;border-top:.5px dashed var(--bd)}
 .mn-tot:empty{display:none}
 .mn-tot-v b{font-size:14px;color:var(--g900)}
@@ -1123,22 +1124,25 @@ function mnCatBuscar(q) {
   mnCatPintar(); const n = document.getElementById('mnCatQ'); if (n) { n.focus(); try { n.setSelectionRange(caret, caret); } catch (e) {} }
   if (q.trim().length < 3) { _mnCatExt = null; return; }
   _mnCatTm = setTimeout(async () => {
-    _mnCatExt = { cargando: true }; const e = document.getElementById('mnCatExt'); if (e) e.innerHTML = mnCatExtHtml();
+    const bed = mnBedBuscar(await mnBedca(), q, 8); if (_mnCatQ !== q) return;
+    _mnCatExt = { cargando: true, bed }; const e = document.getElementById('mnCatExt'); if (e) e.innerHTML = mnCatExtHtml();
     const [off, usda] = await Promise.all([
       fetch(`https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(q)}&search_simple=1&action=process&json=1&page_size=8&lc=es&tagtype_0=countries&tag_contains_0=contains&tag_0=spain`).then(r => r.json()).then(d => (d.products || []).filter(p => p.product_name || p.generic_name)).catch(() => null),
       fetch(`https://api.nal.usda.gov/fdc/v1/foods/search?api_key=${mnUsdaKey()}&query=${encodeURIComponent(q)}&pageSize=6`).then(r => r.json()).then(d => d.foods || []).catch(() => null)]);
     if (_mnCatQ !== q) return;
-    _mnCatExt = { off, usda }; const e2 = document.getElementById('mnCatExt'); if (e2) e2.innerHTML = mnCatExtHtml();
+    _mnCatExt = { off, usda, bed }; const e2 = document.getElementById('mnCatExt'); if (e2) e2.innerHTML = mnCatExtHtml();
   }, 500);
 }
 function mnCatExtHtml() {
   const x = _mnCatExt; if (!x) return '';
-  if (x.cargando) return '<p class="mn-ayuda" style="margin:12px 2px">Buscando en supermercados de España y en USDA…</p>';
+  const bedH = (x.bed || []).length ? `<p class="mn-lbl" style="margin:14px 0 4px">BEDCA (alimentos genéricos de España · AESAN)</p>${x.bed.map((a, i) => `<button type="button" class="mn-ext-i" onclick="mnCatDesdeExt('bedca',${i})"><span class="mn-ext-n">${sudEsc(a.n)}</span><span class="hd-opt"> ${Math.round(a.k)} kcal/100 g</span></button>`).join('')}` : '';
+  if (x.cargando) return bedH + '<p class="mn-ayuda" style="margin:12px 2px">Buscando en supermercados de España y en USDA…</p>';
   const fila = (it, fuente, i) => { const n = compNormalize(it, fuente); return `<button type="button" class="mn-ext-i" onclick="mnCatDesdeExt('${fuente}',${i})"><span class="mn-ext-n">${sudEsc(n.name)}</span><span class="hd-opt">${sudEsc(n.brand || '')}${n.kcal !== undefined ? ' · ' + Math.round(n.kcal) + ' kcal/100 g' : ''}</span></button>`; };
-  return `<p class="mn-lbl" style="margin:14px 0 4px">Supermercados de España (Open Food Facts: Mercadona, Carrefour, Dia, Lidl…)</p>${x.off === null ? '<p class="mn-ayuda">No se pudo consultar.</p>' : x.off.length ? x.off.map((it, i) => fila(it, 'off', i)).join('') : '<p class="mn-ayuda">Sin resultados.</p>'}
+  return `${bedH}<p class="mn-lbl" style="margin:14px 0 4px">Supermercados de España (Open Food Facts: Mercadona, Carrefour, Dia, Lidl…)</p>${x.off === null ? '<p class="mn-ayuda">No se pudo consultar.</p>' : x.off.length ? x.off.map((it, i) => fila(it, 'off', i)).join('') : '<p class="mn-ayuda">Sin resultados.</p>'}
     <p class="mn-lbl" style="margin:12px 0 4px">USDA (alimentos genéricos, nombres en inglés: ponle tu nombre al guardarlo)</p>${x.usda === null ? '<p class="mn-ayuda">No se pudo consultar.</p>' : x.usda.length ? x.usda.map((it, i) => fila(it, 'usda', i)).join('') : '<p class="mn-ayuda">Sin resultados.</p>'}`;
 }
 function mnCatDesdeExt(fuente, i) {
+  if (fuente === 'bedca') { const a = _mnCatExt.bed[i]; _mnCatEd = { id: null, nombre: a.n, categoria: mnCategoria(a.n), estado: a._c || mnEstadoInfer(a.n, ''), medidas: [], nutri: mnBedNutri(a), fuente: 'bedca', fuente_ref: ('BEDCA: ' + a.n).slice(0, 120) }; mnCatPintar(); return; }
   const it = (fuente === 'off' ? _mnCatExt.off : _mnCatExt.usda)[i], n = compNormalize(it, fuente);
   _mnCatEd = { id: null, nombre: n.name, categoria: mnCategoria(n.name), estado: mnEstadoInfer(n.name, ''), medidas: [], nutri: { kcal: n.kcal, prot: n.protein, hc: n.carbs, grasa: n.fat, fibra: n.fiber }, fuente, fuente_ref: String(fuente === 'off' ? (it.code || it._id || '') : (it.fdcId || '')).slice(0, 120) };
   mnCatPintar();
@@ -1239,7 +1243,7 @@ function mnCatEditar(id) { const a = MN.cat.find(x => x.id == id); if (!a) retur
 function mnCatFormHtml() {
   const a = _mnCatEd, nu = a.nutri || {}, cats = [...new Set(MN.cat.map(x => x.categoria).filter(Boolean))];
   const nv = k => nu[k] === undefined || nu[k] === null || isNaN(nu[k]) ? '' : String(Math.round(nu[k] * 10) / 10).replace('.', ',');
-  return `<p class="mt" id="mnCatTit">${a.id ? 'Editar alimento' : 'Nuevo alimento'}</p><p class="ms">${a.fuente === 'usda' ? 'Viene de USDA: ponle el nombre en español con el que lo vas a usar.' : a.fuente === 'off' ? 'Viene de Open Food Facts: revisa el nombre para que sea el genérico que usarás.' : 'Los datos nutricionales son opcionales.'}</p>
+  return `<p class="mt" id="mnCatTit">${a.id ? 'Editar alimento' : 'Nuevo alimento'}</p><p class="ms">${a.fuente === 'bedca' ? 'Viene de BEDCA (AESAN, España): revisa el nombre y el estado (crudo o cocinado).' : a.fuente === 'usda' ? 'Viene de USDA: ponle el nombre en español con el que lo vas a usar.' : a.fuente === 'off' ? 'Viene de Open Food Facts: revisa el nombre para que sea el genérico que usarás.' : 'Los datos nutricionales son opcionales.'}</p>
     ${(a.avisos || []).length ? `<div class="mn-aviso" role="note">${a.avisos.map(x => `<p>${sudEsc(x)}</p>`).join('')}</div>` : ''}
     <label class="mfl" for="mnCfN">Nombre</label><input class="inp" id="mnCfN" maxlength="80" value="${sudEsc(a.nombre)}">
     <div class="mn-fila" style="margin-top:8px"><div style="flex:1 1 180px"><label class="mfl" for="mnCfC">Categoría <span class="hd-opt">(la tuya)</span></label><input class="inp" id="mnCfC" list="mnCfCL" maxlength="40" value="${sudEsc(a.categoria || '')}" placeholder="Proteínas, Hidratos, Grasas…"><datalist id="mnCfCL">${cats.map(c => `<option value="${sudEsc(c)}">`).join('')}</datalist></div>
@@ -1256,7 +1260,7 @@ async function mnCatGuardar() {
   const nombre = v('mnCfN'); if (!nombre) { msg.textContent = 'Escribe el nombre.'; return; }
   const medidas = []; for (const p of v('mnCfM').split(';')) { const m = p.split('='); if (m.length === 2) { const g = parseFloat(m[1].replace(',', '.')); if (m[0].trim() && g > 0) medidas.push({ n: m[0].trim().slice(0, 30), g }); } }
   const nutri = {}; ['kcal', 'prot', 'hc', 'grasa', 'fibra'].forEach(k => { const x = parseFloat(v('mnCfn_' + k).replace(',', '.')); if (isFinite(x) && x >= 0) nutri[k] = x; });
-  const fila = { nombre, categoria: v('mnCfC') || null, estado: v('mnCfE') || null, medidas, nutri: Object.keys(nutri).length ? nutri : null, fuente: a.fuente || 'manual', fuente_ref: a.fuente_ref || null };
+  const fila = { nombre, categoria: v('mnCfC') || null, estado: v('mnCfE') || null, medidas, nutri: Object.keys(nutri).length ? nutri : null, fuente: a.fuente === 'bedca' ? 'manual' : (a.fuente || 'manual'), fuente_ref: a.fuente_ref || null };
   const btn = document.getElementById('mnCfOk'); btn.disabled = true; msg.textContent = '';
   const r = a.id ? await sb(`alimentos?id=eq.${a.id}`, { method: 'PATCH', body: JSON.stringify(fila) }) : await sb('alimentos', { method: 'POST', body: JSON.stringify(fila) });
   btn.disabled = false;
@@ -1580,9 +1584,51 @@ async function mnUsdaNutri(nombre) {
     return { err: 'sin_resultados' };
   } catch (e) { if (e.limite) { _mnUsdaAgotada = true; return { err: 'limite_usda' }; } return { err: 'red' }; }
 }
-// Alimentos genéricos (pollo, verduras, fruta, cereales…): primero USDA; de marca o sin equivalente: primero supermercados de España. Si falla uno, se prueba el otro.
+// ═══ BEDCA: Base de Datos Española de Composición de Alimentos (AESAN) ═══
+// Instantánea local en datos/bedca.json (la genera datos/descargar_bedca.py): ~900 alimentos con energía, proteína, grasa, hidratos y fibra por 100 g de porción
+// comestible, con nombre en español y distinguiendo crudo / cocinado. Se usa PRIMERO para los alimentos genéricos de «Completar catálogo» y sale arriba en el buscador
+// del catálogo. Citar siempre la fuente: «BEDCA, Consorcio BEDCA y AESAN» (www.bedca.net). En la tabla `alimentos` se guarda con fuente «manual» y `fuente_ref` «BEDCA: nombre».
+let _mnBed = null;
+const MN_BED_STOP = new Set(['de', 'del', 'la', 'el', 'los', 'las', 'en', 'con', 'y', 'o', 'a', 'al', 'para', 'un', 'una', 'por', 'sin', 'copos', 'copo']);
+const MN_BED_SIN = [['brocoli', 'brecol'], ['broculi', 'brecol'], ['espagueti', 'pasta alimenticia'], ['espaguetis', 'pasta alimenticia'], ['macarron', 'pasta alimenticia'], ['macarrones', 'pasta alimenticia'], ['fideo', 'pasta alimenticia'], ['fideos', 'pasta alimenticia'], ['tallarin', 'pasta alimenticia'], ['tallarines', 'pasta alimenticia'], ['penne', 'pasta alimenticia'], ['fusilli', 'pasta alimenticia'], ['pechuga de pavo', 'pavo'], ['judia verde', 'judia verde'], ['alubia', 'judia blanca'], ['alubias', 'judias blancas'], ['frijol', 'judia'], ['frijoles', 'judias'], ['cacahuetes', 'cacahuete'], ['pasta', 'pasta alimenticia'], ['pastas', 'pasta alimenticia'], ['huevo', 'huevo gallina'], ['huevos', 'huevo gallina']];
+// Palabras que dicen el estado (crudo / cocinado): no se exigen en el nombre, solo orientan qué entrada de BEDCA conviene
+const MN_BED_CRUDO = /^(crud|seco|seca|fresc)/, MN_BED_COCIDO = /^(cocid|hervid|cocin|asad|plancha|frit|horno|vapor|guisad|estofad|rehogad|saltead)/;
+const mnBedStem = t => t.length > 3 ? t.replace(/(es|s)$/, '') : t;
+const mnBedTok = n => mnNorm(n).split(/[^a-z0-9ñ]+/).filter(t => t && !MN_BED_STOP.has(t)).map(mnBedStem);
+function mnBedca() {
+  if (!_mnBed) _mnBed = fetch('datos/bedca.json').then(r => r.ok ? r.json() : Promise.reject(new Error('bedca'))).then(d => { (d.alimentos || []).forEach(a => { a._t = mnBedTok(a.n); a._set = new Set(a._t); a._c = a._t.some(t => /^crud/.test(t)) ? 'crudo' : a._t.some(t => MN_BED_COCIDO.test(t)) ? 'cocinado' : ''; }); return d; }).catch(() => { _mnBed = null; return null; });
+  return _mnBed;
+}
+// Mejores coincidencias para un nombre: deben aparecer todas sus palabras (salvo las de estado) en el nombre de BEDCA. BEDCA empieza siempre por el alimento principal
+// («Arroz, hervido», «Pollo, pechuga…»): un nombre cuyo primer término no está en lo que escribes («Flan de huevo» para «huevo») queda al final. Gana el más corto y,
+// si dices crudo o cocinado, solo valen las del estado que toca (no se da el valor de crudo para «cocido»: si no hay, se pasa a USDA).
+function mnBedBuscar(d, nombre, max) {
+  if (!d || !d.alimentos) return [];
+  let txt = ' ' + mnNorm(nombre) + ' '; for (const [x, y] of MN_BED_SIN) if (txt.indexOf(' ' + x + ' ') >= 0) { txt = txt.replace(' ' + x + ' ', ' ' + y + ' '); break; }
+  const tAll = mnBedTok(txt), tq = tAll.filter(t => !MN_BED_CRUDO.test(t) && !MN_BED_COCIDO.test(t));
+  if (!tq.length) return [];
+  const pide = tAll.some(t => MN_BED_COCIDO.test(t)) ? 'cocinado' : tAll.some(t => /^(crud|seco|seca|fresc)/.test(t)) ? 'crudo' : '';
+  const sal = [];
+  for (const a of d.alimentos) {
+    if (!tq.every(q => a._set.has(q))) continue;
+    let c = a._t.length - tq.length;
+    if (tq.indexOf(a._t[0]) < 0) c += 4;
+    if (pide) { if (a._c && a._c !== pide) continue; if (!a._c && pide === 'cocinado') c += 1.5; else if (pide === 'cocinado' && a._t.some(x => /^(hervid|cocid)/.test(x))) c -= 0.5; }
+    else if (a._c === 'cocinado') c += 0.8;
+    sal.push([c, a]);
+  }
+  sal.sort((x, y) => x[0] - y[0] || x[1].n.length - y[1].n.length);
+  return sal.slice(0, max || 1).map(x => x[1]);
+}
+const mnBedNutri = a => ({ kcal: a.k, prot: a.p, hc: a.h, grasa: a.f, ...(typeof a.fi === 'number' ? { fibra: a.fi } : {}) });
+async function mnBedcaNutri(nombre) {
+  const d = await mnBedca(); if (!d) return { err: 'sin_resultados' };
+  const a = mnBedBuscar(d, nombre, 1)[0]; if (!a) return { err: 'sin_resultados' };
+  return { nutri: mnBedNutri(a), fuente: 'bedca', ref: 'BEDCA: ' + a.n };
+}
+// Alimentos genéricos (pollo, verduras, fruta, cereales…): primero BEDCA (España) y luego USDA; de marca o sin equivalente: primero supermercados de España. Si falla uno, se prueba el siguiente.
 async function mnBuscarNutri(nombre) {
-  const orden = mnEsGenerico(nombre) ? [mnUsdaNutri, mnOffNutri] : [mnOffNutri, mnUsdaNutri];
+  const orden = mnEsGenerico(nombre) ? [mnBedcaNutri, mnUsdaNutri, mnOffNutri] : [mnOffNutri, mnBedcaNutri, mnUsdaNutri];
   let err = 'sin_resultados';
   for (const f of orden) { const r = await f(nombre); if (r.nutri) return r; if (r.err === 'limite_usda' || (r.err === 'red' && err !== 'limite_usda')) err = r.err; }
   return { err };
@@ -1605,7 +1651,7 @@ async function mnAutoBuscar(filas) {
   const a = _mnAuto; if (!a) return; a.cargando = true; a.hecho = 0; a.total = filas.length; mnAutoPintar();
   const cola = filas.slice(), run = async () => { while (cola.length && _mnAuto === a) {
     const f = cola.shift(), r = await mnBuscarNutri(f.n); if (_mnAuto !== a) return;
-    if (r.nutri) { f.nutri = r.nutri; f.fuente = r.fuente; f.ref = r.ref; f.err = ''; if (!f.est) { const rl = r.ref.toLowerCase(); if (/ raw|uncooked| dry|dry /.test(' ' + rl + ' ') || /crudo|seco/.test(mnNorm(f.n))) f.est = 'crudo'; else if (/cooked/.test(rl)) f.est = 'cocinado'; } }
+    if (r.nutri) { f.nutri = r.nutri; f.fuente = r.fuente; f.ref = r.ref; f.err = ''; if (!f.est) { const rl = r.ref.toLowerCase(); if (/ raw|uncooked| dry|dry /.test(' ' + rl + ' ') || /crudo|seco/.test(mnNorm(f.n)) || /\bcrud[oa]/.test(mnNorm(rl))) f.est = 'crudo'; else if (/cooked/.test(rl) || /hervid|cocid|asad|frit|plancha|horno|guisad/.test(mnNorm(rl))) f.est = 'cocinado'; } }
     else f.err = r.err || 'sin_resultados';
     a.hecho++; mnAutoPintar(); } };
   await Promise.all([run(), run(), run()]);
@@ -1653,7 +1699,7 @@ async function mnAutoGuardar() {
   const btn = document.getElementById('mnAutoOk'); btn.disabled = true; btn.textContent = 'Guardando…';
   for (const f of sel) {
     const nutri = f.nutri && Object.keys(f.nutri).length ? f.nutri : null;
-    const r = await sb('alimentos', { method: 'POST', body: JSON.stringify({ nombre: f.n.trim(), categoria: f.cat.trim() || null, estado: f.est || null, medidas: [], nutri, fuente: nutri ? f.fuente : 'manual', fuente_ref: nutri && f.ref ? f.ref.slice(0, 120) : null }) });
+    const r = await sb('alimentos', { method: 'POST', body: JSON.stringify({ nombre: f.n.trim(), categoria: f.cat.trim() || null, estado: f.est || null, medidas: [], nutri, fuente: nutri && f.fuente !== 'bedca' ? f.fuente : 'manual', fuente_ref: nutri && f.ref ? f.ref.slice(0, 120) : null }) });
     if (esErrorSb(r)) { if (r.code === '23505') dup++; continue; }
     if (Array.isArray(r) && r[0]) { MN.cat.push(r[0]); n++; }
   }
