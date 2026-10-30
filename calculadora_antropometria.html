@@ -821,11 +821,31 @@ let CURRENT_VALORACION_DRAFT = null; // medidas en edición para "Nueva valoraci
 // Construye el objeto "client" que espera el resto de la app a partir de la fila
 // compartida de clientes_deportivos (Panel Profesional) + su perfil antropometrico
 // (si existe) + sus valoraciones.
+// En Supabase el nombre va completo en una sola casilla (clientes_deportivos.nombre). Para mostrar «Nombre» y «Apellidos» por separado (informe, listas) se parte
+// aquí: 1 palabra = nombre; 2 = nombre y apellido; 3 = nombre y dos apellidos; 4 o más = dos nombres y el resto apellidos. Las partículas («de», «del», «la»…) se pegan
+// al apellido («Ana de la Torre» → «Ana» / «de la Torre»). Si el perfil ya trae apellidos guardados, se respetan tal cual.
+const NOMBRE_PARTICULAS = new Set(["de","del","la","las","los","el","y","da","di","van","von","san"]);
+function partirNombre(completo){
+  const w = String(completo||"").trim().split(/\s+/).filter(Boolean);
+  if(w.length<=1) return { nombre:w[0]||"", apellidos:"" };
+  let n = w.length===2 ? 1 : w.length===3 ? 1 : 2;
+  if(n===2 && NOMBRE_PARTICULAS.has(w[1].toLowerCase())) n = 1;
+  return { nombre:w.slice(0,n).join(" "), apellidos:w.slice(n).join(" ") };
+}
+const nombreCompletoDe = c => ((c.nombre||"")+" "+(c.apellidos||"")).trim();
+// Iniciales (igual que el panel): primera letra del nombre y de la siguiente palabra que no sea una partícula («Marta de la Torre» → MT)
+function inicialesDe(c){
+  const w = nombreCompletoDe(c).split(/\s+/).filter(x=>x && !/^[("'“]/.test(x));
+  if(w.length<2) return ((w[0]||"?")[0]).toUpperCase();
+  const sig = w.slice(1).find(x=>!NOMBRE_PARTICULAS.has(x.toLowerCase())) || w[1];
+  return (w[0][0]+sig[0]).toUpperCase();
+}
 function buildClientFromRows(dep, perfil, valoraciones){
+  const partes = (perfil && perfil.apellidos) ? { nombre:dep.nombre||"", apellidos:perfil.apellidos } : partirNombre(dep.nombre);
   return {
     id: dep.id,
-    nombre: dep.nombre || "",
-    apellidos: (perfil && perfil.apellidos) || "",
+    nombre: partes.nombre,
+    apellidos: partes.apellidos,
     sexo: (perfil && perfil.sexo) || "Hombre",
     nacionalidad: (perfil && perfil.nacionalidad) || "",
     raza: (perfil && perfil.raza) || "Caucasica",
@@ -1319,7 +1339,7 @@ function viewClientes(){
     const last = lastValoracion(c);
     const abierto = CURRENT_CLIENT_ID==c.id;
     return `<tr class="clientrow${abierto?" open":""}" data-id="${c.id}">
-      <td><span class="cl-av" aria-hidden="true">${esc(((c.nombre||"?").trim()[0]||"?")+((c.apellidos||"").trim()[0]||""))}</span><span class="chev" aria-hidden="true">${abierto?"▾":"▸"}</span><strong>${esc(c.nombre)} ${esc(c.apellidos||"")}</strong></td>
+      <td><span class="cl-av" aria-hidden="true">${esc(inicialesDe(c))}</span><span class="chev" aria-hidden="true">${abierto?"▾":"▸"}</span><strong>${esc(c.nombre)} ${esc(c.apellidos||"")}</strong></td>
       <td>${c.deporte?`<span class="cl-dep">${esc(c.deporte)}</span>`:"—"}</td>
       <td>${c.sexo?esc(c.sexo):"—"}</td>
       <td>${nVal} <span class="small-note">${nVal===1?"valoración":"valoraciones"}</span></td>
@@ -1434,7 +1454,7 @@ function wireClientes(){
     e.stopPropagation();
     const c = getClient(b.dataset.del);
     if(!c) return;
-    confirmModal(`¿Quitar el perfil antropométrico de ${c.nombre} y todas sus valoraciones? El deportista seguirá existiendo en Nutrición Deportiva (Panel Profesional) — esto solo borra sus datos de antropometría.`, async ()=>{
+    confirmModal(`¿Quitar el perfil antropométrico de ${nombreCompletoDe(c)} y todas sus valoraciones? El deportista seguirá existiendo en Nutrición Deportiva (Panel Profesional) — esto solo borra sus datos de antropometría.`, async ()=>{
       try{
         await sbDeleteValoracionesDe(c.id);
         await sbDeletePerfil(c.id);
@@ -1507,7 +1527,7 @@ function openClientForm(client, prefill){
   // (que no tiene "apellidos" separado). Si el cliente ya tenía apellidos guardados
   // de antes de este cambio, se combinan aquí para no perderlos de vista.
   const nombreCompletoActual = (c.nombre + (c.apellidos ? " "+c.apellidos : "")).trim();
-  const iniciales = isNew ? "" : esc(((nombreCompletoActual.split(/\s+/)[0]||"?")[0]||"?")+((nombreCompletoActual.split(/\s+/)[1]||"")[0]||"")).toUpperCase();
+  const iniciales = isNew ? "" : esc(inicialesDe({ nombre:nombreCompletoActual }));
   const seg = (id, valor, ops) => `<input type="hidden" id="${id}" value="${esc(valor)}"><div class="fi-seg" role="group" data-for="${id}">${ops.map(o=>`<button type="button" data-v="${esc(o)}" aria-pressed="${o===valor}">${esc(o)}</button>`).join("")}</div>`;
   openModal(`
     <div class="fi-scroll">
@@ -1622,7 +1642,7 @@ function openClientForm(client, prefill){
         await sbUpsertPerfil(Object.assign({deportista_id: client.id}, perfilData));
         programarSyncResumenes();
         Object.assign(client, {
-          nombre: nombreCompleto, apellidos: "", deporte,
+          nombre: partirNombre(nombreCompleto).nombre, apellidos: partirNombre(nombreCompleto).apellidos, deporte,
           sexo: perfilData.sexo,
           fechaNacimiento: perfilData.fecha_nacimiento || "",
           nacionalidad: perfilData.nacionalidad,
@@ -3361,7 +3381,7 @@ async function compartirInforme(){
     archivos.push({nombre:`Informe antropometría ${v.fecha}.pdf`, path, fecha:ahora, visible_cliente:true, tipo:"informe_antropometria", valoracion_id:v.id});
     await sb(`clientes_deportivos?id=eq.${c.id}`, {method:"PATCH", headers:{"Prefer":"return=minimal"}, body:JSON.stringify({archivos, ultima_actividad:ahora})});
     viejos.forEach(a=>{ if(a.path) authFetch(`${SURL}/storage/v1/object/deportistas-docs/${ruta(a.path)}`, {method:"DELETE"}).catch(()=>{}); });
-    msg.textContent = `Informe del ${fmtDate(v.fecha)} compartido: ya aparece en los archivos de ${c.nombre} y en su área de clientes.`;
+    msg.textContent = `Informe del ${fmtDate(v.fecha)} compartido: ya aparece en los archivos de ${nombreCompletoDe(c)} y en su área de clientes.`;
     toast("Informe compartido con el cliente");
   }catch(e){
     console.warn("compartirInforme", e);

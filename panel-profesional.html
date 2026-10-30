@@ -4738,7 +4738,9 @@ function getInitials(nombre) {
   const parts = nombre.trim().split(/\s+/).filter(w => !/^[("'“]/.test(w));
   if (!parts.length) return (nombre.trim().charAt(0) || '?').toUpperCase();
   if (parts.length === 1) return parts[0].charAt(0).toUpperCase();
-  return (parts[0].charAt(0) + parts[1].charAt(0)).toUpperCase();
+  // El segundo término no puede ser una partícula: «Marta de la Torre» → MT, no MD
+  const sig = parts.slice(1).find(w => !/^(de|del|la|las|los|el|y|da|di|van|von|san)$/i.test(w)) || parts[1];
+  return (parts[0].charAt(0) + sig.charAt(0)).toUpperCase();
 }
 
 
