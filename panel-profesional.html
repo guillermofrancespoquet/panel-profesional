@@ -1209,6 +1209,14 @@ body.dark-mode .frm select.inp{background-image:url("data:image/svg+xml,%3Csvg x
   @page{margin:14mm}
   #printArea{display:flex !important;flex-direction:column;min-height:var(--pdf-min,268mm)}
   #printArea .pdf-foot{margin-top:auto}
+  /* Modo «marca»: sin la cabecera (título de la página) ni el pie (dirección) que añade el navegador. Con @page sin márgenes esos textos no se imprimen,
+     así que los márgenes se hacen con una tabla cuya cabecera y pie (14 mm) se repiten en cada página. */
+  #printArea.marca{display:block !important;min-height:0;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  #printArea.marca *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .pdf-wrap{width:100%;border-collapse:collapse;border-spacing:0}
+  .pdf-wrap thead{display:table-header-group}.pdf-wrap tfoot{display:table-footer-group}
+  .pdf-wrap td{padding:0}.pdf-sp{height:14mm}
+  .pdf-wrap .pdf-cell{padding:0 14mm}
 }
 .pdf-hero{background:linear-gradient(135deg,#163a47 0%,#1f4d5e 100%);border-radius:18px;padding:22px 28px;color:#f7f4ee;margin-bottom:22px;display:flex;align-items:center;gap:18px}
 .pdf-hero-logo{width:44px;height:44px;border-radius:22%;flex-shrink:0;overflow:hidden}
@@ -1240,8 +1248,13 @@ body.dark-mode .frm select.inp{background-image:url("data:image/svg+xml,%3Csvg x
 .pdf-two-col > div{flex:1}
 .pdf-hist-item{display:flex;gap:10px;padding:5px 0;font-size:11.5px;border-bottom:.5px solid #f0ebe0}
 .pdf-hist-date{color:#c19a6b;font-weight:700;white-space:nowrap;min-width:55px}
-.pdf-tl-sh{color:#3f7a4c}.pdf-tl-when{color:#c19a6b}.pdf-tl-hora{color:#163a47}.pdf-tl-h{color:#163a47}.pdf-tl-li,.pdf-tl-opt{color:#3a3a3a}.pdf-tl-note{color:#8a7f6d}
-.pdf-tl-chip{background:#e4f0e6;color:#3f7a4c}
+.pdf-tl-sh{color:#1f4d5e}.pdf-tl-when{color:#c19a6b}.pdf-tl-hora{color:#163a47}.pdf-tl-h{color:#163a47}.pdf-tl-li,.pdf-tl-opt{color:#3a3a3a}.pdf-tl-note{color:#8a7f6d}
+.pdf-tl-chip{background:#f1e7d6;color:#163a47;border:1px solid #e2d8c5}
+/* Plan de competición en PDF: colores de marca (petróleo, camel y crema), sin los verdes de la interfaz */
+.pdf-tl-item{background:#fff;border-color:#e2d8c5;border-left-color:#c19a6b}
+.pdf-tl-item[data-t="durante"]{border-left-color:#163a47}
+.pdf-tl-item[data-t="despues"]{border-left-color:#d9b88c}
+.pdf-tl-opt{border-left-color:#d9b88c}
 .pdf-sum{display:flex;gap:10px;margin-bottom:18px}
 .pdf-sum div{flex:1;background:#faf8f3;border:1px solid #ece4d6;border-radius:10px;padding:9px 12px}
 .pdf-sum b{display:block;font-size:9.5px;letter-spacing:1px;text-transform:uppercase;color:#a89c89;font-weight:600;margin-bottom:2px}
@@ -1427,6 +1440,12 @@ body.dark-mode :focus-visible{outline-color:#5CC8A6}
 .inp{min-height:var(--h-field)}
 /* iPhone/iPad: los campos de fecha y hora ignoran el ancho y se salen de la ventana si no se les fuerza */
 .mc input[type=date].inp,.mc input[type=time].inp{-webkit-appearance:none;appearance:none;display:block;width:100%;min-width:0;max-width:100%;text-align:left}
+/* Formularios de herramientas (plan de competición…): en iOS fecha y hora se salían de su píldora y el texto quedaba movido; se tratan como un campo de texto más */
+.hd-card input[type=date].inp,.hd-card input[type=time].inp{-webkit-appearance:none;appearance:none;display:block;width:100%;min-width:0;max-width:100%;min-height:var(--h-field,42px);text-align:left}
+@supports (-webkit-touch-callout:none){
+  .hd-card input[type=date].inp,.hd-card input[type=time].inp{display:flex;align-items:center;line-height:normal;padding-top:0;padding-bottom:0}
+  .hd-card input[type=date].inp::-webkit-date-and-time-value,.hd-card input[type=time].inp::-webkit-date-and-time-value{text-align:left;margin:0;min-height:0}
+}
 /* modo oscuro: textos de acento legibles */
 body.dark-mode .tl-chip.on{color:#fff;background:#0F6E56;border-color:#0F6E56}
 body.dark-mode .cmp-tag.b,body.dark-mode .cmp-cell.b::before,body.dark-mode .cmp-cell.b .cmp-track i,body.dark-mode .login-btn:hover{background:#0F6E56}
@@ -5730,8 +5749,9 @@ async function infCompartir(){
 // se reparten las tarjetas entre páginas (una tarjeta no se parte), y se estira el área de impresión
 // hasta esas páginas: así el pie (.pdf-foot) queda al final de la última página y no pegado a la
 // última tarjeta. Si la simulación se queda corta, el pie simplemente sigue al contenido.
-function printNow(){
+function printNow(o){
   const area = document.getElementById('printArea');
+  if(o && o.marca) return printMarca(area, o.titulo);
   const prev = area.getAttribute('style') || '';
   area.style.cssText = prev + ';display:block;position:absolute;visibility:hidden;left:0;top:0;width:182mm;min-height:0';
   const PX = 96/25.4, H = 269;               // px por mm, alto útil de página en mm
@@ -5750,6 +5770,18 @@ function printNow(){
   });
   // Los huecos también desplazan al pie, así que se descuentan del alto total del área.
   area.style.setProperty('--pdf-min', (paginas*H - 1 - huecos) + 'mm');
+  setTimeout(()=>{ window.print(); }, 100);
+}
+// Impresión «de marca»: sin la cabecera ni el pie del navegador, fondo crema y título de archivo propio (el navegador lo usa como nombre al guardar el PDF).
+function printMarca(area, titulo){
+  area.innerHTML = `<table class="pdf-wrap"><thead><tr><td><div class="pdf-sp"></div></td></tr></thead><tbody><tr><td class="pdf-cell">${area.innerHTML}</td></tr></tbody><tfoot><tr><td><div class="pdf-sp"></div></td></tr></tfoot></table>`;
+  area.classList.add('marca');
+  const st = document.createElement('style'); st.id = 'pdfMarcaCss'; st.media = 'print';
+  st.textContent = '@page{size:A4;margin:0}html,html body,html body.has-sidebar{background:#f7f4ee !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}';
+  document.head.appendChild(st);
+  const tit = document.title; if(titulo) document.title = titulo;
+  const fin = () => { window.removeEventListener('afterprint', fin); area.classList.remove('marca'); st.remove(); document.title = tit; };
+  window.addEventListener('afterprint', fin);
   setTimeout(()=>{ window.print(); }, 100);
 }
 // El logo es un archivo (icon-rounded-192.png). Para los PDF se pasa a data URI desde la imagen ya cargada, así html2canvas no depende de descargarlo de nuevo.
@@ -8238,7 +8270,7 @@ function exportPlanPDF(){
     <div class="pdf-tl">${lastPlan.bloques.map(b=>planBloqueHtml(b,'pdf-tl')).join('')}</div>
     <p class="pdf-foot">NutriLogos · Ciencia con propósito · Pauta orientativa: prueba todo en entrenamientos y consulta cualquier duda con tu nutricionista</p>`;
   document.getElementById('printArea').innerHTML = html;
-  printNow();
+  printNow({marca:true, titulo:['Plan de competición', nombre, fecha].filter(Boolean).join(' · ')});
 }
 
 // ── Planes guardados en la ficha del deportista ──
