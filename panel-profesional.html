@@ -613,7 +613,7 @@ body::before{content:'';position:fixed;top:0;left:0;right:0;height:env(safe-area
 .sb-item svg{flex-shrink:0;opacity:.9}
 .sb-item>svg:first-child{stroke-width:1.9}
 .sb-item.on>svg:first-child{stroke-width:2.4}
-.sb-badge{margin-left:auto;background:var(--red);color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:20px;min-width:16px;text-align:center}
+.sb-badge{margin-left:auto;background:rgba(229,83,75,.2);color:#FFB8B2;font-size:10.5px;font-weight:600;line-height:16px;height:16px;padding:0 6px;border-radius:20px;min-width:16px;text-align:center;box-sizing:border-box}
 .sb-export{width:100%;display:flex;align-items:center;gap:11px;background:transparent;border:none;border-radius:10px;color:rgba(217,184,140,.85);font-size:13.5px;font-weight:500;padding:10px 12px;cursor:pointer;font-family:var(--f);text-align:left;transition:background .15s,color .15s}
 .sb-export:hover{background:rgba(184,149,106,.14);color:var(--gold)}
 .sb-export svg{flex-shrink:0;opacity:.9}
@@ -1267,8 +1267,10 @@ body.dark-mode .frm select.inp{background-image:url("data:image/svg+xml,%3Csvg x
 
 /* ═══ BARRA LATERAL: contraer a iconos, indicador, tema y secciones plegables ═══ */
 .sb-brand{position:relative}
-.sb-min-btn{position:absolute;right:.9rem;top:13px;width:26px;height:26px;display:none;align-items:center;justify-content:center;border-radius:50%;border:.5px solid rgba(217,184,140,.55);background:var(--gold);color:var(--t900);cursor:pointer;padding:0;transition:transform .22s ease,background .15s,box-shadow .15s;box-shadow:0 2px 8px rgba(0,0,0,.28)}
-.sb-min-btn:hover{background:#d9b88c}
+.sb-min-btn{display:none;align-items:center;gap:10px;width:100%;margin:0 0 .5rem;padding:7px 10px;border:none;border-radius:10px;background:transparent;color:rgba(255,255,255,.55);font-family:var(--f);font-size:12.5px;font-weight:500;cursor:pointer;text-align:left;transition:background .15s,color .15s}
+.sb-min-btn:hover{background:rgba(255,255,255,.07);color:#fff}
+.sb-min-btn .m-e{display:none}
+.sb-min-btn svg{flex:none}
 @media(min-width:861px){.sb-min-btn{display:flex}}
 .sb-kbd{margin-left:auto;font:600 10.5px/1 var(--f);padding:3px 6px;border-radius:6px;border:.5px solid rgba(255,255,255,.2);color:rgba(255,255,255,.62);background:rgba(255,255,255,.06);letter-spacing:.02em}
 /* indicador de la sección activa: barra camel pegada al borde izquierdo */
@@ -1298,8 +1300,9 @@ body.dark-mode .frm select.inp{background-image:url("data:image/svg+xml,%3Csvg x
   body.sb-min .sidebar{overflow:visible}
   body.sb-min .sb-brand{padding:0 0 1.25rem;justify-content:center}
   body.sb-min .sb-brand>div:not(.sb-logo){display:none}
-  body.sb-min .sb-brand{margin-bottom:1.25rem}
-  body.sb-min .sb-min-btn{right:auto;left:50%;top:auto;bottom:-13px;margin-left:-13px;transform:rotate(180deg)}
+    body.sb-min .sb-min-btn{justify-content:center;padding:8px 0}
+  body.sb-min .sb-min-btn svg{transform:scaleX(-1)}
+  body.sb-min .sb-brand{margin-bottom:.75rem}
   body.sb-min .sb-search-wrap{padding:0 .75rem}
   body.sb-min .sb-search-btn{justify-content:center;padding:9px 0;gap:0}
   body.sb-min .sb-lbl,body.sb-min .sb-kbd,body.sb-min .sb-chevron,body.sb-min .sb-main.on::after{display:none}
@@ -1326,9 +1329,14 @@ body.dark-mode .frm select.inp{background-image:url("data:image/svg+xml,%3Csvg x
 }
 @media(prefers-reduced-motion:reduce){.sidebar,body.has-sidebar,.sb-grp,.sb-min-btn{transition:none!important}}
 /* Insignias, despliegue al pasar el ratón y punto de conexión */
-.sb-subitem .sb-badge{margin-right:2px}
+.sb-subitem .sb-badge{margin-right:12px}
+body.dark-mode .sb-badge{background:rgba(229,83,75,.2)}
+body.sb-min .sb-badge,body.sb-min.dark-mode .sb-badge{background:#E5534B}
 .sb-subitem .sb-lbl{white-space:nowrap}
 body.has-sidebar.sb-peek{padding-left:76px}
+body.sb-peek .sb-min-btn .m-c{display:none}
+body.sb-peek .sb-min-btn .m-e{display:inline}
+body.sb-peek .sb-min-btn svg{transform:scaleX(-1)}
 body.sb-peek .sidebar{z-index:140;box-shadow:12px 0 36px rgba(4,52,44,.35)}
 .sb-acct-btn{position:relative}
 .sb-conn{position:absolute;left:29px;bottom:-1px;width:10px;height:10px;border-radius:50%;background:#34C77B;border:2px solid #0b4a40;box-sizing:border-box}
@@ -1628,7 +1636,6 @@ body.dark-mode .ref-src,body.dark-mode .sup-badge,body.dark-mode .depd-avatar-fa
       <div class="sb-brand-txt">NutriLogos</div>
       <div class="sb-brand-sub">Panel Profesional</div>
     </div>
-    <button type="button" class="sb-min-btn" id="sbMinBtn" onclick="sbToggleMin()" aria-expanded="true" aria-label="Contraer la barra lateral" title="Contraer la barra lateral"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg></button>
   </div>
   <div class="sb-search-wrap">
     <button class="sb-search-btn" onclick="openGlobalSearch()" aria-label="Buscar">
@@ -1728,6 +1735,7 @@ body.dark-mode .ref-src,body.dark-mode .sup-badge,body.dark-mode .depd-avatar-fa
   </div></div>
   </div>
   <div class="sb-foot">
+    <button type="button" class="sb-min-btn" id="sbMinBtn" onclick="sbToggleMin()" aria-expanded="true" aria-label="Contraer la barra lateral" title="Contraer la barra lateral"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M9 4v16"/><path class="sb-mchev" d="M15.5 9.5 13 12l2.5 2.5"/></svg><span class="sb-lbl m-c">Contraer</span><span class="sb-lbl m-e">Fijar abierta</span></button>
     <div class="sb-menu" id="sbAcctMenu" role="menu" aria-label="Cuenta" hidden>
       <button type="button" class="sb-mi" role="menuitem" onclick="abrirAjustes()"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Ajustes</button>
       <button type="button" class="sb-mi" role="menuitem" onclick="cuentaFotoElegir()"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg><span>Cambiar foto</span></button>
@@ -4650,7 +4658,7 @@ function sbPeek(on){
 }
 (function(){
   const sb=document.querySelector('.sidebar'); if(!sb) return;
-  sb.addEventListener('mouseenter',()=>{ if(!document.body.classList.contains('sb-min')) return; clearTimeout(_sbPeekT); _sbPeekT=setTimeout(()=>sbPeek(true),380); });
+  sb.addEventListener('mouseover',e=>{ if(!document.body.classList.contains('sb-min')) return; clearTimeout(_sbPeekT); if(e.target.closest('#sbMinBtn')) return; _sbPeekT=setTimeout(()=>sbPeek(true),650); });
   sb.addEventListener('mouseleave',()=>{ clearTimeout(_sbPeekT); _sbPeekT=setTimeout(()=>{ const m=document.getElementById('sbAcctMenu'); if(m&&!m.hidden) return; sbPeek(false); },160); });
 })();
 function sbToggleMin(){ const peek=document.body.classList.contains('sb-peek'); document.body.classList.remove('sb-peek'); const v = peek ? false : !document.body.classList.contains('sb-min'); sbMin(v); try{ localStorage.setItem('nl_sb_min', v ? '1' : '0'); }catch(e){} }
