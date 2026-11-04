@@ -564,11 +564,12 @@ body.dark-mode img{opacity:.92}
 @media(max-width:860px){body.has-sidebar.emb-view #sbEdge{display:block;position:fixed;left:0;top:0;bottom:0;width:24px;z-index:120;touch-action:pan-y}}
 
 /* ═══ SIDEBAR APP SHELL ═══ */
-@media (min-width:861px){ body.has-sidebar{padding-left:248px;padding-top:env(safe-area-inset-top,0px)} }
+:root{--sbw:248px}
+@media (min-width:861px){ body.has-sidebar{padding-left:var(--sbw);padding-top:env(safe-area-inset-top,0px);transition:padding-left .22s ease} }
 /* iOS (app instalada, barra de estado translúcida): la zona de la muesca se pinta del verde de marca y tapa lo que se desplaza por debajo */
 body::before{content:'';position:fixed;top:0;left:0;right:0;height:env(safe-area-inset-top,0px);background:var(--t900);z-index:8000;pointer-events:none}
 .sidebar{
-  position:fixed;top:0;left:0;bottom:0;width:248px;
+  position:fixed;top:0;left:0;bottom:0;width:var(--sbw);transition:width .22s ease;
   background:var(--t900);display:none;flex-direction:column;
   padding:calc(1.5rem + env(safe-area-inset-top,0px)) 0 1rem;z-index:200;overflow:hidden;
 }
@@ -1263,6 +1264,78 @@ body.dark-mode .frm select.inp{background-image:url("data:image/svg+xml,%3Csvg x
 .pdf-foot{text-align:center;margin-top:26px;padding-top:14px;border-top:1px solid #ece4d6;font-size:9px;color:#a89c89;letter-spacing:1px;text-transform:uppercase}
 
 
+
+/* ═══ BARRA LATERAL: contraer a iconos, indicador, tema y secciones plegables ═══ */
+.sb-brand{position:relative}
+.sb-min-btn{position:absolute;right:.9rem;top:13px;width:26px;height:26px;display:none;align-items:center;justify-content:center;border-radius:50%;border:.5px solid rgba(217,184,140,.55);background:var(--gold);color:var(--t900);cursor:pointer;padding:0;transition:transform .22s ease,background .15s,box-shadow .15s;box-shadow:0 2px 8px rgba(0,0,0,.28)}
+.sb-min-btn:hover{background:#d9b88c}
+@media(min-width:861px){.sb-min-btn{display:flex}}
+.sb-kbd{margin-left:auto;font:600 10.5px/1 var(--f);padding:3px 6px;border-radius:6px;border:.5px solid rgba(255,255,255,.2);color:rgba(255,255,255,.62);background:rgba(255,255,255,.06);letter-spacing:.02em}
+/* indicador de la sección activa: barra camel pegada al borde izquierdo */
+.sb-item.on::before{content:'';position:absolute;left:-12px;top:50%;width:3px;height:18px;transform:translateY(-50%);border-radius:0 3px 3px 0;background:linear-gradient(180deg,#e6caa2,#c19a6b);box-shadow:0 0 8px 1px rgba(217,184,140,.5),0 0 16px 3px rgba(193,154,107,.2)}
+.sb-main.on::before{height:26px}
+/* «Herramientas» plegable */
+.sb-div-btn{display:flex;align-items:center;justify-content:space-between;width:100%;background:transparent;border:0;cursor:pointer;font-family:var(--f);text-align:left;border-radius:8px;transition:color .15s}
+.sb-div-btn:hover{color:#fff!important}
+.sb-div-btn .sb-chevron{margin-right:2px}
+.sb-grp{display:grid;grid-template-rows:1fr;transition:grid-template-rows .24s ease}
+.sb-grp.shut{grid-template-rows:0fr}
+.sb-grp-in{overflow:hidden;min-height:0;display:flex;flex-direction:column;gap:2px}
+/* tema: selector segmentado */
+.sb-theme{display:flex;gap:3px;padding:3px;margin-bottom:8px;border-radius:12px;background:rgba(255,255,255,.06);border:.5px solid rgba(255,255,255,.1)}
+.sb-th{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;height:32px;border:0;border-radius:9px;background:transparent;color:rgba(255,255,255,.7);font:600 12.5px var(--f);cursor:pointer;transition:background .15s,color .15s}
+.sb-th:hover{color:#fff;background:rgba(255,255,255,.07)}
+.sb-th[aria-pressed="true"]{background:#F4F2ED;color:var(--t900);box-shadow:0 2px 8px rgba(0,0,0,.22)}
+.sb-th-sys{flex:0 0 34px}
+.sb-th:focus-visible,.sb-min-btn:focus-visible,.sb-div-btn:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.sb-foot>.sb-icon-btn{display:none}
+.sb-acct .sb-icon-btn{display:none}
+/* tooltip de la barra contraída */
+#sbTip{position:fixed;z-index:9000;display:none;pointer-events:none;padding:6px 10px;border-radius:8px;background:#0B4A3F;color:#fff;border:.5px solid rgba(255,255,255,.18);font:600 12.5px var(--f);white-space:nowrap;box-shadow:0 8px 24px rgba(0,0,0,.3)}
+#sbTip.on{display:block}
+@media(min-width:861px){
+  body.sb-min{--sbw:76px}
+  body.sb-min .sidebar{overflow:visible}
+  body.sb-min .sb-brand{padding:0 0 1.25rem;justify-content:center}
+  body.sb-min .sb-brand>div:not(.sb-logo){display:none}
+  body.sb-min .sb-brand{margin-bottom:1.25rem}
+  body.sb-min .sb-min-btn{right:auto;left:50%;top:auto;bottom:-13px;margin-left:-13px;transform:rotate(180deg)}
+  body.sb-min .sb-search-wrap{padding:0 .75rem}
+  body.sb-min .sb-search-btn{justify-content:center;padding:9px 0;gap:0}
+  body.sb-min .sb-lbl,body.sb-min .sb-kbd,body.sb-min .sb-chevron,body.sb-min .sb-main.on::after{display:none}
+  body.sb-min .sb-divider{font-size:0;height:1px;padding:0;margin:12px 14px 12px;background:rgba(255,255,255,.1);border:0!important;border-radius:0}
+  body.sb-min .sb-nav>.sb-divider:first-child{display:none}
+  body.sb-min .sb-div-btn{pointer-events:none}
+  body.sb-min .sb-item{justify-content:center;padding:10px 0;gap:0}
+  body.sb-min .sb-main{padding:7px 0;min-height:48px}
+  body.sb-min .sb-main.on{background:transparent;box-shadow:none}
+  body.sb-min .sb-main.on:hover{background:rgba(255,255,255,.04)}
+  body.sb-min .sb-main.on>svg:first-child{background:#F4F2ED;color:var(--t900)}
+  body.sb-min .sb-subnav{max-height:none;margin:0}
+  body.sb-min .sb-subitem{padding-left:0}
+  body.sb-min .sb-grp{grid-template-rows:1fr!important}
+  body.sb-min .sb-badge{position:absolute;top:3px;right:8px;margin:0;padding:0;min-width:8px;height:8px;font-size:0;border-radius:50%}
+  body.sb-min .sb-main.on .sb-badge{margin:0}
+  body.sb-min .sb-foot{padding:.75rem .5rem 0}
+  body.sb-min .sb-theme{display:none}
+  body.sb-min .sb-foot>.sb-icon-btn{display:flex;width:100%;margin-bottom:6px;height:36px}
+  body.sb-min .sb-acct{justify-content:center}
+  body.sb-min .sb-acct-t,body.sb-min .sb-acct-btn .sb-chev{display:none}
+  body.sb-min .sb-acct-btn{flex:none;justify-content:center}
+  body.sb-min .sb-menu{left:.5rem;right:auto;width:248px}
+}
+@media(prefers-reduced-motion:reduce){.sidebar,body.has-sidebar,.sb-grp,.sb-min-btn{transition:none!important}}
+/* Insignias, despliegue al pasar el ratón y punto de conexión */
+.sb-subitem .sb-badge{margin-right:2px}
+.sb-subitem .sb-lbl{white-space:nowrap}
+body.has-sidebar.sb-peek{padding-left:76px}
+body.sb-peek .sidebar{z-index:140;box-shadow:12px 0 36px rgba(4,52,44,.35)}
+.sb-acct-btn{position:relative}
+.sb-conn{position:absolute;left:29px;bottom:-1px;width:10px;height:10px;border-radius:50%;background:#34C77B;border:2px solid #0b4a40;box-sizing:border-box}
+body.sin-conexion .sb-conn{background:#E0A050;animation:sbPulso 1.6s ease-in-out infinite}
+@keyframes sbPulso{50%{opacity:.4}}
+@media(prefers-reduced-motion:reduce){body.sin-conexion .sb-conn{animation:none}}
+
 /* ═══ PÍLDORAS: tonos algo más oscuros y borde fino para que se distingan del fondo ═══ */
 :root{--pill-n:#E3DFD2;--pill-n-h:#D9D4C4;--pill-n-bd:rgba(70,58,30,.18);--pill-g:#C4E8D6;--pill-g-bd:rgba(15,110,86,.30);--pill-au:#EAD9BD;--pill-au-bd:rgba(122,90,56,.30);--pill-r:#F7D0D0;--pill-r-bd:rgba(192,57,43,.28)}
 body.dark-mode{--pill-n:#343a3d;--pill-n-h:#3e4548;--pill-n-bd:rgba(255,255,255,.14);--pill-g:#21493f;--pill-g-bd:rgba(159,225,203,.26);--pill-au:#463c22;--pill-au-bd:rgba(217,184,140,.28);--pill-r:#4e2828;--pill-r-bd:rgba(255,140,140,.24)}
@@ -1300,7 +1373,7 @@ body.dark-mode .toast.aviso{background:#4A3A28}
 @keyframes toastIn{from{opacity:0;transform:translateY(8px)}}
 #offlineBar{display:none;position:fixed;top:0;left:0;right:0;z-index:9999;background:#7A5A38;color:#fff;font-size:12.5px;font-weight:500;text-align:center;padding:calc(6px + env(safe-area-inset-top,0px)) 12px 6px}
 body.sin-conexion #offlineBar{display:block}
-body.has-sidebar #offlineBar{left:248px}
+body.has-sidebar #offlineBar{left:var(--sbw,248px)}
 @media(max-width:860px){body.has-sidebar #offlineBar{left:0;top:calc(56px + env(safe-area-inset-top,0px));padding:6px 12px}}
 .skel{display:block;height:14px;border-radius:7px;margin:9px 0;background:linear-gradient(90deg,var(--g100) 25%,var(--g200) 50%,var(--g100) 75%);background-size:200% 100%;animation:skel 1.3s infinite linear}
 .skel.w40{width:40%}.skel.w60{width:60%}.skel.w80{width:80%}
@@ -1555,11 +1628,12 @@ body.dark-mode .ref-src,body.dark-mode .sup-badge,body.dark-mode .depd-avatar-fa
       <div class="sb-brand-txt">NutriLogos</div>
       <div class="sb-brand-sub">Panel Profesional</div>
     </div>
+    <button type="button" class="sb-min-btn" id="sbMinBtn" onclick="sbToggleMin()" aria-expanded="true" aria-label="Contraer la barra lateral" title="Contraer la barra lateral"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg></button>
   </div>
   <div class="sb-search-wrap">
-    <button class="sb-search-btn" onclick="openGlobalSearch()">
+    <button class="sb-search-btn" onclick="openGlobalSearch()" aria-label="Buscar">
       <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      Buscar…
+      <span class="sb-lbl">Buscar…</span><kbd class="sb-kbd" id="sbKbd" aria-hidden="true">Ctrl K</kbd>
     </button>
     <div class="sb-search-inline">
       <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -1574,80 +1648,84 @@ body.dark-mode .ref-src,body.dark-mode .sup-badge,body.dark-mode .depd-avatar-fa
     <p class="sb-divider">Menú principal</p>
     <button class="sb-item sb-main" id="sbHome" onclick="navTo('home')">
       <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
-      Dashboard
+      <span class="sb-lbl">Dashboard</span>
     </button>
     <button class="sb-item sb-main" id="sbAgenda" onclick="navTo('agenda')">
       <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/><path d="M16 18h.01"/></svg>
-      Agenda
+      <span class="sb-lbl">Agenda</span>
       <span class="sb-badge" id="sbAgendaBadge" style="display:none">0</span>
     </button>
     <button class="sb-item sb-main sb-group-toggle" id="sbServiciosToggle" onclick="toggleServiciosGroup()">
       <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/><rect width="20" height="14" x="2" y="6" rx="2"/></svg>
-      Servicios
+      <span class="sb-lbl">Servicios</span>
       <svg class="sb-chevron open" id="sbServiciosChevron" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="margin-left:auto"><polyline points="6 9 12 15 18 9"/></svg>
     </button>
     <div class="sb-subnav open" id="sbServiciosSub">
       <button class="sb-item sb-subitem" id="sbMetodo" onclick="navTo('metodo')">
         <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-        Método 3M
+        <span class="sb-lbl">Método 3M</span>
       </button>
       <button class="sb-item sb-subitem" id="sbDep" onclick="navTo('deportiva')">
         <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-        Nutrición Deportiva
+        <span class="sb-lbl">Nutrición Deportiva</span>
+        <span class="sb-badge" id="sbDepBadge" style="display:none">0</span>
       </button>
     </div>
     <button class="sb-item sb-main" id="sbFact" onclick="navTo('facturacion')">
       <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10h12"/><path d="M4 14h9"/><path d="M19 6a7.7 7.7 0 0 0-5.2-2A7.9 7.9 0 0 0 6 12c0 4.4 3.5 8 7.8 8 2 0 3.8-.8 5.2-2"/></svg>
-      Facturación
+      <span class="sb-lbl">Facturación</span>
+      <span class="sb-badge" id="sbFactBadge" style="display:none">0</span>
     </button>
-    <p class="sb-divider">Herramientas</p>
+    <button type="button" class="sb-divider sb-div-btn" id="sbToolsBtn" aria-expanded="true" aria-controls="sbToolsGrp" onclick="sbToggleTools()"><span>Herramientas</span><svg class="sb-chevron open" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></button>
+    <div class="sb-grp" id="sbToolsGrp"><div class="sb-grp-in">
     <button class="sb-item" id="sbAntropo" onclick="navTo('antropometria')">
         <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M21.3 15.3a2.4 2.4 0 0 1 0 3.4l-2.6 2.6a2.4 2.4 0 0 1-3.4 0L2.7 8.7a2.41 2.41 0 0 1 0-3.4l2.6-2.6a2.41 2.41 0 0 1 3.4 0Z"/><path d="m14.5 12.5 2-2"/><path d="m11.5 9.5 2-2"/><path d="m8.5 6.5 2-2"/><path d="m17.5 15.5 2-2"/></svg>
-        Antropometría
+        <span class="sb-lbl">Antropometría</span>
       </button>
     <button class="sb-item" id="sbMenuSem" onclick="navTo('menusem')">
         <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M7 21h10"/><path d="M12 21a9 9 0 0 0 9-9H3a9 9 0 0 0 9 9Z"/><path d="M11.38 12a2.4 2.4 0 0 1-.4-4.77 2.4 2.4 0 0 1 3.2-2.77 2.4 2.4 0 0 1 3.47-.63 2.4 2.4 0 0 1 3.37 3.37 2.4 2.4 0 0 1-1.1 3.7 2.51 2.51 0 0 1 .03 1.1"/><path d="m13 12 4-4"/><path d="M10.9 7.25A3.99 3.99 0 0 0 4 10c0 .73.2 1.41.54 2"/></svg>
-        Plan nutricional
+        <span class="sb-lbl">Plan nutricional</span>
       </button>
     <button class="sb-item" id="sbRef" onclick="navTo('referencia')">
       <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v14"/><path d="M16 12h2"/><path d="M16 8h2"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/><path d="M6 12h2"/><path d="M6 8h2"/></svg>
-      Referencias clínicas
+      <span class="sb-lbl">Referencias clínicas</span>
     </button>
     <button class="sb-item" id="sbSupl" onclick="navTo('suplementacion')">
       <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z"/><path d="m8.5 8.5 7 7"/></svg>
-      Suplementación
+      <span class="sb-lbl">Suplementación</span>
     </button>
     <button class="sb-item sb-group-toggle" id="sbCalcToggle" onclick="toggleCalcGroup()">
       <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="20" x="4" y="2" rx="2"/><line x1="8" x2="16" y1="6" y2="6"/><line x1="16" x2="16" y1="14" y2="18"/><path d="M16 10h.01"/><path d="M12 10h.01"/><path d="M8 10h.01"/><path d="M12 14h.01"/><path d="M8 14h.01"/><path d="M12 18h.01"/><path d="M8 18h.01"/></svg>
-      Calculadora
+      <span class="sb-lbl">Calculadora</span>
       <svg class="sb-chevron" id="sbCalcChevron" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="margin-left:auto"><polyline points="6 9 12 15 18 9"/></svg>
     </button>
     <div class="sb-subnav" id="sbCalcSub">
       <button class="sb-item sb-subitem" id="sbCalcEnergia" onclick="navTo('calc-energia')">
         <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
-        Energía y macros
+        <span class="sb-lbl">Energía y macros</span>
       </button>
       <button class="sb-item sb-subitem" id="sbCalcHidra" onclick="navTo('calc-hidra')">
         <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/></svg>
-        Hidratación
+        <span class="sb-lbl">Hidratación</span>
       </button>
     </div>
     <button class="sb-item" id="sbPlan" onclick="navTo('plan')">
       <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
-      Plan de competición
+      <span class="sb-lbl">Plan de competición</span>
     </button>
     <button class="sb-item" id="sbComp" onclick="navTo('comparador')">
       <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg>
-      Comparar alimentos
+      <span class="sb-lbl">Comparar alimentos</span>
     </button>
     <button class="sb-item" id="sbMenu" onclick="navTo('menugen')">
       <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4"/><path d="M3 10h18"/><path d="M8 2v4"/><path d="M17 14h-6"/><path d="M13 18H7"/><path d="M7 14h.01"/><path d="M17 18h.01"/></svg>
-      Menú semanal
+      <span class="sb-lbl">Menú semanal</span>
     </button>
     <button class="sb-item" id="sbEntreno" onclick="navTo('entreno')">
       <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M14.4 14.4 9.6 9.6"/><path d="M18.657 21.485a2 2 0 1 1-2.829-2.828l-1.767 1.768a2 2 0 1 1-2.829-2.829l6.364-6.364a2 2 0 1 1 2.829 2.829l-1.768 1.767a2 2 0 1 1 2.828 2.829z"/><path d="m21.5 21.5-1.4-1.4"/><path d="M3.9 3.9 2.5 2.5"/><path d="M6.404 12.768a2 2 0 1 1-2.829-2.829l1.768-1.767a2 2 0 1 1-2.828-2.829l2.828-2.828a2 2 0 1 1 2.829 2.828l1.767-1.768a2 2 0 1 1 2.829 2.829z"/></svg>
-      Entrenamiento
+      <span class="sb-lbl">Entrenamiento</span>
     </button>
+  </div></div>
   </div>
   <div class="sb-foot">
     <div class="sb-menu" id="sbAcctMenu" role="menu" aria-label="Cuenta" hidden>
@@ -1663,19 +1741,27 @@ body.dark-mode .ref-src,body.dark-mode .sup-badge,body.dark-mode .depd-avatar-fa
       <button type="button" class="sb-mi danger" role="menuitem" onclick="cerrarAcctMenu();logout()"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Cerrar sesión</button>
     </div>
     <p class="sb-export-status" id="exportStatus" role="status"></p>
+    <div class="sb-theme" id="sbTema" role="group" aria-label="Tema de la aplicación">
+      <button type="button" class="sb-th" data-modo="light" aria-pressed="false" onclick="setModo('light')"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg><span>Claro</span></button>
+      <button type="button" class="sb-th" data-modo="dark" aria-pressed="false" onclick="setModo('dark')"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg><span>Oscuro</span></button>
+      <button type="button" class="sb-th sb-th-sys" data-modo="system" aria-pressed="false" aria-label="Seguir el tema del sistema" title="Seguir el tema del sistema" onclick="setModo('system')"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><rect width="20" height="14" x="2" y="3" rx="2"/><path d="M8 21h8M12 17v4"/></svg></button>
+    </div>
+    <button type="button" class="sb-icon-btn" id="darkModeBtn" onclick="toggleDarkMode()" aria-label="Cambiar a modo oscuro" title="Cambiar a modo oscuro">
+      <svg class="sb-ic-moon" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      <svg class="sb-ic-sun" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+    </button>
     <div class="sb-acct">
       <button type="button" class="sb-acct-btn" id="sbAcctBtn" aria-haspopup="menu" aria-expanded="false" aria-controls="sbAcctMenu" onclick="toggleAcctMenu()">
-        <span class="sb-av" id="sbAv" aria-hidden="true">NL</span>
+        <span class="sb-av" id="sbAv" aria-hidden="true">NL</span><span class="sb-conn" id="sbConn" role="img" aria-label="Conectado"></span>
         <span class="sb-acct-t"><span class="sb-acct-n">NutriLogos</span><span class="sb-acct-s">Profesional</span></span>
         <svg class="sb-chev" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><polyline points="7 15 12 20 17 15"/><polyline points="7 9 12 4 17 9"/></svg>
-      </button>
-      <button type="button" class="sb-icon-btn" id="darkModeBtn" onclick="toggleDarkMode()" aria-label="Cambiar a modo oscuro" title="Cambiar a modo oscuro">
-        <svg class="sb-ic-moon" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-        <svg class="sb-ic-sun" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
       </button>
     </div>
   </div>
 </div>
+
+<script>try{if(matchMedia('(min-width:861px)').matches&&localStorage.getItem('nl_sb_min')==='1')document.body.classList.add('sb-min');}catch(e){}</script>
+<div id="sbTip" role="tooltip" aria-hidden="true"></div>
 
 <!-- DASHBOARD (home) -->
 <div id="vhome" class="view" role="main">
@@ -3210,6 +3296,7 @@ let _conectado=true;
 function conexion(ok){
   if(ok===_conectado) return; _conectado=ok;
   document.body.classList.toggle('sin-conexion',!ok);
+  const cd=document.getElementById('sbConn'); if(cd) cd.setAttribute('aria-label',ok?'Conectado':'Sin conexión');
   if(ok) toast('Conexión recuperada',{ms:2500});
 }
 // Un fallo de red al cargar datos no es un error de la app: la franja ya lo explica.
@@ -4244,7 +4331,7 @@ async function loadDashboard(){
   // ── Pagos pendientes/atrasados ──
   const impagos=dashCitas.filter(c=>!c.pagado&&c.requiere_pago!==false).sort((a,b)=>(citaYaPaso(b)-citaYaPaso(a))||a.fecha.localeCompare(b.fecha));   // primero las que ya pasaron
   _dash.venc=impagos.filter(c=>citaYaPaso(c)).length;
-  document.getElementById('dashPagosCount').textContent=_dash.venc;
+  document.getElementById('dashPagosCount').textContent=_dash.venc; sbPonBadge('sbFactBadge', _dash.venc, 'cobros vencidos');
   document.getElementById('dashPagos').innerHTML=impagos.length?impagos.slice(0,5).map(c=>{
     const vencido=citaYaPaso(c);
     return `<div class="dash-row"><div class="dash-row-dot ${vencido?'red':'teal'}"></div><div class="dash-row-txt"><div class="dash-row-name">${c.cliente}</div><div class="dash-row-sub">${c.servicio||'Revisión'}</div></div><span class="dash-row-tag">${vencido?'Pendiente':'Por cobrar'}</span></div>`;
@@ -4460,7 +4547,7 @@ async function pintarAvisosDash(deps, citasAll, todayISO){
   avisos.unshift(...planes.map(({ d, pp }) => ({ id: d.id, n: d.nombre, sub: d.deporte || '', tag: 'Plan por preparar · ' + planPendienteTxt(pp), cls: daysUntil(pp.para) <= 0 ? 'red' : 'gold' })));
   document.getElementById('dashAvisosCount').textContent = avisos.length;
   card.style.display = avisos.length ? '' : 'none';
-  _dash.avisos = avisos.length; dashPintarEstado();
+  _dash.avisos = avisos.length; dashPintarEstado(); sbPonBadge('sbDepBadge', avisos.length, 'por atender');
   document.getElementById('dashAvisos').innerHTML = avisos.map(a=>`<div class="dash-row dash-row-link" role="button" tabindex="0" onclick="abrirFichaDash(${a.id})" onkeydown="if(event.key==='Enter')abrirFichaDash(${a.id})"><div class="dash-row-dot ${a.cls}"></div><div class="dash-row-txt"><div class="dash-row-name">${sudEsc(a.n)}</div><div class="dash-row-sub">${sudEsc(a.sub)}</div></div><span class="dash-row-tag">${a.tag}</span></div>`).join('');
 }
 async function abrirFichaDash(id){ if(!deportistas.length) await loadDeportistas(); openDepDet(id); }
@@ -4545,12 +4632,78 @@ function enfocar(id){ if(esTactil()) return; const e = document.getElementById(i
   document.addEventListener('DOMContentLoaded', () => ['antroFrame','menuFrame'].forEach(id => { const f = document.getElementById(id); if(f) f.addEventListener('load', () => aplicar(true)); }));
 })();
 
+
+// ═══════════════ BARRA LATERAL: contraer a iconos, secciones plegables y tooltips ═══════════════
+const sbEscritorio = () => matchMedia('(min-width:861px)').matches;
+function sbMin(v){
+  document.body.classList.toggle('sb-min', !!v);
+  const b = document.getElementById('sbMinBtn'); if(b){ b.setAttribute('aria-expanded', v ? 'false' : 'true'); const t = v ? 'Expandir la barra lateral' : 'Contraer la barra lateral'; b.setAttribute('aria-label', t); b.title = t; }
+  sbTip(null);
+}
+function sbPonBadge(id,n,txt){ const b=document.getElementById(id); if(!b) return; b.textContent=n>99?'99+':n; b.style.display=n?'':'none'; b.title=n?(n+' '+txt):''; b.setAttribute('aria-label',n?(n+' '+txt):''); }
+// Contraída: al pasar el ratón se despliega encima del contenido (sin moverlo); no cambia lo guardado
+let _sbPeekT=null;
+function sbPeek(on){
+  const b=document.body; if(!sbEscritorio()) return;
+  if(on){ if(b.classList.contains('sb-min')){ b.classList.remove('sb-min'); b.classList.add('sb-peek'); } }
+  else if(b.classList.contains('sb-peek')){ b.classList.remove('sb-peek'); b.classList.add('sb-min'); }
+}
+(function(){
+  const sb=document.querySelector('.sidebar'); if(!sb) return;
+  sb.addEventListener('mouseenter',()=>{ if(!document.body.classList.contains('sb-min')) return; clearTimeout(_sbPeekT); _sbPeekT=setTimeout(()=>sbPeek(true),380); });
+  sb.addEventListener('mouseleave',()=>{ clearTimeout(_sbPeekT); _sbPeekT=setTimeout(()=>{ const m=document.getElementById('sbAcctMenu'); if(m&&!m.hidden) return; sbPeek(false); },160); });
+})();
+function sbToggleMin(){ const peek=document.body.classList.contains('sb-peek'); document.body.classList.remove('sb-peek'); const v = peek ? false : !document.body.classList.contains('sb-min'); sbMin(v); try{ localStorage.setItem('nl_sb_min', v ? '1' : '0'); }catch(e){} }
+function sbTools(abierto, guardar){
+  const g = document.getElementById('sbToolsGrp'), b = document.getElementById('sbToolsBtn'); if(!g) return;
+  g.classList.toggle('shut', !abierto); if(b){ b.setAttribute('aria-expanded', abierto ? 'true' : 'false'); const c = b.querySelector('.sb-chevron'); if(c) c.classList.toggle('open', abierto); }
+  if(guardar){ try{ localStorage.setItem('nl_sb_tools', abierto ? '1' : '0'); }catch(e){} }
+}
+function sbToggleTools(){ const g = document.getElementById('sbToolsGrp'); sbTools(g.classList.contains('shut'), true); }
+// Tooltip de la barra contraída (un único elemento fijo: la barra tiene scroll y recortaría uno hijo)
+function sbTip(el){
+  const t = document.getElementById('sbTip'); if(!t) return;
+  if(!el || !document.body.classList.contains('sb-min') || !sbEscritorio()){ t.classList.remove('on'); t.setAttribute('aria-hidden','true'); return; }
+  const lb = el.querySelector && el.querySelector('.sb-lbl'), txt = el.dataset.tip || (lb ? lb.textContent : '') || el.getAttribute('aria-label') || el.title || '';
+  if(!txt){ t.classList.remove('on'); return; }
+  t.textContent = txt.replace(/…$/, ''); t.classList.add('on'); t.setAttribute('aria-hidden','false');
+  const r = el.getBoundingClientRect(); t.style.left = (r.right + 12) + 'px'; t.style.top = (r.top + r.height/2 - t.offsetHeight/2) + 'px';
+}
+(function(){
+  const SEL = '.sidebar .sb-item, .sidebar .sb-search-btn, .sidebar .sb-acct-btn, .sidebar .sb-foot>.sb-icon-btn, .sidebar .sb-min-btn';
+  document.addEventListener('mouseover', e => { const el = e.target.closest && e.target.closest(SEL); sbTip(el || null); });
+  document.addEventListener('focusin', e => { const el = e.target.closest && e.target.closest(SEL); if(el && el.matches(':focus-visible')) sbTip(el); });
+  document.addEventListener('focusout', () => sbTip(null));
+  document.addEventListener('mouseleave', () => sbTip(null));
+  document.addEventListener('scroll', () => sbTip(null), true);
+  document.addEventListener('keydown', e => { if(e.key === 'Escape') sbTip(null); });
+  document.addEventListener('click', () => sbTip(null));
+  const arrancar = () => {
+    // atajo según el sistema
+    const k = document.getElementById('sbKbd'); if(k && /Mac|iPhone|iPad/i.test(navigator.platform || navigator.userAgent)) k.textContent = '⌘ K';
+    // estado guardado
+    let min = false, tools = true; try{ min = localStorage.getItem('nl_sb_min') === '1'; tools = localStorage.getItem('nl_sb_tools') !== '0'; }catch(e){}
+    sbMin(min && sbEscritorio()); sbTools(tools, false);
+    // aria-current y «Herramientas» abierta si la sección activa está dentro
+    const nav = document.querySelector('.sb-nav'); if(!nav) return;
+    const sync = () => {
+      nav.querySelectorAll('.sb-item').forEach(b => { if(b.classList.contains('on')) b.setAttribute('aria-current','page'); else b.removeAttribute('aria-current'); });
+      const act = nav.querySelector('#sbToolsGrp .sb-item.on'), g = document.getElementById('sbToolsGrp');
+      if(act && g && g.classList.contains('shut')) sbTools(true, false);
+    };
+    new MutationObserver(sync).observe(nav, {subtree:true, attributes:true, attributeFilter:['class']}); sync();
+    matchMedia('(min-width:861px)').addEventListener('change', e => { if(!e.matches) document.body.classList.remove('sb-min'); else { try{ sbMin(localStorage.getItem('nl_sb_min') === '1'); }catch(x){} } });
+  };
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', arrancar); else arrancar();
+})();
+
 // ═══════════════ MODO OSCURO ═══════════════
 // Preferencia guardada en nutrilogos_dark: '1' oscuro, '0' claro, sin valor = seguir el sistema
 const modoPref=()=>{ try{ const v=localStorage.getItem('nutrilogos_dark'); return v==='1'?'dark':v==='0'?'light':'system'; }catch(e){ return 'system'; } };
 function aplicarModo(){
   const p=modoPref(), dark = p==='dark' || (p==='system' && matchMedia('(prefers-color-scheme: dark)').matches);
   document.body.classList.toggle('dark-mode',dark);
+  document.querySelectorAll('#sbTema .sb-th').forEach(b=>b.setAttribute('aria-pressed', b.dataset.modo===p ? 'true' : 'false'));
   const b=document.getElementById('darkModeBtn'); if(b){ const t=dark?'Cambiar a modo claro':'Cambiar a modo oscuro'; b.setAttribute('aria-label',t); b.title=t; }
   syncAntroDark(); syncMenuDark();
 }
