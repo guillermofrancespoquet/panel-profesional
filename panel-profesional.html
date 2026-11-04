@@ -1234,13 +1234,13 @@ body.dark-mode .frm select.inp{background-image:url("data:image/svg+xml,%3Csvg x
 .pdf-row .v{color:#163a47;font-weight:600}
 .pdf-box{background:#faf8f3;border:1px solid #ece4d6;border-radius:10px;padding:12px 16px;font-size:12px;color:#3a3a3a;line-height:1.6}
 .pdf-badge{display:inline-block;font-size:10.5px;font-weight:700;padding:3px 10px;border-radius:20px;margin-left:6px}
-.pdf-badge.ok{background:#e4f0e6;color:#3f7a4c}
+.pdf-badge.ok{background:#f1e7d6;color:#163a47}
 .pdf-badge.pending{background:#FEF2F2;color:#c0392b}
 .pdf-progress-wrap{margin-bottom:6px}
 .pdf-progress-bar{height:10px;background:#f0ebe0;border-radius:999px;overflow:hidden;margin-top:6px}
-.pdf-progress-fill{height:100%;background:linear-gradient(90deg,#7db88a,#1D9E75);border-radius:999px}
+.pdf-progress-fill{height:100%;background:linear-gradient(90deg,#d9b88c,#c19a6b);border-radius:999px}
 .pdf-macro-bar{display:flex;height:14px;border-radius:999px;overflow:hidden;margin:10px 0 8px}
-.pdf-macro-p{background:#c19a6b}.pdf-macro-f{background:#6a9cc2}.pdf-macro-c{background:#5a9c68}
+.pdf-macro-p{background:#c19a6b}.pdf-macro-f{background:#d9b88c}.pdf-macro-c{background:#1f4d5e}
 .pdf-macro-legend{display:flex;gap:16px;font-size:10.5px;color:#6b6b6b;margin-bottom:4px}
 .pdf-macro-legend span{display:flex;align-items:center;gap:5px}
 .pdf-macro-legend .dot{width:7px;height:7px;border-radius:50%}
@@ -5831,7 +5831,7 @@ function exportClientePDF(id){
     <p class="pdf-foot">NutriLogos · Ciencia con propósito · Documento de uso interno — Método 3M</p>
   `;
   document.getElementById('printArea').innerHTML = html;
-  printNow();
+  printNow({marca:true, titulo:'Método 3M · '+c.nombre});
 }
 
 // ═══════════════ CALCULADORA NUTRICIONAL ═══════════════
@@ -6051,8 +6051,8 @@ function exportCalcPDF(){
       </div>
       <div class="pdf-macro-legend">
         <span><span class="dot" style="background:#c19a6b"></span>Proteína ${lastCalc.pctP}%</span>
-        <span><span class="dot" style="background:#6a9cc2"></span>Grasa ${lastCalc.pctF}%</span>
-        <span><span class="dot" style="background:#5a9c68"></span>Carbohidratos ${lastCalc.pctC}%</span>
+        <span><span class="dot" style="background:#d9b88c"></span>Grasa ${lastCalc.pctF}%</span>
+        <span><span class="dot" style="background:#1f4d5e"></span>Carbohidratos ${lastCalc.pctC}%</span>
       </div>
       <div class="pdf-row" style="margin-top:8px"><span class="l">Proteína</span><span class="v">${lastCalc.proteinaG} g</span></div>
       <div class="pdf-row"><span class="l">Grasa</span><span class="v">${lastCalc.grasaG} g</span></div>
@@ -6080,7 +6080,7 @@ function exportCalcPDF(){
   html += `<p class="pdf-foot">NutriLogos · Ciencia con propósito · Cálculo orientativo, no sustituye valoración profesional individualizada</p>`;
 
   document.getElementById('printArea').innerHTML = html;
-  printNow();
+  printNow({marca:true, titulo:'Calculadora nutricional · NutriLogos'});
 }
 
 // Energía y macros. Estimaciones orientativas: el basal tiene un error de ~13-16 % (Jagim 2026) y los límites
