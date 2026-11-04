@@ -1333,6 +1333,72 @@ body.dark-mode .frm select.inp{background-image:url("data:image/svg+xml,%3Csvg x
 .sb-theme{max-height:60px;overflow:hidden;transition:max-height .22s ease,opacity .16s ease,margin .22s ease,padding .22s ease}
 .sb-acct-btn{gap:8px}
 /* Insignias, despliegue al pasar el ratón y punto de conexión */
+/* DASHBOARD VIVO: alimento del día, reto del día y calculadora rápida (tarjetas claras, como «Hoy y mañana») */
+.al-wrap{perspective:900px}
+.al-in{position:relative;height:160px;transition:transform .55s cubic-bezier(.4,.2,.2,1);transform-style:preserve-3d}
+.al-in.flip{transform:rotateY(180deg)}
+.al-f,.al-b{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:12px;border:.5px solid var(--bd);padding:14px 16px;display:flex;flex-direction:column;text-align:left;font-family:var(--f);color:var(--g900)}
+.al-f{background:linear-gradient(135deg,var(--t50) 0%,var(--sf) 70%);cursor:pointer;width:100%}
+.al-f:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.al-b{background:var(--sf);transform:rotateY(180deg)}
+.al-k{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-dk)}
+.al-n{font-size:20px;font-weight:600;letter-spacing:-.01em;line-height:1.2;margin:6px 0 10px}
+.al-tags{display:flex;flex-wrap:wrap;gap:5px}
+.al-tag{font-size:11px;font-weight:600;line-height:16px;padding:1px 9px;border-radius:20px;background:var(--pill-n);color:var(--g700);box-shadow:inset 0 0 0 .5px var(--pill-n-bd);font-variant-numeric:tabular-nums}
+.al-hint{margin-top:auto;font-size:11.5px;color:var(--g400);display:flex;align-items:center;gap:6px}
+.al-bh{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:10px}
+.al-bh b{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.al-bh span{font-size:10.5px;color:var(--g400);white-space:nowrap}
+.al-st{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.al-st div{display:flex;flex-direction:column;gap:3px;min-width:0}
+.al-st b{font-size:17px;font-weight:600;letter-spacing:-.01em;font-variant-numeric:tabular-nums;line-height:1}
+.al-st span{font-size:9.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--g400)}
+.al-ex{font-size:11px;color:var(--g400);margin-top:8px;font-variant-numeric:tabular-nums}
+.al-acc{display:flex;gap:6px;margin-top:auto;align-items:center}
+.mini-btn{height:30px;padding:0 11px;border:.5px solid var(--bdm);border-radius:8px;background:var(--sf);color:var(--t800);font:600 12px/1 var(--f);cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:background .15s,border-color .15s}
+.mini-btn:hover{background:var(--t50);border-color:rgba(29,158,117,.45)}
+.mini-btn:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.al-src{margin-left:auto;font-size:9.5px;color:var(--g400);text-align:right;line-height:1.3}
+.rt-q{font-size:14px;font-weight:600;line-height:1.4;margin-bottom:10px;color:var(--g900)}
+.rt-os{display:flex;flex-direction:column;gap:7px}
+.rt-o{width:100%;text-align:left;min-height:var(--h-btn,40px);padding:9px 14px;border:.5px solid var(--bdm);border-radius:var(--r-btn,10px);background:var(--sf);color:var(--g900);font:500 13px/1.35 var(--f);cursor:pointer;display:flex;align-items:center;gap:10px;transition:background .15s,border-color .15s,opacity .2s}
+.rt-o:hover:not(:disabled){background:var(--t50);border-color:rgba(29,158,117,.45)}
+.rt-o:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.rt-o i{flex:none;width:18px;height:18px;border-radius:50%;border:.5px solid var(--bdm);display:inline-flex;align-items:center;justify-content:center;font-style:normal;font-size:10px;font-weight:700;color:var(--g500)}
+.rt-o:disabled{cursor:default}
+.rt-o.ok{background:rgba(29,158,117,.1);border-color:var(--t400);color:var(--t800)}
+.rt-o.ok i{background:var(--t400);border-color:var(--t400);color:#fff}
+.rt-o.mal{background:rgba(184,50,50,.08);border-color:rgba(184,50,50,.45)}
+.rt-o.mal i{background:var(--red);border-color:var(--red);color:#fff}
+.rt-os.hecho .rt-o:not(.ok):not(.mal){opacity:.55}
+body.dark-mode .rt-o.mal i{color:#14181a}
+.rt-e{margin-top:11px;padding:11px 13px;border-radius:10px;background:var(--g100);font-size:12.5px;line-height:1.5;color:var(--g700);animation:rtIn .3s ease}
+.rt-e b{color:var(--g900)}
+.rt-f{display:block;margin-top:5px;font-size:10.5px;font-weight:600;color:var(--gold-dk)}
+.rt-pie{display:flex;align-items:center;justify-content:space-between;margin-top:10px;gap:8px;font-size:11px;color:var(--g400)}
+@keyframes rtIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.calc-in{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.calc-f{display:flex;align-items:center;gap:8px;height:var(--h-btn,40px);padding:0 12px;border:.5px solid var(--bdm);border-radius:var(--r-btn,10px);background:var(--sf);transition:border-color .15s,box-shadow .15s;cursor:text}
+.calc-f:hover{border-color:var(--g400)}
+.calc-f:focus-within{border-color:var(--gold);box-shadow:0 0 0 3px rgba(184,149,106,.18)}
+.calc-f span{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--g400)}
+.calc-f input{flex:1;min-width:0;width:100%;border:none;outline:none;background:transparent;font:600 14px var(--f);color:var(--g900);text-align:right;font-variant-numeric:tabular-nums;-moz-appearance:textfield}
+.calc-f input::-webkit-outer-spin-button,.calc-f input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.calc-f input::placeholder{color:var(--g200)}
+.calc-f em{font-style:normal;font-size:12px;color:var(--g400)}
+.calc-r{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:9px 0;border-top:.5px solid var(--bd)}
+.calc-r:first-child{border-top:none}
+.calc-l{min-width:0}
+.calc-l b{display:block;font-size:12.5px;font-weight:600;color:var(--g900)}
+.calc-l small{display:block;font-size:10.5px;color:var(--g400);line-height:1.4;margin-top:1px}
+.calc-v{font-size:14px;font-weight:600;color:var(--t800);white-space:nowrap;font-variant-numeric:tabular-nums;text-align:right}
+.calc-vacio{font-size:12px;color:var(--g400);padding:6px 0 2px}
+.calc-pie{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:8px;padding-top:10px;border-top:.5px solid var(--bd)}
+.calc-pie small{font-size:10.5px;color:var(--g400);line-height:1.4}
+@media(max-width:860px){.al-in{height:172px}.al-st b{font-size:16px}}
+@media(pointer:coarse){.calc-f input{font-size:16px}}
+@media(prefers-reduced-motion:reduce){.al-in{transition:none}.rt-e{animation:none}}
+
 /* SISTEMA VISUAL (nov 2026): buscadores, filtros, pestañas y cabeceras de TODAS las pantallas con la misma altura, forma y foco que los .ui-* */
 .page-header{margin-bottom:1.5rem}
 #vcartera .page-header{margin-bottom:1.5rem}
@@ -1930,6 +1996,20 @@ body.dark-mode .ref-src,body.dark-mode .sup-badge,body.dark-mode .depd-avatar-fa
         </div>
         <div id="dashSesiones"></div>
       </div>
+        <div class="dash-card" data-dc="alimento">
+        <div class="dash-card-head">
+          <span class="dash-card-title"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>Alimento del día</span>
+          <span class="dash-card-count" id="dashAlMes">De temporada</span>
+        </div>
+        <div id="dashAlimento"></div>
+      </div>
+        <div class="dash-card" data-dc="reto">
+        <div class="dash-card-head">
+          <span class="dash-card-title"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Reto del día</span>
+          <span class="dash-card-count" id="dashRetoRacha" style="display:none"></span>
+        </div>
+        <div id="dashReto"></div>
+      </div>
       </div>
       <div class="dash-col" id="dashColSide" data-col="side">
         <div class="dash-card" data-dc="pagos">
@@ -1963,6 +2043,16 @@ body.dark-mode .ref-src,body.dark-mode .sup-badge,body.dark-mode .depd-avatar-fa
       </div>
       <div id="remList"></div>
     </div>
+        <div class="dash-card" data-dc="calculadora">
+        <div class="dash-card-head">
+          <span class="dash-card-title"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="8.01" y2="10"/><line x1="12" y1="10" x2="12.01" y2="10"/><line x1="16" y1="10" x2="16.01" y2="10"/><line x1="8" y1="14" x2="8.01" y2="14"/><line x1="12" y1="14" x2="12.01" y2="14"/><line x1="16" y1="14" x2="16.01" y2="14"/><line x1="8" y1="18" x2="12" y2="18"/></svg>Calculadora rápida</span>
+        </div>
+        <div class="calc-in">
+          <label class="calc-f"><span>Peso</span><input type="number" id="dcPeso" inputmode="decimal" min="30" max="200" step="0.5" placeholder="70" oninput="dashCalcPintar()" aria-label="Peso en kilos"><em>kg</em></label>
+          <label class="calc-f"><span>Duración</span><input type="number" id="dcMin" inputmode="numeric" min="10" max="900" step="5" placeholder="90" oninput="dashCalcPintar()" aria-label="Duración del ejercicio en minutos"><em>min</em></label>
+        </div>
+        <div id="dashCalcOut"></div>
+      </div>
       </div>
     </div>
   </div>
@@ -4453,6 +4543,7 @@ function renderFactOfDay(){
 
 async function loadDashboard(){
   skPoner('dashProxima', '<span class="sk sk-banner"></span>');
+  dashVivoIniciar();
   document.getElementById('dashDate').textContent=fechaLarga(new Date());
   renderFactOfDay();
   loadRecordatorios();
@@ -4653,6 +4744,171 @@ const skRows = n => '<div class="sk-list">' + Array.from({length:n}, () => '<div
 const skCards = n => '<div class="sk-grid">' + Array.from({length:n}, () => '<span class="sk sk-card"></span>').join('') + '</div>';
 function skPoner(id, html){ const e = document.getElementById(id); if(e && !e.firstElementChild) e.innerHTML = html; }
 async function abrirFichaDash(id){ if(!deportistas.length) await loadDeportistas(); openDepDet(id); }
+
+// ═══════════════ DASHBOARD VIVO: alimento del día · reto del día · calculadora rápida ═══════════════
+// Tarjetas pequeñas y discretas (como «Hoy y mañana»). Nada de esto toca datos de clientes; solo se guarda en este navegador la racha del reto y el último peso de la calculadora.
+const dashDiaIdx = () => { const d = new Date(); return Math.floor(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 86400000); };
+const dashAyerISO = () => { const d = new Date(); d.setDate(d.getDate() - 1); return localISO(d); };
+
+// ── Alimento del día: de temporada en la península (calendario habitual, orientativo) con datos de BEDCA ──
+// Los números son los ids de datos/bedca.json. La composición sale de esa base (por 100 g de porción comestible); no se inventa nada.
+const AL_TEMP = {
+  1:[2235,2229,2246,2228,1176,2387,1177,2386,2400,2212,2378,2424,731,2384],
+  2:[2235,2229,2246,2228,1176,2387,1177,2386,2212,2424,880],
+  3:[2225,2235,1176,1179,2194,2399,2415,2212,1177],
+  4:[2225,1179,2194,2399,2415,2424,1176],
+  5:[2225,2220,2218,2194,2198,2376,2407,2399,1179],
+  6:[2220,2218,2232,2236,1172,2247,2234,2421,2407,2409,2376,2370,2198],
+  7:[2247,2234,2232,2236,1172,2227,2421,2409,2370,2376,2407],
+  8:[2247,2234,2227,2249,2232,2241,2421,2409,2370,2376],
+  9:[2249,2227,2226,2241,2231,1172,2421,2409,2370,2378,2198,731],
+  10:[2226,2213,2249,2231,2241,1006,2378,731,2187,2384,2387,1177,2386],
+  11:[2213,2226,2229,2235,2228,2231,2241,2187,2378,731,2387,1177,2386,2212],
+  12:[2235,2229,2228,2226,2213,2231,2241,2187,2378,2387,1177,2386,2400,1176]
+};
+const AL_MESES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+let _alOff = 0, _alData = null;
+const alNum = (v, d) => v == null || isNaN(v) ? '—' : medNum(+v, d);
+function alTags(a){
+  const t = [];
+  if(a.k <= 35) t.push(`Ligero · ${alNum(a.k, 0)} kcal`);
+  if(a.fi >= 2.5) t.push(`Fibra ${alNum(a.fi, 1)} g`);
+  if(a.p >= 4) t.push(`Proteína ${alNum(a.p, 1)} g`);
+  if(a.fe >= 1.5) t.push(`Hierro ${alNum(a.fe, 1)} mg`);
+  if(a.h >= 14) t.push(`Hidratos ${alNum(a.h, 1)} g`);
+  if(!t.length) t.push(`${alNum(a.k, 0)} kcal`);
+  return t.slice(0, 3);
+}
+async function dashAlimentoPintar(){
+  const el = document.getElementById('dashAlimento'); if(!el) return;
+  const mes = new Date().getMonth() + 1, lista = AL_TEMP[mes], tag = document.getElementById('dashAlMes');
+    if(!el.firstElementChild) el.innerHTML = '<span class="sk sk-banner" style="height:160px;margin:0"></span>';
+  let d;
+  try{ d = _alData || (_alData = await compBedCargar()); }catch(e){ el.innerHTML = '<p class="calc-vacio">No se pudo cargar el alimento del día (sin conexión).</p>'; return; }
+  const por = {}; (d.alimentos || []).forEach(a => { por[a.id] = a; });
+  const ids = lista.filter(id => por[id]); if(!ids.length) return;
+  const id = ids[(dashDiaIdx() + _alOff) % ids.length], a = por[id], grupo = (d.grupos || {})[a.g] || '';
+  const nombre = String(a.n).replace(/, (crudo|cruda|cocido|cocida|hervido|hervida)$/i, '');
+  const ex = [a.fe != null ? `Hierro ${alNum(a.fe, 1)} mg` : '', a.na != null ? `Sodio ${alNum(a.na, 0)} mg` : '', a.sa != null ? `Saturadas ${alNum(a.sa, 1)} g` : ''].filter(Boolean).join(' · ');
+  el.innerHTML = `<div class="al-wrap"><div class="al-in" id="alIn">
+    <div class="al-f" id="alF" role="button" tabindex="0" onclick="alVoltear(true)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();alVoltear(true)}">
+      <span class="al-k">${AL_MESES[mes - 1]}</span>
+      <span class="al-n">${sudEsc(nombre)}</span>
+      <span class="al-tags">${alTags(a).map(t => `<span class="al-tag">${sudEsc(t)}</span>`).join('')}</span>
+      <span class="al-hint"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>Toca para ver su composición</span>
+    </div>
+    <div class="al-b" id="alB" inert>
+      <div class="al-bh"><b>${sudEsc(nombre)}</b><span>por 100 g${grupo ? ' · ' + sudEsc(grupo) : ''}</span></div>
+      <div class="al-st"><div><b>${alNum(a.k, 0)}</b><span>kcal</span></div><div><b>${alNum(a.p, 1)}</b><span>Prot.</span></div><div><b>${alNum(a.h, 1)}</b><span>Hidr.</span></div><div><b>${alNum(a.f, 1)}</b><span>Grasa</span></div><div><b>${alNum(a.fi, 1)}</b><span>Fibra</span></div></div>
+      <div class="al-ex">${sudEsc(ex)}</div>
+      <div class="al-acc"><button type="button" class="mini-btn" onclick="alVoltear(false)">Volver</button><button type="button" class="mini-btn" onclick="alOtro()">Otro de temporada</button><button type="button" class="mini-btn" onclick="alComparar(${a.id})">Comparar</button></div>
+    </div>
+  </div></div><p class="al-src" style="text-align:left;margin:8px 0 0">Calendario habitual en la península (orientativo). Composición: BEDCA, Consorcio BEDCA y AESAN (www.bedca.net).</p>`;
+}
+function alVoltear(a){
+  const i = document.getElementById('alIn'), f = document.getElementById('alF'), b = document.getElementById('alB'); if(!i) return;
+  i.classList.toggle('flip', a);
+  if(a){ f.setAttribute('inert', ''); b.removeAttribute('inert'); const x = b.querySelector('button'); if(x && !esTactil()) setTimeout(() => x.focus(), 300); }
+  else { b.setAttribute('inert', ''); f.removeAttribute('inert'); if(!esTactil()) setTimeout(() => f.focus(), 300); }
+}
+function alOtro(){ _alOff++; dashAlimentoPintar().then(() => setTimeout(() => alVoltear(true), 60)); }
+async function alComparar(id){
+  try{
+    const d = await compBedCargar(), a = (d.alimentos || []).find(x => x.id === id); if(!a) return;
+    navTo('comparador'); setCompSource('bedca');
+    compRawResults.A = [a]; await compSelect('A', 0);
+  }catch(e){ toast('No se pudo abrir Comparar alimentos', { tipo: 'error' }); }
+}
+
+// ── Reto del día: una pregunta de nutrición deportiva con su fuente ──
+// Cada pregunta: q (enunciado), o (3 opciones), c (la correcta), e (explicación breve), f (fuente). Solo cifras de consensos y valores de referencia citados.
+const RETO = [
+  { q:'¿Cuál es la recomendación general de proteína para un adulto sano?', o:['0,8 g/kg al día','1,6 g/kg al día','2,4 g/kg al día'], c:0, e:'Es el punto de partida para la población general; quien entrena suele necesitar más.', f:'OMS/FAO/UNU 2007 · EFSA 2012' },
+  { q:'¿Qué cantidad de proteína de calidad por comida estimula al máximo la síntesis de proteína muscular?', o:['≈ 5 g','≈ 80 g','0,25 g/kg o 20–40 g'], c:2, e:'Lo ideal es repartirla cada 3–4 h a lo largo del día.', f:'ISSN 2017 (Jäger et al.)' },
+  { q:'¿Qué dosis de cafeína mejora de forma consistente el rendimiento?', o:['0,5–1 mg/kg','9–12 mg/kg','3–6 mg/kg'], c:2, e:'Dosis muy altas (≈ 9 mg/kg) no aportan más beneficio y aumentan los efectos adversos.', f:'ISSN 2021 (Guest et al.)' },
+  { q:'¿Cuándo se toma la cafeína respecto al ejercicio, de forma más habitual?', o:['Justo después','≈ 60 min antes','6 h antes'], c:1, e:'El momento óptimo depende de la fuente: con chicle de cafeína puede bastar menos tiempo.', f:'ISSN 2021 (Guest et al.)' },
+  { q:'¿Qué cantidad de cafeína en una sola toma no plantea problemas de seguridad en adultos sanos, según EFSA?', o:['100 mg','400 mg','200 mg'], c:2, e:'Hasta 200 mg en una toma y hasta 400 mg al día (no gestantes).', f:'EFSA 2015' },
+  { q:'En pruebas de más de 2,5–3 h, ¿hasta cuántos hidratos por hora se pueden aprovechar?', o:['≈ 20 g/h','≈ 90 g/h combinando varios tipos de hidrato','≈ 150 g/h de glucosa sola'], c:1, e:'Con un solo hidrato la oxidación se satura hacia 60 g/h; mezclar fuentes (p. ej. glucosa y fructosa) permite llegar a ≈ 90 g/h.', f:'Jeukendrup 2014 · Burke 2011' },
+  { q:'En un esfuerzo intenso de ≈ 1 hora, ¿qué efecto tienen pequeñas cantidades de hidrato, incluso solo enjuagarse la boca?', o:['Ninguno','Rellenan por completo el glucógeno','Pueden mejorar el rendimiento por efectos en el sistema nervioso central'], c:2, e:'El efecto es central (cerebro), no por la energía que aportan.', f:'Burke 2011' },
+  { q:'¿A partir de qué pérdida de peso por sudor puede empeorar el rendimiento?', o:['0,5 %','≈ 2 %','≈ 8 %'], c:1, e:'Se recomienda beber para evitar pérdidas superiores al 2 % del peso, con una pauta individualizada.', f:'ACSM 2007 (Sawka et al.)' },
+  { q:'¿Cómo se estima la tasa de sudoración de una persona?', o:['Por el color de la orina','Contando los vasos que bebe','Pesándose antes y después de entrenar'], c:2, e:'La diferencia de peso, corregida con lo bebido, estima lo sudado. Varía mucho entre personas.', f:'ACSM 2007 (Sawka et al.)' },
+  { q:'¿Qué dice la evidencia sobre la creatina a largo plazo en personas sanas?', o:['Daña los riñones de forma habitual','Es segura y bien tolerada','Solo es segura menos de un mes'], c:1, e:'Se han estudiado dosis de hasta 30 g/día durante 5 años en sanos sin problemas de seguridad.', f:'ISSN 2017 (Kreider et al.)' },
+  { q:'¿Qué dosis diaria de mantenimiento de creatina monohidrato se usa habitualmente?', o:['20–30 g','1 g','3–5 g'], c:2, e:'No depende del peso corporal y el efecto es acumulativo.', f:'ISSN 2017 (Kreider et al.)' },
+  { q:'El sodio que se pierde con el sudor…', o:['Es casi igual en todas las personas','Varía mucho de una persona a otra','Solo depende del sexo'], c:1, e:'Por eso la reposición de sodio se individualiza; un test de sudoración ayuda a ajustarla.', f:'ACSM 2007 · Baker 2016' },
+  { q:'¿Cuánto debería dormir un adulto sano de forma habitual?', o:['5 horas','12 horas','Al menos 7 horas'], c:2, e:'Dormir menos de 7 h de forma habitual se asocia con peores resultados de salud.', f:'AASM y SRS 2015 (Watson et al.)' },
+  { q:'¿Cuánta fibra al día es adecuada para un adulto según EFSA?', o:['10 g','25 g','60 g'], c:1, e:'Legumbres, cereales integrales, fruta y verdura son las fuentes clave.', f:'EFSA 2010' },
+  { q:'¿Cuánta sal como máximo al día recomienda la OMS a los adultos?', o:['Menos de 12 g','Menos de 20 g','Menos de 5 g'], c:2, e:'Equivale a unos 2 g de sodio al día.', f:'OMS 2012' },
+  { q:'¿Qué porcentaje de la energía diaria deberían aportar, como máximo, los azúcares libres según la OMS?', o:['Menos del 10 %','Menos del 25 %','Menos del 40 %'], c:0, e:'La OMS sugiere además que por debajo del 5 % habría beneficios adicionales para la salud.', f:'OMS 2015' },
+  { q:'Según EFSA, ¿qué grupo de adultos necesita más hierro al día?', o:['Hombres (11 mg)','Todos por igual (12 mg)','Mujeres premenopáusicas (16 mg)'], c:2, e:'Por las pérdidas con la menstruación.', f:'EFSA 2015' },
+  { q:'¿Qué ingesta adecuada de vitamina D fija EFSA para adultos cuando la síntesis por el sol es mínima?', o:['15 µg (600 UI) al día','1,5 µg al día','150 µg al día'], c:0, e:'Es la ingesta adecuada si no hay síntesis cutánea por exposición solar.', f:'EFSA 2016' },
+  { q:'¿Cuánto calcio al día recomienda EFSA a los adultos de 25 años o más?', o:['≈ 300 mg','≈ 2.500 mg','≈ 950 mg'], c:2, e:'En adultos de 18 a 24 años la cifra sube a 1.000 mg.', f:'EFSA 2015' },
+  { q:'¿Cuánto EPA + DHA (omega-3) al día recomienda EFSA a los adultos?', o:['≈ 25 mg','≈ 250 mg','≈ 2.500 mg'], c:1, e:'Se alcanza con pescado azul o con aceite de algas en dietas vegetales.', f:'EFSA 2010' },
+  { q:'¿Cuántas kcal aporta 1 gramo de grasa?', o:['4','7','9'], c:2, e:'Hidratos y proteínas aportan 4 kcal por gramo; el alcohol, 7.', f:'Factores de Atwater' },
+  { q:'En una dieta vegana, ¿qué nutriente se debe suplementar siempre?', o:['Vitamina C','Vitamina K','Vitamina B12'], c:2, e:'No hay fuentes vegetales fiables sin enriquecer.', f:'Academy of Nutrition and Dietetics 2016' },
+  { q:'Una disponibilidad energética por debajo de ≈ 30 kcal/kg de masa libre de grasa al día se asocia con…', o:['Más rendimiento','Riesgo para la salud y el rendimiento (RED-S)','Ningún efecto'], c:1, e:'Puede afectar a hueso, hormonas y recuperación. Es una señal para valorar, no un diagnóstico.', f:'COI 2018 (consenso RED-S)' },
+  { q:'Con poco tiempo entre dos sesiones exigentes, ¿cuánto hidrato conviene tomar tras la primera?', o:['≈ 0,1 g/kg/h','≈ 5 g/kg/h','≈ 1,0–1,2 g/kg/h durante las primeras 4 h'], c:2, e:'Ayuda a recuperar el glucógeno rápido; si hay más de 24 h, el total del día manda más que el momento.', f:'Burke 2011 · ACSM/AND/DC 2016' }
+];
+let _retoExtra = 0, _retoRes = null;
+function retoLeer(k){ try{ return JSON.parse(localStorage.getItem(k) || 'null'); }catch(e){ return null; } }
+function retoGuardar(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
+function dashRetoPintar(){
+  const el = document.getElementById('dashReto'); if(!el) return;
+  const hoy = localISO(new Date()), idx = (dashDiaIdx() + _retoExtra) % RETO.length, qz = RETO[idx], practica = _retoExtra > 0;
+  const est = retoLeer('nl_reto'), hechoHoy = est && est.f === hoy && !practica;
+  const resp = hechoHoy ? est.r : (_retoRes && _retoRes.idx === idx ? _retoRes.r : null);
+  const racha = retoLeer('nl_reto_racha'), badge = document.getElementById('dashRetoRacha');
+  const n = racha && racha.n > 0 && (racha.f === hoy || racha.f === dashAyerISO()) ? racha.n : 0;
+  if(badge){ badge.style.display = n ? '' : 'none'; badge.textContent = n ? `Racha ${n}` : ''; badge.title = n ? `${n} día${n !== 1 ? 's' : ''} seguido${n !== 1 ? 's' : ''} acertando el reto` : ''; }
+  const L = ['A', 'B', 'C'];
+  el.innerHTML = `<p class="rt-q" id="rtQ">${sudEsc(qz.q)}</p>
+    <div class="rt-os${resp != null ? ' hecho' : ''}" role="group" aria-labelledby="rtQ">${qz.o.map((o, i) => {
+      const cls = resp == null ? '' : i === qz.c ? ' ok' : i === resp ? ' mal' : '';
+      return `<button type="button" class="rt-o${cls}" ${resp != null ? 'disabled' : ''} onclick="retoResponder(${idx},${i})"><i aria-hidden="true">${resp != null && i === qz.c ? '✓' : resp != null && i === resp ? '✕' : L[i]}</i><span>${sudEsc(o)}</span></button>`;
+    }).join('')}</div>` + (resp != null ? `<div class="rt-e" role="status"><b>${resp === qz.c ? '¡Correcto!' : 'No exactamente.'}</b> ${sudEsc(qz.e)}<span class="rt-f">Fuente: ${sudEsc(qz.f)}</span></div>
+    <div class="rt-pie"><span>${practica ? 'Práctica: no cuenta para la racha' : 'Mañana, otra pregunta'}</span><button type="button" class="mini-btn" onclick="retoOtra()">Otra pregunta</button></div>` : `<div class="rt-pie"><span>${practica ? 'Práctica: no cuenta para la racha' : 'Una pregunta al día'}</span>${practica ? '<button type="button" class="mini-btn" onclick="retoVolver()">Volver a la de hoy</button>' : ''}</div>`);
+}
+function retoResponder(idx, i){
+  const hoy = localISO(new Date()), qz = RETO[idx], ok = i === qz.c;
+  if(_retoExtra === 0){
+    retoGuardar('nl_reto', { f: hoy, r: i });
+    const rc = retoLeer('nl_reto_racha') || { n: 0, f: '' };
+    retoGuardar('nl_reto_racha', ok ? { n: rc.f === hoy ? rc.n : (rc.f === dashAyerISO() ? rc.n + 1 : 1), f: hoy } : { n: 0, f: hoy });
+  } else _retoRes = { idx, r: i };
+  dashRetoPintar();
+}
+function retoOtra(){ _retoExtra++; _retoRes = null; dashRetoPintar(); }
+function retoVolver(){ _retoExtra = 0; _retoRes = null; dashRetoPintar(); }
+
+// ── Calculadora rápida: cifras de referencia que ya usa la app (Referencias, Suplementación) y los consensos citados ──
+let _calcTxt = '';
+function dashCalcPintar(){
+  const out = document.getElementById('dashCalcOut'), ip = document.getElementById('dcPeso'), im = document.getElementById('dcMin'); if(!out || !ip) return;
+  const p = parseFloat(String(ip.value).replace(',', '.')), m = parseFloat(im.value);
+  if(ip.value) { try{ localStorage.setItem('nl_calc_peso', ip.value); }catch(e){} }
+  if(!(p >= 30 && p <= 200)){ out.innerHTML = '<p class="calc-vacio">Escribe el peso (30–200 kg) para ver las cifras.</p>'; _calcTxt = ''; return; }
+  const r = x => Math.round(x), n1 = x => medNum(x, 1), rows = [];
+  rows.push(['Proteína al día', '1,2–1,6 g/kg · sin déficit calórico', `${r(1.2 * p)}–${r(1.6 * p)} g`]);
+  rows.push(['Proteína en déficit', '1,6–2,4 g/kg · con déficit calórico', `${r(1.6 * p)}–${r(2.4 * p)} g`]);
+  rows.push(['Proteína por toma', '0,25 g/kg · ISSN 2017 (rango habitual 20–40 g)', `≈ ${r(0.25 * p)} g`]);
+  const cafMin = 3 * p, cafMax = 6 * p, cafSug = Math.min(cafMin, 200);
+  rows.push(['Cafeína', `3–6 mg/kg (${r(cafMin)}–${r(cafMax)} mg) · 60 min antes · tope EFSA 200 mg por toma`, `${Math.round(cafSug / 5) * 5} mg`]);
+  if(m > 0){
+    let t, h;
+    if(m < 60){ t = 'Pequeñas cantidades'; h = 'Esfuerzo de menos de 1 h: incluso un enjuague bucal (Burke 2011)'; }
+    else if(m <= 150){ t = `${r(m / 60 * 30)}–${r(m / 60 * 60)} g`; h = '30–60 g/h (Burke 2011, Jeukendrup 2014)'; }
+    else { t = `${r(m / 60 * 60)}–${r(m / 60 * 90)} g`; h = '60–90 g/h en más de 2,5 h, con varios tipos de hidrato (Jeukendrup 2014)'; }
+    rows.push(['Hidratos durante el ejercicio', h, t]);
+  } else rows.push(['Hidratos durante el ejercicio', 'Indica la duración para calcularlo', '—']);
+  rows.push(['Pérdida por sudor del 2 %', 'A partir de aquí puede bajar el rendimiento (ACSM 2007)', `${n1(0.02 * p)} kg`]);
+  out.innerHTML = rows.map(x => `<div class="calc-r"><div class="calc-l"><b>${sudEsc(x[0])}</b><small>${sudEsc(x[1])}</small></div><div class="calc-v">${sudEsc(x[2])}</div></div>`).join('') +
+    `<div class="calc-pie"><small>Orientativo, para adultos sanos. Menores de 18 años y casos clínicos: criterio profesional.</small><button type="button" class="mini-btn" onclick="dashCalcCopiar()">Copiar</button></div>`;
+  _calcTxt = `Peso ${n1(p)} kg${m > 0 ? ' · ' + r(m) + ' min' : ''}\n` + rows.map(x => `${x[0]}: ${x[2]}`).join('\n');
+}
+async function dashCalcCopiar(){ try{ await navigator.clipboard.writeText(_calcTxt); toast('Cifras copiadas', { ms: 1800 }); }catch(e){ toast('No se pudo copiar', { tipo: 'error' }); } }
+function dashVivoIniciar(){
+  const ip = document.getElementById('dcPeso'); if(ip && !ip.value){ try{ const v = localStorage.getItem('nl_calc_peso'); if(v) ip.value = v; }catch(e){} }
+  dashAlimentoPintar(); dashRetoPintar(); dashCalcPintar();
+}
 
 // ═══════════════ CARTERA: semáforo de todos los clientes ═══════════════
 // Todo se calcula en el navegador con lo que ya hay en Supabase (sin SQL nuevo) y con las mismas reglas y umbrales que «Por atender» y «Estado del cliente»:
