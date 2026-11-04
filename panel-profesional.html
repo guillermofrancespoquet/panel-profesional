@@ -564,7 +564,7 @@ body.dark-mode img{opacity:.92}
 @media(max-width:860px){body.has-sidebar.emb-view #sbEdge{display:block;position:fixed;left:0;top:0;bottom:0;width:24px;z-index:120;touch-action:pan-y}}
 
 /* ═══ SIDEBAR APP SHELL ═══ */
-:root{--sbw:248px}
+:root{--sbw:272px}
 @media (min-width:861px){ body.has-sidebar{padding-left:var(--sbw);padding-top:env(safe-area-inset-top,0px);transition:padding-left .22s ease} }
 /* iOS (app instalada, barra de estado translúcida): la zona de la muesca se pinta del verde de marca y tapa lo que se desplaza por debajo */
 body::before{content:'';position:fixed;top:0;left:0;right:0;height:env(safe-area-inset-top,0px);background:var(--t900);z-index:8000;pointer-events:none}
@@ -1325,7 +1325,7 @@ body.dark-mode .frm select.inp{background-image:url("data:image/svg+xml,%3Csvg x
   body.sb-min .sb-acct{justify-content:center}
   body.sb-min .sb-acct-t,body.sb-min .sb-acct-btn .sb-chev{display:none}
   body.sb-min .sb-acct-btn{flex:none;justify-content:center}
-  body.sb-min .sb-menu{left:.5rem;right:auto;width:248px}
+  body.sb-min .sb-menu{left:.5rem;right:auto;width:260px}
 }
 @media(prefers-reduced-motion:reduce){.sidebar,body.has-sidebar,.sb-grp,.sb-min-btn{transition:none!important}}
 /* Insignias, despliegue al pasar el ratón y punto de conexión */
@@ -1333,7 +1333,7 @@ body.dark-mode .sb-badge{background:rgba(229,83,75,.2)}
 body.sb-min .sb-badge,body.sb-min.dark-mode .sb-badge{background:#E5534B}
 .sb-subitem .sb-lbl{white-space:nowrap;min-width:0;overflow:hidden;text-overflow:ellipsis}
 .sb-item .sb-badge{flex:none}
-.sb-subitem{padding-left:3rem;padding-right:.5rem}
+.sb-subitem{padding-left:3.4rem;padding-right:.5rem}
 .sb-subitem .sb-badge{margin-right:6px}
 body.has-sidebar.sb-peek{padding-left:76px}
 body.sb-peek .sb-min-btn .m-c{display:none}
@@ -1383,7 +1383,7 @@ body.dark-mode .toast.aviso{background:#4A3A28}
 @keyframes toastIn{from{opacity:0;transform:translateY(8px)}}
 #offlineBar{display:none;position:fixed;top:0;left:0;right:0;z-index:9999;background:#7A5A38;color:#fff;font-size:12.5px;font-weight:500;text-align:center;padding:calc(6px + env(safe-area-inset-top,0px)) 12px 6px}
 body.sin-conexion #offlineBar{display:block}
-body.has-sidebar #offlineBar{left:var(--sbw,248px)}
+body.has-sidebar #offlineBar{left:var(--sbw,272px)}
 @media(max-width:860px){body.has-sidebar #offlineBar{left:0;top:calc(56px + env(safe-area-inset-top,0px));padding:6px 12px}}
 .skel{display:block;height:14px;border-radius:7px;margin:9px 0;background:linear-gradient(90deg,var(--g100) 25%,var(--g200) 50%,var(--g100) 75%);background-size:200% 100%;animation:skel 1.3s infinite linear}
 .skel.w40{width:40%}.skel.w60{width:60%}.skel.w80{width:80%}
