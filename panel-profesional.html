@@ -1333,6 +1333,60 @@ body.dark-mode .frm select.inp{background-image:url("data:image/svg+xml,%3Csvg x
 .sb-theme{max-height:60px;overflow:hidden;transition:max-height .22s ease,opacity .16s ease,margin .22s ease,padding .22s ease}
 .sb-acct-btn{gap:8px}
 /* Insignias, despliegue al pasar el ratón y punto de conexión */
+/* CARTERA */
+.cart-sum{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:1.1rem}
+.cart-pill{display:inline-flex;align-items:center;gap:8px;padding:7px 14px;border-radius:20px;background:var(--sf);border:.5px solid var(--bd);font-size:12.5px;font-weight:600;color:var(--g700);white-space:nowrap}
+.cart-pill b{font-size:15px;color:var(--t900)}
+body.dark-mode .cart-pill b{color:var(--g900,#fff)}
+.cart-pill.sub{background:transparent;font-weight:500;color:var(--g500)}
+.cart-dot{width:8px;height:8px;border-radius:50%;flex:none;display:inline-block}
+.cart-dot.risk{background:var(--red)}.cart-dot.warn{background:var(--gold)}.cart-dot.ok{background:var(--t400)}
+.cart-bar .agenda-tabs{margin-bottom:0}
+.cart-ord{width:auto;min-width:190px}
+#vcartera .page{max-width:1120px}
+.sb-main.on .sb-badge{background:rgba(184,50,50,.14);color:#B83232}
+.cart-list{background:var(--sf);border:.5px solid var(--bd);border-radius:16px;overflow:hidden}
+.cart-row,.cart-head{display:grid;grid-template-columns:minmax(170px,1.3fr) 100px minmax(0,2.4fr) 112px 84px 112px;gap:14px;align-items:center;padding:12px 18px}
+.cart-head{padding-top:10px;padding-bottom:10px;font-size:10.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--g500);background:var(--g100);border-bottom:.5px solid var(--bd)}
+.cart-row{border-bottom:.5px solid var(--bd);cursor:pointer;transition:background .12s}
+.cart-row:last-child{border-bottom:none}
+.cart-row:hover{background:var(--t50)}
+.cart-row:focus-visible{outline:2px solid var(--gold);outline-offset:-2px}
+.cart-cli{display:flex;align-items:center;gap:12px;min-width:0}
+.cart-av{width:38px;height:38px;border-radius:12px;overflow:hidden;flex:none;background:linear-gradient(135deg,#04342C 0%,#1f4d5e 100%);display:flex;align-items:center;justify-content:center;box-shadow:inset 0 0 0 1px rgba(184,149,106,.55)}
+.cart-av img{width:100%;height:100%;object-fit:cover}
+.cart-av span{font-size:13px;font-weight:700;color:#fff}
+.cart-n{font-size:13.5px;font-weight:600;color:var(--g900,var(--t900));white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cart-s{font-size:11.5px;color:var(--g400);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cart-est{display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:600;color:var(--g700);white-space:nowrap}
+.cart-mot{display:flex;flex-wrap:wrap;gap:5px}
+.cart-chip{max-width:100%;overflow:hidden;text-overflow:ellipsis;font-size:11px;font-weight:600;line-height:16px;padding:1px 9px;border-radius:20px;white-space:nowrap;background:var(--pill-n);color:var(--g700);box-shadow:inset 0 0 0 .5px var(--pill-n-bd)}
+.cart-chip.red{background:rgba(184,50,50,.12);color:var(--red);box-shadow:none}
+.cart-chip.gold{background:rgba(184,149,106,.2);color:var(--gold-dk);box-shadow:none}
+body.dark-mode .cart-chip.gold{color:#E0C196}
+.cart-ok{font-size:12px;color:var(--g400)}
+.cart-c{font-size:12.5px;color:var(--g700);min-width:0}
+.cart-c .cart-k{display:none}
+.cart-adh{display:flex;align-items:center;gap:8px;white-space:nowrap}
+.cart-adh svg{flex:none}
+.cart-adh .n{font-size:12px;font-weight:600;color:var(--g700)}
+@media(max-width:1280px){
+  .cart-row,.cart-head{grid-template-columns:minmax(150px,1.3fr) 100px minmax(0,2.2fr) 108px 84px}
+  .cart-row .cart-adh,.cart-head .cart-adh{display:none}
+}
+@media(max-width:860px){
+  .cart-head{display:none}
+  .cart-list{background:transparent;border:none;border-radius:0;overflow:visible}
+  .cart-row{grid-template-columns:1fr auto;gap:10px 12px;padding:14px;margin-bottom:10px;background:linear-gradient(135deg,var(--t50) 0%,var(--sf) 62%);border:.5px solid var(--bd);border-radius:16px}
+  .cart-row:last-child{border-bottom:.5px solid var(--bd)}
+  .cart-cli{grid-column:1}.cart-est{grid-column:2}
+  .cart-mot{grid-column:1/-1}
+  .cart-c.cart-cons,.cart-c.cart-rev{grid-column:auto}
+  .cart-row .cart-adh{display:flex;grid-column:1/-1}
+  .cart-c .cart-k{display:inline;color:var(--g400);margin-right:5px}
+  .cart-ord,.cart-bar .dep-search{flex:1 1 100%;width:100%}
+}
+
 body.dark-mode .sb-badge{background:rgba(229,83,75,.2)}
 body.sb-min .sb-badge,body.sb-min.dark-mode .sb-badge{background:#E5534B}
 .sb-subitem .sb-lbl{white-space:nowrap;min-width:0;overflow:hidden;text-overflow:ellipsis}
@@ -1662,6 +1716,11 @@ body.dark-mode .ref-src,body.dark-mode .sup-badge,body.dark-mode .depd-avatar-fa
     <button class="sb-item sb-main" id="sbHome" onclick="navTo('home')">
       <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
       <span class="sb-lbl">Dashboard</span>
+    </button>
+    <button class="sb-item sb-main" id="sbCartera" onclick="navTo('cartera')">
+      <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      <span class="sb-lbl">Cartera</span>
+      <span class="sb-badge" id="sbCartBadge" style="display:none">0</span>
     </button>
     <button class="sb-item sb-main" id="sbAgenda" onclick="navTo('agenda')">
       <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/><path d="M16 18h.01"/></svg>
@@ -2135,6 +2194,35 @@ body.dark-mode .ref-src,body.dark-mode .sup-badge,body.dark-mode .depd-avatar-fa
     </div>
 
     <div id="menuResult"></div>
+  </div>
+</div>
+
+<div id="vcartera" class="view" role="main">
+  <div class="page">
+    <div class="page-header">
+      <div><p class="page-title" role="heading" aria-level="1">Cartera</p><p class="page-sub" id="cartSub">Cargando…</p></div>
+      <button type="button" class="btn-soft" id="cartRef" onclick="cargarCartera()">Actualizar</button>
+    </div>
+    <div class="cart-sum" id="cartSum" aria-live="polite"></div>
+    <div class="dep-toolbar cart-bar">
+      <div class="agenda-tabs cart-tabs" id="cartTabs" role="group" aria-label="Filtrar por estado">
+        <button type="button" class="agenda-tab on" data-f="todos" onclick="cartFiltro('todos')">Todos</button>
+        <button type="button" class="agenda-tab" data-f="risk" onclick="cartFiltro('risk')">En riesgo</button>
+        <button type="button" class="agenda-tab" data-f="warn" onclick="cartFiltro('warn')">Por mirar</button>
+        <button type="button" class="agenda-tab" data-f="ok" onclick="cartFiltro('ok')">Al día</button>
+      </div>
+      <div class="dep-search">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="cartBusca" placeholder="Buscar por nombre o deporte…" oninput="cartBuscar()" aria-label="Buscar en la cartera">
+      </div>
+      <select class="inp cart-ord" id="cartOrd" onchange="cartOrden()" aria-label="Ordenar por">
+        <option value="urgencia">Más urgentes primero</option>
+        <option value="nombre">Nombre (A–Z)</option>
+        <option value="consulta">Más tiempo sin consulta</option>
+        <option value="revision">Próxima revisión</option>
+      </select>
+    </div>
+    <div class="cart-list" id="cartList"></div>
   </div>
 </div>
 
@@ -4566,6 +4654,155 @@ async function pintarAvisosDash(deps, citasAll, todayISO){
 }
 async function abrirFichaDash(id){ if(!deportistas.length) await loadDeportistas(); openDepDet(id); }
 
+// ═══════════════ CARTERA: semáforo de todos los clientes ═══════════════
+// Todo se calcula en el navegador con lo que ya hay en Supabase (sin SQL nuevo) y con las mismas reglas y umbrales que «Por atender» y «Estado del cliente»:
+//   EN RIESGO  adherencia ≤ 2 dos semanas seguidas · molestias dos semanas seguidas · 2 semanas o más sin enviar el seguimiento · plan por preparar vencido ·
+//              objetivo en dirección contraria · revisión con la fecha pasada
+//   POR MIRAR  seguimiento sin enviar esta semana · peso sin anotar ≥ 14 días (si antes lo anotaba) · comidas del diario sin comentar · medición con más de 90 días ·
+//              más de 30 días sin consulta · sin revisión programada · objetivo con la fecha límite pasada · plan por preparar · plan sin publicar
+// Las tablas que no existan (SQL sin ejecutar) simplemente no aportan avisos.
+let _cart = { filas: [], filtro: 'todos', orden: 'urgencia', busca: '', cargando: false, listo: false };
+const CART_EST = { risk: { t: 'En riesgo', o: 0 }, warn: { t: 'Por mirar', o: 1 }, ok: { t: 'Al día', o: 2 } };
+async function cargarCartera(){
+  if(_cart.cargando) return; _cart.cargando = true;
+  const sub = document.getElementById('cartSub'), lista = document.getElementById('cartList'), btn = document.getElementById('cartRef');
+  if(btn) btn.disabled = true;
+  if(!_cart.listo && lista) lista.innerHTML = '<div class="cart-ok" style="padding:2rem;text-align:center">Calculando el estado de tus clientes…</div>';
+  try{
+    const lista0 = await getDeportistas();
+    if(!Array.isArray(lista0)){ if(sub) sub.textContent = 'No se pudo cargar'; if(lista) lista.innerHTML = vacioHtml('users','No se pudo cargar la cartera','Comprueba la conexión y pulsa «Actualizar».'); return; }
+    deportistas = lista0;
+    const deps = lista0.filter(d => !d.fecha_baja);
+    const seguro = p => Promise.resolve(p).then(v => Array.isArray(v) ? v : null).catch(() => null);
+    const hoy = localISO(new Date()), lunes = lunesMadridISO();
+    const haceD = n => localISO(new Date(Date.now() - n * 86400000));
+    const lunesPrev = (() => { const x = new Date(lunes + 'T00:00:00'); x.setDate(x.getDate() - 7); return localISO(x); })();
+    const [segs, pesos, comidas, hist, meds, bios, menus, objs] = await Promise.all([
+      seguro(sb(`seguimientos?semana=gte.${haceD(70)}&select=deportista_id,semana,respuestas&order=semana.desc`)),
+      seguro(sb(`pesos_cliente?fecha=gte.${haceD(60)}&select=deportista_id,fecha&order=fecha.desc`)),
+      seguro(sb(`comidas_cliente?fecha=gte.${haceD(7)}&comentario=is.null&select=deportista_id`)),
+      seguro(sb('historial_deportista?select=deportista_id,fecha&order=fecha.desc&limit=3000')),
+      seguro(sb('antropometria_valoraciones?select=deportista_id,fecha&order=fecha.desc&limit=3000')),
+      seguro(sb('bioimpedancias?select=deportista_id,fecha&order=fecha.desc&limit=3000')),
+      seguro(sb('menus_cliente?select=deportista_id,publicado_en')),
+      seguro(sb('objetivos_cliente?estado=eq.activo&select=deportista_id'))
+    ]);
+    const por = (arr, f) => { const m = {}; (arr || []).forEach(x => { const k = String(x.deportista_id); (m[k] = m[k] || []).push(x); }); return m; };
+    const pSeg = por(segs), pPeso = por(pesos), pCom = por(comidas), pHist = por(hist), pMed = por(meds), pBio = por(bios), pMenu = por(menus);
+    // Objetivos activos: el avance se pide solo a quien tiene uno (de 6 en 6)
+    const conObj = [...new Set((objs || []).map(x => String(x.deportista_id)))].filter(id => deps.some(d => String(d.id) === id));
+    const pObj = {};
+    for(let i = 0; i < conObj.length; i += 6) await Promise.all(conObj.slice(i, i + 6).map(async id => { const r = await objCargarActivos(id).catch(() => null); pObj[id] = r && r.lista || []; }));
+    const dia = f => String(f || '').slice(0, 10);
+    const dias = f => Math.round((new Date(hoy + 'T00:00:00') - new Date(dia(f) + 'T00:00:00')) / 86400000);
+    const maxF = arrs => arrs.flat().map(x => dia(x.fecha)).filter(Boolean).sort().pop() || null;
+
+    _cart.filas = deps.map(d => {
+      const k = String(d.id), chips = [], ch = (t, cls) => chips.push({ t, cls });
+      const fm = (d.formularios && typeof d.formularios === 'object') ? d.formularios : {};
+      const segAct = !!(fm.seguimiento && fm.seguimiento.activo), sl = pSeg[k] || [];
+      // Seguimiento semanal
+      if(segAct){
+        if(segYaToca(d, lunesPrev) && !sl.some(x => dia(x.semana) >= lunesPrev)) ch('Sin seguimiento hace 2 semanas o más', 'red');
+        else if(segYaToca(d, lunes) && !sl.some(x => dia(x.semana) >= lunes)) ch('Seguimiento sin enviar', 'gold');
+      }
+      const [a, b] = sl, seguidas = a && b && Math.round((new Date(dia(a.semana)) - new Date(dia(b.semana))) / 86400000) === 7;
+      if(seguidas){
+        const qa = a.respuestas || {}, qb = b.respuestas || {};
+        if(qa.adherencia != null && qb.adherencia != null && qa.adherencia <= 2 && qb.adherencia <= 2) ch('Adherencia baja 2 semanas', 'red');
+        if(String(qa.molestias || '').trim() && String(qb.molestias || '').trim()) ch('Molestias 2 semanas', 'red');
+      }
+      const serie = sl.filter(x => dia(x.semana) >= haceD(42)).map(x => (x.respuestas || {}).adherencia).filter(v => v != null && !isNaN(v)).reverse();
+      const rec = sl.filter(x => dia(x.semana) >= haceD(28)).map(x => (x.respuestas || {}).adherencia);
+      const adhMedia = infMedia(rec);
+      // Peso que anota el cliente
+      const pp0 = pPeso[k]; if(pp0 && pp0.length){ const n = dias(pp0[0].fecha); if(n >= 14) ch(`Sin anotar el peso ${n} días`, 'gold'); }
+      // Diario sin comentar
+      const nc = (pCom[k] || []).length; if(nc) ch(`${nc} comida${nc !== 1 ? 's' : ''} sin comentar`, 'gold');
+      // Consulta y mediciones
+      const ultimaCons = maxF([pHist[k] || [], pMed[k] || [], pBio[k] || []]);
+      let sinCons30 = false;
+      if(ultimaCons && dias(ultimaCons) > 30){ sinCons30 = true; ch(`Sin consulta hace ${dias(ultimaCons)} días`, 'gold'); }
+      const ultimaMed = maxF([pMed[k] || [], pBio[k] || []]);
+      if(ultimaMed && dias(ultimaMed) > 90) ch('Medición de hace más de 90 días', 'gold');
+      // Revisión
+      const rv = dia(d.proxima_revision);
+      if(!rv) ch('Sin revisión programada', 'gold'); else if(rv < hoy) ch('Revisión con la fecha pasada', 'red');
+      // Plan
+      const filasMenu = pMenu[k] || [], pub = filasMenu.map(x => x.publicado_en).filter(Boolean).sort().pop() || null;
+      const pend = planPendienteVivo(d, pub);
+      if(pend) ch('Plan por preparar · ' + planPendienteTxt(pend), daysUntil(pend.para) <= 0 ? 'red' : 'gold');
+      else if(filasMenu.length && !pub) ch('Plan sin publicar', 'gold');
+      // Objetivo
+      (pObj[k] || []).forEach(o => {
+        if(o.progreso_bruto != null && o.progreso_bruto < 0 && !(o.dias != null && o.dias < 0)) ch('Objetivo en dirección contraria', 'red');
+        else if(o.progreso_bruto != null && o.progreso_bruto < 1 && o.dias != null && o.dias < 0) ch('Objetivo con la fecha pasada', 'gold');
+      });
+      const nRed = chips.filter(c => c.cls === 'red').length;
+      const est = nRed ? 'risk' : chips.length ? 'warn' : 'ok';
+      chips.sort((x, y) => (y.cls === 'red') - (x.cls === 'red'));
+      return { d, est, chips, nRed, serie, adhMedia, ultimaCons, sinCons30, rev: rv };
+    });
+    _cart.listo = true;
+    cartPintar();
+  }catch(e){
+    if(sub) sub.textContent = 'No se pudo calcular';
+    if(lista && !_cart.listo) lista.innerHTML = vacioHtml('users','No se pudo calcular la cartera','Pulsa «Actualizar» para volver a intentarlo.');
+  }finally{
+    _cart.cargando = false; if(btn) btn.disabled = false;
+  }
+}
+function cartFiltro(f){ _cart.filtro = f; document.querySelectorAll('#cartTabs .agenda-tab').forEach(b => b.classList.toggle('on', b.dataset.f === f)); cartPintar(); }
+function cartBuscar(){ _cart.busca = (document.getElementById('cartBusca').value || '').trim().toLowerCase(); cartPintar(); }
+function cartOrden(){ _cart.orden = document.getElementById('cartOrd').value; cartPintar(); }
+function cartSpark(vals){
+  if(!vals || vals.length < 2) return vals && vals.length === 1 ? '' : '';
+  const w = 64, h = 22, n = vals.length, px = i => 2 + i * (w - 4) / (n - 1), py = v => h - 3 - (Math.min(5, Math.max(1, v)) - 1) / 4 * (h - 6);
+  const pts = vals.map((v, i) => `${px(i).toFixed(1)},${py(v).toFixed(1)}`).join(' ');
+  const l = vals[n - 1];
+  return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" aria-hidden="true"><polyline points="${pts}" fill="none" stroke="var(--t400)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="${px(n-1).toFixed(1)}" cy="${py(l).toFixed(1)}" r="2.4" fill="var(--t400)"/></svg>`;
+}
+function cartPintar(){
+  const filas = _cart.filas, el = document.getElementById('cartList'); if(!el) return;
+  const cnt = { risk: 0, warn: 0, ok: 0 }; filas.forEach(f => cnt[f.est]++);
+  const s30 = filas.filter(f => f.sinCons30).length;
+  document.getElementById('cartSub').textContent = filas.length ? `${filas.length} cliente${filas.length !== 1 ? 's' : ''} en seguimiento` : 'Sin clientes todavía';
+  document.getElementById('cartSum').innerHTML = filas.length ? `
+    <span class="cart-pill"><span class="cart-dot ok"></span><b>${cnt.ok}</b> al día</span>
+    <span class="cart-pill"><span class="cart-dot warn"></span><b>${cnt.warn}</b> por mirar</span>
+    <span class="cart-pill"><span class="cart-dot risk"></span><b>${cnt.risk}</b> en riesgo</span>
+    <span class="cart-pill sub">${s30 ? `<b>${s30}</b> con más de 30 días sin consulta` : 'Nadie lleva más de 30 días sin consulta'}</span>` : '';
+  sbPonBadge('sbCartBadge', cnt.risk, 'en riesgo');
+  let v = filas.filter(f => (_cart.filtro === 'todos' || f.est === _cart.filtro) && (!_cart.busca || (f.d.nombre + ' ' + (f.d.deporte || '')).toLowerCase().includes(_cart.busca)));
+  const nom = (a, b) => String(a.d.nombre).localeCompare(String(b.d.nombre), 'es');
+  const ord = {
+    urgencia: (a, b) => CART_EST[a.est].o - CART_EST[b.est].o || b.nRed - a.nRed || b.chips.length - a.chips.length || nom(a, b),
+    nombre: nom,
+    consulta: (a, b) => (a.ultimaCons || '0000').localeCompare(b.ultimaCons || '0000') || nom(a, b),   // los que no tienen ninguna, primero
+    revision: (a, b) => (a.rev || '9999').localeCompare(b.rev || '9999') || nom(a, b)
+  }[_cart.orden] || nom;
+  v = v.slice().sort(ord);
+  if(!filas.length){ el.innerHTML = vacioHtml('users','Aún no hay clientes en la cartera','Crea tu primer deportista y aquí verás su estado de un vistazo.',{t:'Nuevo deportista',f:"navTo('deportiva');openAddDep()"}); return; }
+  if(!v.length){ el.innerHTML = vacioHtml('search','Ningún cliente coincide','Cambia el filtro o la búsqueda.',null,true); return; }
+  const hoy = localISO(new Date()), dia = f => String(f || '').slice(0, 10);
+  const hace = f => { if(!f) return 'Aún ninguna'; const n = Math.round((new Date(hoy + 'T00:00:00') - new Date(dia(f) + 'T00:00:00')) / 86400000); return n <= 0 ? 'Hoy' : n === 1 ? 'Hace 1 día' : n < 60 ? `Hace ${n} días` : `Hace ${Math.round(n / 30.4)} meses`; };
+  const fmt = f => f ? new Date(dia(f) + 'T00:00:00').toLocaleDateString('es-ES', { day: 'numeric', month: 'short' }) : 'Sin fecha';
+  el.innerHTML = `<div class="cart-head" aria-hidden="true"><div>Cliente</div><div>Estado</div><div>Qué mirar</div><div>Última consulta</div><div>Revisión</div><div class="cart-adh">Adherencia</div></div>` + v.map(f => {
+    const d = f.d, mostrar = f.chips.slice(0, 3), mas = f.chips.length - mostrar.length;
+    const chips = f.chips.length ? mostrar.map(c => `<span class="cart-chip ${c.cls}">${sudEsc(c.t)}</span>`).join('') + (mas > 0 ? `<span class="cart-chip" title="${sudEsc(f.chips.slice(3).map(c => c.t).join(' · '))}">+${mas}</span>` : '') : '<span class="cart-ok">Todo en orden</span>';
+    const adh = f.adhMedia != null ? `${cartSpark(f.serie)}<span class="n">${medNum(f.adhMedia, 1)}/5</span>` : '<span class="cart-ok">—</span>';
+    return `<div class="cart-row" role="button" tabindex="0" onclick="abrirFichaDash(${d.id})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();abrirFichaDash(${d.id})}">
+      <div class="cart-cli"><span class="cart-av">${avatarHtml(d, '')}</span><div style="min-width:0"><div class="cart-n">${sudEsc(d.nombre)}</div><div class="cart-s">${sudEsc(d.deporte || '—')}</div></div></div>
+      <div class="cart-est"><span class="cart-dot ${f.est}"></span>${CART_EST[f.est].t}</div>
+      <div class="cart-mot">${chips}</div>
+      <div class="cart-c cart-cons"><span class="cart-k">Consulta</span>${hace(f.ultimaCons)}</div>
+      <div class="cart-c cart-rev"><span class="cart-k">Revisión</span>${fmt(f.rev)}</div>
+      <div class="cart-c cart-adh">${adh}</div>
+    </div>`;
+  }).join('');
+  cargarAvatares(el);
+}
+
 // Enlace al área de clientes (misma carpeta, sin escribir el nombre del repo a mano)
 function urlCliente(){ return window.location.origin + window.location.pathname.replace('panel-profesional.html','cliente.html'); }
 // Solo la cuenta del profesional entra en el panel: una cuenta de cliente (área de clientes) inicia sesión igual en Supabase, pero
@@ -4757,6 +4994,7 @@ function toggleServiciosGroup(){
 function navTo(section){
   document.querySelectorAll('.sb-item').forEach(b=>b.classList.remove('on'));
   if(section==='home'){document.getElementById('sbHome').classList.add('on');show('vhome');loadDashboard();}
+  else if(section==='cartera'){document.getElementById('sbCartera').classList.add('on');show('vcartera');cargarCartera();}
   else if(section==='agenda'){document.getElementById('sbAgenda').classList.add('on');show('vagenda');loadCitas();}
   else if(section==='metodo'){document.getElementById('sbMetodo').classList.add('on');show('vdash');load();}
   else if(section==='deportiva'){document.getElementById('sbDep').classList.add('on');show('vdepdash');loadDeportistas();}
@@ -5622,7 +5860,7 @@ function renderCitas() {
 async function refrescarVista(){
   await _autoDep.ahora(); await _autoM3.ahora();
   const v = document.querySelector('.view.active'); if(!v) return;
-  const mapa = {vhome:loadDashboard, vagenda:loadCitas, vdash:load, vdepdash:loadDeportistas, vfact:loadFacturacion,
+  const mapa = {vhome:loadDashboard, vcartera:cargarCartera, vagenda:loadCitas, vdash:load, vdepdash:loadDeportistas, vfact:loadFacturacion,
     vdepdet:async()=>{ await loadDeportistas(); if(currentDepId) openDepDet(currentDepId); }};
   const f = mapa[v.id]; if(!f) return;
   try{ await f(); toast('Actualizado',{ms:1500}); }catch(e){ toast('No se pudo actualizar',{tipo:'error'}); }
