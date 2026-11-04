@@ -1333,21 +1333,41 @@ body.dark-mode .frm select.inp{background-image:url("data:image/svg+xml,%3Csvg x
 .sb-theme{max-height:60px;overflow:hidden;transition:max-height .22s ease,opacity .16s ease,margin .22s ease,padding .22s ease}
 .sb-acct-btn{gap:8px}
 /* Insignias, despliegue al pasar el ratón y punto de conexión */
+/* SISTEMA DE CONTROLES (botón, buscador, desplegable): misma altura, radio, borde y foco; se usa en Cartera y sirve para el resto de pantallas */
+.ui-btn,.ui-search input,.ui-select select{height:var(--h-btn,40px);border:.5px solid var(--bdm);border-radius:var(--r-btn,10px);background:var(--sf);color:var(--g900);font:500 13px/1 var(--f);transition:border-color .15s,box-shadow .15s,background .15s}
+.ui-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:0 16px;font-weight:600;color:var(--t800);cursor:pointer;white-space:nowrap}
+.ui-btn svg{flex:none;color:var(--t600)}
+.ui-btn:hover{background:var(--t50);border-color:rgba(29,158,117,.45)}
+.ui-btn:disabled{opacity:.55;cursor:default}
+.ui-btn.cargando svg{animation:sp .8s linear infinite}
+.ui-bar{display:flex;gap:10px;align-items:center;margin:14px 0}
+.ui-search{position:relative;flex:1;min-width:0;display:block}
+.ui-search svg{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--g400);pointer-events:none}
+.ui-search input{width:100%;padding:0 14px 0 38px;outline:none}
+.ui-search input::placeholder{color:var(--g400)}
+.ui-select{position:relative;flex:none;width:224px}
+.ui-select select{width:100%;padding:0 38px 0 14px;appearance:none;-webkit-appearance:none;cursor:pointer;outline:none;text-overflow:ellipsis}
+.ui-select svg{position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--g400);pointer-events:none}
+.ui-search input:hover,.ui-select select:hover{border-color:var(--g400)}
+.ui-search input:focus,.ui-select select:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(184,149,106,.18)}
+.ui-btn:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+@media(max-width:860px){.ui-bar{flex-wrap:wrap}.ui-select{width:100%}.ui-search{flex:1 1 100%}}
 /* CARTERA */
-.cart-sum{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:1.1rem}
-.cart-pill{display:inline-flex;align-items:center;gap:8px;padding:7px 14px;border-radius:20px;background:var(--sf);border:.5px solid var(--bd);font-size:12.5px;font-weight:600;color:var(--g700);white-space:nowrap}
-.cart-pill b{font-size:15px;color:var(--t900)}
-body.dark-mode .cart-pill b{color:var(--g900,#fff)}
-.cart-pill.sub{background:transparent;font-weight:500;color:var(--g500)}
-.cart-dot{width:8px;height:8px;border-radius:50%;flex:none;display:inline-block}
+#vcartera .page-header{margin-bottom:1.25rem}
+.cart-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--bd);border:.5px solid var(--bd);border-radius:16px;overflow:hidden}
+.cart-cell{display:flex;flex-direction:column;align-items:flex-start;gap:6px;padding:14px 18px 15px;background:var(--sf);border:none;cursor:pointer;font-family:var(--f);text-align:left;position:relative;transition:background .15s}
+.cart-cell:hover{background:var(--t50)}
+.cart-cell>span{display:inline-flex;align-items:center;gap:7px;font-size:10.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--g500);white-space:nowrap}
+.cart-cell>b{font-size:26px;line-height:1;font-weight:600;letter-spacing:-.02em;color:var(--g900);font-variant-numeric:tabular-nums}
+.cart-cell.on{background:var(--t50)}
+.cart-cell.on::after{content:'';position:absolute;left:18px;right:18px;bottom:0;height:2px;border-radius:2px 2px 0 0;background:var(--gold)}
+.cart-cell:focus-visible{outline:2px solid var(--gold);outline-offset:-2px}
+.cart-dot{width:7px;height:7px;border-radius:50%;flex:none;display:inline-block}
 .cart-dot.risk{background:var(--red)}.cart-dot.warn{background:var(--gold)}.cart-dot.ok{background:var(--t400)}
-.cart-bar .agenda-tabs{margin-bottom:0}
-.cart-ord{width:auto;min-width:190px}
-#vcartera .page{max-width:1120px}
-.sb-main.on .sb-badge{background:rgba(184,50,50,.14);color:#B83232}
+@media(max-width:860px){.cart-strip{grid-template-columns:repeat(2,1fr)}.cart-cell:last-child{grid-column:1/-1}.cart-cell>b{font-size:24px}}
 .cart-list{background:var(--sf);border:.5px solid var(--bd);border-radius:16px;overflow:hidden}
-.cart-row,.cart-head{display:grid;grid-template-columns:minmax(170px,1.3fr) 100px minmax(0,2.4fr) 112px 84px 112px;gap:14px;align-items:center;padding:12px 18px}
-.cart-head{padding-top:10px;padding-bottom:10px;font-size:10.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--g500);background:var(--g100);border-bottom:.5px solid var(--bd)}
+.cart-row,.cart-head{display:grid;grid-template-columns:minmax(170px,1.3fr) 100px minmax(0,2.4fr) 126px 84px 112px;gap:14px;align-items:center;padding:12px 18px}
+.cart-head{padding-top:10px;padding-bottom:10px;white-space:nowrap;font-size:10.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--g500);background:var(--g100);border-bottom:.5px solid var(--bd)}
 .cart-row{border-bottom:.5px solid var(--bd);cursor:pointer;transition:background .12s}
 .cart-row:last-child{border-bottom:none}
 .cart-row:hover{background:var(--t50)}
@@ -1371,7 +1391,7 @@ body.dark-mode .cart-chip.gold{color:#E0C196}
 .cart-adh svg{flex:none}
 .cart-adh .n{font-size:12px;font-weight:600;color:var(--g700)}
 @media(max-width:1280px){
-  .cart-row,.cart-head{grid-template-columns:minmax(150px,1.3fr) 100px minmax(0,2.2fr) 108px 84px}
+  .cart-row,.cart-head{grid-template-columns:minmax(150px,1.3fr) 100px minmax(0,2.2fr) 124px 84px}
   .cart-row .cart-adh,.cart-head .cart-adh{display:none}
 }
 @media(max-width:860px){
@@ -1384,7 +1404,6 @@ body.dark-mode .cart-chip.gold{color:#E0C196}
   .cart-c.cart-cons,.cart-c.cart-rev{grid-column:auto}
   .cart-row .cart-adh{display:flex;grid-column:1/-1}
   .cart-c .cart-k{display:inline;color:var(--g400);margin-right:5px}
-  .cart-ord,.cart-bar .dep-search{flex:1 1 100%;width:100%}
 }
 
 body.dark-mode .sb-badge{background:rgba(229,83,75,.2)}
@@ -1740,7 +1759,6 @@ body.dark-mode .ref-src,body.dark-mode .sup-badge,body.dark-mode .depd-avatar-fa
       <button class="sb-item sb-subitem" id="sbDep" onclick="navTo('deportiva')">
         <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
         <span class="sb-lbl">Nutrición Deportiva</span>
-        <span class="sb-badge" id="sbDepBadge" style="display:none">0</span>
       </button>
     </div>
     <button class="sb-item sb-main" id="sbFact" onclick="navTo('facturacion')">
@@ -1859,13 +1877,6 @@ body.dark-mode .ref-src,body.dark-mode .sup-badge,body.dark-mode .depd-avatar-fa
 
     <div class="dash-cols" id="dashCols">
       <div class="dash-col" id="dashColMain" data-col="main">
-        <div class="dash-card" data-dc="avisos" id="dashAvisosCard" style="display:none">
-      <div class="dash-card-head">
-        <span class="dash-card-title"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>Por atender</span>
-        <span class="dash-card-count" id="dashAvisosCount">0</span>
-      </div>
-      <div id="dashAvisos"></div>
-    </div>
         <div class="dash-card" data-dc="sesiones">
         <div class="dash-card-head">
           <span class="dash-card-title"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Hoy y mañana</span>
@@ -2201,26 +2212,17 @@ body.dark-mode .ref-src,body.dark-mode .sup-badge,body.dark-mode .depd-avatar-fa
   <div class="page">
     <div class="page-header">
       <div><p class="page-title" role="heading" aria-level="1">Cartera</p><p class="page-sub" id="cartSub">Cargando…</p></div>
-      <button type="button" class="btn-soft" id="cartRef" onclick="cargarCartera()">Actualizar</button>
+      <button type="button" class="ui-btn" id="cartRef" onclick="cargarCartera()"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>Actualizar</button>
     </div>
-    <div class="cart-sum" id="cartSum" aria-live="polite"></div>
-    <div class="dep-toolbar cart-bar">
-      <div class="agenda-tabs cart-tabs" id="cartTabs" role="group" aria-label="Filtrar por estado">
-        <button type="button" class="agenda-tab on" data-f="todos" onclick="cartFiltro('todos')">Todos</button>
-        <button type="button" class="agenda-tab" data-f="risk" onclick="cartFiltro('risk')">En riesgo</button>
-        <button type="button" class="agenda-tab" data-f="warn" onclick="cartFiltro('warn')">Por mirar</button>
-        <button type="button" class="agenda-tab" data-f="ok" onclick="cartFiltro('ok')">Al día</button>
-      </div>
-      <div class="dep-search">
-        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input type="text" id="cartBusca" placeholder="Buscar por nombre o deporte…" oninput="cartBuscar()" aria-label="Buscar en la cartera">
-      </div>
-      <select class="inp cart-ord" id="cartOrd" onchange="cartOrden()" aria-label="Ordenar por">
+    <div class="cart-strip" id="cartStrip" role="group" aria-label="Filtrar por estado" aria-live="polite"></div>
+    <div class="ui-bar">
+      <label class="ui-search"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" id="cartBusca" placeholder="Buscar por nombre o deporte" oninput="cartBuscar()" aria-label="Buscar en la cartera" autocomplete="off"></label>
+      <div class="ui-select"><select id="cartOrd" onchange="cartOrden()" aria-label="Ordenar por">
         <option value="urgencia">Más urgentes primero</option>
         <option value="nombre">Nombre (A–Z)</option>
         <option value="consulta">Más tiempo sin consulta</option>
         <option value="revision">Próxima revisión</option>
-      </select>
+      </select><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></div>
     </div>
     <div class="cart-list" id="cartList"></div>
   </div>
@@ -4462,8 +4464,8 @@ async function loadDashboard(){
     return `<div class="dash-row"><div class="dash-row-dot red"></div><div class="dash-row-txt"><div class="dash-row-name">${d.nombre}</div><div class="dash-row-sub">${d.deporte||''}</div></div><span class="dash-row-tag">${d._idays}d</span></div>`;
   }).join(''):dashVacio('ok','Todos con actividad reciente.');
 
-  // ── Por atender: seguimientos sin enviar esta semana y revisiones sin cita ──
-  pintarAvisosDash(dashDeps, dashCitas, todayISO);
+  // ── Clientes por mirar: sale de la Cartera (mismas reglas) y rellena la frase de arriba y la insignia de la barra lateral ──
+  cargarCartera({ silencioso: true });
 
   // ── Sidebar badge (avisos totales) ──
   const totalAvisos=revs.length;   // el número de «Agenda»: solo las revisiones próximas (de hoy a 7 días), las mismas de la tarjeta «Revisiones próximas»
@@ -4489,7 +4491,7 @@ function dashPintarEstado() {
   const r = document.getElementById('dashResumen'), ok = document.getElementById('dashTodoOk'); if (!r) return;
   const n = (k, s, p) => `${k} ${k === 1 ? s : p}`, p = [];
   p.push(_dash.hoy ? n(_dash.hoy, 'cita hoy', 'citas hoy') : 'Sin citas hoy');
-  if (_dash.avisos) p.push(n(_dash.avisos, 'cosa por atender', 'cosas por atender'));
+  if (_dash.avisos) p.push(n(_dash.avisos, 'cliente por mirar', 'clientes por mirar'));
   if (_dash.venc) p.push(n(_dash.venc, 'cobro vencido', 'cobros vencidos'));
   const todo = _dash.avisos === 0 && !_dash.venc && !_dash.revs;
   if (todo) p.push('todo al día');
@@ -4598,60 +4600,6 @@ function lunesMadridISO(){
   const d = new Date(Date.UTC(+g('year'), +g('month')-1, +g('day')-dow));
   return d.toISOString().slice(0,10);
 }
-async function pintarAvisosDash(deps, citasAll, todayISO){
-  const card = document.getElementById('dashAvisosCard'); if(!card) return;
-  const avisos = [];
-  // 1) Seguimiento semanal: sin enviar esta semana, adherencia baja o molestias dos semanas seguidas
-  //    y clientes que antes anotaban su peso y llevan días sin hacerlo (si las tablas no existen, simplemente no se avisa)
-  const conSeg = deps.filter(d => d.formularios && d.formularios.seguimiento && d.formularios.seguimiento.activo);
-  const lunes = lunesMadridISO(), hace = n => { const x = new Date(lunes+'T00:00:00'); x.setDate(x.getDate()-n); return localISO(x); };
-  const [segs, pesos, comidas, objVenc, pubs] = await Promise.all([
-    Promise.resolve(sb(`seguimientos?semana=gte.${hace(21)}&select=deportista_id,semana,respuestas&order=semana.desc`)).then(a=>Array.isArray(a)?a:null).catch(()=>null),
-    Promise.resolve(sb(`pesos_cliente?fecha=gte.${hace(60)}&select=deportista_id,fecha&order=fecha.desc`)).then(a=>Array.isArray(a)?a:null).catch(()=>null),
-    Promise.resolve(sb(`comidas_cliente?fecha=gte.${localISO(new Date(Date.now() - 7*86400000))}&comentario=is.null&select=deportista_id`)).then(a=>Array.isArray(a)?a:null).catch(()=>null),
-    Promise.resolve(sb(`objetivos_cliente?estado=eq.activo&fecha_limite=lt.${todayISO}&select=deportista_id`)).then(a=>Array.isArray(a)?a:null).catch(()=>null),
-    deps.some(d => d.plan_pendiente) ? Promise.resolve(sb('menus_cliente?publicado_en=not.is.null&select=deportista_id,publicado_en')).then(a=>Array.isArray(a)?a:[]).catch(()=>[]) : Promise.resolve([])
-  ]);
-  const aviso = (d, tag, cls) => avisos.push({id:d.id, n:d.nombre, sub:d.deporte||'', tag, cls});
-  if(segs){
-    const por = {}; segs.forEach(x=>{ (por[String(x.deportista_id)] = por[String(x.deportista_id)] || []).push(x); });
-    conSeg.forEach(d=>{
-      const l = por[String(d.id)] || [];
-      if(segYaToca(d, lunes) && !l.some(x=>String(x.semana).slice(0,10) >= lunes)) aviso(d, 'Seguimiento sin enviar', 'gold');
-      // las dos últimas semanas seguidas (con 7 días de diferencia)
-      const [a, b] = l, seguidas = a && b && Math.round((new Date(String(a.semana).slice(0,10)) - new Date(String(b.semana).slice(0,10))) / 86400000) === 7;
-      if(seguidas){
-        const qa = a.respuestas || {}, qb = b.respuestas || {};
-        if(qa.adherencia != null && qb.adherencia != null && qa.adherencia <= 2 && qb.adherencia <= 2) aviso(d, 'Adherencia baja 2 semanas seguidas', 'red');
-        if(String(qa.molestias||'').trim() && String(qb.molestias||'').trim()) aviso(d, 'Molestias 2 semanas seguidas', 'red');
-      }
-    });
-  }
-  if(pesos){
-    const ultimo = {}; pesos.forEach(x=>{ const k = String(x.deportista_id); if(!ultimo[k]) ultimo[k] = String(x.fecha).slice(0,10); });
-    deps.forEach(d=>{ const u = ultimo[String(d.id)]; if(!u) return; const dias = Math.round((new Date(todayISO+'T00:00:00') - new Date(u+'T00:00:00')) / 86400000); if(dias >= 14) aviso(d, `Sin anotar el peso hace ${dias} días`, 'gold'); });
-  }
-  if(comidas){   // comidas del diario de los últimos 7 días que aún no has comentado
-    const n = {}; comidas.forEach(x => { const k = String(x.deportista_id); n[k] = (n[k] || 0) + 1; });
-    deps.forEach(d => { const c = n[String(d.id)]; if(c) aviso(d, `${c} comida${c!==1?'s':''} del diario sin comentar`, 'gold'); });
-  }
-  if(objVenc) [...new Set(objVenc.map(x => String(x.deportista_id)))].forEach(id => { const x = { deportista_id:id }; const d = deps.find(y => y.id == x.deportista_id); if(d) aviso(d, 'Objetivo con la fecha límite pasada', 'gold'); });
-  // 2) Revisión sin cita en la agenda (fecha próxima) o con la fecha ya pasada y sin nueva
-  deps.forEach(d=>{
-    const f = d.proxima_revision ? String(d.proxima_revision).slice(0,10) : '';
-    if(!f) return;
-    if(f < todayISO) avisos.push({id:d.id, n:d.nombre, sub:d.deporte||'', tag:'Poner nueva fecha de revisión', cls:'red'});
-    else if(!citasAll.some(c=>c.cliente===d.nombre && String(c.fecha).slice(0,10)===f)) avisos.push({id:d.id, n:d.nombre, sub:d.deporte||'', tag:'Revisión sin cita en la agenda', cls:'red'});
-  });
-  // 3) Plan por preparar (tras una consulta) hasta que se publica el plan: lo primero de la lista
-  const pub = {}; (pubs || []).forEach(x => { pub[String(x.deportista_id)] = x.publicado_en; });
-  const planes = deps.map(d => ({ d, pp: planPendienteVivo(d, pub[String(d.id)]) })).filter(x => x.pp).sort((a, b) => a.pp.para.localeCompare(b.pp.para));
-  avisos.unshift(...planes.map(({ d, pp }) => ({ id: d.id, n: d.nombre, sub: d.deporte || '', tag: 'Plan por preparar · ' + planPendienteTxt(pp), cls: daysUntil(pp.para) <= 0 ? 'red' : 'gold' })));
-  document.getElementById('dashAvisosCount').textContent = avisos.length;
-  card.style.display = avisos.length ? '' : 'none';
-  _dash.avisos = avisos.length; dashPintarEstado(); sbPonBadge('sbDepBadge', avisos.length, 'por atender');
-  document.getElementById('dashAvisos').innerHTML = avisos.map(a=>`<div class="dash-row dash-row-link" role="button" tabindex="0" onclick="abrirFichaDash(${a.id})" onkeydown="if(event.key==='Enter')abrirFichaDash(${a.id})"><div class="dash-row-dot ${a.cls}"></div><div class="dash-row-txt"><div class="dash-row-name">${sudEsc(a.n)}</div><div class="dash-row-sub">${sudEsc(a.sub)}</div></div><span class="dash-row-tag">${a.tag}</span></div>`).join('');
-}
 async function abrirFichaDash(id){ if(!deportistas.length) await loadDeportistas(); openDepDet(id); }
 
 // ═══════════════ CARTERA: semáforo de todos los clientes ═══════════════
@@ -4663,11 +4611,12 @@ async function abrirFichaDash(id){ if(!deportistas.length) await loadDeportistas
 // Las tablas que no existan (SQL sin ejecutar) simplemente no aportan avisos.
 let _cart = { filas: [], filtro: 'todos', orden: 'urgencia', busca: '', cargando: false, listo: false };
 const CART_EST = { risk: { t: 'En riesgo', o: 0 }, warn: { t: 'Por mirar', o: 1 }, ok: { t: 'Al día', o: 2 } };
-async function cargarCartera(){
+async function cargarCartera(opts){
+  const silencioso = !!(opts && opts.silencioso);
   if(_cart.cargando) return; _cart.cargando = true;
   const sub = document.getElementById('cartSub'), lista = document.getElementById('cartList'), btn = document.getElementById('cartRef');
-  if(btn) btn.disabled = true;
-  if(!_cart.listo && lista) lista.innerHTML = '<div class="cart-ok" style="padding:2rem;text-align:center">Calculando el estado de tus clientes…</div>';
+  if(btn && !silencioso){ btn.disabled = true; btn.classList.add('cargando'); }
+  if(!_cart.listo && lista && !silencioso) lista.innerHTML = '<div class="cart-ok" style="padding:2rem;text-align:center">Calculando el estado de tus clientes…</div>';
   try{
     const lista0 = await getDeportistas();
     if(!Array.isArray(lista0)){ if(sub) sub.textContent = 'No se pudo cargar'; if(lista) lista.innerHTML = vacioHtml('users','No se pudo cargar la cartera','Comprueba la conexión y pulsa «Actualizar».'); return; }
@@ -4677,7 +4626,7 @@ async function cargarCartera(){
     const hoy = localISO(new Date()), lunes = lunesMadridISO();
     const haceD = n => localISO(new Date(Date.now() - n * 86400000));
     const lunesPrev = (() => { const x = new Date(lunes + 'T00:00:00'); x.setDate(x.getDate() - 7); return localISO(x); })();
-    const [segs, pesos, comidas, hist, meds, bios, menus, objs] = await Promise.all([
+    const [segs, pesos, comidas, hist, meds, bios, menus, objs, citasAll] = await Promise.all([
       seguro(sb(`seguimientos?semana=gte.${haceD(70)}&select=deportista_id,semana,respuestas&order=semana.desc`)),
       seguro(sb(`pesos_cliente?fecha=gte.${haceD(60)}&select=deportista_id,fecha&order=fecha.desc`)),
       seguro(sb(`comidas_cliente?fecha=gte.${haceD(7)}&comentario=is.null&select=deportista_id`)),
@@ -4685,7 +4634,8 @@ async function cargarCartera(){
       seguro(sb('antropometria_valoraciones?select=deportista_id,fecha&order=fecha.desc&limit=3000')),
       seguro(sb('bioimpedancias?select=deportista_id,fecha&order=fecha.desc&limit=3000')),
       seguro(sb('menus_cliente?select=deportista_id,publicado_en')),
-      seguro(sb('objetivos_cliente?estado=eq.activo&select=deportista_id'))
+      seguro(sb('objetivos_cliente?estado=eq.activo&select=deportista_id')),
+      seguro(sb(`citas?fecha=gte.${hoy}&select=cliente,fecha`))
     ]);
     const por = (arr, f) => { const m = {}; (arr || []).forEach(x => { const k = String(x.deportista_id); (m[k] = m[k] || []).push(x); }); return m; };
     const pSeg = por(segs), pPeso = por(pesos), pCom = por(comidas), pHist = por(hist), pMed = por(meds), pBio = por(bios), pMenu = por(menus);
@@ -4703,7 +4653,7 @@ async function cargarCartera(){
       const segAct = !!(fm.seguimiento && fm.seguimiento.activo), sl = pSeg[k] || [];
       // Seguimiento semanal
       if(segAct){
-        if(segYaToca(d, lunesPrev) && !sl.some(x => dia(x.semana) >= lunesPrev)) ch('Sin seguimiento hace 2 semanas o más', 'red');
+        if(segYaToca(d, lunesPrev) && !sl.some(x => dia(x.semana) >= lunesPrev)) ch('2+ semanas sin seguimiento', 'red');
         else if(segYaToca(d, lunes) && !sl.some(x => dia(x.semana) >= lunes)) ch('Seguimiento sin enviar', 'gold');
       }
       const [a, b] = sl, seguidas = a && b && Math.round((new Date(dia(a.semana)) - new Date(dia(b.semana))) / 86400000) === 7;
@@ -4728,10 +4678,11 @@ async function cargarCartera(){
       // Revisión
       const rv = dia(d.proxima_revision);
       if(!rv) ch('Sin revisión programada', 'gold'); else if(rv < hoy) ch('Revisión con la fecha pasada', 'red');
+      else if(citasAll && !citasAll.some(c => String(c.cliente || '').trim().toLowerCase() === String(d.nombre || '').trim().toLowerCase() && dia(c.fecha) === rv)) ch('Revisión sin cita en la agenda', 'gold');
       // Plan
       const filasMenu = pMenu[k] || [], pub = filasMenu.map(x => x.publicado_en).filter(Boolean).sort().pop() || null;
       const pend = planPendienteVivo(d, pub);
-      if(pend) ch('Plan por preparar · ' + planPendienteTxt(pend), daysUntil(pend.para) <= 0 ? 'red' : 'gold');
+      if(pend){ const du = daysUntil(pend.para); ch(du < 0 ? `Plan vencido hace ${-du} día${du === -1 ? '' : 's'}` : du === 0 ? 'Plan para hoy' : du === 1 ? 'Plan para mañana' : 'Plan para el ' + new Date(pend.para + 'T00:00:00').toLocaleDateString('es-ES', { day: 'numeric', month: 'short' }), du <= 0 ? 'red' : 'gold'); }
       else if(filasMenu.length && !pub) ch('Plan sin publicar', 'gold');
       // Objetivo
       (pObj[k] || []).forEach(o => {
@@ -4745,14 +4696,15 @@ async function cargarCartera(){
     });
     _cart.listo = true;
     cartPintar();
+    _dash.avisos = _cart.filas.filter(f => f.est !== 'ok').length; dashPintarEstado();
   }catch(e){
     if(sub) sub.textContent = 'No se pudo calcular';
     if(lista && !_cart.listo) lista.innerHTML = vacioHtml('users','No se pudo calcular la cartera','Pulsa «Actualizar» para volver a intentarlo.');
   }finally{
-    _cart.cargando = false; if(btn) btn.disabled = false;
+    _cart.cargando = false; if(btn){ btn.disabled = false; btn.classList.remove('cargando'); }
   }
 }
-function cartFiltro(f){ _cart.filtro = f; document.querySelectorAll('#cartTabs .agenda-tab').forEach(b => b.classList.toggle('on', b.dataset.f === f)); cartPintar(); }
+function cartFiltro(f){ _cart.filtro = (_cart.filtro === f && f !== 'todos') ? 'todos' : f; cartPintar(); }
 function cartBuscar(){ _cart.busca = (document.getElementById('cartBusca').value || '').trim().toLowerCase(); cartPintar(); }
 function cartOrden(){ _cart.orden = document.getElementById('cartOrd').value; cartPintar(); }
 function cartSpark(vals){
@@ -4767,13 +4719,10 @@ function cartPintar(){
   const cnt = { risk: 0, warn: 0, ok: 0 }; filas.forEach(f => cnt[f.est]++);
   const s30 = filas.filter(f => f.sinCons30).length;
   document.getElementById('cartSub').textContent = filas.length ? `${filas.length} cliente${filas.length !== 1 ? 's' : ''} en seguimiento` : 'Sin clientes todavía';
-  document.getElementById('cartSum').innerHTML = filas.length ? `
-    <span class="cart-pill"><span class="cart-dot ok"></span><b>${cnt.ok}</b> al día</span>
-    <span class="cart-pill"><span class="cart-dot warn"></span><b>${cnt.warn}</b> por mirar</span>
-    <span class="cart-pill"><span class="cart-dot risk"></span><b>${cnt.risk}</b> en riesgo</span>
-    <span class="cart-pill sub">${s30 ? `<b>${s30}</b> con más de 30 días sin consulta` : 'Nadie lleva más de 30 días sin consulta'}</span>` : '';
+  const celda = (k, n, l, dot) => `<button type="button" class="cart-cell${_cart.filtro === k ? ' on' : ''}" aria-pressed="${_cart.filtro === k}" onclick="cartFiltro('${k}')"><span>${dot ? `<i class="cart-dot ${dot}"></i>` : ''}${l}</span><b>${n}</b></button>`;
+  document.getElementById('cartStrip').innerHTML = filas.length ? celda('todos', filas.length, 'Clientes') + celda('ok', cnt.ok, 'Al día', 'ok') + celda('warn', cnt.warn, 'Por mirar', 'warn') + celda('risk', cnt.risk, 'En riesgo', 'risk') + celda('old', s30, '+30 días sin consulta') : '';
   sbPonBadge('sbCartBadge', cnt.risk, 'en riesgo');
-  let v = filas.filter(f => (_cart.filtro === 'todos' || f.est === _cart.filtro) && (!_cart.busca || (f.d.nombre + ' ' + (f.d.deporte || '')).toLowerCase().includes(_cart.busca)));
+  let v = filas.filter(f => (_cart.filtro === 'todos' || (_cart.filtro === 'old' ? f.sinCons30 : f.est === _cart.filtro)) && (!_cart.busca || (f.d.nombre + ' ' + (f.d.deporte || '')).toLowerCase().includes(_cart.busca)));
   const nom = (a, b) => String(a.d.nombre).localeCompare(String(b.d.nombre), 'es');
   const ord = {
     urgencia: (a, b) => CART_EST[a.est].o - CART_EST[b.est].o || b.nRed - a.nRed || b.chips.length - a.chips.length || nom(a, b),
@@ -4789,7 +4738,7 @@ function cartPintar(){
   const fmt = f => f ? new Date(dia(f) + 'T00:00:00').toLocaleDateString('es-ES', { day: 'numeric', month: 'short' }) : 'Sin fecha';
   el.innerHTML = `<div class="cart-head" aria-hidden="true"><div>Cliente</div><div>Estado</div><div>Qué mirar</div><div>Última consulta</div><div>Revisión</div><div class="cart-adh">Adherencia</div></div>` + v.map(f => {
     const d = f.d, mostrar = f.chips.slice(0, 3), mas = f.chips.length - mostrar.length;
-    const chips = f.chips.length ? mostrar.map(c => `<span class="cart-chip ${c.cls}">${sudEsc(c.t)}</span>`).join('') + (mas > 0 ? `<span class="cart-chip" title="${sudEsc(f.chips.slice(3).map(c => c.t).join(' · '))}">+${mas}</span>` : '') : '<span class="cart-ok">Todo en orden</span>';
+    const chips = f.chips.length ? mostrar.map(c => `<span class="cart-chip ${c.cls}" title="${sudEsc(c.t)}">${sudEsc(c.t)}</span>`).join('') + (mas > 0 ? `<span class="cart-chip" title="${sudEsc(f.chips.slice(3).map(c => c.t).join(' · '))}">+${mas}</span>` : '') : '<span class="cart-ok">Todo en orden</span>';
     const adh = f.adhMedia != null ? `${cartSpark(f.serie)}<span class="n">${medNum(f.adhMedia, 1)}/5</span>` : '<span class="cart-ok">—</span>';
     return `<div class="cart-row" role="button" tabindex="0" onclick="abrirFichaDash(${d.id})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();abrirFichaDash(${d.id})}">
       <div class="cart-cli"><span class="cart-av">${avatarHtml(d, '')}</span><div style="min-width:0"><div class="cart-n">${sudEsc(d.nombre)}</div><div class="cart-s">${sudEsc(d.deporte || '—')}</div></div></div>
