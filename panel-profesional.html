@@ -1272,7 +1272,7 @@ body.dark-mode .frm select.inp{background-image:url("data:image/svg+xml,%3Csvg x
 @media(min-width:861px){.sb-min-btn{display:flex}}
 .sb-kbd{margin-left:auto;font:600 10.5px/1 var(--f);padding:3px 6px;border-radius:6px;border:.5px solid rgba(255,255,255,.2);color:rgba(255,255,255,.62);background:rgba(255,255,255,.06);letter-spacing:.02em}
 /* indicador de la sección activa: barra camel pegada al borde izquierdo */
-.sb-item.on::before{content:'';position:absolute;left:-12px;top:50%;width:4px;height:22px;transform:translateY(-50%);border-radius:0 4px 4px 0;background:var(--gold)}
+.sb-item.on::before{content:'';position:absolute;left:-12px;top:50%;width:5px;height:26px;transform:translateY(-50%);border-radius:0 6px 6px 0;background:linear-gradient(180deg,#e6caa2,#c19a6b);box-shadow:0 0 10px 1px rgba(217,184,140,.55),0 0 22px 4px rgba(193,154,107,.28)}
 .sb-main.on::before{height:26px}
 /* «Herramientas» plegable */
 .sb-div-btn{display:flex;align-items:center;justify-content:space-between;width:100%;background:transparent;border:0;cursor:pointer;font-family:var(--f);text-align:left;border-radius:8px;transition:color .15s}
@@ -1298,7 +1298,8 @@ body.dark-mode .frm select.inp{background-image:url("data:image/svg+xml,%3Csvg x
   body.sb-min .sidebar{overflow:visible}
   body.sb-min .sb-brand{padding:0 0 1.25rem;justify-content:center}
   body.sb-min .sb-brand>div:not(.sb-logo){display:none}
-  body.sb-min .sb-min-btn{right:-13px;top:13px;transform:rotate(180deg)}
+  body.sb-min .sb-brand{margin-bottom:1.25rem}
+  body.sb-min .sb-min-btn{right:auto;left:50%;top:auto;bottom:-13px;margin-left:-13px;transform:rotate(180deg)}
   body.sb-min .sb-search-wrap{padding:0 .75rem}
   body.sb-min .sb-search-btn{justify-content:center;padding:9px 0;gap:0}
   body.sb-min .sb-lbl,body.sb-min .sb-kbd,body.sb-min .sb-chevron,body.sb-min .sb-main.on::after{display:none}
