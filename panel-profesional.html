@@ -1333,6 +1333,52 @@ body.dark-mode .frm select.inp{background-image:url("data:image/svg+xml,%3Csvg x
 .sb-theme{max-height:60px;overflow:hidden;transition:max-height .22s ease,opacity .16s ease,margin .22s ease,padding .22s ease}
 .sb-acct-btn{gap:8px}
 /* Insignias, despliegue al pasar el ratón y punto de conexión */
+/* SISTEMA VISUAL (nov 2026): buscadores, filtros, pestañas y cabeceras de TODAS las pantallas con la misma altura, forma y foco que los .ui-* */
+.page-header{margin-bottom:1.5rem}
+#vcartera .page-header{margin-bottom:1.5rem}
+.dep-toolbar,.agenda-toolbar{gap:10px;align-items:center}
+.dep-search input{height:var(--h-btn,40px);padding:0 14px 0 38px;border:.5px solid var(--bdm);border-radius:var(--r-btn,10px);background:var(--sf);color:var(--g900);font:500 13px/1 var(--f);transition:border-color .15s,box-shadow .15s}
+.dep-search input::placeholder{color:var(--g400)}
+.dep-search input:hover{border-color:var(--g400)}
+.dep-search input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(184,149,106,.18)}
+.dep-search svg{left:13px;width:15px;height:15px}
+.agenda-tabs,.fact-period-tabs{padding:3px;border-radius:var(--r-btn,10px);background:var(--g100);gap:2px}
+.agenda-tab{height:calc(var(--h-btn,40px) - 6px);padding:0 18px;display:inline-flex;align-items:center;justify-content:center;border-radius:8px;font-size:12.5px}
+.agenda-tab:focus-visible{outline:2px solid var(--gold);outline-offset:1px}
+.dep-chip{height:34px;padding:0 14px;display:inline-flex;align-items:center;border-radius:var(--r-btn,10px);font-size:12.5px}
+.dep-chip:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+@media(max-width:860px){.agenda-tabs .agenda-tab{padding:0 6px}.dep-toolbar .dep-search,.agenda-toolbar .dep-search{flex:1 1 100%}}
+/* Filtros de la agenda: mismo segmentado que Lista/Semana */
+.agenda-chips{display:flex;gap:2px;padding:3px;border-radius:var(--r-btn,10px);background:var(--g100);flex-wrap:nowrap}
+.agenda-chips .dep-chip{height:calc(var(--h-btn,40px) - 6px);padding:0 14px;background:transparent;border:none;border-radius:8px;color:var(--g500);font-weight:600}
+.agenda-chips .dep-chip:hover:not(.active){background:rgba(0,0,0,.04)}
+.agenda-chips .dep-chip.active{background:#fff;color:var(--t800);box-shadow:0 1px 4px rgba(0,0,0,.08)}
+body.dark-mode .agenda-chips .dep-chip.active{background:var(--sf);color:var(--t800)}
+body.dark-mode .agenda-chips .dep-chip:hover:not(.active){background:rgba(255,255,255,.05)}
+@media(max-width:860px){.agenda-chips{margin:0;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;width:100%}.agenda-chips::-webkit-scrollbar{display:none}.agenda-chips .dep-chip{flex:0 0 auto}}
+@media(pointer:coarse){.dep-search input,.ui-btn,.ui-search input,.ui-select select{height:44px;font-size:16px}.agenda-tab{height:38px}}
+/* Números alineados en cifras, tablas y listas */
+.cart-cell>b,.cart-n,.cart-c,.cart-adh .n,.fact-row-amount,.dash-card-count,.dash-stat-n,.est-v,.ref-table td,.hist-w td,.seg-table td{font-variant-numeric:tabular-nums}
+/* Esqueletos de carga */
+.sk{display:block;background:linear-gradient(90deg,var(--g100) 25%,var(--g200) 37%,var(--g100) 63%);background-size:400% 100%;animation:skShimmer 1.5s ease-in-out infinite;border-radius:8px}
+body.dark-mode .sk{background:linear-gradient(90deg,#262a28 25%,#31363a 37%,#262a28 63%);background-size:400% 100%}
+@keyframes skShimmer{0%{background-position:100% 50%}100%{background-position:0 50%}}
+.sk-line{height:11px}.sk-line.w40{width:40%}.sk-line.w60{width:60%}.sk-line.w80{width:80%}.sk-line.big{height:22px;width:48px}
+.sk-av{width:38px;height:38px;border-radius:12px;flex:none}
+.sk-row{display:flex;align-items:center;gap:14px;padding:16px 18px;border-bottom:.5px solid var(--bd)}
+.sk-row:last-child{border-bottom:none}
+.sk-row .sk-col{flex:1;display:flex;flex-direction:column;gap:9px;min-width:0}
+.sk-list{background:var(--sf);border:.5px solid var(--bd);border-radius:16px;overflow:hidden}
+.sk-card{height:176px;border-radius:16px}
+.sk-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px}
+.sk-banner{height:128px;border-radius:16px;margin-bottom:12px}
+.sk-cell{padding:14px 18px 15px;background:var(--sf);display:flex;flex-direction:column;gap:12px}
+@media(prefers-reduced-motion:reduce){.sk{animation:none}}
+/* Cabecera de tabla fija al desplazarse (Cartera) */
+.cart-list{overflow:visible}
+.cart-head{position:sticky;top:0;z-index:4;border-radius:16px 16px 0 0}
+.cart-row:last-child{border-radius:0 0 16px 16px}
+
 /* SISTEMA DE CONTROLES (botón, buscador, desplegable): misma altura, radio, borde y foco; se usa en Cartera y sirve para el resto de pantallas */
 .ui-btn,.ui-search input,.ui-select select{height:var(--h-btn,40px);border:.5px solid var(--bdm);border-radius:var(--r-btn,10px);background:var(--sf);color:var(--g900);font:500 13px/1 var(--f);transition:border-color .15s,box-shadow .15s,background .15s}
 .ui-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:0 16px;font-weight:600;color:var(--t800);cursor:pointer;white-space:nowrap}
@@ -1365,7 +1411,7 @@ body.dark-mode .frm select.inp{background-image:url("data:image/svg+xml,%3Csvg x
 .cart-dot{width:7px;height:7px;border-radius:50%;flex:none;display:inline-block}
 .cart-dot.risk{background:var(--red)}.cart-dot.warn{background:var(--gold)}.cart-dot.ok{background:var(--t400)}
 @media(max-width:860px){.cart-strip{grid-template-columns:repeat(2,1fr)}.cart-cell:last-child{grid-column:1/-1}.cart-cell>b{font-size:24px}}
-.cart-list{background:var(--sf);border:.5px solid var(--bd);border-radius:16px;overflow:hidden}
+.cart-list{background:var(--sf);border:.5px solid var(--bd);border-radius:16px}
 .cart-row,.cart-head{display:grid;grid-template-columns:minmax(170px,1.3fr) 100px minmax(0,2.4fr) 126px 84px 112px;gap:14px;align-items:center;padding:12px 18px}
 .cart-head{padding-top:10px;padding-bottom:10px;white-space:nowrap;font-size:10.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--g500);background:var(--g100);border-bottom:.5px solid var(--bd)}
 .cart-row{border-bottom:.5px solid var(--bd);cursor:pointer;transition:background .12s}
@@ -2242,7 +2288,7 @@ body.dark-mode .ref-src,body.dark-mode .sup-badge,body.dark-mode .depd-avatar-fa
         <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         <input type="text" id="depSearchInp" placeholder="Buscar por nombre…" oninput="filterDeportistas()">
       </div>
-      <button type="button" class="btn-soft" id="depBajasBtn" style="display:none" onclick="toggleBajas()"></button>
+      <button type="button" class="ui-btn" id="depBajasBtn" style="display:none" onclick="toggleBajas()"></button>
     </div>
     <div class="dep-grid" id="depgrid"></div>
   </div>
@@ -4406,6 +4452,7 @@ function renderFactOfDay(){
 }
 
 async function loadDashboard(){
+  skPoner('dashProxima', '<span class="sk sk-banner"></span>');
   document.getElementById('dashDate').textContent=fechaLarga(new Date());
   renderFactOfDay();
   loadRecordatorios();
@@ -4600,6 +4647,11 @@ function lunesMadridISO(){
   const d = new Date(Date.UTC(+g('year'), +g('month')-1, +g('day')-dow));
   return d.toISOString().slice(0,10);
 }
+
+// ── Esqueletos de carga (solo la primera vez; si ya hay contenido, no se tapa) ──
+const skRows = n => '<div class="sk-list">' + Array.from({length:n}, () => '<div class="sk-row"><span class="sk sk-av"></span><div class="sk-col"><span class="sk sk-line w40"></span><span class="sk sk-line w80"></span></div></div>').join('') + '</div>';
+const skCards = n => '<div class="sk-grid">' + Array.from({length:n}, () => '<span class="sk sk-card"></span>').join('') + '</div>';
+function skPoner(id, html){ const e = document.getElementById(id); if(e && !e.firstElementChild) e.innerHTML = html; }
 async function abrirFichaDash(id){ if(!deportistas.length) await loadDeportistas(); openDepDet(id); }
 
 // ═══════════════ CARTERA: semáforo de todos los clientes ═══════════════
@@ -4616,10 +4668,10 @@ async function cargarCartera(opts){
   if(_cart.cargando) return; _cart.cargando = true;
   const sub = document.getElementById('cartSub'), lista = document.getElementById('cartList'), btn = document.getElementById('cartRef');
   if(btn && !silencioso){ btn.disabled = true; btn.classList.add('cargando'); }
-  if(!_cart.listo && lista && !silencioso) lista.innerHTML = '<div class="cart-ok" style="padding:2rem;text-align:center">Calculando el estado de tus clientes…</div>';
+  if(!_cart.listo && lista && !silencioso){ lista.innerHTML = skRows(6); const st = document.getElementById('cartStrip'); if(st && !st.firstElementChild) st.innerHTML = Array.from({length:5}, () => '<div class="sk-cell"><span class="sk sk-line w60"></span><span class="sk sk-line big"></span></div>').join(''); }
   try{
     const lista0 = await getDeportistas();
-    if(!Array.isArray(lista0)){ if(sub) sub.textContent = 'No se pudo cargar'; if(lista) lista.innerHTML = vacioHtml('users','No se pudo cargar la cartera','Comprueba la conexión y pulsa «Actualizar».'); return; }
+    if(!Array.isArray(lista0)){ const st0 = document.getElementById('cartStrip'); if(st0) st0.innerHTML = ''; if(sub) sub.textContent = 'No se pudo cargar'; if(lista) lista.innerHTML = vacioHtml('users','No se pudo cargar la cartera','Comprueba la conexión y pulsa «Actualizar».'); return; }
     deportistas = lista0;
     const deps = lista0.filter(d => !d.fecha_baja);
     const seguro = p => Promise.resolve(p).then(v => Array.isArray(v) ? v : null).catch(() => null);
@@ -4698,6 +4750,7 @@ async function cargarCartera(opts){
     cartPintar();
     _dash.avisos = _cart.filas.filter(f => f.est !== 'ok').length; dashPintarEstado();
   }catch(e){
+    const st1 = document.getElementById('cartStrip'); if(st1 && !_cart.listo) st1.innerHTML = '';
     if(sub) sub.textContent = 'No se pudo calcular';
     if(lista && !_cart.listo) lista.innerHTML = vacioHtml('users','No se pudo calcular la cartera','Pulsa «Actualizar» para volver a intentarlo.');
   }finally{
@@ -4968,6 +5021,7 @@ function navTo(section){
 
 // ── DASHBOARD ──
 async function load(){
+  skPoner('cgrid', skCards(6));
   clients=await getAll()||[];
   renderDash();
 }
@@ -5354,6 +5408,7 @@ const deleteDep = (id) => sb(`clientes_deportivos?id=eq.${id}`, {method:'DELETE'
 let depSearchTerm = '';
 
 async function loadDeportistas() {
+  skPoner('depgrid', skCards(8));
   deportistas = await getDeportistas() || [];
   depSearchTerm = '';
   const inp = document.getElementById('depSearchInp');
@@ -5633,6 +5688,7 @@ async function gcalEnviarProximas() {
 
 
 async function loadCitas() {
+  skPoner('agendaList', skRows(5));
   citas = await getCitas() || [];
   renderCitas();
 }
