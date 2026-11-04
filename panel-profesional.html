@@ -1217,6 +1217,7 @@ body.dark-mode .frm select.inp{background-image:url("data:image/svg+xml,%3Csvg x
   .pdf-wrap thead{display:table-header-group}.pdf-wrap tfoot{display:table-footer-group}
   .pdf-wrap td{padding:0}.pdf-sp{height:14mm}
   .pdf-wrap .pdf-cell{padding:0 14mm}
+  .pdf-body{display:flex;flex-direction:column}.pdf-body>.pdf-foot{margin-top:auto}
 }
 .pdf-hero{background:linear-gradient(135deg,#163a47 0%,#1f4d5e 100%);border-radius:18px;padding:22px 28px;color:#f7f4ee;margin-bottom:22px;display:flex;align-items:center;gap:18px}
 .pdf-hero-logo{width:44px;height:44px;border-radius:22%;flex-shrink:0;overflow:hidden}
@@ -5749,9 +5750,8 @@ async function infCompartir(){
 // se reparten las tarjetas entre páginas (una tarjeta no se parte), y se estira el área de impresión
 // hasta esas páginas: así el pie (.pdf-foot) queda al final de la última página y no pegado a la
 // última tarjeta. Si la simulación se queda corta, el pie simplemente sigue al contenido.
-function printNow(o){
-  const area = document.getElementById('printArea');
-  if(o && o.marca) return printMarca(area, o.titulo);
+// Alto mínimo (mm) que debe tener el contenido para que el pie quede al final de la última página (ver explicación arriba).
+function pdfMinAlto(area){
   const prev = area.getAttribute('style') || '';
   area.style.cssText = prev + ';display:block;position:absolute;visibility:hidden;left:0;top:0;width:182mm;min-height:0';
   const PX = 96/25.4, H = 269;               // px por mm, alto útil de página en mm
@@ -5769,12 +5769,18 @@ function printNow(o){
     else y += h;
   });
   // Los huecos también desplazan al pie, así que se descuentan del alto total del área.
-  area.style.setProperty('--pdf-min', (paginas*H - 1 - huecos) + 'mm');
+  return paginas*H - 1 - huecos;
+}
+function printNow(o){
+  const area = document.getElementById('printArea');
+  if(o && o.marca) return printMarca(area, o.titulo);
+  area.style.setProperty('--pdf-min', pdfMinAlto(area) + 'mm');
   setTimeout(()=>{ window.print(); }, 100);
 }
 // Impresión «de marca»: sin la cabecera ni el pie del navegador, fondo crema y título de archivo propio (el navegador lo usa como nombre al guardar el PDF).
 function printMarca(area, titulo){
-  area.innerHTML = `<table class="pdf-wrap"><thead><tr><td><div class="pdf-sp"></div></td></tr></thead><tbody><tr><td class="pdf-cell">${area.innerHTML}</td></tr></tbody><tfoot><tr><td><div class="pdf-sp"></div></td></tr></tfoot></table>`;
+  const minMm = pdfMinAlto(area);   // se mide antes de envolver el contenido
+  area.innerHTML = `<table class="pdf-wrap"><thead><tr><td><div class="pdf-sp"></div></td></tr></thead><tbody><tr><td class="pdf-cell"><div class="pdf-body" style="min-height:${minMm}mm">${area.innerHTML}</div></td></tr></tbody><tfoot><tr><td><div class="pdf-sp"></div></td></tr></tfoot></table>`;
   area.classList.add('marca');
   const st = document.createElement('style'); st.id = 'pdfMarcaCss'; st.media = 'print';
   st.textContent = '@page{size:A4;margin:0}html,html body,html body.has-sidebar{background:#f7f4ee !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}';
