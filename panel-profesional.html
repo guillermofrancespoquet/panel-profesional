@@ -1325,6 +1325,17 @@ body.dark-mode .frm select.inp{background-image:url("data:image/svg+xml,%3Csvg x
   body.sb-min .sb-menu{left:.5rem;right:auto;width:248px}
 }
 @media(prefers-reduced-motion:reduce){.sidebar,body.has-sidebar,.sb-grp,.sb-min-btn{transition:none!important}}
+/* Insignias, despliegue al pasar el ratón y punto de conexión */
+.sb-subitem .sb-badge{margin-right:2px}
+.sb-subitem .sb-lbl{white-space:nowrap}
+body.has-sidebar.sb-peek{padding-left:76px}
+body.sb-peek .sidebar{z-index:140;box-shadow:12px 0 36px rgba(4,52,44,.35)}
+.sb-acct-btn{position:relative}
+.sb-conn{position:absolute;left:29px;bottom:-1px;width:10px;height:10px;border-radius:50%;background:#34C77B;border:2px solid #0b4a40;box-sizing:border-box}
+body.sin-conexion .sb-conn{background:#E0A050;animation:sbPulso 1.6s ease-in-out infinite}
+@keyframes sbPulso{50%{opacity:.4}}
+@media(prefers-reduced-motion:reduce){body.sin-conexion .sb-conn{animation:none}}
+
 /* ═══ PÍLDORAS: tonos algo más oscuros y borde fino para que se distingan del fondo ═══ */
 :root{--pill-n:#E3DFD2;--pill-n-h:#D9D4C4;--pill-n-bd:rgba(70,58,30,.18);--pill-g:#C4E8D6;--pill-g-bd:rgba(15,110,86,.30);--pill-au:#EAD9BD;--pill-au-bd:rgba(122,90,56,.30);--pill-r:#F7D0D0;--pill-r-bd:rgba(192,57,43,.28)}
 body.dark-mode{--pill-n:#343a3d;--pill-n-h:#3e4548;--pill-n-bd:rgba(255,255,255,.14);--pill-g:#21493f;--pill-g-bd:rgba(159,225,203,.26);--pill-au:#463c22;--pill-au-bd:rgba(217,184,140,.28);--pill-r:#4e2828;--pill-r-bd:rgba(255,140,140,.24)}
@@ -1657,11 +1668,13 @@ body.dark-mode .ref-src,body.dark-mode .sup-badge,body.dark-mode .depd-avatar-fa
       <button class="sb-item sb-subitem" id="sbDep" onclick="navTo('deportiva')">
         <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
         <span class="sb-lbl">Nutrición Deportiva</span>
+        <span class="sb-badge" id="sbDepBadge" style="display:none">0</span>
       </button>
     </div>
     <button class="sb-item sb-main" id="sbFact" onclick="navTo('facturacion')">
       <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10h12"/><path d="M4 14h9"/><path d="M19 6a7.7 7.7 0 0 0-5.2-2A7.9 7.9 0 0 0 6 12c0 4.4 3.5 8 7.8 8 2 0 3.8-.8 5.2-2"/></svg>
       <span class="sb-lbl">Facturación</span>
+      <span class="sb-badge" id="sbFactBadge" style="display:none">0</span>
     </button>
     <button type="button" class="sb-divider sb-div-btn" id="sbToolsBtn" aria-expanded="true" aria-controls="sbToolsGrp" onclick="sbToggleTools()"><span>Herramientas</span><svg class="sb-chevron open" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></button>
     <div class="sb-grp" id="sbToolsGrp"><div class="sb-grp-in">
@@ -1739,7 +1752,7 @@ body.dark-mode .ref-src,body.dark-mode .sup-badge,body.dark-mode .depd-avatar-fa
     </button>
     <div class="sb-acct">
       <button type="button" class="sb-acct-btn" id="sbAcctBtn" aria-haspopup="menu" aria-expanded="false" aria-controls="sbAcctMenu" onclick="toggleAcctMenu()">
-        <span class="sb-av" id="sbAv" aria-hidden="true">NL</span>
+        <span class="sb-av" id="sbAv" aria-hidden="true">NL</span><span class="sb-conn" id="sbConn" role="img" aria-label="Conectado"></span>
         <span class="sb-acct-t"><span class="sb-acct-n">NutriLogos</span><span class="sb-acct-s">Profesional</span></span>
         <svg class="sb-chev" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><polyline points="7 15 12 20 17 15"/><polyline points="7 9 12 4 17 9"/></svg>
       </button>
@@ -3283,6 +3296,7 @@ let _conectado=true;
 function conexion(ok){
   if(ok===_conectado) return; _conectado=ok;
   document.body.classList.toggle('sin-conexion',!ok);
+  const cd=document.getElementById('sbConn'); if(cd) cd.setAttribute('aria-label',ok?'Conectado':'Sin conexión');
   if(ok) toast('Conexión recuperada',{ms:2500});
 }
 // Un fallo de red al cargar datos no es un error de la app: la franja ya lo explica.
@@ -4317,7 +4331,7 @@ async function loadDashboard(){
   // ── Pagos pendientes/atrasados ──
   const impagos=dashCitas.filter(c=>!c.pagado&&c.requiere_pago!==false).sort((a,b)=>(citaYaPaso(b)-citaYaPaso(a))||a.fecha.localeCompare(b.fecha));   // primero las que ya pasaron
   _dash.venc=impagos.filter(c=>citaYaPaso(c)).length;
-  document.getElementById('dashPagosCount').textContent=_dash.venc;
+  document.getElementById('dashPagosCount').textContent=_dash.venc; sbPonBadge('sbFactBadge', _dash.venc, 'cobros vencidos');
   document.getElementById('dashPagos').innerHTML=impagos.length?impagos.slice(0,5).map(c=>{
     const vencido=citaYaPaso(c);
     return `<div class="dash-row"><div class="dash-row-dot ${vencido?'red':'teal'}"></div><div class="dash-row-txt"><div class="dash-row-name">${c.cliente}</div><div class="dash-row-sub">${c.servicio||'Revisión'}</div></div><span class="dash-row-tag">${vencido?'Pendiente':'Por cobrar'}</span></div>`;
@@ -4533,7 +4547,7 @@ async function pintarAvisosDash(deps, citasAll, todayISO){
   avisos.unshift(...planes.map(({ d, pp }) => ({ id: d.id, n: d.nombre, sub: d.deporte || '', tag: 'Plan por preparar · ' + planPendienteTxt(pp), cls: daysUntil(pp.para) <= 0 ? 'red' : 'gold' })));
   document.getElementById('dashAvisosCount').textContent = avisos.length;
   card.style.display = avisos.length ? '' : 'none';
-  _dash.avisos = avisos.length; dashPintarEstado();
+  _dash.avisos = avisos.length; dashPintarEstado(); sbPonBadge('sbDepBadge', avisos.length, 'por atender');
   document.getElementById('dashAvisos').innerHTML = avisos.map(a=>`<div class="dash-row dash-row-link" role="button" tabindex="0" onclick="abrirFichaDash(${a.id})" onkeydown="if(event.key==='Enter')abrirFichaDash(${a.id})"><div class="dash-row-dot ${a.cls}"></div><div class="dash-row-txt"><div class="dash-row-name">${sudEsc(a.n)}</div><div class="dash-row-sub">${sudEsc(a.sub)}</div></div><span class="dash-row-tag">${a.tag}</span></div>`).join('');
 }
 async function abrirFichaDash(id){ if(!deportistas.length) await loadDeportistas(); openDepDet(id); }
@@ -4626,7 +4640,20 @@ function sbMin(v){
   const b = document.getElementById('sbMinBtn'); if(b){ b.setAttribute('aria-expanded', v ? 'false' : 'true'); const t = v ? 'Expandir la barra lateral' : 'Contraer la barra lateral'; b.setAttribute('aria-label', t); b.title = t; }
   sbTip(null);
 }
-function sbToggleMin(){ const v = !document.body.classList.contains('sb-min'); sbMin(v); try{ localStorage.setItem('nl_sb_min', v ? '1' : '0'); }catch(e){} }
+function sbPonBadge(id,n,txt){ const b=document.getElementById(id); if(!b) return; b.textContent=n>99?'99+':n; b.style.display=n?'':'none'; b.title=n?(n+' '+txt):''; b.setAttribute('aria-label',n?(n+' '+txt):''); }
+// Contraída: al pasar el ratón se despliega encima del contenido (sin moverlo); no cambia lo guardado
+let _sbPeekT=null;
+function sbPeek(on){
+  const b=document.body; if(!sbEscritorio()) return;
+  if(on){ if(b.classList.contains('sb-min')){ b.classList.remove('sb-min'); b.classList.add('sb-peek'); } }
+  else if(b.classList.contains('sb-peek')){ b.classList.remove('sb-peek'); b.classList.add('sb-min'); }
+}
+(function(){
+  const sb=document.querySelector('.sidebar'); if(!sb) return;
+  sb.addEventListener('mouseenter',()=>{ if(!document.body.classList.contains('sb-min')) return; clearTimeout(_sbPeekT); _sbPeekT=setTimeout(()=>sbPeek(true),380); });
+  sb.addEventListener('mouseleave',()=>{ clearTimeout(_sbPeekT); _sbPeekT=setTimeout(()=>{ const m=document.getElementById('sbAcctMenu'); if(m&&!m.hidden) return; sbPeek(false); },160); });
+})();
+function sbToggleMin(){ const peek=document.body.classList.contains('sb-peek'); document.body.classList.remove('sb-peek'); const v = peek ? false : !document.body.classList.contains('sb-min'); sbMin(v); try{ localStorage.setItem('nl_sb_min', v ? '1' : '0'); }catch(e){} }
 function sbTools(abierto, guardar){
   const g = document.getElementById('sbToolsGrp'), b = document.getElementById('sbToolsBtn'); if(!g) return;
   g.classList.toggle('shut', !abierto); if(b){ b.setAttribute('aria-expanded', abierto ? 'true' : 'false'); const c = b.querySelector('.sb-chevron'); if(c) c.classList.toggle('open', abierto); }
