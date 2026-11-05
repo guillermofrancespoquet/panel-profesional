@@ -35,7 +35,7 @@ fn_internas_auth as (
   select string_agg(p.proname, ', ' order by p.proname) as d
     from pg_proc p join pg_namespace n on n.oid = p.pronamespace
    where n.nspname = 'public' and p.prokind = 'f'
-     and (p.proname like 'objetivos\_%' or p.proname like 'push\_%' or p.proname like 'consent\_%' or p.proname like 'trg\_consent\_%' or p.proname = 'cliente_deportista_id' or p.proname = 'cliente_ruta_valida' or p.proname = 'comidas_cliente_comentario')
+     and ((p.proname like 'objetivos\_%' and p.proname <> 'objetivos_progreso') or p.proname like 'push\_%' or p.proname like 'consent\_%' or p.proname like 'trg\_consent\_%' or p.proname = 'cliente_deportista_id' or p.proname = 'cliente_ruta_valida' or p.proname = 'comidas_cliente_comentario')
      and has_function_privilege('authenticated', p.oid, 'execute')
 ),
 fn_sin_search_path as (

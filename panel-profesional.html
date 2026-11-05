@@ -1781,11 +1781,48 @@ body.dark-mode .ref-src,body.dark-mode .sup-badge,body.dark-mode .depd-avatar-fa
 .bio-foot{display:flex;align-items:center;gap:12px;padding:12px 20px;border-top:.5px solid var(--bd);flex-wrap:wrap}
 .bio-foot .bio-msg{flex:1;min-width:180px;font-size:12.5px;color:var(--g500);line-height:1.4}
 .bio-foot .btn-ok,.bio-foot .btn-cancel{flex:none;min-width:130px}
+/* ── Analíticas: filas de revisión, estado y vista de lectura ── */
+.ana-e{display:inline-block;font-size:11px;font-weight:600;padding:2px 9px;border-radius:20px;white-space:nowrap;line-height:1.5}
+.ana-e.ok{background:var(--pill-g);color:var(--t800)}
+.ana-e.alto{background:rgba(184,50,50,.12);color:var(--red)}
+.ana-e.bajo{background:rgba(43,108,176,.12);color:#2B6CB0}
+.ana-e.sin{background:var(--g100);color:var(--g500)}
+body.dark-mode .ana-e.bajo{background:rgba(141,184,236,.16);color:#8DB8EC}
+body.dark-mode .ana-e.alto{background:rgba(242,133,131,.16)}
+.ana-tab{display:flex;flex-direction:column}
+.ana-head{display:grid;grid-template-columns:minmax(150px,1.5fr) minmax(150px,1fr) minmax(120px,.9fr) 92px 28px;gap:8px;font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--g500);margin-top:14px}
+.ana-head span:nth-child(4){text-align:center}
+.ana-row{display:grid;grid-template-columns:minmax(150px,1.5fr) minmax(150px,1fr) minmax(120px,.9fr) 92px 28px;gap:6px 8px;align-items:center;padding:6px 0;border-top:.5px solid var(--bd)}
+.ana-row .inp{width:100%;height:36px;font-size:13px;padding:0 10px;margin:0}
+.ana-vu{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.ana-rg{display:grid;grid-template-columns:1fr auto 1fr;gap:4px;align-items:center;color:var(--g400)}
+.ana-es{text-align:center}
+.ana-x{width:28px;height:28px;border-radius:8px;border:none;background:transparent;color:var(--g400);font-size:18px;line-height:1;cursor:pointer}
+.ana-x:hover{background:var(--g100);color:var(--red)}
+.ana-row.d .inp{border-color:var(--gold);background:var(--gold-50)}
+.ana-dud{grid-column:1/-1;font-size:11px;color:var(--gold-dk);line-height:1.4}
+.ana-cnt{font-weight:500;color:var(--g400);margin-left:4px;letter-spacing:0}
+.ana-meta{font-size:12.5px;color:var(--g500);margin:0 0 10px;line-height:1.5}
+.ana-fuera .ana-e{background:var(--sf)}
+.ana-fuera{background:var(--gold-50);border-radius:10px;padding:10px 12px;font-size:12.5px;line-height:2.1;margin-bottom:10px}
+.ana-t{margin-top:2px}
+.ana-t tr.fuera td{background:rgba(184,50,50,.05)}
+.ana-t-n{font-weight:600;color:var(--g900)}
+.ana-t small,.ana-nd{color:var(--g400)}
+.ana-t td.n{font-variant-numeric:tabular-nums}
+@media(max-width:560px){.ana-t .hide-m{display:none}}
+@media(max-width:860px){
+  .ana-head{display:none}
+  .ana-row{grid-template-columns:minmax(0,1fr) minmax(0,1fr) 28px}
+  .ana-n{grid-column:1/-1}
+  .ana-vu{grid-column:1/2}.ana-rg{grid-column:2/3}
+  .ana-es{grid-column:1/3;text-align:left}.ana-x{grid-column:3/4;grid-row:3;justify-self:end}
+}
 .spin-mini{display:inline-block;width:12px;height:12px;border:2px solid var(--g200);border-top-color:var(--t400);border-radius:50%;animation:ptrSpin .7s linear infinite;vertical-align:-2px}
 @media(max-width:860px){
   .bio-modal{max-height:min(82vh,calc(100dvh - 5rem));border-radius:14px}
   .bio-body{grid-template-columns:minmax(0,1fr);overflow-y:auto}
-  .bio-prev{border-right:none;border-bottom:.5px solid var(--bd);max-height:240px;flex-direction:row;overflow:auto}
+  .bio-prev{border-right:none;border-bottom:.5px solid var(--bd);max-height:240px;min-height:150px;flex:none;flex-direction:row;overflow:auto}
   .bio-prev img{width:auto;max-height:216px}
   .bio-form{overflow:visible}
 }
@@ -2579,6 +2616,26 @@ body.dark-mode .ref-src,body.dark-mode .sup-badge,body.dark-mode .depd-avatar-fa
   </div>
 </div>
 <input type="file" id="bioFile" accept=".pdf,image/*" style="display:none" aria-hidden="true" tabindex="-1">
+<div class="mbg" id="mAna" style="display:none;z-index:300" role="dialog" aria-modal="true" aria-labelledby="anaTitulo">
+  <div class="bio-modal">
+    <div class="bio-head"><p class="mt" id="anaTitulo">Analítica</p><button type="button" class="inf-x" onclick="cerrarAna()" aria-label="Cerrar">&times;</button></div>
+    <div class="bio-body">
+      <div class="bio-prev" id="anaPrev"></div>
+      <div class="bio-form"><div id="anaAviso" aria-live="polite"></div><div id="anaCab"></div><div id="anaFilas"></div></div>
+    </div>
+    <div class="bio-foot"><div class="bio-msg" id="anaMsg" role="status" aria-live="polite"></div>
+      <button type="button" class="btn-cancel" onclick="cerrarAna()">Cancelar</button>
+      <button type="button" class="btn-ok" id="anaGuardar" onclick="anaGuardar()">Guardar analítica</button></div>
+  </div>
+</div>
+<div class="mbg" id="mAnaVer" style="display:none;z-index:300" role="dialog" aria-modal="true" aria-labelledby="anaVerTitulo">
+  <div class="bio-modal" style="width:min(820px,100%)">
+    <div class="bio-head"><p class="mt" id="anaVerTitulo">Analítica</p><button type="button" class="inf-x" onclick="cerrarAnaVer()" aria-label="Cerrar">&times;</button></div>
+    <div class="bio-form" id="anaVerCuerpo" style="flex:1"></div>
+    <div class="bio-foot"><div class="bio-msg"></div><button type="button" class="btn-cancel" onclick="cerrarAnaVer()">Cerrar</button></div>
+  </div>
+</div>
+<input type="file" id="anaFile" accept=".pdf,image/*" style="display:none" aria-hidden="true" tabindex="-1">
 
 <!-- MODAL: SUPLEMENTO DEL CLIENTE -->
 <div class="mbg" id="mSupl" style="display:none;z-index:300" role="dialog" aria-modal="true" aria-labelledby="supTit" onclick="if(event.target===this)supCerrar()">
@@ -7287,6 +7344,11 @@ function openDepDet(id) {
     </div>
 
     <div class="depd-section">
+      <p class="sec-title">Analíticas</p>
+      <div class="med-box" id="anaBox">${skel(3)}</div>
+    </div>
+
+    <div class="depd-section">
       <p class="sec-title">Test de sudoración</p>
       <div class="med-box" id="sudBox">${skel(3)}</div>
     </div>
@@ -7361,6 +7423,7 @@ function openDepDet(id) {
   loadFichaInicial(d.id);
   loadMateriales(d.id);
   loadMediciones(d.id);
+  loadAna(d.id);
   loadEstado(d.id);
   loadObjetivo(d.id);
   loadSudoracion(d.id);
@@ -7888,7 +7951,7 @@ async function revGuardar(depId, quitar){
 // ── Estado del cliente: resumen calculado con lo que ya hay (mediciones, seguimiento, peso, consultas, revisión y formularios) ──
 async function loadEstado(depId){
   const seguro = p => Promise.resolve(p).then(v => Array.isArray(v) ? v : []).catch(() => []);
-  const [meds, bios, segs, pesos, hist, comidas, objA, pubEst, , , consEst, fichaEst] = await Promise.all([
+  const [meds, bios, segs, pesos, hist, comidas, objA, pubEst, , , consEst, fichaEst, anaEst] = await Promise.all([
     seguro(getMediciones(depId)), seguro(getBio(depId)),
     seguro(sb(`seguimientos?deportista_id=eq.${depId}&order=semana.desc&limit=6&select=semana,respuestas`)),
     seguro(sb(`pesos_cliente?deportista_id=eq.${depId}&order=fecha.desc&limit=1&select=fecha,peso`)),
@@ -7897,7 +7960,8 @@ async function loadEstado(depId){
     objCargarActivos(depId).then(r => r ? r.lista : []).catch(() => []),
     Promise.resolve(sb(`menus_cliente?deportista_id=eq.${depId}&select=publicado_en`)).then(a => Array.isArray(a) && a[0] ? a[0].publicado_en : null).catch(() => null),
     rgCargarAjustes(), rgCargarTextos(), seguro(sb(`consentimientos?deportista_id=eq.${depId}&select=tipo,version,retirado_en`)),
-    seguro(sb(`fichas_iniciales?deportista_id=eq.${depId}&select=respuestas,enviado_en`))
+    seguro(sb(`fichas_iniciales?deportista_id=eq.${depId}&select=respuestas,enviado_en`)),
+    seguro(getAna(depId))
   ]);
   const el = document.getElementById('estBox'), d = deportistas.find(x => x.id == depId);
   if(!el || !d || currentDepId != depId) return;
@@ -7924,6 +7988,12 @@ async function loadEstado(depId){
     const n = dias(u.fecha), vieja = n > 90;
     add('Última medición', `${fmt(u.fecha)}${partes.length ? ': ' + partes.join(' · ') : ''}${bascula ? ' (báscula)' : ''} · ${hace(n)}${vieja ? ' — conviene volver a medir' : ''}`, vieja);
   } else add('Mediciones', 'Todavía no hay ninguna.', false);
+
+  // Última analítica (solo si hay alguna: no se avisa de que falte)
+  if(anaEst.length){
+    const u = anaEst[anaEst.length - 1], fu = anaFuera(u), n = dias(u.fecha);
+    add('Última analítica', `${fmt(u.fecha)} · ${hace(n)}${fu.length ? `: ${fu.length} valor${fu.length !== 1 ? 'es' : ''} fuera del rango (${fu.slice(0, 4).map(x => x.n).join(', ')}${fu.length > 4 ? '…' : ''})` : ': todo dentro del rango del laboratorio'}`, fu.length > 0);
+  }
 
   // Seguimiento semanal
   const fm = (d.formularios && typeof d.formularios === 'object') ? d.formularios : {};
@@ -8487,6 +8557,538 @@ function bioEliminar(id, depId, btn) {
     ocultar: () => { if (fila) fila.style.display = 'none'; },
     restaurar: () => { if (fila) fila.style.display = ''; },
     ejecutar: async () => { const r = await sb(`bioimpedancias?id=eq.${id}`, { method: 'DELETE', headers: { 'Prefer': 'return=minimal' } }); if (!esErrorSb(r) && currentDepId == depId) { loadMediciones(depId); loadHistorial(depId); } return r; }
+  });
+}
+
+
+// ═══════════════ ANALÍTICAS (informes de laboratorio) ═══════════════
+// Se sube el PDF o una foto del informe: el archivo se lee EN EL NAVEGADOR (pdf.js y, si hace falta, OCR) y no sale a ningún servidor.
+// Cada fila (prueba, resultado, unidades, rango del laboratorio) se muestra para revisarla y solo se guarda al confirmar.
+// ── Analíticas: de palabras con posición a una lista de resultados (nombre, valor, unidad, rango) ──
+// Se prueba en Node y se pega tal cual dentro de panel-profesional.html.
+function anaNorm(s) { return String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9%]+/g, ' ').replace(/\s+/g, ' ').trim(); }
+
+// Algunos PDF (p. ej. los «desbloqueados» con ciertos programas) guardan el texto en UTF-16 con los bytes cambiados y pdf.js lo lee como caracteres chinos: se deshace el cambio.
+function anaArreglaTexto(str) {
+  if (!/[\u2000-\u9fff]/.test(str)) return str;
+  const r = Array.from(str).map(ch => { const c = ch.charCodeAt(0); return c > 0xff ? String.fromCharCode(((c & 0xff) << 8) | (c >> 8)) : ch; }).join('');
+  return /[A-Za-z0-9]/.test(r) && !/[\u2000-\u9fff]/.test(r) ? r : str;
+}
+// Número con coma o punto decimal, con o sin separador de miles. `ref` (el rango) ayuda cuando es ambiguo (174.000 / 4.61).
+function anaNum(t, ref) {
+  let s = String(t || '').replace(/[<>≤≥\s]/g, '');
+  if (!/^\d[\d.,]*$/.test(s)) return null;
+  const nP = (s.match(/\./g) || []).length, nC = (s.match(/,/g) || []).length;
+  if (nP && nC) return s.lastIndexOf(',') > s.lastIndexOf('.') ? +s.replace(/\./g, '').replace(',', '.') : +s.replace(/,/g, '');
+  if (nC > 1) return +s.replace(/,/g, '');
+  if (nC === 1) return +s.replace(',', '.');
+  if (nP > 1) return +s.replace(/\./g, '');
+  if (nP === 1) {
+    const dec = +s, mil = +s.replace('.', '');
+    if (!/^\d{1,3}\.\d{3}$/.test(s)) return dec;                       // 4.61, 0.8, 13.7: decimal
+    if (ref && ref.max != null) { const m = ref.max, d = Math.abs(Math.log((dec || 1e-9) / m)), k = Math.abs(Math.log(mil / m)); return k < d ? mil : dec; }
+    if (ref && ref.min != null) { const m = ref.min, d = Math.abs(Math.log((dec || 1e-9) / m)), k = Math.abs(Math.log(mil / m)); return k < d ? mil : dec; }
+    return dec;
+  }
+  return +s;
+}
+const ANA_UNIT = /^(?:[a-zµμ]{1,4}\/[a-zµμ0-9.,\/²³^]+|(?:mg|g|µg|μg|ug|ng|pg|fl|dl|ml|l|mm|mmol|meq|ui|u|iu|s|h|kg|cm|mol|ul|µl|μl|uiu|µiu|μiu|fg|mosm|seg)|%|[·x]?10[\^³⁶⁹0-9]*\/?[µμu]?[lL]|\/[µμu]?[lL]|índice|indice|ratio|segundos?)$/i;
+const ANA_RANGO_INI = /^(?:\(|<|>|≤|≥|inf\.?|sup\.?|hasta|menor|mayor|\d[\d.,]*\s?[-–—]\s?\d)/i;
+
+function anaRango(txt) {
+  const t = String(txt || '').replace(/[()]/g, ' ').replace(/\s+/g, ' ').trim();
+  if (!t) return null;
+  const ini = /^(?:inf\.?|hasta|menor(?:\s+de)?|<|≤|sup\.?|mayor(?:\s+de)?|>|≥)\s*(\d[\d.,]*)/i.exec(t);
+  if (ini) { const x = anaNum(ini[1]), esMax = /^(?:inf|hasta|menor|<|≤)/i.test(ini[0]); return esMax ? { min: null, max: x, txt: t } : { min: x, max: null, txt: t }; }
+  const m = t.match(/(\d[\d.,]*)\s*(?:-|–|—)\s*(\d[\d.,]*)/) || t.match(/^(\d[\d.,]*)\s*[-–—=~_]*\s*(\d[\d.,]*)\b/);
+  if (m) { const a = anaNum(m[1]), b = anaNum(m[2]); if (a != null && b != null && b > a) return { min: a, max: b, txt: t }; }
+  return null;
+}
+
+// Palabras de la página → líneas (por altura) con las palabras ordenadas de izquierda a derecha
+function anaLineas(words) {
+  const ws = words.filter(w => w.t && w.t.trim()).map(w => ({ ...w, yc: (w.y0 + w.y1) / 2, h: Math.max(1, w.y1 - w.y0) }));
+  if (!ws.length) return [];
+  const hs = ws.map(w => w.h).sort((a, b) => a - b), hm = hs[Math.floor(hs.length / 2)];
+  // Una foto del papel suele salir ladeada: se busca el giro (±4°) que deja las filas más alineadas y se ordena con él.
+  let mejor = 0, mejorS = -1;
+  if (ws.length >= 30) for (let g = -4; g <= 4.001; g += 0.1) {
+    const tn = Math.tan(g * Math.PI / 180), bins = {};
+    ws.forEach(w => { const b = Math.round((w.yc - (w.x0 + w.x1) / 2 * tn) / (hm * 0.5)); bins[b] = (bins[b] || 0) + 1; });
+    const sc = Object.values(bins).reduce((a, n) => a + n * n, 0);
+    if (sc > mejorS + 1e-9) { mejorS = sc; mejor = g; }
+  }
+  const tn = Math.tan(mejor * Math.PI / 180);
+  ws.forEach(w => { w.yc = w.yc - (w.x0 + w.x1) / 2 * tn; });
+  ws.sort((a, b) => a.yc - b.yc);
+  const lineas = [];
+  ws.forEach(w => { const L = lineas[lineas.length - 1]; if (L && Math.abs(w.yc - L.yc) <= hm * 0.55) { L.ws.push(w); L.yc = (L.yc * (L.ws.length - 1) + w.yc) / L.ws.length; } else lineas.push({ yc: w.yc, ws: [w] }); });
+  lineas.forEach(L => {
+    L.ws.sort((a, b) => a.x0 - b.x0);
+    const m = [];   // fragmentos pegados (ligaduras fi, ti… del PDF) vuelven a ser una sola palabra
+    L.ws.forEach(w => { const p = m[m.length - 1]; if (p && w.x0 - p.x1 < Math.max(0.6, 0.1 * w.h) && /[\p{L}\uFFFD]$/u.test(p.t) && /^[\p{L}\uFFFD]/u.test(w.t)) { p.t += w.t; p.x1 = w.x1; } else m.push({ ...w }); });
+    L.ws = m;
+  });
+  return lineas;
+}
+
+// Catálogo: nombre canónico, sección y cómo reconocerlo (sobre el nombre normalizado, sin acentos). El primero que encaja gana.
+const ANA_CAT = [
+  ['hematies', 'Hematíes', 'Hemograma', /^(hematies|eritrocitos|recuento de hematies|globulos rojos)\b/],
+  ['hemoglobina', 'Hemoglobina', 'Hemograma', /^hemoglobina( total)?$/],
+  ['hematocrito', 'Hematocrito', 'Hemograma', /^hematocrito/],
+  ['vcm', 'VCM', 'Hemograma', /^(vcm|volumen corpuscular medio)/],
+  ['hcm', 'HCM', 'Hemograma', /^(hcm|hemoglobina corpuscular media)/],
+  ['chcm', 'CHCM', 'Hemograma', /^(chcm|concentracion de hemoglobina corpuscular)/],
+  ['rdw', 'RDW', 'Hemograma', /^(rdw|ancho de distribucion)/],
+  ['leucocitos', 'Leucocitos', 'Hemograma', /^(leucocitos|recuento de leucocitos|globulos blancos)/],
+  ['neutrofilos', 'Neutrófilos', 'Hemograma', /neutrofilos/],
+  ['linfocitos', 'Linfocitos', 'Hemograma', /linfocitos/],
+  ['monocitos', 'Monocitos', 'Hemograma', /monocitos/],
+  ['eosinofilos', 'Eosinófilos', 'Hemograma', /eosinofilos/],
+  ['basofilos', 'Basófilos', 'Hemograma', /basofilos/],
+  ['plaquetas', 'Plaquetas', 'Hemograma', /^(plaquetas|recuento de plaquetas)/],
+  ['vpm', 'Volumen plaquetar medio', 'Hemograma', /^(vpm|volumen plaquetar medio)/],
+  ['vsg', 'VSG', 'Inflamación', /^(vsg|velocidad de sedimentacion)/],
+  ['pcr', 'Proteína C reactiva', 'Inflamación', /^(pcr|proteina c reactiva)/],
+  ['ferritina', 'Ferritina', 'Hierro', /^ferritina/],
+  ['hierro', 'Hierro (sideremia)', 'Hierro', /^(hierro|sideremia)/],
+  ['transferrina_sat', 'Saturación de transferrina', 'Hierro', /^(saturacion de transferrina|indice de saturacion|ist\b)/],
+  ['transferrina', 'Transferrina', 'Hierro', /^transferrina/],
+  ['tibc', 'Capacidad de fijación de hierro (TIBC)', 'Hierro', /^(capacidad total|tibc|capacidad de fijacion)/],
+  ['glucosa', 'Glucosa', 'Glucosa y riñón', /^glucosa/],
+  ['hba1c', 'Hemoglobina glicosilada (HbA1c)', 'Glucosa y riñón', /^(hba1c|hemoglobina glicosilada|hemoglobina glicada|hemoglobina a1c)/],
+  ['homa', 'Resistencia a la insulina (HOMA)', 'Glucosa y riñón', /(resistencia insulinica|homa)/],
+  ['insulina', 'Insulina', 'Glucosa y riñón', /^insulina/],
+  ['urea', 'Urea', 'Glucosa y riñón', /^urea/],
+  ['creatinina', 'Creatinina', 'Glucosa y riñón', /^creatinina( suero| plasma)?$/],
+  ['fg', 'Filtrado glomerular', 'Glucosa y riñón', /^(filtrado glomerular|estimacion filtrado|indice de filtracion|tasa de filtracion|egfr|fg )/],
+  ['urico', 'Ácido úrico', 'Glucosa y riñón', /^(acido urico|urico)/],
+  ['ast', 'AST (GOT)', 'Hígado y enzimas', /^(ast|got|gpt-ast|got ast|asat|transaminasa glutamico oxalacetica)/],
+  ['alt', 'ALT (GPT)', 'Hígado y enzimas', /^(alt|gpt|gpt alt|alat|transaminasa glutamico piruvica)/],
+  ['ggt', 'GGT', 'Hígado y enzimas', /^(ggt|gamma gt|gamma glutamil|gamma-gt)/],
+  ['fa', 'Fosfatasa alcalina', 'Hígado y enzimas', /^(fosfatasa alcalina|fa\b)/],
+  ['ck', 'CK (creatinquinasa)', 'Hígado y enzimas', /^(ck\b|cpk|creatinquinasa|creatina quinasa|creatina cinasa)/],
+  ['ldh', 'LDH', 'Hígado y enzimas', /^(ldh|lactato deshidrogenasa)/],
+  ['bilirrubina', 'Bilirrubina total', 'Hígado y enzimas', /^bilirrubina( total)?$/],
+  ['bili_dir', 'Bilirrubina directa', 'Hígado y enzimas', /^bilirrubina directa/],
+  ['fli', 'Índice de hígado graso (FLI)', 'Hígado y enzimas', /(higado graso|^fli\b)/],
+  ['col_total', 'Colesterol total', 'Lípidos', /^(colesterol total|colesterol( suero)?$)/],
+  ['hdl', 'Colesterol HDL', 'Lípidos', /^(hdl|colesterol hdl|hdl colesterol)/],
+  ['ldl', 'Colesterol LDL', 'Lípidos', /^(ldl|colesterol ldl|ldl colesterol)/],
+  ['nohdl', 'Colesterol no-HDL', 'Lípidos', /^(colesterol no hdl|no hdl)/],
+  ['trigliceridos', 'Triglicéridos', 'Lípidos', /^trigliceridos/],
+  ['ind_ater', 'Índice aterogénico', 'Lípidos', /^indice aterogenico/],
+  ['apob', 'Apolipoproteína B', 'Lípidos', /^(apolipoproteina b|apo b)/],
+  ['lpa', 'Lipoproteína (a)', 'Lípidos', /^(lipoproteina a|lp a)/],
+  ['sodio', 'Sodio', 'Iones y proteínas', /^sodio/],
+  ['potasio', 'Potasio', 'Iones y proteínas', /^potasio/],
+  ['cloro', 'Cloro', 'Iones y proteínas', /^cloro/],
+  ['calcio', 'Calcio', 'Iones y proteínas', /^calcio/],
+  ['fosforo', 'Fósforo', 'Iones y proteínas', /^(fosforo|fosfato)/],
+  ['magnesio', 'Magnesio', 'Iones y proteínas', /^magnesio/],
+  ['prot_tot', 'Proteínas totales', 'Iones y proteínas', /^proteinas totales/],
+  ['albumina', 'Albúmina', 'Iones y proteínas', /^albumina/],
+  ['vitd', 'Vitamina D (25-OH)', 'Vitaminas y minerales', /(vitamina d|25 oh|25-oh|calcidiol|25 hidroxi)/],
+  ['b12', 'Vitamina B12', 'Vitaminas y minerales', /(vitamina b12|b12|cobalamina)/],
+  ['folico', 'Ácido fólico', 'Vitaminas y minerales', /(acido folico|folato)/],
+  ['zinc', 'Zinc', 'Vitaminas y minerales', /^(zinc|cinc)/],
+  ['tsh', 'TSH', 'Tiroides y hormonas', /^(tsh|tirotropina)/],
+  ['t4l', 'T4 libre', 'Tiroides y hormonas', /^(t4 libre|tiroxina libre|t4l)/],
+  ['t3l', 'T3 libre', 'Tiroides y hormonas', /^(t3 libre|triyodotironina libre|t3l)/],
+  ['testo', 'Testosterona', 'Tiroides y hormonas', /^testosterona( total)?$/],
+  ['testo_l', 'Testosterona libre', 'Tiroides y hormonas', /^testosterona libre/],
+  ['cortisol', 'Cortisol', 'Tiroides y hormonas', /^cortisol/],
+  ['shbg', 'SHBG', 'Tiroides y hormonas', /^shbg/],
+  ['tp', 'Tiempo de protrombina', 'Coagulación', /(protrombina|^inr$|^inr )/],
+  ['aptt', 'Cefalina (APTT)', 'Coagulación', /(cefalina|aptt|ttpa)/],
+  ['fibrinogeno', 'Fibrinógeno', 'Coagulación', /^fibrinogeno/],
+];
+const ANA_SECCIONES = ['Hemograma', 'Hierro', 'Glucosa y riñón', 'Hígado y enzimas', 'Lípidos', 'Iones y proteínas', 'Vitaminas y minerales', 'Tiroides y hormonas', 'Inflamación', 'Coagulación', 'Orina', 'Otros'];
+// pdf.js a veces no sabe leer una ligadura («tí», «ti») y pone �: se repara con las palabras conocidas del catálogo.
+let _anaPalabras = null;
+function anaReparaNombre(n) {
+  if (!/\uFFFD/.test(n)) return { n, roto: false };
+  if (!_anaPalabras) { _anaPalabras = {}; ANA_CAT.forEach(c => c[1].split(/[\s()]+/).forEach(w => { if (w.length >= 4) _anaPalabras[anaNorm(w)] = w; })); ['Hematíes', 'Creatinina', 'Leucocitos', 'Triglicéridos', 'Eosinófilos', 'Basófilos', 'Neutrófilos', 'Linfocitos', 'Monocitos', 'Plaquetas', 'Fosfatasa', 'Colesterol'].forEach(w => { _anaPalabras[anaNorm(w)] = w; }); }
+  let roto = false;
+  const txt = n.replace(/\s*\uFFFD\s*/g, '\uFFFD').split(/\s+/).map(w => {
+    if (!/\uFFFD/.test(w)) return w;
+    const re = new RegExp('^' + anaNorm(w.replace(/\uFFFD/g, 'X')).replace(/x/g, '[a-z]{1,3}').replace(/ /g, '') + '$');
+    const c = Object.keys(_anaPalabras).filter(k => re.test(k));
+    if (c.length === 1) return _anaPalabras[c[0]];
+    roto = true; return w.replace(/\uFFFD/g, '?');
+  }).join(' ');
+  return { n: txt, roto };
+}
+function anaCatalogo(nombre, unidad) {
+  const n = anaNorm(nombre), pct = /%/.test(unidad || '') || /%/.test(n);
+  for (const [k, nom, sec, re] of ANA_CAT) if (re.test(n)) {
+    const dif = ['neutrofilos', 'linfocitos', 'monocitos', 'eosinofilos', 'basofilos'].includes(k);
+    const ratio = k === 'tp' ? (/ratio/.test(n) ? '_ratio' : /inr/.test(n) ? '_inr' : '') : k === 'aptt' && /ratio/.test(n) ? '_ratio' : '';
+    return { k: k + (dif ? (pct ? '_pct' : '_abs') : '') + ratio, n: nom + (dif ? (pct ? ' (%)' : ' (valor absoluto)') : '') + (ratio === '_ratio' ? ' · ratio' : ratio === '_inr' ? ' · INR' : ''), sec };
+  }
+  return { k: 'x_' + n.replace(/ /g, '_').slice(0, 40), n: String(nombre).trim(), sec: /orina|sedimento/.test(n) ? 'Orina' : 'Otros' };
+}
+
+const ANA_UCANON = { hierro: 'µg/dL', tibc: 'µg/dL', ferritina: 'ng/mL', b12: 'pg/mL', folico: 'ng/mL', glucosa: 'mg/dL', urea: 'mg/dL', creatinina: 'mg/dL', urico: 'mg/dL', col_total: 'mg/dL', hdl: 'mg/dL', ldl: 'mg/dL', nohdl: 'mg/dL', trigliceridos: 'mg/dL', fibrinogeno: 'mg/dL', hemoglobina: 'g/dL', chcm: 'g/dL', prot_tot: 'g/dL', albumina: 'g/dL', ast: 'UI/L', alt: 'UI/L', ggt: 'UI/L', fa: 'UI/L', sodio: 'mEq/L', potasio: 'mEq/L', cloro: 'mEq/L', vcm: 'fL', hcm: 'pg', vpm: 'fL' };
+function anaLev(a, b) { const d = Array.from({ length: a.length + 1 }, (_, i) => [i]); for (let j = 1; j <= b.length; j++) d[0][j] = j; for (let i = 1; i <= a.length; i++) for (let j = 1; j <= b.length; j++) d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1)); return d[a.length][b.length]; }
+// Si la unidad leída se parece mucho a la habitual de esa prueba (el OCR confunde µ con p, l con 1…), se usa la habitual.
+function anaUnidadFinal(key, u) { const c = ANA_UCANON[String(key).split('_')[0]]; if (!c) return u; const n = x => String(x).toLowerCase().replace(/[µμ]/g, 'u'); return n(u) === n(c) ? c : (u && anaLev(n(u), n(c)) <= 2) || !u ? c : u; }
+const ANA_RUIDO = /^(prueba|resultado|unidades|valores?|datos|paciente|fecha|edad|sexo|nº|n°|no\b|sip|pagina|doctor|centro|servicio|origen|diagnostico|laboratorio|facultativos|nombre|razon|informacion|muestra|c\.|ubicacion|se |si |objetivo|nota|el indice|menor|entre|mayor)/i;
+const ANA_METODO = /(amparado|acreditacion|espectrofotometria|quimioluminiscencia|inmunoturbidimetria|nefelometria|coagulativa|contaje|citometria|electrodo|enzimatico|colorimetric|turbidimetria|potenciometria|ensayo|metodo|fluorescencia|inmunoensayo|hplc|calculado)/i;
+
+const ANA_NO_UNIDAD = /^(de|del|la|el|en|a|y|o|con|sin|hora|horas|dias|dia|años|anos|año|ano|enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre|min|minutos|mes|meses)$/i;
+function anaUnidadLimpia(u) {
+  const t = String(u || '').trim();
+  if (/^m[eE][qgaA9]{0,2}[\/A1lLI]{0,2}$/.test(t)) return 'mEq/L';
+  if (/^(UML|UL|WL|UI\/?[lL1I]|U\/?[lL1I]|[uU]\/L|iu\/l)$/.test(t)) return 'UI/L';
+  if (/^mg\/d[lLI1]$/i.test(t)) return 'mg/dL';
+  if (/^g\/d[lLI1]$/i.test(t)) return 'g/dL';
+  if (/^[uµμ]g\/(d[lLI1]|al)$/i.test(t)) return 'µg/dL';
+  if (/^ng\/(m[lLI1]|al)$/i.test(t)) return 'ng/mL';
+  if (/^pg\/(m[lLI1])$/i.test(t)) return 'pg/mL';
+  return t;
+}
+// Una línea → una fila de resultado (o null). Cada palabra lleva su confianza (OCR) para marcar lo dudoso.
+function anaFila(L, titulo) {
+  let ws = [];
+  L.ws.forEach(w => String(w.t).replace(/\.{3,}/g, ' ').trim().split(/\s+/).filter(Boolean).forEach(t => ws.push({ t, c: w.c == null ? 100 : w.c })));
+  ws = ws.filter(w => !/^[._·]+$/.test(w.t) && !/^(MAG[A-Z]{0,2}|MAOT|MACT|K|H|L)$/.test(w.t));
+  if (ws.length < 2) return null;
+  let flag = false;
+  const limpio = [];
+  ws.forEach(w => { if (/^[‡†]+$/.test(w.t)) return; if (/^\*+$/.test(w.t)) { flag = true; return; } const t = w.t.replace(/[‡†]+$/, '').replace(/^\*+|\*+$/g, ''); if (t) limpio.push({ t, c: w.c }); });
+  ws = limpio;
+  const T = ws.map(w => w.t);
+  const NUM = /^[<>≤≥]?\d[\d.,]*$/, RANGO_PEGADO = /^\d[\d.,]*\s?[-–—]\s?\d|^\d[\d.,]*[-–—]$/;
+  for (let i = 1; i < T.length; i++) {
+    if (!NUM.test(T[i]) || T[i].replace(/\D/g, '').length > 10) continue;
+    const resto = T.slice(i + 1);
+    const hayRango = r => r.some(x => ANA_RANGO_INI.test(x) || NUM.test(x));
+    const ok = !resto.length || ANA_UNIT.test(resto[0]) || /\//.test(resto[0]) || ANA_RANGO_INI.test(resto[0]) || RANGO_PEGADO.test(resto[0]) ||
+      (!ANA_NO_UNIDAD.test(resto[0]) && /^[A-Za-zµμ%.\d]{1,8}$/.test(resto[0]) && hayRango(resto.slice(1)));
+    if (!ok) continue;
+    let nombre = T.slice(0, i).join(' ').replace(/\s+/g, ' ').trim();
+    if (!nombre || nombre.length > 70 || nombre.split(' ').length > 9 || /[:]/.test(nombre) || /^[-•·]/.test(nombre) || /\d{1,2}\/\d{1,2}\/\d{2}/.test(nombre) || /historia|muestra|externo/i.test(nombre)) return null;
+    if (!/[a-zA-Záéíóúñ]{2}/.test(nombre) || (ANA_RUIDO.test(anaNorm(nombre)) && !(titulo && /^(resultado|ratio)$/i.test(nombre)))) return null;
+    // unidad = lo que hay antes del rango; rango = lo demás
+    const empiezaRango = j => ANA_RANGO_INI.test(resto[j]) || RANGO_PEGADO.test(resto[j]) || (j > 0 && NUM.test(resto[j])) || (NUM.test(resto[j]) && /^[-–—]$/.test(resto[j + 1] || ''));
+    let j = 0; while (j < resto.length && !empiezaRango(j)) j++;
+    let unidad = anaUnidadLimpia(resto.slice(0, j).join(' ').replace(/\s+/g, ' ').trim());
+    if (!unidad && /%/.test(nombre)) unidad = '%';
+    const rtxt = resto.slice(j).join(' ');
+    const rango = anaRango(rtxt);
+    const op = /^[<≤]/.test(T[i]) ? '<' : /^[>≥]/.test(T[i]) ? '>' : '';
+    const v = anaNum(T[i], rango);
+    if (v == null || !isFinite(v)) return null;
+    const rep = anaReparaNombre(nombre); nombre = rep.n;
+    if (/^(resultado|ratio)$/i.test(nombre) && titulo) nombre = (titulo + (/^ratio$/i.test(nombre) ? ' ratio' : '')).trim();
+    return { nombre, v, op, u: unidad, min: rango ? rango.min : null, max: rango ? rango.max : null, rtxt: rango ? rango.txt : (rtxt.trim() || ''), rdud: (!rango && /\d/.test(rtxt)) || rep.roto, flag, conf: Math.min(ws[i].c, ws[i - 1].c) };
+  }
+  return null;
+}
+function anaEstado(f) {
+  const v = f.v;
+  if (f.min == null && f.max == null) return 'sin';
+  if (f.op === '<') return f.max != null ? (v <= f.max ? 'ok' : 'alto') : 'ok';
+  if (f.op === '>') return f.min != null ? (v >= f.min ? 'ok' : 'bajo') : 'ok';
+  if (f.min != null && v < f.min) return 'bajo';
+  if (f.max != null && v > f.max) return 'alto';
+  return 'ok';
+}
+function anaFecha(s) { const m = String(s).match(/\b(\d{1,2})[\/.-](\d{1,2})[\/.-](20\d{2})\b/); return m ? `${m[3]}-${m[2].padStart(2, '0')}-${m[1].padStart(2, '0')}` : null; }
+
+// pages = [{ w, h, words: [{t,x0,y0,x1,y1}] }]
+function anaParse(pages) {
+  const out = { fecha: null, lab: '', filas: [], avisos: [], textoPlano: '' };
+  const textos = [], vistos = new Set();
+  let titulo = '', fechaToma = null, fechaReg = null, lineasAll = [];
+  pages.forEach(p => {
+    const lineas = anaLineas(p.words);
+    lineas.forEach(L => { L.txt = L.ws.map(w => w.t).join(' '); textos.push(L.txt); });
+    lineasAll = lineasAll.concat(lineas);
+  });
+  // Fecha de la extracción y laboratorio
+  lineasAll.forEach((L, i) => {
+    const n = anaNorm(L.txt);
+    if (!fechaToma && /(toma de muestra|extraccion|recogida)/.test(n)) fechaToma = anaFecha(L.txt.replace(/.*?(toma de muestra|extracci\S+|recogida)/i, '')) || anaFecha((lineasAll[i + 1] || {}).txt || '');
+    if (!fechaReg && /(fecha reg|fecha de registro|fecha registro)/.test(n)) fechaReg = anaFecha(L.txt.replace(/.*?fecha\s+reg\S*/i, ''));
+    if (!out.lab) { if (/echevarne/i.test(L.txt)) out.lab = 'Laboratorio Echevarne'; else { const m = L.txt.match(/hospital\s+[\p{L}'·. ]{3,40}/iu); if (m && !/analisis/i.test(m[0])) out.lab = m[0].replace(/\s+(an[aá]lisis).*/i, '').trim(); } }
+  });
+  out.fecha = fechaToma || fechaReg || null;
+  // Filas
+  lineasAll.forEach(L => {
+    const f = anaFila(L, titulo);
+    if (f) {
+      const c = anaCatalogo(f.nombre, f.u);
+      if (c.sec === 'Otros' && ((!f.u && f.min == null && f.max == null) || /^\d/.test(f.nombre))) return;
+      let k = c.k; if (vistos.has(k)) { let n = 2; while (vistos.has(k + '#' + n)) n++; k = k + '#' + n; } vistos.add(k);
+      out.filas.push({ k, n: c.n, sec: c.sec, v: f.v, op: f.op, u: anaUnidadFinal(c.k, f.u), min: f.min, max: f.max, rtxt: f.rtxt, flag: f.flag, e: anaEstado(f), d: f.conf < 70 || f.rdud || undefined });
+    } else {
+      const n = anaNorm(L.txt);
+      if (L.ws.length <= 12 && /[a-z]{3}/.test(n) && !ANA_METODO.test(n) && !ANA_RUIDO.test(n) && !/\d{2}\/\d{2}\/\d{4}/.test(L.txt)) titulo = L.txt.replace(/\(LC\)/gi, '').replace(/\s*\/\s*(suero|plasma|sangre|orina)\b.*/i, '').replace(/\s+/g, ' ').trim();
+    }
+  });
+  out.textoPlano = textos.join(' ');
+  if (!out.fecha) out.avisos.push('No he encontrado la fecha de la extracción: indícala.');
+  if (out.filas.length < 3) out.avisos.push('He leído muy pocos valores: revisa el archivo o añádelos a mano.');
+  return out;
+}
+
+// ── Lector: PDF (con texto o escaneado) o foto → palabras con posición. El archivo NO sale del navegador. ──
+// Algunos PDF traen el texto roto (caracteres chinos o ceros que se pierden): en ese caso se lee la página como imagen (OCR).
+function anaPalabrasPDF(items, vp) {
+  const words = []; let roto = false;
+  items.forEach(it => {
+    let str = (it.str || '').replace(/\u0000/g, '\uFFFD'); const fix = anaArreglaTexto(str); if (fix !== str) { roto = true; str = fix; }
+    if (!str.trim()) return;
+    const tx = window.pdfjsLib.Util.transform(vp.transform, it.transform), h = Math.hypot(tx[2], tx[3]), wTot = it.width * vp.scale; let x = tx[4]; const n = str.length || 1;
+    str.split(/(\s+)/).forEach(tr => { const wd = wTot * tr.length / n; if (tr.trim()) words.push({ t: tr, c: 100, x0: x, y0: tx[5] - h, x1: x + wd, y1: tx[5] }); x += wd; });
+  });
+  return { words, roto };
+}
+function anaMiniatura(canvas) {
+  const w = Math.min(760, canvas.width), r = w / canvas.width, c = document.createElement('canvas'); c.width = w; c.height = Math.round(canvas.height * r);
+  c.getContext('2d').drawImage(canvas, 0, 0, c.width, c.height); return c.toDataURL('image/jpeg', 0.62);
+}
+async function anaLeerArchivo(file, prog) {
+  const esPDF = file.type === 'application/pdf' || /\.pdf$/i.test(file.name);
+  const paginas = [], previas = [];
+  if (esPDF) {
+    prog('Abriendo el PDF…');
+    if (!window.pdfjsLib) await cargarScript(BIO_CDN.pdf);
+    window.pdfjsLib.GlobalWorkerOptions.workerSrc = BIO_CDN.pdfWorker;
+    const pdf = await window.pdfjsLib.getDocument({ data: await file.arrayBuffer() }).promise;
+    const n = Math.min(pdf.numPages, 14);
+    if (pdf.numPages > n) _ana.avisosLectura = [`El PDF tiene ${pdf.numPages} páginas: he leído las ${n} primeras.`];
+    for (let i = 1; i <= n; i++) {
+      prog(n > 1 ? `Preparando la página ${i} de ${n}…` : 'Preparando la página…');
+      const pg = await pdf.getPage(i), v1 = pg.getViewport({ scale: 1 }), t = anaPalabrasPDF((await pg.getTextContent()).items, v1);
+      const texto = (!t.roto && t.words.length >= 40) ? { w: v1.width, h: v1.height, words: t.words } : null;
+      const vp = pg.getViewport({ scale: texto ? Math.min(1.3, 900 / v1.width) : Math.min(3, 2000 / v1.width) });
+      const c = document.createElement('canvas'); c.width = Math.round(vp.width); c.height = Math.round(vp.height);
+      await pg.render({ canvasContext: c.getContext('2d'), viewport: vp }).promise;
+      previas.push(anaMiniatura(c)); paginas.push({ canvas: texto ? null : c, texto });
+    }
+  } else {
+    prog('Abriendo la imagen…');
+    const url = URL.createObjectURL(file);
+    const img = await new Promise((ok, ko) => { const i = new Image(); i.onload = () => ok(i); i.onerror = () => ko(new Error('imagen')); i.src = url; });
+    paginas.push({ canvas: img, texto: null }); previas.push(url);
+  }
+  const lecturas = [];
+  for (let i = 0; i < paginas.length; i++) {
+    if (paginas[i].texto) { lecturas.push(paginas[i].texto); continue; }
+    prog(paginas.length > 1 ? `Leyendo la página ${i + 1} de ${paginas.length} (puede tardar un poco)…` : 'Leyendo el informe (puede tardar un poco)…');
+    lecturas.push(await bioOCR(paginas[i].canvas, false, prog)); paginas[i].canvas = null;
+  }
+  return { res: anaParse(lecturas), previas, ocr: paginas.some(p => !p.texto) };
+}
+
+// ── Estado visual y comparación ──
+const ANA_E = { ok: ['Normal', 'ok'], alto: ['Alto ↑', 'alto'], bajo: ['Bajo ↓', 'bajo'], sin: ['Sin rango', 'sin'] };
+const anaChip = e => { const x = ANA_E[e] || ANA_E.sin; return `<span class="ana-e ${x[1]}">${x[0]}</span>`; };
+const anaFmt = (v, op) => (op || '') + (v == null || isNaN(v) ? '—' : (Math.abs(v) >= 1000 ? Math.round(v).toLocaleString('es-ES') : String(+(+v).toFixed(2)).replace('.', ',')));
+const anaRangoTxt = f => f.min != null && f.max != null ? `${anaFmt(f.min)} – ${anaFmt(f.max)}` : f.max != null ? `< ${anaFmt(f.max)}` : f.min != null ? `> ${anaFmt(f.min)}` : '—';
+const anaFechaTxt = f => new Date(String(f).slice(0, 10) + 'T00:00:00').toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' });
+const anaFuera = r => (r.valores || []).filter(x => x.e === 'alto' || x.e === 'bajo');
+const ANA_NOTA = 'El estado sale del rango de referencia que imprime el propio laboratorio (no de los mismos cortes en todos los informes). En deportistas algunos valores —AST, CK, ferritina, urea…— pueden variar con el entrenamiento: interprétalos con contexto.';
+
+let _ana = null, _anaCache = {};
+async function getAna(depId) {
+  try { const r = await sb(`analiticas?deportista_id=eq.${depId}&order=fecha.asc,id.asc&select=*`); if (Array.isArray(r)) { _anaCache[depId] = r; return r; } } catch (e) {}
+  return null;   // null = la tabla no existe todavía (falta ejecutar el SQL)
+}
+async function loadAna(depId) {
+  const rows = await getAna(depId), box = document.getElementById('anaBox');
+  if (!box || currentDepId != depId) return;
+  const acciones = `<div class="med-actions">${btnSoft('Subir informe o foto', `anaElegir(${depId})`, 'plus')}</div>`;
+  if (rows === null) { box.innerHTML = '<p class="med-empty">Esta función necesita el SQL <b>supabase_analiticas.sql</b> ejecutado en Supabase.</p>'; return; }
+  if (!rows.length) { box.innerHTML = vacioHtml('doc', 'Sin analíticas todavía', 'Sube el PDF o una foto del informe y la app lee los valores y marca los que quedan fuera del rango del laboratorio. Tú los revisas antes de guardar.', { t: 'Subir informe o foto', f: `anaElegir(${depId})` }, true); return; }
+  const filas = rows.slice().reverse().map(r => {
+    const v = r.valores || [], fuera = anaFuera(r);
+    return `<tr><td class="n bio-f1">${anaFechaTxt(r.fecha)}</td><td class="bio-ap">${sudEsc(r.laboratorio || '—')}</td>
+      <td class="n" data-l="Valores">${v.length}</td>
+      <td data-l="Fuera de rango">${fuera.length ? `<span class="ana-e alto">${fuera.length} fuera de rango</span>` : '<span class="ana-e ok">Todo en rango</span>'}</td>
+      <td class="act"><div class="row-actions">${btnSoft('Ver', `anaVer(${r.id},${depId})`, 'doc', true)}${btnDel('Eliminar analítica', `anaEliminar(${r.id},${depId},this)`)}</div></td></tr>`;
+  }).join('');
+  box.innerHTML = `<table class="plan-lista bio-lista"><thead><tr><td>Fecha</td><td>Laboratorio</td><td>Valores</td><td>Resumen</td><td></td></tr></thead><tbody>${filas}</tbody></table>${acciones}<p class="med-note">${ANA_NOTA}</p>`;
+}
+
+// ── Subir y revisar ──
+function anaElegir(depId) { const i = document.getElementById('anaFile'); i.value = ''; i.onchange = () => { if (i.files[0]) abrirAna(depId, i.files[0]); }; i.click(); }
+function abrirAna(depId, file) {
+  const d = deportistas.find(x => x.id == depId); if (!d) return;
+  _ana = { depId, nombre: d.nombre, file: file || null, filas: [], fecha: bioHoy(), lab: '', previas: [], ocupado: false };
+  document.getElementById('mAna').style.display = 'flex';
+  document.getElementById('anaAviso').innerHTML = ''; document.getElementById('anaMsg').textContent = ''; document.getElementById('anaPrev').innerHTML = '';
+  anaPintarCab(); anaPintarFilas();
+  if (file) anaProcesar(file);
+}
+function cerrarAna() { document.getElementById('mAna').style.display = 'none'; _ana = null; }
+function anaPintarCab() {
+  document.getElementById('anaCab').innerHTML = `<div class="bio-grid">
+    <div class="bio-f"><label for="anaFecha">Fecha de la extracción</label><input type="date" class="inp" id="anaFecha" value="${_ana.fecha || ''}"></div>
+    <div class="bio-f"><label for="anaLab">Laboratorio <span class="bio-u">(opcional)</span></label><input type="text" class="inp" id="anaLab" value="${sudEsc(_ana.lab || '')}" maxlength="80" autocomplete="off"></div></div>
+    <div class="bio-f" style="margin-top:10px"><label for="anaNotas">Notas <span class="bio-u">(opcional)</span></label><input type="text" class="inp" id="anaNotas" placeholder="Ej. en ayunas, tras una semana de descarga…" maxlength="200"></div>`;
+}
+function anaFilaHtml(f, i) {
+  const val = (f.op || '') + (f.v == null ? '' : String(f.v).replace('.', ','));
+  const nm = (k, v, ph, lab, extra) => `<input type="text" class="inp ${k}" value="${sudEsc(v)}" placeholder="${ph}" aria-label="${lab}" autocomplete="off" ${extra || ''} oninput="anaCambio(${i})">`;
+  return `<div class="ana-row${f.d ? ' d' : ''}" id="anaR${i}">
+    ${nm('ana-n', f.n, 'Prueba', 'Prueba', 'maxlength="80"')}
+    <div class="ana-vu">${nm('ana-v', val, 'Valor', 'Resultado', 'inputmode="decimal"')}${nm('ana-u', f.u || '', 'Unidad', 'Unidades', 'maxlength="16"')}</div>
+    <div class="ana-rg">${nm('ana-mn', f.min == null ? '' : String(f.min).replace('.', ','), 'mín.', 'Mínimo de referencia', 'inputmode="decimal"')}<span aria-hidden="true">–</span>${nm('ana-mx', f.max == null ? '' : String(f.max).replace('.', ','), 'máx.', 'Máximo de referencia', 'inputmode="decimal"')}</div>
+    <div class="ana-es" id="anaE${i}">${anaChip(f.e)}</div>
+    <button type="button" class="ana-x" onclick="anaQuitar(${i})" aria-label="Quitar ${sudEsc(f.n)}" title="Quitar esta fila">&times;</button>
+    ${f.d ? `<small class="ana-dud">Revisa esta fila con la imagen: la lectura no es segura.</small>` : ''}</div>`;
+}
+function anaPintarFilas() {
+  const F = _ana.filas.map((f, i) => [f, i]).filter(([f]) => f);
+  const grupos = ANA_SECCIONES.map(s => [s, F.filter(([f]) => f.sec === s)]).filter(g => g[1].length);
+  document.getElementById('anaFilas').innerHTML = (grupos.length ? '<div class="ana-head" aria-hidden="true"><span>Prueba</span><span>Resultado · unidad</span><span>Referencia del laboratorio</span><span>Estado</span><span></span></div>' : '') + (grupos.length ? grupos.map(([s, fs]) => `<p class="bio-sec">${s} <span class="ana-cnt">${fs.length}</span></p><div class="ana-tab">${fs.map(([f, i]) => anaFilaHtml(f, i)).join('')}</div>`).join('') : '<p class="med-empty">Todavía no hay valores. Añádelos con el botón de abajo.</p>') +
+    `<div style="margin-top:12px"><button type="button" class="btn-soft sm" onclick="anaAnadir()">+ Añadir un valor</button></div>`;
+}
+function anaLeerFila(i) {
+  const r = document.getElementById('anaR' + i); if (!r) return null;
+  const q = c => (r.querySelector('.' + c).value || '').trim();
+  const mn = q('ana-mn') === '' ? null : anaNum(q('ana-mn')), mx = q('ana-mx') === '' ? null : anaNum(q('ana-mx'));
+  const tv = q('ana-v'), op = /^[<≤]/.test(tv) ? '<' : /^[>≥]/.test(tv) ? '>' : '';
+  const v = tv === '' ? null : anaNum(tv, { min: mn, max: mx });
+  const f = _ana.filas[i];
+  return { ...f, n: q('ana-n'), v, op, u: q('ana-u'), min: mn, max: mx, vTxt: tv };
+}
+function anaCambio(i) {
+  const f = anaLeerFila(i); if (!f) return;
+  f.e = f.v == null ? 'sin' : anaEstado(f); f.d = _ana.filas[i].d; _ana.filas[i] = f;
+  const el = document.getElementById('anaE' + i); if (el) el.innerHTML = anaChip(f.e);
+}
+function anaQuitar(i) {
+  const f = _ana.filas[i], r = document.getElementById('anaR' + i);
+  _ana.filas[i] = null; if (r) { const tab = r.parentElement; r.remove(); if (tab && !tab.children.length) { const t = tab.previousElementSibling; if (t && t.classList.contains('bio-sec')) t.remove(); tab.remove(); } }
+  toast(`«${f.n}» quitado`, { ms: 4500, accion: { texto: 'Deshacer', fn: () => { _ana.filas[i] = f; anaSincronizar(); anaPintarFilas(); } } });
+}
+function anaSincronizar() { _ana.filas = _ana.filas.map((f, i) => { if (!f) return null; const g = anaLeerFila(i); if (!g) return f; g.e = g.v == null ? 'sin' : anaEstado(g); g.d = f.d; return g; }).filter(Boolean); }
+function anaAnadir() {
+  anaSincronizar();
+  _ana.filas.push({ k: '', n: '', sec: 'Otros', v: null, op: '', u: '', min: null, max: null, e: 'sin' });
+  anaPintarFilas();
+  const r = document.getElementById('anaR' + (_ana.filas.length - 1)); if (r) { r.scrollIntoView({ block: 'center' }); const n = r.querySelector('.ana-n'); if (n && !esTactil()) n.focus(); }
+}
+async function anaProcesar(file) {
+  const msg = document.getElementById('anaMsg'), btn = document.getElementById('anaGuardar');
+  btn.disabled = true; _ana.ocupado = true;
+  const prog = t => { msg.innerHTML = `<span class="spin-mini" aria-hidden="true"></span> ${sudEsc(t)}`; };
+  try {
+    const { res, previas, ocr } = await anaLeerArchivo(file, prog);
+    if (!_ana) return;
+    _ana.previas = previas; _ana.filas = res.filas.map(f => ({ ...f }));
+    if (res.fecha) _ana.fecha = res.fecha; if (res.lab) _ana.lab = res.lab;
+    document.getElementById('anaPrev').innerHTML = previas.map((u, i) => `<img src="${u}" alt="Página ${i + 1} del archivo subido">`).join('');
+    anaPintarCab(); anaPintarFilas();
+    const av = (_ana.avisosLectura || []).slice();
+    const tokens = String(_ana.nombre || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().split(/\s+/).filter(t => t.length >= 3);
+    const plano = anaNorm(res.textoPlano);
+    if (tokens.length && !tokens.some(t => plano.includes(t))) av.push(`No encuentro el nombre de ${sudEsc(_ana.nombre)} en el archivo. Comprueba que es de la persona correcta.`);
+    res.avisos.forEach(a => av.push(sudEsc(a)));
+    if (res.fecha && res.fecha > bioHoy()) av.push('La fecha del archivo es futura: revísala.');
+    const nD = res.filas.filter(f => f.d).length, nF = res.filas.filter(f => f.e === 'alto' || f.e === 'bajo').length;
+    document.getElementById('anaAviso').innerHTML = av.map(a => `<div class="bio-aviso" role="alert">${a}</div>`).join('') +
+      `<div class="bio-ok">He leído ${res.filas.length} valores${nF ? `; ${nF} fuera de rango` : ''}${nD ? `; ${nD} marcado${nD > 1 ? 's' : ''} para revisar` : ''}. ${ocr ? 'El informe se ha leído como imagen, así que puede haber errores: compara los números con la imagen. ' : ''}Corrige lo que haga falta y quita las filas que no sean resultados.</div>`;
+    msg.textContent = '';
+  } catch (e) {
+    console.warn('anaProcesar', e);
+    msg.textContent = '';
+    document.getElementById('anaAviso').innerHTML = '<div class="bio-aviso" role="alert">No he podido leer el archivo (puede que falle la conexión para descargar el lector). Puedes añadir los valores a mano.</div>';
+  } finally { if (_ana) _ana.ocupado = false; btn.disabled = false; }
+}
+async function anaGuardar() {
+  if (!_ana || _ana.ocupado) return;
+  const depId = _ana.depId, d = deportistas.find(x => x.id == depId), msg = document.getElementById('anaMsg'), btn = document.getElementById('anaGuardar');
+  const fecha = document.getElementById('anaFecha').value, lab = (document.getElementById('anaLab').value || '').trim() || null, notas = (document.getElementById('anaNotas').value || '').trim() || null;
+  if (!fecha) { msg.textContent = 'Indica la fecha de la extracción.'; return; }
+  if (fecha > bioHoy()) { msg.textContent = 'La fecha no puede ser futura.'; return; }
+  const filas = [], vistos = new Set(), malos = [];
+  _ana.filas.forEach((f0, i) => {
+    if (!f0) return; const f = anaLeerFila(i); if (!f) return;
+    if (!f.n && f.v == null) return;                       // fila vacía
+    if (!f.n || f.v == null || !isFinite(f.v)) { malos.push(f.n || 'sin nombre'); return; }
+    if (f.min != null && f.max != null && f.min > f.max) { malos.push(f.n + ' (rango)'); return; }
+    const c = anaCatalogo(f.n, f.u); let k = c.k; if (vistos.has(k)) { let n = 2; while (vistos.has(k + '#' + n)) n++; k += '#' + n; } vistos.add(k);
+    filas.push({ k, n: f.n, sec: f0.sec && f0.sec !== 'Otros' && anaNorm(f0.n) === anaNorm(f.n) ? f0.sec : c.sec, v: f.v, op: f.op || '', u: f.u || '', min: f.min, max: f.max, e: anaEstado(f), rtxt: f0.rtxt || '' });
+  });
+  if (malos.length) { msg.textContent = 'Revisa estas filas (falta el nombre o el resultado no es un número): ' + malos.slice(0, 4).join(', ') + (malos.length > 4 ? '…' : '') + '.'; return; }
+  if (!filas.length) { msg.textContent = 'Añade al menos un valor.'; return; }
+  btn.disabled = true; msg.textContent = 'Guardando…';
+  let path = null, avisoArchivo = '';
+  try {
+    if (_ana.file) {
+      const ext = (/\.(pdf|png|jpe?g|webp|heic)$/i.exec(_ana.file.name) || ['', 'bin'])[1].toLowerCase();
+      path = `${depId}/${Date.now()}_analitica_${fecha}.${ext}`;
+      for (let intento = 1; intento <= 3; intento++) {
+        try {
+          const up = await authFetch(`${SURL}/storage/v1/object/${STORAGE_BUCKET}/${path.split('/').map(encodeURIComponent).join('/')}`, { method: 'POST', headers: { 'Content-Type': _ana.file.type || 'application/octet-stream' }, body: _ana.file });
+          if (up.ok) { avisoArchivo = ''; break; }
+          let m = ''; try { const j = await up.json(); m = j.message || j.error || ''; } catch (e) {}
+          avisoArchivo = `${up.status}${m ? ' ' + m : ''}`;
+          if (up.status < 500) break;
+        } catch (e) { avisoArchivo = e.message || 'sin conexión'; }
+        if (intento < 3) { msg.textContent = `Subiendo el archivo… reintento ${intento}`; await new Promise(r => setTimeout(r, intento === 1 ? 1500 : 4000)); }
+      }
+      if (avisoArchivo) { console.warn('anaGuardar subida', avisoArchivo); path = null; }
+    }
+    const r = await sb('analiticas', { method: 'POST', body: JSON.stringify({ deportista_id: depId, fecha, laboratorio: lab, valores: filas, archivo_path: path, notas }) });
+    if (esErrorSb(r)) { if (path) authFetch(`${SURL}/storage/v1/object/${STORAGE_BUCKET}/${path.split('/').map(encodeURIComponent).join('/')}`, { method: 'DELETE' }).catch(() => {}); const err = new Error(r.code === '42P01' || r.code === 'PGRST205' ? 'sin_tabla' : 'guardado'); err.detalle = [r.code, r.message].filter(Boolean).join(' · '); throw err; }
+    if (path) {   // el original también queda en «Archivos» (no visible para el cliente salvo que tú lo marques)
+      try {
+        const fila = await sb(`clientes_deportivos?id=eq.${depId}&select=archivos`);
+        const previos = (Array.isArray(fila) && fila[0] && Array.isArray(fila[0].archivos)) ? fila[0].archivos : (d.archivos || []);
+        const ahora = new Date().toISOString(), archivos = previos.concat([{ nombre: `Analítica ${fecha}${path.slice(path.lastIndexOf('.'))}`, path, fecha: ahora, visible_cliente: false, tipo: 'analitica' }]);
+        const rp = await patchDep(depId, { archivos, ultima_actividad: ahora });
+        if (!esErrorSb(rp)) { d.archivos = archivos; d.ultima_actividad = ahora; const fl = document.getElementById('filesList'); if (fl && currentDepId == depId) fl.innerHTML = renderFilesList(archivos, depId); const tn = document.querySelector('#depTab-archivos .tab-n'); if (tn) tn.textContent = archivos.length; }
+      } catch (e) { console.warn('ana archivos', e); }
+    }
+    if (avisoArchivo) toast('Analítica guardada, pero no se pudo subir el archivo original (' + avisoArchivo + ').', { tipo: 'aviso', ms: 9000 });
+    else toast('Analítica guardada');
+    cerrarAna();
+    if (currentDepId == depId) { loadAna(depId); loadEstado(depId); }
+  } catch (e) {
+    console.warn('anaGuardar', e);
+    msg.textContent = e.message === 'sin_tabla' ? 'Falta ejecutar el SQL «supabase_analiticas.sql» en Supabase.' : 'No se pudo guardar' + ((e.detalle || (e.message !== 'guardado' ? e.message : '')) ? ' (' + (e.detalle || e.message) + ')' : '') + '. Comprueba la conexión y vuelve a intentarlo.';
+    btn.disabled = false;
+  }
+}
+
+// ── Ver una analítica guardada (con la anterior al lado) ──
+function anaVer(id, depId) {
+  const lista = _anaCache[depId] || [], i = lista.findIndex(r => r.id == id); if (i < 0) return;
+  const r = lista[i], v = r.valores || [], fuera = anaFuera(r);
+  const previos = lista.slice(0, i).reverse();                    // más reciente primero
+  const antes = k => { for (const p of previos) { const x = (p.valores || []).find(y => y.k === k); if (x) return { x, fecha: p.fecha }; } return null; };
+  const grupos = ANA_SECCIONES.map(s => [s, v.filter(x => x.sec === s)]).filter(g => g[1].length);
+  const dd = deportistas.find(x => x.id == depId), ai = r.archivo_path && dd ? (dd.archivos || []).findIndex(a => a.path === r.archivo_path) : -1;
+  const fila = x => {
+    const a = antes(x.k);
+    const ant = a ? `${anaFmt(a.x.v, a.x.op)} <small>${anaFechaTxt(a.fecha)}</small>` : '<span class="ana-nd">—</span>';
+    return `<tr class="${x.e === 'alto' || x.e === 'bajo' ? 'fuera' : ''}"><td class="ana-t-n">${sudEsc(x.n)}</td><td class="n" data-l="Resultado"><b>${anaFmt(x.v, x.op)}</b> <small>${sudEsc(x.u || '')}</small></td><td class="n" data-l="Referencia">${anaRangoTxt(x)}</td><td data-l="Estado">${anaChip(x.e)}</td><td class="n hide-m" data-l="Anterior">${ant}</td></tr>`;
+  };
+  document.getElementById('anaVerTitulo').textContent = `Analítica · ${anaFechaTxt(r.fecha)}`;
+  document.getElementById('anaVerCuerpo').innerHTML = `
+    <p class="ana-meta">${sudEsc(r.laboratorio || 'Laboratorio sin indicar')} · ${v.length} valores${r.notas ? ' · ' + sudEsc(r.notas) : ''}</p>
+    ${fuera.length ? `<div class="ana-fuera"><b>Fuera de rango:</b> ${fuera.map(x => `<span class="ana-e ${x.e}">${sudEsc(x.n)} ${anaFmt(x.v, x.op)} ${sudEsc(x.u || '')}</span>`).join(' ')}</div>` : '<div class="bio-ok">Todos los valores con rango están dentro del rango del laboratorio.</div>'}
+    ${grupos.map(([s, xs]) => `<p class="bio-sec">${s}</p><table class="plan-lista ana-t"><thead><tr><td>Prueba</td><td>Resultado</td><td>Referencia</td><td>Estado</td><td class="hide-m">Anterior</td></tr></thead><tbody>${xs.map(fila).join('')}</tbody></table>`).join('')}
+    <p class="med-note">${ANA_NOTA}</p>
+    ${ai >= 0 ? `<div class="med-actions">${btnSoft('Ver el informe original', `abrirArchivo(${depId},${ai})`, 'doc')}</div>` : ''}`;
+  document.getElementById('mAnaVer').style.display = 'flex';
+}
+function cerrarAnaVer() { document.getElementById('mAnaVer').style.display = 'none'; }
+function anaEliminar(id, depId, btn) {
+  const fila = btn && btn.closest('tr');
+  deshacerBorrado({
+    texto: 'Analítica eliminada (el archivo sigue en «Archivos»)',
+    ocultar: () => { if (fila) fila.style.display = 'none'; },
+    restaurar: () => { if (fila) fila.style.display = ''; },
+    ejecutar: async () => { const r = await sb(`analiticas?id=eq.${id}`, { method: 'DELETE', headers: { 'Prefer': 'return=minimal' } }); if (!esErrorSb(r) && currentDepId == depId) { loadAna(depId); loadEstado(depId); } return r; }
   });
 }
 
@@ -9939,7 +10541,7 @@ async function rgReactivar(depId) {
 
 // ── Exportar todos los datos de un cliente (un .zip sin librerías: datos en JSON + sus archivos) ──
 const RG_TABLAS = [['ficha', 'clientes_deportivos?id=eq.{id}&select=*'], ['antropometria_perfil', 'antropometria_perfil?deportista_id=eq.{id}&select=*'],
-  ['antropometria_valoraciones', 'antropometria_valoraciones?deportista_id=eq.{id}&select=*&order=fecha.asc'], ['bioimpedancias', 'bioimpedancias?deportista_id=eq.{id}&select=*'],
+  ['antropometria_valoraciones', 'antropometria_valoraciones?deportista_id=eq.{id}&select=*&order=fecha.asc'], ['bioimpedancias', 'bioimpedancias?deportista_id=eq.{id}&select=*'], ['analiticas', 'analiticas?deportista_id=eq.{id}&select=*'],
   ['tests_sudoracion', 'tests_sudoracion?deportista_id=eq.{id}&select=*'], ['planes_competicion', 'planes_competicion?deportista_id=eq.{id}&select=*'],
   ['historial_deportista', 'historial_deportista?deportista_id=eq.{id}&select=*'], ['progresion_cargas', 'progresion_cargas?deportista_id=eq.{id}&select=*'],
   ['seguimientos', 'seguimientos?deportista_id=eq.{id}&select=*'], ['pesos_cliente', 'pesos_cliente?deportista_id=eq.{id}&select=*'], ['fotos_cliente', 'fotos_cliente?deportista_id=eq.{id}&select=*'],
