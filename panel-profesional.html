@@ -4944,7 +4944,7 @@ function dashVivoIniciar(){
 //   EN RIESGO  adherencia ≤ 2 dos semanas seguidas · molestias dos semanas seguidas · 2 semanas o más sin enviar el seguimiento · plan por preparar vencido ·
 //              objetivo en dirección contraria · revisión con la fecha pasada
 //   POR MIRAR  seguimiento sin enviar esta semana · peso sin anotar ≥ 14 días (si antes lo anotaba) · comidas del diario sin comentar · medición con más de 90 días ·
-//              más de 30 días sin consulta · sin revisión programada · objetivo con la fecha límite pasada · plan por preparar · plan sin publicar
+//              más de 30 días sin consulta · sin revisión programada · objetivo con la fecha límite pasada · plan por preparar
 // Las tablas que no existan (SQL sin ejecutar) simplemente no aportan avisos.
 let _cart = { filas: [], filtro: 'todos', orden: 'urgencia', busca: '', cargando: false, listo: false };
 const CART_EST = { risk: { t: 'En riesgo', o: 0 }, warn: { t: 'Por mirar', o: 1 }, ok: { t: 'Al día', o: 2 } };
@@ -5020,7 +5020,7 @@ async function cargarCartera(opts){
       const filasMenu = pMenu[k] || [], pub = filasMenu.map(x => x.publicado_en).filter(Boolean).sort().pop() || null;
       const pend = planPendienteVivo(d, pub);
       if(pend){ const du = daysUntil(pend.para); ch(du < 0 ? `Plan vencido hace ${-du} día${du === -1 ? '' : 's'}` : du === 0 ? 'Plan para hoy' : du === 1 ? 'Plan para mañana' : 'Plan para el ' + new Date(pend.para + 'T00:00:00').toLocaleDateString('es-ES', { day: 'numeric', month: 'short' }), du <= 0 ? 'red' : 'gold'); }
-      else if(filasMenu.length && !pub) ch('Plan sin publicar', 'gold');
+      // (Sin aviso de «plan sin publicar»: mientras se prueba el planificador, los borradores son normales y el plan de siempre sigue siendo el enlace.)
       // Objetivo
       (pObj[k] || []).forEach(o => {
         if(o.progreso_bruto != null && o.progreso_bruto < 0 && !(o.dias != null && o.dias < 0)) ch('Objetivo en dirección contraria', 'red');
