@@ -912,9 +912,19 @@ body.dark-mode .cmp-cell.b .cmp-track i{background:var(--t400)}
 .dash-prox-a .btn-soft:hover{background:rgba(255,255,255,.18)}
 .dash-prox-a .btn-soft.pri{background:#F4F2ED;border-color:#F4F2ED;color:var(--t900)}
 .dash-prox-a .btn-soft.pri:hover{background:#fff}
-.dash-cols{display:flex;flex-direction:column;gap:14px;margin-bottom:1.5rem}
-.dash-col{display:flex;flex-direction:column;gap:14px;min-width:0}
-@media(min-width:1150px){.dash-cols{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);align-items:start}}
+.dash-sec{margin-bottom:1.6rem}
+.dash-sec-h{display:flex;align-items:center;gap:12px;margin:0 0 .7rem;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--g500)}
+.dash-sec-h::after{content:"";flex:1;height:.5px;background:var(--bd);order:1}
+.dash-sec-h>span{order:0}
+.dash-sec-l{order:2;display:inline-flex;align-items:center;gap:3px;border:0;background:none;color:var(--t600);font:inherit;font-size:11.5px;font-weight:600;letter-spacing:.02em;text-transform:none;cursor:pointer;padding:2px 0;border-radius:6px}
+.dash-sec-l:hover{color:var(--t900)}
+.dash-sec #dashProxima:not(:empty){margin-bottom:14px}
+.dash-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:14px;align-items:start}
+.dash-grid>.fact-card{margin-bottom:0}
+.dash-grid.g3{align-items:stretch}
+@media(min-width:900px){.dash-grid.g2{grid-template-columns:repeat(2,minmax(0,1fr))}.dash-grid.g3{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(min-width:1150px){.dash-grid.g3{grid-template-columns:repeat(3,minmax(0,1fr))}#dashSecTuyo>.fact-card{grid-column:1/-1}}
+@media(min-width:900px) and (max-width:1149px){#dashSecTuyo>.fact-card{grid-column:1/-1}}
 .dash-vacio{display:flex;align-items:center;gap:11px;padding:.5rem 0 .2rem;color:var(--g400);font-size:12.5px;line-height:1.4}
 .dash-vacio>span{flex:none;width:30px;height:30px;border-radius:50%;background:var(--t50);color:var(--t600);display:flex;align-items:center;justify-content:center}
 .dash-ok{display:flex;align-items:center;gap:16px;flex-wrap:wrap;background:var(--sf);border:.5px solid var(--pill-g-bd);border-radius:16px;padding:1.2rem 1.4rem;margin-bottom:1.25rem;box-shadow:0 2px 10px rgba(0,0,0,.04)}
@@ -1981,14 +1991,11 @@ body.dark-mode .ref-src,body.dark-mode .sup-badge,body.dark-mode .depd-avatar-fa
       <div class="dash-persbar" id="dashPersBar" style="display:none"><span>Mueve las tarjetas con las flechas u ocúltalas con el ojo. Se guarda solo en este navegador.</span><span class="dash-persbar-b"><button type="button" class="btn-soft sm" onclick="dashPersReset()">Restablecer</button><button type="button" class="btn-soft sm" onclick="dashPersonalizar()">Listo</button></span></div>
     </div>
 
-    <div id="dashProxima"></div>
-
-    <div class="fact-card" id="factCard" data-dc="fact"></div>
-
-    <div id="dashTodoOk"></div>
-
-    <div class="dash-cols" id="dashCols">
-      <div class="dash-col" id="dashColMain" data-col="main">
+    <section class="dash-sec" aria-labelledby="dsHoy">
+      <h2 class="dash-sec-h" id="dsHoy"><span>Hoy</span></h2>
+      <div id="dashProxima"></div>
+      <div id="dashTodoOk"></div>
+      <div class="dash-grid g2" id="dashSecHoy" data-col="hoy">
         <div class="dash-card" data-dc="sesiones">
         <div class="dash-card-head">
           <span class="dash-card-title"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Hoy y mañana</span>
@@ -1996,29 +2003,22 @@ body.dark-mode .ref-src,body.dark-mode .sup-badge,body.dark-mode .depd-avatar-fa
         </div>
         <div id="dashSesiones"></div>
       </div>
-        <div class="dash-card" data-dc="alimento">
-        <div class="dash-card-head">
-          <span class="dash-card-title"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>Alimento del día</span>
-          <span class="dash-card-count" id="dashAlMes">De temporada</span>
-        </div>
-        <div id="dashAlimento"></div>
+        <div class="dash-card" data-dc="recordatorios">
+      <div class="dash-card-head">
+        <span class="dash-card-title"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Recordatorios</span>
       </div>
-        <div class="dash-card" data-dc="reto">
-        <div class="dash-card-head">
-          <span class="dash-card-title"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Reto del día</span>
-          <span class="dash-card-count" id="dashRetoRacha" style="display:none"></span>
-        </div>
-        <div id="dashReto"></div>
+      <div class="rem-add">
+        <input type="text" class="inp" id="remInput" placeholder="Añadir un recordatorio…" style="margin:0" onkeydown="if(event.key==='Enter')addRecordatorio()">
+        <button class="btn-rem-add" onclick="addRecordatorio()">Añadir</button>
       </div>
+      <div id="remList"></div>
+    </div>
       </div>
-      <div class="dash-col" id="dashColSide" data-col="side">
-        <div class="dash-card" data-dc="pagos">
-        <div class="dash-card-head">
-          <span class="dash-card-title"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Pagos</span>
-          <span class="dash-card-count" id="dashPagosCount">0</span>
-        </div>
-        <div id="dashPagos"></div>
-      </div>
+    </section>
+
+    <section class="dash-sec" aria-labelledby="dsCli">
+      <h2 class="dash-sec-h" id="dsCli"><span>Clientes</span><button type="button" class="dash-sec-l" onclick="navTo('cartera')">Ver Cartera <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg></button></h2>
+      <div class="dash-grid g3" id="dashSecCli" data-col="clientes">
         <div class="dash-card" data-dc="revisiones">
         <div class="dash-card-head">
           <span class="dash-card-title"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>Revisiones próximas</span>
@@ -2033,16 +2033,34 @@ body.dark-mode .ref-src,body.dark-mode .sup-badge,body.dark-mode .depd-avatar-fa
         </div>
         <div id="dashInactividad"></div>
       </div>
-        <div class="dash-card" data-dc="recordatorios">
-      <div class="dash-card-head">
-        <span class="dash-card-title"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Recordatorios</span>
+        <div class="dash-card" data-dc="pagos">
+        <div class="dash-card-head">
+          <span class="dash-card-title"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Pagos</span>
+          <span class="dash-card-count" id="dashPagosCount">0</span>
+        </div>
+        <div id="dashPagos"></div>
       </div>
-      <div class="rem-add">
-        <input type="text" class="inp" id="remInput" placeholder="Añadir un recordatorio…" style="margin:0" onkeydown="if(event.key==='Enter')addRecordatorio()">
-        <button class="btn-rem-add" onclick="addRecordatorio()">Añadir</button>
       </div>
-      <div id="remList"></div>
-    </div>
+    </section>
+
+    <section class="dash-sec" aria-labelledby="dsTuyo">
+      <h2 class="dash-sec-h" id="dsTuyo"><span>Para ti</span></h2>
+      <div class="dash-grid g3" id="dashSecTuyo" data-col="tuyo">
+        <div class="fact-card" id="factCard" data-dc="fact"></div>
+        <div class="dash-card" data-dc="alimento">
+        <div class="dash-card-head">
+          <span class="dash-card-title"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>Alimento del día</span>
+          <span class="dash-card-count" id="dashAlMes">De temporada</span>
+        </div>
+        <div id="dashAlimento"></div>
+      </div>
+        <div class="dash-card" data-dc="reto">
+        <div class="dash-card-head">
+          <span class="dash-card-title"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Reto del día</span>
+          <span class="dash-card-count" id="dashRetoRacha" style="display:none"></span>
+        </div>
+        <div id="dashReto"></div>
+      </div>
         <div class="dash-card" data-dc="calculadora">
         <div class="dash-card-head">
           <span class="dash-card-title"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="8.01" y2="10"/><line x1="12" y1="10" x2="12.01" y2="10"/><line x1="16" y1="10" x2="16.01" y2="10"/><line x1="8" y1="14" x2="8.01" y2="14"/><line x1="12" y1="14" x2="12.01" y2="14"/><line x1="16" y1="14" x2="16.01" y2="14"/><line x1="8" y1="18" x2="12" y2="18"/></svg>Calculadora rápida</span>
@@ -2054,7 +2072,7 @@ body.dark-mode .ref-src,body.dark-mode .sup-badge,body.dark-mode .depd-avatar-fa
         <div id="dashCalcOut"></div>
       </div>
       </div>
-    </div>
+    </section>
   </div>
 </div>
 
@@ -4669,19 +4687,20 @@ function dashRegistrar(id) {
 const DC_KEY = 'nl_dash_layout', DC_TIT = { fact: 'el dato del día' };
 let _dcDef = null;
 function dcLeer() { try { const v = JSON.parse(localStorage.getItem(DC_KEY) || 'null'); return v && typeof v === 'object' ? v : {}; } catch (e) { return {}; } }
-function dcCols() { return { main: document.getElementById('dashColMain'), side: document.getElementById('dashColSide') }; }
+const DC_COLS = ['hoy', 'clientes', 'tuyo'];
+function dcCols() { return { hoy: document.getElementById('dashSecHoy'), clientes: document.getElementById('dashSecCli'), tuyo: document.getElementById('dashSecTuyo') }; }
 function dcSnapshot() {
   const c = dcCols(), o = {};
-  ['main', 'side'].forEach(k => { o[k] = [...c[k].children].filter(e => e.dataset.dc).map(e => e.dataset.dc); });
+  DC_COLS.forEach(k => { o[k] = [...c[k].children].filter(e => e.dataset.dc).map(e => e.dataset.dc); });
   o.hide = [...document.querySelectorAll('#vhome [data-dc].dc-off')].map(e => e.dataset.dc);
   return o;
 }
 function dcTitulo(e) { const t = e.querySelector('.dash-card-title'); return DC_TIT[e.dataset.dc] || (t ? t.textContent.trim().toLowerCase() : e.dataset.dc); }
 function aplicarLayoutDash() {
-  const c = dcCols(); if (!c.main) return;
-  if (!_dcDef) { _dcDef = { main: [...c.main.children].map(e => e.dataset.dc), side: [...c.side.children].map(e => e.dataset.dc) }; }
+  const c = dcCols(); if (!c.hoy) return;
+  if (!_dcDef) { _dcDef = {}; DC_COLS.forEach(k => { _dcDef[k] = [...c[k].children].map(e => e.dataset.dc); }); }
   const l = dcLeer(), hide = Array.isArray(l.hide) ? l.hide : [];
-  ['main', 'side'].forEach(k => {   // orden guardado; lo que no esté en la lista (tarjetas nuevas) se queda detrás, en su orden de origen
+  DC_COLS.forEach(k => {   // orden guardado; lo que no esté en la lista (tarjetas nuevas) se queda detrás, en su orden de origen
     const ord = Array.isArray(l[k]) ? l[k] : [], pos = e => { const i = ord.indexOf(e.dataset.dc); return i < 0 ? 1000 : i; };
     [...c[k].children].map((e, i) => [e, i]).sort((a, b) => (pos(a[0]) - pos(b[0])) || (a[1] - b[1])).forEach(x => c[k].appendChild(x[0]));
   });
@@ -4721,7 +4740,7 @@ function dashPersonalizar() {
 }
 function dashPersReset() {
   try { localStorage.removeItem(DC_KEY); } catch (e) {}
-  const c = dcCols(); if (_dcDef) ['main', 'side'].forEach(k => _dcDef[k].forEach(id => { const e = c[k].querySelector(`:scope>[data-dc="${id}"]`); if (e) c[k].appendChild(e); }));
+  const c = dcCols(); if (_dcDef) DC_COLS.forEach(k => _dcDef[k].forEach(id => { const e = c[k].querySelector(`:scope>[data-dc="${id}"]`); if (e) c[k].appendChild(e); }));
   document.querySelectorAll('#vhome [data-dc].dc-off').forEach(e => { e.classList.remove('dc-off'); dcOjo(e); });
   toast('Panel restablecido');
 }
