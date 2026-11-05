@@ -923,8 +923,18 @@ body.dark-mode .cmp-cell.b .cmp-track i{background:var(--t400)}
 .dash-grid>.fact-card{margin-bottom:0}
 .dash-grid.g3{align-items:stretch}
 @media(min-width:900px){.dash-grid.g2{grid-template-columns:repeat(2,minmax(0,1fr))}.dash-grid.g3{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(min-width:1150px){.dash-grid.g3{grid-template-columns:repeat(3,minmax(0,1fr))}#dashSecTuyo>.fact-card{grid-column:1/-1}}
-@media(min-width:900px) and (max-width:1149px){#dashSecTuyo>.fact-card{grid-column:1/-1}}
+@media(min-width:1150px){.dash-grid.g3{grid-template-columns:repeat(3,minmax(0,1fr))}}
+/* Para ti: dato a todo el ancho, alimento y reto a mitad y la calculadora a todo el ancho con los campos a la izquierda y las cifras en rejilla */
+.dash-grid.g-tuyo{align-items:stretch}
+@media(min-width:900px){
+  #dashSecTuyo>.fact-card,#dashSecTuyo>[data-dc="calculadora"]{grid-column:1/-1}
+  #dashSecTuyo>[data-dc="calculadora"]{display:grid;grid-template-columns:minmax(220px,300px) minmax(0,1fr);column-gap:28px;align-items:start;grid-template-rows:auto 1fr}
+  #dashSecTuyo>[data-dc="calculadora"] .dash-card-head{grid-column:1;grid-row:1}
+  #dashSecTuyo>[data-dc="calculadora"] .calc-in{grid-column:1;grid-row:2;margin-bottom:0;align-self:start}
+  #dashSecTuyo>[data-dc="calculadora"] #dashCalcOut{grid-column:2;grid-row:1/3;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:28px;align-content:start}
+  #dashSecTuyo>[data-dc="calculadora"] #dashCalcOut .calc-r:nth-child(2){border-top:none}
+  #dashSecTuyo>[data-dc="calculadora"] #dashCalcOut>.calc-pie,#dashSecTuyo>[data-dc="calculadora"] #dashCalcOut>.calc-vacio{grid-column:1/-1}
+}
 .dash-vacio{display:flex;align-items:center;gap:11px;padding:.5rem 0 .2rem;color:var(--g400);font-size:12.5px;line-height:1.4}
 .dash-vacio>span{flex:none;width:30px;height:30px;border-radius:50%;background:var(--t50);color:var(--t600);display:flex;align-items:center;justify-content:center}
 .dash-ok{display:flex;align-items:center;gap:16px;flex-wrap:wrap;background:var(--sf);border:.5px solid var(--pill-g-bd);border-radius:16px;padding:1.2rem 1.4rem;margin-bottom:1.25rem;box-shadow:0 2px 10px rgba(0,0,0,.04)}
@@ -2045,7 +2055,7 @@ body.dark-mode .ref-src,body.dark-mode .sup-badge,body.dark-mode .depd-avatar-fa
 
     <section class="dash-sec" aria-labelledby="dsTuyo">
       <h2 class="dash-sec-h" id="dsTuyo"><span>Para ti</span></h2>
-      <div class="dash-grid g3" id="dashSecTuyo" data-col="tuyo">
+      <div class="dash-grid g2 g-tuyo" id="dashSecTuyo" data-col="tuyo">
         <div class="fact-card" id="factCard" data-dc="fact"></div>
         <div class="dash-card" data-dc="alimento">
         <div class="dash-card-head">
