@@ -1957,7 +1957,6 @@ body.dark-mode .ana-e.alto{background:rgba(242,133,131,.16)}
     <button class="sb-item sb-main" id="sbAgenda" onclick="navTo('agenda')">
       <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/><path d="M16 18h.01"/></svg>
       <span class="sb-lbl">Agenda</span>
-      <span class="sb-badge" id="sbAgendaBadge" style="display:none">0</span>
     </button>
     <button class="sb-item sb-main sb-group-toggle" id="sbServiciosToggle" onclick="toggleServiciosGroup()">
       <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/><rect width="20" height="14" x="2" y="6" rx="2"/></svg>
@@ -1977,7 +1976,6 @@ body.dark-mode .ana-e.alto{background:rgba(242,133,131,.16)}
     <button class="sb-item sb-main" id="sbFact" onclick="navTo('facturacion')">
       <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10h12"/><path d="M4 14h9"/><path d="M19 6a7.7 7.7 0 0 0-5.2-2A7.9 7.9 0 0 0 6 12c0 4.4 3.5 8 7.8 8 2 0 3.8-.8 5.2-2"/></svg>
       <span class="sb-lbl">Facturación</span>
-      <span class="sb-badge" id="sbFactBadge" style="display:none">0</span>
     </button>
     <button type="button" class="sb-divider sb-div-btn" id="sbToolsBtn" aria-expanded="true" aria-controls="sbToolsGrp" onclick="sbToggleTools()"><span>Herramientas</span><svg class="sb-chevron open" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></button>
     <div class="sb-grp" id="sbToolsGrp"><div class="sb-grp-in">
@@ -4713,7 +4711,7 @@ async function loadDashboard(){
   // ── Pagos pendientes/atrasados ──
   const impagos=dashCitas.filter(c=>!c.pagado&&c.requiere_pago!==false).sort((a,b)=>(citaYaPaso(b)-citaYaPaso(a))||a.fecha.localeCompare(b.fecha));   // primero las que ya pasaron
   _dash.venc=impagos.filter(c=>citaYaPaso(c)).length;
-  document.getElementById('dashPagosCount').textContent=_dash.venc; sbPonBadge('sbFactBadge', _dash.venc, 'cobros vencidos');
+  document.getElementById('dashPagosCount').textContent=_dash.venc;
   document.getElementById('dashPagos').innerHTML=impagos.length?impagos.slice(0,5).map(c=>{
     const vencido=citaYaPaso(c);
     return `<div class="dash-row"><div class="dash-row-dot ${vencido?'red':'teal'}"></div><div class="dash-row-txt"><div class="dash-row-name">${c.cliente}</div><div class="dash-row-sub">${c.servicio||'Revisión'}</div></div><span class="dash-row-tag">${vencido?'Pendiente':'Por cobrar'}</span></div>`;
@@ -4733,12 +4731,6 @@ async function loadDashboard(){
 
   // ── Clientes por mirar: sale de la Cartera (mismas reglas) y rellena la frase de arriba y la insignia de la barra lateral ──
   cargarCartera({ silencioso: true });
-
-  // ── Sidebar badge (avisos totales) ──
-  const totalAvisos=revs.length;   // el número de «Agenda»: solo las revisiones próximas (de hoy a 7 días), las mismas de la tarjeta «Revisiones próximas»
-  const badgeEl=document.getElementById('sbAgendaBadge');
-  if(totalAvisos>0){badgeEl.textContent=totalAvisos>9?'9+':totalAvisos;badgeEl.style.display='inline-block';}
-  else{badgeEl.style.display='none';}
 
   dashPintarEstado();
 }
