@@ -1592,6 +1592,15 @@ body.dark-mode{--pill-n:#343a3d;--pill-n-h:#3e4548;--pill-n-bd:rgba(255,255,255,
 .dep-chip:hover:not(.active){background:var(--pill-n-h)}
 .dep-chip.active{background:var(--pill-au);border-color:var(--pill-au-bd);color:var(--gold-dk)}
 body.dark-mode .dep-chip.active{color:var(--gold)}
+/* Cartera · Por hacer: chips y botones neutros (sin verde claro ni marrón) */
+.cart-tchips .dep-chip{background:var(--sf);border:.5px solid var(--bdm);color:var(--g700)}
+.cart-tchips .dep-chip:hover:not(.active){background:var(--g100)}
+.cart-tchips .dep-chip.active{background:var(--btn);border-color:var(--btn);color:#fff}
+body.dark-mode .cart-tchips .dep-chip.active{color:#fff}
+.cart-ac .btn-soft{background:var(--sf);border:.5px solid var(--bdm);color:var(--g700);font-weight:600}
+.cart-ac .btn-soft:hover{background:var(--g100);border-color:var(--g400);color:var(--g900,var(--g700))}
+.cart-t:has(.cart-ed.red) .cart-ac .btn-soft{background:var(--btn);border-color:var(--btn);color:#fff}
+.cart-t:has(.cart-ed.red) .cart-ac .btn-soft:hover{filter:brightness(1.08);color:#fff}
 .hist-tag,.dep-obj-badge,.cbadge.on,.rev-badge.ok,.sup-badge.strong,.pay-toggle.paid{background:var(--pill-g);color:var(--t800);box-shadow:inset 0 0 0 .5px var(--pill-g-bd)}
 body.dark-mode .hist-tag,body.dark-mode .dep-obj-badge,body.dark-mode .cbadge.on,body.dark-mode .rev-badge.ok,body.dark-mode .sup-badge.strong,body.dark-mode .pay-toggle.paid{color:var(--t100)}
 .rev-badge.soon,.dash-card-count,.ref-src,.sup-badge.mid{background:var(--pill-au);color:var(--gold-dk);box-shadow:inset 0 0 0 .5px var(--pill-au-bd)}
