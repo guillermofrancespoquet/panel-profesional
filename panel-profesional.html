@@ -1538,6 +1538,36 @@ body.dark-mode .cart-chip.gold{color:#E0C196}
   .cart-c .cart-k{display:inline;color:var(--g400);margin-right:5px}
 }
 
+/* ── Cartera · Por hacer ── */
+.cart-vistas{margin-bottom:1rem}
+.cart-tabn{display:inline-block;min-width:18px;padding:0 6px;margin-left:4px;border-radius:10px;font-size:11px;line-height:18px;background:var(--g200);color:var(--g700);font-variant-numeric:tabular-nums}
+.cart-tabn:empty{display:none}
+.cart-tabn.risk{background:rgba(184,50,50,.14);color:var(--red)}
+.cart-tchips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.cart-tchips .dep-chip b{margin-left:5px;font-weight:700;font-variant-numeric:tabular-nums;opacity:.75}
+.cart-tlist{background:var(--sf);border:.5px solid var(--bd);border-radius:16px;overflow:hidden}
+.cart-t{display:grid;grid-template-columns:minmax(170px,1.2fr) minmax(0,2.3fr) 130px 140px;gap:14px;align-items:center;padding:12px 18px;border-bottom:.5px solid var(--bd);transition:background .12s}
+.cart-t:last-child{border-bottom:none}
+.cart-t.click{cursor:pointer}
+.cart-t.click:hover{background:var(--t50)}
+.cart-t:focus-visible{outline:2px solid var(--gold);outline-offset:-2px}
+.cart-tx{display:flex;flex-direction:column;gap:3px;min-width:0}
+.cart-tt{font-size:13px;color:var(--g900);line-height:1.4}
+.cart-tag{align-self:flex-start;font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--g500)}
+.cart-ed{font-size:12px;color:var(--g500);white-space:nowrap}
+.cart-ed.red{color:var(--red);font-weight:600}
+.cart-ac{display:flex;justify-content:flex-end}
+.cart-ac .btn-soft{white-space:nowrap}
+@media(max-width:1100px){.cart-t{grid-template-columns:minmax(150px,1fr) minmax(0,2fr) auto}.cart-ed{display:none}}
+@media(max-width:860px){
+  .cart-tlist{background:transparent;border:none;border-radius:0;overflow:visible}
+  .cart-t{grid-template-columns:1fr auto;gap:8px 12px;padding:14px;margin-bottom:10px;background:linear-gradient(135deg,var(--t50) 0%,var(--sf) 62%);border:.5px solid var(--bd);border-radius:16px}
+  .cart-t:last-child{border-bottom:.5px solid var(--bd)}
+  .cart-t .cart-cli{grid-column:1/-1}
+  .cart-t .cart-tx{grid-column:1/-1}
+  .cart-ed{display:block;grid-column:1;font-size:11.5px}
+  .cart-ac{grid-column:2}
+}
 body.dark-mode .sb-badge{background:rgba(229,83,75,.2)}
 body.sb-min .sb-badge,body.sb-min.dark-mode .sb-badge{background:#E5534B}
 .sb-subitem .sb-lbl{white-space:nowrap;min-width:0;overflow:hidden;text-overflow:ellipsis}
@@ -2415,6 +2445,15 @@ body.dark-mode .ana-e.alto{background:rgba(242,133,131,.16)}
       <div><p class="page-title" role="heading" aria-level="1">Cartera</p><p class="page-sub" id="cartSub">Cargando…</p></div>
       <button type="button" class="ui-btn" id="cartRef" onclick="cargarCartera()"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>Actualizar</button>
     </div>
+    <div class="agenda-tabs cart-vistas" role="tablist" aria-label="Vista de la cartera">
+      <button type="button" class="agenda-tab on" id="cartTabHacer" role="tab" aria-selected="true" onclick="cartVista('hacer')">Por hacer <span class="cart-tabn" id="cartTabHacerN"></span></button>
+      <button type="button" class="agenda-tab" id="cartTabCli" role="tab" aria-selected="false" onclick="cartVista('clientes')">Por cliente</button>
+    </div>
+    <div id="cartVHacer">
+      <div class="cart-tchips" id="cartTChips" role="group" aria-label="Filtrar tareas por tipo"></div>
+      <div class="cart-tlist" id="cartHacer" aria-live="polite"></div>
+    </div>
+    <div id="cartVCli" style="display:none">
     <div class="cart-strip" id="cartStrip" role="group" aria-label="Filtrar por estado" aria-live="polite"></div>
     <div class="ui-bar">
       <label class="ui-search"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" id="cartBusca" placeholder="Buscar por nombre o deporte" oninput="cartBuscar()" aria-label="Buscar en la cartera" autocomplete="off"></label>
@@ -2426,6 +2465,7 @@ body.dark-mode .ana-e.alto{background:rgba(242,133,131,.16)}
       </select><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></div>
     </div>
     <div class="cart-list" id="cartList"></div>
+    </div>
   </div>
 </div>
 
@@ -3577,7 +3617,8 @@ const VACIO_ICO={
   file:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>',
   chart:'<line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>',
   msg:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',
-  search:'<circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>'};
+  search:'<circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>',
+  check:'<polyline points="20 6 9 17 4 12"/>'};
 function vacioHtml(ico,titulo,texto,cta,peq){
   return `<div class="vacio${peq?' sm':''}"><span class="vacio-ic" aria-hidden="true"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">${VACIO_ICO[ico]||''}</svg></span>
     <p class="vacio-t">${titulo}</p>${texto?`<p class="vacio-s">${texto}</p>`:''}${cta?`<button type="button" class="btn-add" onclick="${cta.f}">${cta.t}</button>`:''}</div>`;
@@ -5003,7 +5044,7 @@ function dashVivoIniciar(){
 //   POR MIRAR  seguimiento sin enviar esta semana · peso sin anotar ≥ 14 días (si antes lo anotaba) · comidas del diario sin comentar · medición con más de 90 días ·
 //              más de 30 días sin consulta · sin revisión programada · objetivo con la fecha límite pasada · plan por preparar
 // Las tablas que no existan (SQL sin ejecutar) simplemente no aportan avisos.
-let _cart = { filas: [], filtro: 'todos', orden: 'urgencia', busca: '', cargando: false, listo: false };
+let _cart = { filas: [], filtro: 'todos', orden: 'urgencia', busca: '', cargando: false, listo: false, vista: 'hacer', tClientes: [], tCitas: [], tareas: [], citas: [], tfiltro: 'todas' };
 const CART_EST = { risk: { t: 'En riesgo', o: 0 }, warn: { t: 'Por mirar', o: 1 }, ok: { t: 'Al día', o: 2 } };
 async function cargarCartera(opts){
   const silencioso = !!(opts && opts.silencioso);
@@ -5023,14 +5064,16 @@ async function cargarCartera(opts){
     const [segs, pesos, comidas, hist, meds, bios, menus, objs, citasAll] = await Promise.all([
       seguro(sb(`seguimientos?semana=gte.${haceD(70)}&select=deportista_id,semana,respuestas&order=semana.desc`)),
       seguro(sb(`pesos_cliente?fecha=gte.${haceD(60)}&select=deportista_id,fecha&order=fecha.desc`)),
-      seguro(sb(`comidas_cliente?fecha=gte.${haceD(7)}&comentario=is.null&select=deportista_id`)),
+      seguro(sb(`comidas_cliente?fecha=gte.${haceD(7)}&comentario=is.null&select=deportista_id,fecha`)),
       seguro(sb('historial_deportista?select=deportista_id,fecha&order=fecha.desc&limit=3000')),
       seguro(sb('antropometria_valoraciones?select=deportista_id,fecha&order=fecha.desc&limit=3000')),
       seguro(sb('bioimpedancias?select=deportista_id,fecha&order=fecha.desc&limit=3000')),
       seguro(sb('menus_cliente?select=deportista_id,publicado_en')),
       seguro(sb('objetivos_cliente?estado=eq.activo&select=deportista_id')),
-      seguro(sb(`citas?fecha=gte.${hoy}&select=cliente,fecha`))
+      seguro(sb(`citas?select=*&or=(fecha.gte.${hoy},pagado.is.null,pagado.eq.false,fecha.gte.${haceD(21)})`))
     ]);
+    _cart.citas = citasAll || [];
+    const tareas = [];
     const por = (arr, f) => { const m = {}; (arr || []).forEach(x => { const k = String(x.deportista_id); (m[k] = m[k] || []).push(x); }); return m; };
     const pSeg = por(segs), pPeso = por(pesos), pCom = por(comidas), pHist = por(hist), pMed = por(meds), pBio = por(bios), pMenu = por(menus);
     // Objetivos activos: el avance se pide solo a quien tiene uno (de 6 en 6)
@@ -5043,12 +5086,13 @@ async function cargarCartera(opts){
 
     _cart.filas = deps.map(d => {
       const k = String(d.id), chips = [], ch = (t, cls) => chips.push({ t, cls });
+      const tk = (tipo, txt, urg, edad, btn, fn) => tareas.push({ tipos: [tipo], d, nombre: d.nombre, txt, urg, edad, btn, fn });
       const fm = (d.formularios && typeof d.formularios === 'object') ? d.formularios : {};
       const segAct = !!(fm.seguimiento && fm.seguimiento.activo), sl = pSeg[k] || [];
       // Seguimiento semanal
       if(segAct){
-        if(segYaToca(d, lunesPrev) && !sl.some(x => dia(x.semana) >= lunesPrev)) ch('2+ semanas sin seguimiento', 'red');
-        else if(segYaToca(d, lunes) && !sl.some(x => dia(x.semana) >= lunes)) ch('Seguimiento sin enviar', 'gold');
+        if(segYaToca(d, lunesPrev) && !sl.some(x => dia(x.semana) >= lunesPrev)){ ch('2+ semanas sin seguimiento', 'red'); tk('seguimiento', 'No ha enviado el seguimiento semanal en 2 semanas o más.', 2, null, 'Ver ficha', `cartIr(${d.id},'seguimiento')`); }
+        else if(segYaToca(d, lunes) && !sl.some(x => dia(x.semana) >= lunes)){ ch('Seguimiento sin enviar', 'gold'); tk('seguimiento', 'Aún no ha enviado el seguimiento de esta semana.', 1, null, 'Ver ficha', `cartIr(${d.id},'seguimiento')`); }
       }
       const [a, b] = sl, seguidas = a && b && Math.round((new Date(dia(a.semana)) - new Date(dia(b.semana))) / 86400000) === 7;
       if(seguidas){
@@ -5062,7 +5106,7 @@ async function cargarCartera(opts){
       // Peso que anota el cliente
       const pp0 = pPeso[k]; if(pp0 && pp0.length){ const n = dias(pp0[0].fecha); if(n >= 14) ch(`Sin anotar el peso ${n} días`, 'gold'); }
       // Diario sin comentar
-      const nc = (pCom[k] || []).length; if(nc) ch(`${nc} comida${nc !== 1 ? 's' : ''} sin comentar`, 'gold');
+      const nc = (pCom[k] || []).length; if(nc){ ch(`${nc} comida${nc !== 1 ? 's' : ''} sin comentar`, 'gold'); const ant = dias((pCom[k] || []).map(x => dia(x.fecha)).sort()[0]); tk('comidas', `${nc} comida${nc !== 1 ? 's' : ''} del diario sin comentar.`, ant >= 4 ? 2 : 1, ant, 'Comentar', `cartIr(${d.id},'seguimiento')`); }
       // Consulta y mediciones
       const ultimaCons = maxF([pHist[k] || [], pMed[k] || [], pBio[k] || []]);
       let sinCons30 = false;
@@ -5071,12 +5115,13 @@ async function cargarCartera(opts){
       if(ultimaMed && dias(ultimaMed) > 90) ch('Medición de hace más de 90 días', 'gold');
       // Revisión
       const rv = dia(d.proxima_revision);
-      if(!rv) ch('Sin revisión programada', 'gold'); else if(rv < hoy) ch('Revisión con la fecha pasada', 'red');
-      else if(citasAll && !citasAll.some(c => String(c.cliente || '').trim().toLowerCase() === String(d.nombre || '').trim().toLowerCase() && dia(c.fecha) === rv)) ch('Revisión sin cita en la agenda', 'gold');
+      if(!rv){ ch('Sin revisión programada', 'gold'); tk('revision', 'No tiene la próxima revisión programada.', 1, null, 'Poner fecha', `cartIr(${d.id},'resumen')`); }
+      else if(rv < hoy){ ch('Revisión con la fecha pasada', 'red'); tk('revision', `La fecha de la revisión ya pasó (${new Date(rv + 'T00:00:00').toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })}).`, 2, dias(rv), 'Poner nueva fecha', `cartIr(${d.id},'resumen')`); }
+      else if(citasAll && !citasAll.some(c => String(c.cliente || '').trim().toLowerCase() === String(d.nombre || '').trim().toLowerCase() && dia(c.fecha) === rv)){ ch('Revisión sin cita en la agenda', 'gold'); tk('revision', `Revisión del ${new Date(rv + 'T00:00:00').toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })} sin cita en la agenda.`, 1, null, 'Ver ficha', `cartIr(${d.id},'resumen')`); }
       // Plan
       const filasMenu = pMenu[k] || [], pub = filasMenu.map(x => x.publicado_en).filter(Boolean).sort().pop() || null;
       const pend = planPendienteVivo(d, pub);
-      if(pend){ const du = daysUntil(pend.para); ch(du < 0 ? `Plan vencido hace ${-du} día${du === -1 ? '' : 's'}` : du === 0 ? 'Plan para hoy' : du === 1 ? 'Plan para mañana' : 'Plan para el ' + new Date(pend.para + 'T00:00:00').toLocaleDateString('es-ES', { day: 'numeric', month: 'short' }), du <= 0 ? 'red' : 'gold'); }
+      if(pend){ const du = daysUntil(pend.para); tk('plan', du < 0 ? `Plan por preparar: venció hace ${-du} día${du === -1 ? '' : 's'}.` : du === 0 ? 'Plan por preparar: es para hoy.' : du === 1 ? 'Plan por preparar: es para mañana.' : 'Plan por preparar para el ' + new Date(pend.para + 'T00:00:00').toLocaleDateString('es-ES', { day: 'numeric', month: 'short' }) + '.', du <= 0 ? 2 : 1, du < 0 ? -du : null, 'Abrir plan', `abrirMenuSemanal(${d.id})`); ch(du < 0 ? `Plan vencido hace ${-du} día${du === -1 ? '' : 's'}` : du === 0 ? 'Plan para hoy' : du === 1 ? 'Plan para mañana' : 'Plan para el ' + new Date(pend.para + 'T00:00:00').toLocaleDateString('es-ES', { day: 'numeric', month: 'short' }), du <= 0 ? 'red' : 'gold'); }
       // (Sin aviso de «plan sin publicar»: mientras se prueba el planificador, los borradores son normales y el plan de siempre sigue siendo el enlace.)
       // Objetivo
       (pObj[k] || []).forEach(o => {
@@ -5088,6 +5133,7 @@ async function cargarCartera(opts){
       chips.sort((x, y) => (y.cls === 'red') - (x.cls === 'red'));
       return { d, est, chips, nRed, serie, adhMedia, ultimaCons, sinCons30, rev: rv };
     });
+    _cart.tClientes = tareas; cartTareasCitas();
     _cart.listo = true;
     cartPintar();
     _dash.avisos = _cart.filas.filter(f => f.est !== 'ok').length; dashPintarEstado();
@@ -5098,6 +5144,76 @@ async function cargarCartera(opts){
   }finally{
     _cart.cargando = false; if(btn){ btn.disabled = false; btn.classList.remove('cargando'); }
   }
+}
+// Una tarea por cita pasada: consulta sin registrar (últimos 21 días) y/o sin cobrar (cualquier fecha). Se calcula con las citas ya cargadas.
+function cartTareasCitas(){
+  const hoy = localISO(new Date()), dia = f => String(f || '').slice(0, 10), hayHecha = _cart.citas.some(c => 'hecha' in c);
+  const hace = f => Math.max(0, Math.round((new Date(hoy + 'T00:00:00') - new Date(dia(f) + 'T00:00:00')) / 86400000));
+  const nom = s => String(s || '').trim().toLowerCase();
+  const out = [];
+  _cart.citas.filter(c => citaYaPaso(c)).forEach(c => {
+    const sinReg = hayHecha && !c.hecha && hace(c.fecha) <= 21, sinCobro = !c.pagado && c.requiere_pago !== false;
+    if(!sinReg && !sinCobro) return;
+    const d = deportistas.find(x => !x.fecha_baja && nom(x.nombre) === nom(c.cliente)) || null;
+    const cuando = new Date(dia(c.fecha) + 'T00:00:00').toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'short' });
+    const monto = c.monto != null && c.monto !== '' ? ` · ${medNum(+c.monto, 0)} €` : '';
+    const n = hace(c.fecha), serv = c.servicio || 'Cita';
+    out.push({
+      tipos: [sinReg ? 'consulta' : null, sinCobro ? 'cobro' : null].filter(Boolean), d, nombre: c.cliente, cita: c.id,
+      txt: `${serv} del ${cuando}: ${sinReg && sinCobro ? 'sin registrar y sin cobrar' + monto : sinReg ? 'sin registrar' : 'sin cobrar' + monto}.`,
+      urg: sinCobro && n > 7 ? 2 : 1, edad: n,
+      btn: sinReg ? 'Registrar' : 'Marcar cobrada', fn: sinReg ? `cartRegistrar(${c.id})` : `cartCobrar(${c.id})`
+    });
+  });
+  _cart.tCitas = out;
+  _cart.tareas = _cart.tClientes.concat(out);
+}
+function cartVista(v){
+  _cart.vista = v === 'clientes' ? 'clientes' : 'hacer';
+  document.getElementById('cartVHacer').style.display = _cart.vista === 'hacer' ? '' : 'none';
+  document.getElementById('cartVCli').style.display = _cart.vista === 'clientes' ? '' : 'none';
+  [['cartTabHacer', 'hacer'], ['cartTabCli', 'clientes']].forEach(([id, k]) => { const b = document.getElementById(id); b.classList.toggle('on', _cart.vista === k); b.setAttribute('aria-selected', String(_cart.vista === k)); });
+  cartPintar();
+}
+function cartTFiltro(t){ _cart.tfiltro = (_cart.tfiltro === t && t !== 'todas') ? 'todas' : t; cartPintarHacer(); }
+async function cartIr(id, tab){ await abrirFichaDash(id); if(tab && tab !== 'resumen') depTab(tab); }
+function cartRegistrar(id){
+  const c = _cart.citas.find(x => x.id == id); if(!c) return;
+  const d = deportistas.find(x => !x.fecha_baja && String(x.nombre || '').trim().toLowerCase() === String(c.cliente || '').trim().toLowerCase());
+  abrirConsulta(d ? d.id : null, c);
+}
+async function cartCobrar(id){
+  const c = _cart.citas.find(x => x.id == id); if(!c) return;
+  const poner = v => { c.pagado = v; const g = (typeof citas !== 'undefined' ? citas : []).find(x => x.id == id); if(g) g.pagado = v; cartTareasCitas(); cartPintar(); };
+  const r = await patchCita(id, { pagado: true });
+  if(esErrorSb(r)){ toast('No se pudo marcar como cobrada. Inténtalo de nuevo.', { tipo: 'error' }); return; }
+  poner(true);
+  toast('Cita marcada como cobrada', { ms: 6000, accion: { texto: 'Deshacer', fn: async () => { const r2 = await patchCita(id, { pagado: false }); if(esErrorSb(r2)) toast('No se pudo deshacer.', { tipo: 'error' }); else poner(false); } } });
+}
+const CART_TIPOS = [['comidas', 'Comidas'], ['plan', 'Planes'], ['cobro', 'Cobros'], ['consulta', 'Consultas'], ['seguimiento', 'Seguimientos'], ['revision', 'Revisiones']];
+function cartPintarHacer(){
+  const el = document.getElementById('cartHacer'), ch = document.getElementById('cartTChips'); if(!el) return;
+  const T = _cart.tareas, nRojas = T.filter(t => t.urg === 2).length;
+  const n = document.getElementById('cartTabHacerN'); n.textContent = T.length || ''; n.classList.toggle('risk', nRojas > 0);
+  sbPonBadge('sbCartBadge', T.length, 'tareas por hacer');
+  if(_cart.vista === 'hacer') document.getElementById('cartSub').textContent = T.length ? `${T.length} cosa${T.length !== 1 ? 's' : ''} por hacer${nRojas ? ` · ${nRojas} urgente${nRojas !== 1 ? 's' : ''}` : ''}` : 'Nada pendiente';
+  const cuenta = k => T.filter(t => t.tipos.includes(k)).length;
+  ch.innerHTML = T.length ? `<button type="button" class="dep-chip${_cart.tfiltro === 'todas' ? ' active' : ''}" aria-pressed="${_cart.tfiltro === 'todas'}" onclick="cartTFiltro('todas')">Todas<b>${T.length}</b></button>` +
+    CART_TIPOS.filter(([k]) => cuenta(k)).map(([k, l]) => `<button type="button" class="dep-chip${_cart.tfiltro === k ? ' active' : ''}" aria-pressed="${_cart.tfiltro === k}" onclick="cartTFiltro('${k}')">${l}<b>${cuenta(k)}</b></button>`).join('') : '';
+  if(!T.length){ el.innerHTML = vacioHtml('check', 'Todo al día', 'No tienes nada pendiente: ni comidas por comentar, ni planes, ni cobros, ni consultas por registrar.'); return; }
+  const v = T.filter(t => _cart.tfiltro === 'todas' || t.tipos.includes(_cart.tfiltro)).sort((a, b) => b.urg - a.urg || (b.edad || 0) - (a.edad || 0) || String(a.nombre).localeCompare(String(b.nombre), 'es'));
+  const tipoTxt = t => CART_TIPOS.filter(([k]) => t.tipos.includes(k)).map(x => x[1]).join(' · ');
+  const edadTxt = t => t.edad == null ? '' : t.tipos.includes('plan') || (t.tipos.includes('revision') && t.urg === 2) ? `vencido hace ${t.edad} día${t.edad !== 1 ? 's' : ''}` : t.edad <= 0 ? 'hoy' : t.edad === 1 ? 'desde ayer' : `desde hace ${t.edad} días`;
+  el.innerHTML = v.map(t => {
+    const dd = t.d || { nombre: t.nombre }, ed = edadTxt(t);
+    return `<div class="cart-t${t.d ? ' click' : ''}"${t.d ? ` onclick="if(!event.target.closest('button'))abrirFichaDash(${t.d.id})"` : ''}>
+      <div class="cart-cli"><span class="cart-av">${avatarHtml(dd, '')}</span><div style="min-width:0"><div class="cart-n">${sudEsc(t.nombre)}</div><div class="cart-s">${sudEsc(t.d ? (t.d.deporte || '—') : 'Sin ficha de deportista')}</div></div></div>
+      <div class="cart-tx"><span class="cart-tag">${tipoTxt(t)}</span><span class="cart-tt">${sudEsc(t.txt)}</span></div>
+      <div class="cart-ed${t.urg === 2 ? ' red' : ''}">${ed}</div>
+      <div class="cart-ac"><button type="button" class="btn-soft sm" onclick="event.stopPropagation();${t.fn}">${t.btn}</button></div>
+    </div>`;
+  }).join('');
+  cargarAvatares(el);
 }
 function cartFiltro(f){ _cart.filtro = (_cart.filtro === f && f !== 'todos') ? 'todos' : f; cartPintar(); }
 function cartBuscar(){ _cart.busca = (document.getElementById('cartBusca').value || '').trim().toLowerCase(); cartPintar(); }
@@ -5110,13 +5226,13 @@ function cartSpark(vals){
   return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" aria-hidden="true"><polyline points="${pts}" fill="none" stroke="var(--t400)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="${px(n-1).toFixed(1)}" cy="${py(l).toFixed(1)}" r="2.4" fill="var(--t400)"/></svg>`;
 }
 function cartPintar(){
+  cartPintarHacer();
   const filas = _cart.filas, el = document.getElementById('cartList'); if(!el) return;
   const cnt = { risk: 0, warn: 0, ok: 0 }; filas.forEach(f => cnt[f.est]++);
   const s30 = filas.filter(f => f.sinCons30).length;
-  document.getElementById('cartSub').textContent = filas.length ? `${filas.length} cliente${filas.length !== 1 ? 's' : ''} en seguimiento` : 'Sin clientes todavía';
+  if(_cart.vista === 'clientes') document.getElementById('cartSub').textContent = filas.length ? `${filas.length} cliente${filas.length !== 1 ? 's' : ''} en seguimiento` : 'Sin clientes todavía';
   const celda = (k, n, l, dot) => `<button type="button" class="cart-cell${_cart.filtro === k ? ' on' : ''}" aria-pressed="${_cart.filtro === k}" onclick="cartFiltro('${k}')"><span>${dot ? `<i class="cart-dot ${dot}"></i>` : ''}${l}</span><b>${n}</b></button>`;
   document.getElementById('cartStrip').innerHTML = filas.length ? celda('todos', filas.length, 'Clientes') + celda('ok', cnt.ok, 'Al día', 'ok') + celda('warn', cnt.warn, 'Por mirar', 'warn') + celda('risk', cnt.risk, 'En riesgo', 'risk') + celda('old', s30, '+30 días sin consulta') : '';
-  sbPonBadge('sbCartBadge', cnt.risk, 'en riesgo');
   let v = filas.filter(f => (_cart.filtro === 'todos' || (_cart.filtro === 'old' ? f.sinCons30 : f.est === _cart.filtro)) && (!_cart.busca || (f.d.nombre + ' ' + (f.d.deporte || '')).toLowerCase().includes(_cart.busca)));
   const nom = (a, b) => String(a.d.nombre).localeCompare(String(b.d.nombre), 'es');
   const ord = {
@@ -10249,6 +10365,7 @@ async function guardarConsulta(){
     cerrarConsulta();
     if(dep != null && currentDepId == dep && document.getElementById('vdepdet').classList.contains('active')) openDepDet(dep);
     if(document.getElementById('vhome').classList.contains('active')) loadDashboard();
+    if(document.getElementById('vcartera').classList.contains('active')) cargarCartera({silencioso:true});
   }catch(e){ toast('No se pudo guardar. Inténtalo de nuevo.', {tipo:'error'}); btn.disabled = false; }
 }
 
