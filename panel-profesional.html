@@ -196,7 +196,12 @@ body.dark-mode .login-btn:hover{background:var(--t600)}
 .btn-cancel{flex:1;padding:11px;background:var(--g100);border:none;border-radius:10px;color:var(--g700);font-size:14px;font-weight:500;cursor:pointer;font-family:var(--f)}
 .btn-ok{flex:1;padding:11px;background:var(--btn);border:none;border-radius:10px;color:#fff;font-size:14px;font-weight:600;cursor:pointer;font-family:var(--f)}
 .btn-ok.danger{background:var(--red)}
-body.dark-mode .btn-ok.danger,body.dark-mode .sb-badge{background:#B83232}
+body.dark-mode .btn-ok.danger,.dash-hacer{width:100%;background:none;border:0;border-bottom:.5px solid var(--bd);font:inherit;color:inherit;text-align:left;cursor:pointer}
+.dash-hacer:hover{background:var(--g100)}
+.dash-hacer .dash-row-sub{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dash-mas{display:block;width:100%;margin-top:8px;padding:8px;background:none;border:0;font:inherit;font-size:12.5px;font-weight:600;color:var(--t800);cursor:pointer;border-radius:8px}
+.dash-mas:hover{background:var(--g100)}
+body.dark-mode .sb-badge{background:#B83232}
 .merr{font-size:12px;color:var(--red);margin-top:8px;min-height:16px}
 
 @media(max-width:600px){
@@ -1006,7 +1011,7 @@ body.dark-mode .cmp-cell.b .cmp-track i{background:var(--t400)}
   .agenda-chips .dep-chip{flex-shrink:0}
   .page-header{margin-bottom:1.25rem}
   .page-title{font-size:19px}
-  .dash-grid{grid-template-columns:1fr}
+  .dash-grid{grid-template-columns:minmax(0,1fr)}
   .dash-stats{grid-template-columns:repeat(2,1fr);gap:10px}
   .dash-stat{padding:.85rem}
   .dash-stat-n{font-size:19px}
@@ -2112,12 +2117,12 @@ body.dark-mode .ana-e.alto{background:rgba(242,133,131,.16)}
         </div>
         <div id="dashRevisiones"></div>
       </div>
-        <div class="dash-card" data-dc="inactividad">
+        <div class="dash-card" data-dc="porhacer">
         <div class="dash-card-head">
-          <span class="dash-card-title"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Sin actividad (14+ días)</span>
-          <span class="dash-card-count" id="dashInactCount">0</span>
+          <span class="dash-card-title"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Por hacer</span>
+          <span class="dash-card-count" id="dashHacerCount">0</span>
         </div>
-        <div id="dashInactividad"></div>
+        <div id="dashPorHacer"></div>
       </div>
         <div class="dash-card" data-dc="pagos">
         <div class="dash-card-head">
@@ -4726,17 +4731,6 @@ async function loadDashboard(){
     return `<div class="dash-row"><div class="dash-row-dot ${d._days===0?'red':'gold'}"></div><div class="dash-row-txt"><div class="dash-row-name">${d.nombre}</div><div class="dash-row-sub">${d.deporte||''}</div></div><span class="dash-row-tag">${lbl}</span></div>`;
   }).join(''):dashVacio('bolt','Sin revisiones en los próximos 7 días.');
 
-  // ── Inactividad 14+ días ──
-  const inact=dashDeps.map(d=>{
-    const last=d.ultima_actividad?new Date(d.ultima_actividad):null;
-    const days=last?Math.floor((today-last)/86400000):null;
-    return {...d,_idays:days};
-  }).filter(d=>d._idays!==null&&d._idays>=14).sort((a,b)=>b._idays-a._idays);
-  document.getElementById('dashInactCount').textContent=inact.length;
-  document.getElementById('dashInactividad').innerHTML=inact.length?inact.slice(0,5).map(d=>{
-    return `<div class="dash-row"><div class="dash-row-dot red"></div><div class="dash-row-txt"><div class="dash-row-name">${d.nombre}</div><div class="dash-row-sub">${d.deporte||''}</div></div><span class="dash-row-tag">${d._idays}d</span></div>`;
-  }).join(''):dashVacio('ok','Todos con actividad reciente.');
-
   // ── Clientes por mirar: sale de la Cartera (mismas reglas) y rellena la frase de arriba y la insignia de la barra lateral ──
   cargarCartera({ silencioso: true });
 
@@ -5201,6 +5195,7 @@ async function cartCobrar(id){
 }
 const CART_TIPOS = [['comidas', 'Comidas'], ['plan', 'Planes'], ['cobro', 'Cobros'], ['consulta', 'Consultas'], ['seguimiento', 'Seguimientos'], ['revision', 'Revisiones']];
 function cartPintarHacer(){
+  dashPorHacerPintar();
   const el = document.getElementById('cartHacer'), ch = document.getElementById('cartTChips'); if(!el) return;
   const T = _cart.tareas, nRojas = T.filter(t => t.urg === 2).length;
   const n = document.getElementById('cartTabHacerN'); n.textContent = T.length || ''; n.classList.toggle('risk', nRojas > 0);
@@ -5223,6 +5218,15 @@ function cartPintarHacer(){
     </div>`;
   }).join('');
   cargarAvatares(el);
+}
+function dashPorHacerPintar(){
+  const el = document.getElementById('dashPorHacer'); if(!el) return;
+  const T = (_cart.tareas || []).slice().sort((a, b) => b.urg - a.urg || (b.edad || 0) - (a.edad || 0) || String(a.nombre).localeCompare(String(b.nombre), 'es'));
+  document.getElementById('dashHacerCount').textContent = T.length;
+  if(!_cart.listo){ el.innerHTML = skRows(3); return; }
+  if(!T.length){ el.innerHTML = dashVacio('ok', 'Nada pendiente.'); return; }
+  el.innerHTML = T.slice(0, 5).map(t => `<button type="button" class="dash-row dash-hacer" onclick="${t.fn}"><div class="dash-row-dot ${t.urg === 2 ? 'red' : 'gold'}"></div><div class="dash-row-txt"><div class="dash-row-name">${sudEsc(t.nombre)}</div><div class="dash-row-sub">${sudEsc(t.txt)}</div></div><span class="dash-row-tag">${t.btn}</span></button>`).join('') +
+    (T.length > 5 ? `<button type="button" class="dash-mas" onclick="navTo('cartera')">Ver las ${T.length} tareas</button>` : '');
 }
 function cartFiltro(f){ _cart.filtro = (_cart.filtro === f && f !== 'todos') ? 'todos' : f; cartPintar(); }
 function cartBuscar(){ _cart.busca = (document.getElementById('cartBusca').value || '').trim().toLowerCase(); cartPintar(); }
