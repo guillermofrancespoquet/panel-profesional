@@ -270,7 +270,10 @@ body.dark-mode .sb-badge{background:#B83232}
 .dep-avatar-fallback{font-size:22px;font-weight:700;color:#fff}
 .fi-alert{margin:0 0 10px;padding:10px 12px 10px 28px;border-radius:10px;background:rgba(184,149,106,.14);border:.5px solid var(--gold);font-size:13px;line-height:1.5}
 .plan-chk{display:flex;gap:8px;align-items:flex-start;font-size:14px;line-height:1.4;cursor:pointer}.plan-chk input{margin-top:3px;width:18px;height:18px;flex:none;accent-color:var(--btn)}
-.est-acc{margin-top:6px}
+.est-acc{display:flex;width:max-content;margin-top:8px;padding:6px 12px;font-size:12px}
+.btn-soft.est-acc{background:var(--sf);color:var(--g700);border:.5px solid var(--bdm,var(--bd));font-weight:600}
+.btn-soft.est-acc:hover{background:var(--g100)}
+body.dark-mode .btn-soft.est-acc{color:var(--g700);border-color:var(--bdm,var(--bd))}
 .rg-fila{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:.5px solid var(--bd);flex-wrap:wrap}.rg-fila:last-child{border-bottom:0}.rg-fila b{font-size:14px}.rg-sub{font-size:12.5px;color:var(--g400);margin-top:2px;line-height:1.4}
 .rg-acc{display:flex;gap:8px;flex-wrap:wrap}.rg-caja{border-radius:12px;padding:12px 14px;font-size:13.5px;line-height:1.5;margin:12px 0}.rg-caja.warn{background:rgba(184,149,106,.14);border:.5px solid var(--gold)}.rg-caja.info{background:var(--t50);border:.5px solid rgba(29,158,117,.25)}
 .cons-chk-p{display:flex;gap:8px;align-items:flex-start;margin:10px 0 2px;font-size:13px;line-height:1.4}.cons-chk-p input{margin-top:2px}
@@ -894,7 +897,11 @@ body.dark-mode .cmp-cell.b .cmp-track i{background:var(--t400)}
 .dash-hero{margin-bottom:1.25rem}
 .dash-hero-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
 .dash-hero-txt{min-width:0}
-.dash-resumen{font-size:14px;font-weight:500;color:var(--g700);margin-top:8px;line-height:1.5}
+.dash-resumen{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.dash-pill{display:inline-flex;align-items:center;gap:7px;height:30px;padding:0 12px;border-radius:var(--r-btn,10px);border:.5px solid var(--bdm,var(--bd));background:var(--sf);color:var(--g700);font:600 12.5px var(--f);white-space:nowrap}
+.dash-pill i{width:7px;height:7px;border-radius:50%;background:var(--g400);flex:none}
+.dash-pill.warn i{background:var(--gold)}.dash-pill.red i{background:var(--red)}.dash-pill.ok i{background:var(--t400)}
+button.dash-pill{cursor:pointer}button.dash-pill:hover{background:var(--g100)}
 .dash-pers{flex:none;display:inline-flex;align-items:center;gap:7px;height:36px;padding:0 12px;border-radius:10px;border:.5px solid var(--bdm,var(--bd));background:var(--sf);color:var(--g700);font:600 12.5px var(--f);cursor:pointer}
 .dash-pers:hover{background:var(--g100)}
 .dash-pers[aria-pressed="true"]{background:var(--pill-g);border-color:var(--pill-g-bd);color:var(--t800)}
@@ -959,8 +966,8 @@ body.dark-mode .cmp-cell.b .cmp-track i{background:var(--t400)}
     .dash-pers span{display:none}.dash-pers{width:36px;padding:0;justify-content:center}
   .dash-prox{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;padding:16px;gap:14px 14px}.dash-prox-h{width:72px;height:72px;border-radius:16px}.dash-prox-h b{font-size:21px}.dash-prox-h span{margin-top:5px;letter-spacing:.06em}.dash-prox-n{font-size:18px}.dash-prox-a{grid-column:1/-1;width:100%}.dash-prox-a .btn-soft{flex:1;justify-content:center}.dash-prox-s{white-space:normal}
 }
-.dash-greet{font-size:22px;font-weight:700;letter-spacing:-.02em;margin-bottom:3px}
-.dash-date{font-size:13px;color:var(--g400)}
+.dash-greet{font-size:26px;font-weight:700;letter-spacing:-.025em;line-height:1.15}
+.dash-date{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--g500);margin-bottom:6px}
 .dash-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:1.5rem}
 .dash-card{background:var(--sf);border-radius:16px;border:.5px solid var(--bd);padding:1.25rem 1.4rem;box-shadow:0 2px 10px rgba(0,0,0,.04)}
 .dash-card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:.9rem}
@@ -2071,9 +2078,9 @@ body.dark-mode .ana-e.alto{background:rgba(242,133,131,.16)}
     <div class="dash-hero">
       <div class="dash-hero-top">
         <div class="dash-hero-txt">
-          <p class="dash-greet" role="heading" aria-level="1">Hola, Guillermo</p>
           <p class="dash-date" id="dashDate"></p>
-          <p class="dash-resumen" id="dashResumen" aria-live="polite"></p>
+          <p class="dash-greet" role="heading" aria-level="1">Hola, Guillermo</p>
+          <div class="dash-resumen" id="dashResumen" aria-live="polite"></div>
         </div>
         <button type="button" class="dash-pers" id="dashPersBtn" onclick="dashPersonalizar()" aria-pressed="false" aria-label="Personalizar el panel"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg><span>Personalizar</span></button>
       </div>
@@ -4749,12 +4756,13 @@ const dashVacio = (ico, txt) => `<div class="dash-vacio"><span aria-hidden="true
 function dashPintarEstado() {
   const r = document.getElementById('dashResumen'), ok = document.getElementById('dashTodoOk'); if (!r) return;
   const n = (k, s, p) => `${k} ${k === 1 ? s : p}`, p = [];
-  p.push(_dash.hoy ? n(_dash.hoy, 'cita hoy', 'citas hoy') : 'Sin citas hoy');
-  if (_dash.avisos) p.push(n(_dash.avisos, 'cliente por mirar', 'clientes por mirar'));
-  if (_dash.venc) p.push(n(_dash.venc, 'cobro vencido', 'cobros vencidos'));
+  const pill = (txt, cls, go) => `<${go ? `button type="button" onclick="navTo('${go}')"` : 'span'} class="dash-pill ${cls}"><i aria-hidden="true"></i>${txt}</${go ? 'button' : 'span'}>`;
+  p.push(pill(_dash.hoy ? n(_dash.hoy, 'cita hoy', 'citas hoy') : 'Sin citas hoy', '', 'agenda'));
+  if (_dash.avisos) p.push(pill(n(_dash.avisos, 'cliente por mirar', 'clientes por mirar'), 'warn', 'cartera'));
+  if (_dash.venc) p.push(pill(n(_dash.venc, 'cobro vencido', 'cobros vencidos'), 'red', 'facturacion'));
   const todo = _dash.avisos === 0 && !_dash.venc && !_dash.revs;
-  if (todo) p.push('todo al día');
-  r.textContent = p.join(' · ');
+  if (todo) p.push(pill('Todo al día', 'ok'));
+  r.innerHTML = p.join('');
   if (ok) ok.innerHTML = todo ? `<div class="dash-ok"><span class="dash-ok-ic" aria-hidden="true"><svg width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span><div><p class="dash-ok-t">Todo al día</p><p class="dash-ok-s">No hay nada pendiente ahora mismo: ni avisos, ni cobros vencidos ni revisiones en los próximos 7 días.</p></div><button type="button" class="btn-soft" onclick="navTo('agenda');openAddCita()">Nueva cita</button></div>` : '';
 }
 function pintarProximaDash(lista, deps) {
