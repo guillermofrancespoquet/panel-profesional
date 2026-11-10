@@ -479,6 +479,18 @@ body.dark-mode :focus-visible{outline-color:#5CC8A6}
 .skip-link{position:fixed;left:12px;top:-60px;z-index:20000;background:#fff;color:#04342C;font:600 14px var(--f,system-ui);padding:10px 16px;border-radius:10px;box-shadow:0 4px 16px rgba(0,0,0,.25);text-decoration:none;transition:top .15s}
 .skip-link:focus{top:12px}
 @media(pointer:coarse){.btn{min-height:44px}input,select{min-height:44px}}
+
+/* ═══ Coherencia con el panel (nov 2026): el color solo cuando significa algo, cifras sin negrita ═══ */
+.btn.ghost{background:var(--sf);color:var(--g700);border:.5px solid var(--bdm);font-weight:600}
+.btn.ghost:hover{opacity:1;background:var(--g100)}
+.btn.ghost.ico-del{color:var(--g500)}
+.btn.ghost.ico-del:hover{color:var(--red);border-color:var(--red);background:var(--red-bg)}
+.kpi .val{font-weight:600;letter-spacing:-.025em;font-variant-numeric:tabular-nums}
+.measure-block-head .mi,.measure-block-head .unit-tag{background:var(--g100);color:var(--g700)}
+.clientrow.open td{background:var(--g100)}
+#clientTable tr.clientrow.open{background:var(--g100);border-color:var(--bdm)}
+.badge-count{background:var(--g100);color:var(--g700)}
+td,.val,.num{font-variant-numeric:tabular-nums}
 </style>
 </head>
 <body>
@@ -1344,7 +1356,7 @@ function viewClientes(){
       <td>${c.sexo?esc(c.sexo):"—"}</td>
       <td>${nVal} <span class="small-note">${nVal===1?"valoración":"valoraciones"}</span></td>
       <td>${last?fmtDate(last.fecha):"—"}</td>
-      <td class="no-print"><div class="btn-group"><button class="btn camel sm" data-newval="${c.id}" title="Empezar una valoración nueva de este cliente"><span class="ic">${ic("plus")}</span> Valoración</button> <button class="btn ghost sm" data-open="${c.id}" aria-expanded="${abierto}"><span class="ic">${abierto?"▴":ic("doc")}</span> ${abierto?"Cerrar":"Abrir"}</button> <button class="btn danger sm" data-del="${c.id}" title="Quitar el perfil antropométrico"><span class="ic">${ic("trash")}</span></button></div></td>
+      <td class="no-print"><div class="btn-group"><button class="btn ghost sm" data-newval="${c.id}" title="Empezar una valoración nueva de este cliente"><span class="ic">${ic("plus")}</span> Valoración</button> <button class="btn ghost sm" data-open="${c.id}" aria-expanded="${abierto}"><span class="ic">${abierto?"▴":ic("doc")}</span> ${abierto?"Cerrar":"Abrir"}</button> <button class="btn ghost sm ico-del" data-del="${c.id}" aria-label="Quitar el perfil antropométrico" title="Quitar el perfil antropométrico"><span class="ic">${ic("trash")}</span></button></div></td>
     </tr>${abierto ? `<tr class="detailrow"><td colspan="6">${viewClienteDetalle(c)}</td></tr>` : ""}`;
   }).join("");
   return `

@@ -472,6 +472,18 @@ body>*:not(#mnPrint){display:none !important}
 #mnPrint .pd-r ol{margin:4pt 0 4pt 16pt;padding:0;font-size:9.8pt}
 #mnPrint .pd-pie{margin-top:12pt;font-size:8.5pt;color:#8F8E88;text-align:center}
 @page{size:A4;margin:14mm}}
+
+/* ═══ Coherencia con el panel (nov 2026): cifras y títulos en peso 600; recuadro de las gráficas ═══ */
+.hello,.h2,.stat-v,.obj-pct,.celebra-t,.login-brand,.rev-d,.fi-h{font-weight:600;letter-spacing:-.025em}
+.stat-v,.obj-pct,.rev-d{font-variant-numeric:tabular-nums}
+.chart .tt-hit{fill:transparent;stroke:none;cursor:pointer;pointer-events:all}
+#chartTip{position:fixed;z-index:9000;pointer-events:none;background:#1a1d1c;color:#fff;border-radius:9px;padding:6px 10px 7px;font:500 11px/1.25 var(--f);box-shadow:0 6px 18px rgba(0,0,0,.22);transform:translate(-50%,calc(-100% - 10px));opacity:0;transition:opacity .12s;white-space:nowrap}
+#chartTip.on{opacity:1}
+#chartTip b{display:block;font-size:13.5px;font-weight:600;letter-spacing:-.01em;font-variant-numeric:tabular-nums;margin-top:1px}
+#chartTip::after{content:"";position:absolute;left:50%;bottom:-4px;width:8px;height:8px;background:#1a1d1c;transform:translateX(-50%) rotate(45deg)}
+body.dark-mode #chartTip,body.dark-mode #chartTip::after{background:#f0f0ec}
+body.dark-mode #chartTip{color:#14181a}
+@media(prefers-reduced-motion:reduce){#chartTip{transition:none}}
 </style>
 </head>
 <body>
@@ -1017,6 +1029,24 @@ function trazo(P){
   for(let i=0;i<n-1;i++){ const h=dx[i]/3; d+=` C${f(P[i][0]+h)} ${f(P[i][1]+t[i]*h)} ${f(P[i+1][0]-h)} ${f(P[i+1][1]-t[i+1]*h)} ${f(P[i+1][0])} ${f(P[i+1][1])}`; }
   return d;
 }
+// ── Recuadro de las gráficas (data-tt="título|valor"): ratón y toque, igual que en el panel ──
+(function(){
+  let tip = null;
+  const pon = el => {
+    if(!tip){ tip = document.createElement('div'); tip.id = 'chartTip'; tip.setAttribute('aria-hidden','true'); document.body.appendChild(tip); }
+    const [a, v] = String(el.getAttribute('data-tt')||'').split('|');
+    tip.innerHTML = `${esc(a||'')}${v ? `<b>${esc(v)}</b>` : ''}`;
+    const r = el.getBoundingClientRect();
+    tip.style.left = Math.max(70, Math.min(innerWidth - 70, r.left + r.width / 2)) + 'px';
+    tip.style.top = Math.max(50, r.top) + 'px';
+    tip.classList.add('on');
+  };
+  const quita = () => { if(tip) tip.classList.remove('on'); };
+  document.addEventListener('pointerover', e => { const el = e.target.closest && e.target.closest('[data-tt]'); if(el) pon(el); });
+  document.addEventListener('pointerout', e => { const el = e.target.closest && e.target.closest('[data-tt]'); if(el && !(e.relatedTarget && el.contains(e.relatedTarget))) quita(); });
+  document.addEventListener('pointerdown', e => { const el = e.target.closest && e.target.closest('[data-tt]'); if(el) pon(el); else quita(); }, true);
+  addEventListener('scroll', quita, true);
+})();
 function serie(pts,key,color,titulo,unit,dec,rango){
   const sr=pts.filter(p=>p[key]!==null&&p[key]!==undefined);
   if(sr.length<2) return '';
@@ -1028,7 +1058,9 @@ function serie(pts,key,color,titulo,unit,dec,rango){
   const rng=(mx-mn)||1, yAt=v=>pT+(1-(v-mn)/rng)*(H-pT-pB), yb=H-pB;
   const P=sr.map(p=>[xAt(p.fecha),yAt(p[key])]), ruta=trazo(P), a=sr[0], z=sr[sr.length-1], pz=P[P.length-1];
   const guias=[0,.5].map(k=>{ const y=(pT+(yb-pT)*k).toFixed(1); return `<line x1="${pL}" x2="${W-pR}" y1="${y}" y2="${y}" stroke="var(--bd)" stroke-width=".6" stroke-dasharray="2 3"/>`; }).join('');
-  const puntos=sr.map((p,i)=>{ const tip=`<title>${fmtF(p.fecha,true)}: ${nf(p[key],dec)} ${esc(unit)}</title>`;
+  const tip='';   // el valor de cada punto sale en el recuadro oscuro (data-tt), como en el panel
+  const hits=sr.map((p,i)=>`<circle class="tt-hit" cx="${P[i][0].toFixed(1)}" cy="${P[i][1].toFixed(1)}" r="9" data-tt="${esc(fmtF(p.fecha,true))}|${esc(nf(p[key],dec)+' '+unit)}"/>`).join('');
+  const puntos=sr.map((p,i)=>{
     if(i===sr.length-1) return `<circle cx="${P[i][0].toFixed(1)}" cy="${P[i][1].toFixed(1)}" r="7" fill="${color}" opacity=".16"/><circle cx="${P[i][0].toFixed(1)}" cy="${P[i][1].toFixed(1)}" r="3.6" fill="${color}" stroke="var(--sf)" stroke-width="1.4">${tip}</circle>`;
     return sr.length<=14?`<circle class="dot" cx="${P[i][0].toFixed(1)}" cy="${P[i][1].toFixed(1)}" r="2.6" stroke="${color}" stroke-width="1.6">${tip}</circle>`:''; }).join('');
   const lab=(p,q)=>`<text class="v" x="${q[0].toFixed(1)}" y="${Math.max(q[1]-9,10).toFixed(1)}" text-anchor="middle">${nf(p[key],dec)}</text>`;
@@ -1037,7 +1069,7 @@ function serie(pts,key,color,titulo,unit,dec,rango){
       <defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:${color}" stop-opacity=".24"/><stop offset="1" style="stop-color:${color}" stop-opacity="0"/></linearGradient></defs>${guias}
       <line x1="${pL}" x2="${W-pR}" y1="${yb}" y2="${yb}" stroke="var(--bdm)" stroke-width=".9"/>
       <path d="${ruta} L${pz[0].toFixed(1)} ${yb} L${P[0][0].toFixed(1)} ${yb} Z" fill="url(#${id})" stroke="none"/>
-      <path d="${ruta}" fill="none" stroke="${color}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>${puntos}${lab(a,P[0])}${lab(z,pz)}
+      <path d="${ruta}" fill="none" stroke="${color}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>${puntos}${lab(a,P[0])}${lab(z,pz)}${hits}
       <text x="${pL}" y="${H-4}" text-anchor="start">${fmtF(a.fecha,true)}</text>
       <text x="${W-pR}" y="${H-4}" text-anchor="end">${fmtF(z.fecha,true)}</text>
     </svg></div>`;

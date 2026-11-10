@@ -2028,6 +2028,29 @@ body.dark-mode #chartTip{color:#14181a}
 .busy::after{content:"";display:inline-block;width:12px;height:12px;margin-left:8px;vertical-align:-2px;border-radius:50%;border:2px solid currentColor;border-right-color:transparent;animation:spinB .7s linear infinite}
 @keyframes spinB{to{transform:rotate(360deg)}}
 @media(prefers-reduced-motion:reduce){.view.view-in{animation:none}.busy::after{animation-duration:1.6s}}
+
+/* ═══ Coherencia entre pantallas (nov 2026) ═══ */
+/* Método 3M: las tres cifras en una sola franja, como Facturación y Cartera */
+.stats{gap:1px;background:var(--bd);border:.5px solid var(--bd);border-radius:16px;overflow:hidden;margin:1.1rem 0 1.5rem}
+.stat{border:none;border-radius:0;padding:16px 18px 17px;display:flex;flex-direction:column-reverse;gap:6px}
+.stat-l{font-size:12.5px;font-weight:500;color:var(--g500)}
+.stat-n{font-size:28px;line-height:1.05;margin:0;color:var(--g900)}
+@media(max-width:860px){.stat{padding:13px 12px}.stat-n{font-size:23px}.stat-l{font-size:11.5px}}
+/* Agenda: recuadro de la fecha neutro (el verde queda para «Pagado») */
+.agenda-date-box{background:var(--g100)}
+.agenda-date-day{color:var(--g900)}
+.agenda-date-month{color:var(--g500)}
+/* Citas pasadas: se distinguen por el color del texto y el recuadro sin fondo, no con opacidad (el texto atenuado no llegaba a 4,5:1) */
+.agenda-item.past>*{opacity:1}
+.agenda-item.past>.agenda-date-box{background:none;box-shadow:inset 0 0 0 .5px var(--bdm)}
+.agenda-item.past .agenda-date-day,.agenda-item.past .agenda-cliente{color:var(--g500)}
+.agenda-item.past .agenda-date-month,.agenda-item.past .agenda-meta{color:var(--g400)}
+/* Estado del cliente: la píldora de arriba igual que las del dashboard */
+.est-head .dash-pill{height:28px;font-size:12px}
+/* «+ próxima acción» vacía: enlace discreto, sin píldora */
+.accion-badge.subtle.empty{background:none;box-shadow:none;padding:3px 2px;color:var(--g400)}
+.accion-badge.subtle.empty:hover{background:none;color:var(--g700);text-decoration:underline;text-underline-offset:3px}
+body.dark-mode .accion-badge.subtle.empty{color:var(--g400);background:none}
 </style>
 </head>
 <body>
@@ -5901,7 +5924,9 @@ async function toggleClientePago(id){
   await patch(id,{pagado:c.pagado});
   openDet(id);
 }
+function sbMarcar(id){ const b = document.getElementById(id); if(!b || b.classList.contains('on')) return; document.querySelectorAll('.sb-item').forEach(x => x.classList.remove('on')); b.classList.add('on'); }
 function openDet(id){
+  sbMarcar('sbMetodo');
   currentId=id;
   const c=clients.find(x=>x.id===id); if(!c)return;
   const base=window.location.origin+window.location.pathname.replace('panel-profesional.html','metodo-3-meses-final.html');
@@ -7689,6 +7714,7 @@ function depTabKey(e){
   e.preventDefault(); depTab(ks[i]); const b=document.getElementById('depTab-'+ks[i]); if(b) b.focus();
 }
 function openDepDet(id) {
+  sbMarcar('sbDep');   // llegue desde donde llegue (Cartera, dashboard, Ctrl+K), la barra marca Nutrición Deportiva
   if(_depTabDep!=id){ _depTab='resumen'; _depTabDep=id; }
   currentDepId = id;
   const d = deportistas.find(x => x.id === id);
@@ -8553,7 +8579,7 @@ async function loadEstado(depId){
   if(rgActivo() && !d.fecha_baja && !rgConsentOk(consEst, 'tratamiento')) add('Consentimiento', 'Falta el consentimiento de tratamiento de datos: lo acepta el cliente al entrar en su área, o regístralo en papel en Archivos → Datos y privacidad.', true);
 
   const avisos = filas.filter(f => f.warn).length;
-  el.innerHTML = `<div class="est-head"><span class="est-pill${avisos ? ' warn' : ''}">${avisos ? (avisos === 1 ? '1 cosa que mirar' : avisos + ' cosas que mirar') : 'Todo en orden'}</span></div>
+  el.innerHTML = `<div class="est-head"><span class="dash-pill ${avisos ? 'warn' : 'ok'}"><i aria-hidden="true"></i>${avisos ? (avisos === 1 ? '1 cosa que mirar' : avisos + ' cosas que mirar') : 'Todo en orden'}</span></div>
     <div class="est-grid">${filas.map(f => `<div class="est-row${f.warn ? ' warn' : ''}"><div class="est-k">${f.k}</div><div class="est-v">${sudEsc(f.t)}${f.acc || ''}</div></div>`).join('')}</div>`;
 }
 
