@@ -2008,7 +2008,7 @@ body.dark-mode #chartTip{color:#14181a}
 /* ═══ Barra de navegación inferior (solo móvil, ≤ 860 px) ═══ */
 .bnav{display:none}
 @media(max-width:860px){
-  .bnav{display:flex;position:fixed;left:12px;right:12px;bottom:calc(10px + env(safe-area-inset-bottom,0px));z-index:140;max-width:460px;margin:0 auto;height:62px;padding:5px;gap:2px;border-radius:22px;background:rgba(4,52,44,.94);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border:.5px solid rgba(255,255,255,.1);box-shadow:0 10px 30px rgba(0,0,0,.22);transition:transform .22s ease,opacity .22s ease}
+  .bnav{display:flex;position:fixed;left:12px;right:12px;bottom:max(8px,calc(env(safe-area-inset-bottom,0px) - 8px));z-index:140;max-width:460px;margin:0 auto;height:62px;padding:5px;gap:2px;border-radius:22px;background:rgba(4,52,44,.94);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border:.5px solid rgba(255,255,255,.1);box-shadow:0 10px 30px rgba(0,0,0,.22);transition:transform .22s ease,opacity .22s ease}
   .bnav button{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;border:0;border-radius:17px;background:transparent;color:rgba(255,255,255,.72);font:600 10.5px var(--f);cursor:pointer;position:relative;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
   .bnav button svg{width:21px;height:21px;stroke-width:1.9}
   .bnav button.on{background:rgba(255,255,255,.13);color:#fff}
@@ -2051,6 +2051,22 @@ body.dark-mode #chartTip{color:#14181a}
 .accion-badge.subtle.empty{background:none;box-shadow:none;padding:3px 2px;color:var(--g400)}
 .accion-badge.subtle.empty:hover{background:none;color:var(--g700);text-decoration:underline;text-underline-offset:3px}
 body.dark-mode .accion-badge.subtle.empty{color:var(--g400);background:none}
+
+/* ═══ Coherencia, cierre (nov 2026): secundarios blancos con borde, peligro con texto rojo, chips como los de la Cartera ═══ */
+.btn-action:not(.primary){background:var(--sf);border:.5px solid var(--bdm);color:var(--g700);font-weight:600}
+.btn-action:not(.primary):hover{opacity:1;background:var(--g100)}
+.btn-action.danger,.btn-del{background:var(--sf);border:.5px solid var(--bdm);color:var(--red)}
+.btn-action.danger:hover,.btn-del:hover{background:var(--red-bg);border-color:var(--red);opacity:1}
+.btn-cancel{background:var(--sf);border:.5px solid var(--bdm);color:var(--g700);font-weight:600}
+.btn-cancel:hover{background:var(--g100)}
+.btn-plan{background:var(--sf);border:.5px solid var(--bdm);color:var(--g700);font-weight:600}
+.btn-plan:hover{background:var(--g100)}
+.mini-btn:hover{background:var(--g100);border-color:var(--bdm)}
+.dep-chip{background:var(--sf);border:.5px solid var(--bdm);color:var(--g700)}
+.dep-chip:hover:not(.active){background:var(--g100)}
+.dep-chip.active,body.dark-mode .dep-chip.active{background:var(--btn);border-color:var(--btn);color:#fff}
+.cmp-ej button{background:var(--sf);border-color:var(--bdm);border-radius:var(--r-btn,10px)}
+body.dark-mode .wnum.lk{color:var(--g700)}   /* semanas bloqueadas del Método 3M: el gris no llegaba a 4,5:1 en oscuro */
 </style>
 </head>
 <body>
@@ -5963,7 +5979,7 @@ function openDet(id){
             Rebloquear
           </button>`:''}
           <div class="act-bar-sep"></div>
-          <button class="btn-action" style="background:var(--gold-50);color:var(--gold-dk)" onclick="exportClientePDF(${id})">
+          <button class="btn-action" onclick="exportClientePDF(${id})">
             <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
             Exportar PDF
           </button>
