@@ -2004,6 +2004,22 @@ body.dark-mode #chartTip{color:#14181a}
 .fx-chart-h{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:0 4px 8px}
 .fx-chart-h b{font-size:20px;font-weight:600;letter-spacing:-.02em;color:var(--g900);font-variant-numeric:tabular-nums}
 .fx-chart-h span{font-size:12px;color:var(--g500)}
+
+/* ═══ Barra de navegación inferior (solo móvil, ≤ 860 px) ═══ */
+.bnav{display:none}
+@media(max-width:860px){
+  .bnav{display:flex;position:fixed;left:12px;right:12px;bottom:calc(10px + env(safe-area-inset-bottom,0px));z-index:140;max-width:460px;margin:0 auto;height:62px;padding:5px;gap:2px;border-radius:22px;background:rgba(4,52,44,.94);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border:.5px solid rgba(255,255,255,.1);box-shadow:0 10px 30px rgba(0,0,0,.22);transition:transform .22s ease,opacity .22s ease}
+  .bnav button{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;border:0;border-radius:17px;background:transparent;color:rgba(255,255,255,.72);font:600 10.5px var(--f);cursor:pointer;position:relative;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+  .bnav button svg{width:21px;height:21px;stroke-width:1.9}
+  .bnav button.on{background:rgba(255,255,255,.13);color:#fff}
+  .bnav button:active{transform:scale(.96)}
+  .bnav .bn-b{position:absolute;top:6px;left:calc(50% + 6px);min-width:16px;height:16px;padding:0 4px;border-radius:8px;background:#B83232;color:#fff;font-size:9.5px;font-weight:700;line-height:16px;text-align:center;font-variant-numeric:tabular-nums}
+  .bnav .bn-b:empty{display:none}
+  body.emb-view .bnav,body.bn-off .bnav{transform:translateY(140%);opacity:0;pointer-events:none}
+  body:not(.emb-view) .page{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
+  body:not(.emb-view):not(.bn-off) #toasts{bottom:calc(84px + env(safe-area-inset-bottom,0px))}
+}
+@media(prefers-reduced-motion:reduce){.bnav{transition:none}}
 </style>
 </head>
 <body>
@@ -2197,6 +2213,14 @@ body.dark-mode #chartTip{color:#14181a}
 
 <script>try{if(matchMedia('(min-width:861px)').matches&&localStorage.getItem('nl_sb_min')==='1')document.body.classList.add('sb-min');}catch(e){}</script>
 <div id="sbTip" role="tooltip" aria-hidden="true"></div>
+
+<nav class="bnav" id="bnav" aria-label="Navegación principal (móvil)">
+  <button type="button" data-bn="home" data-sb="sbHome" onclick="navTo('home')"><span class="bn-i"></span>Inicio</button>
+  <button type="button" data-bn="cartera" data-sb="sbCartera" onclick="navTo('cartera')"><span class="bn-i"></span>Cartera<span class="bn-b" id="bnCartBadge"></span></button>
+  <button type="button" data-bn="agenda" data-sb="sbAgenda" onclick="navTo('agenda')"><span class="bn-i"></span>Agenda</button>
+  <button type="button" data-bn="deportiva" data-sb="sbDep" onclick="navTo('deportiva')"><span class="bn-i"></span>Clientes</button>
+  <button type="button" data-bn="mas" onclick="toggleMobileSidebar()" aria-label="Más secciones"><span class="bn-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="12" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="19" cy="12" r="1.2"/></svg></span>Más</button>
+</nav>
 
 <!-- DASHBOARD (home) -->
 <div id="vhome" class="view" role="main">
@@ -12075,6 +12099,31 @@ async function resetGuion(clientId, semana, nombre) {
   toast('Checks de la sesión limpiados', {ms:6000, accion:{texto:'Deshacer', fn: async () => { await saveGuionChecksFor(clientId, semana, antes); reabrir(); }}});
 }
 
+
+// ── Barra de navegación inferior (móvil): copia los iconos de la barra lateral, marca la sección activa y la insignia de Cartera ──
+(function(){
+  const bn = document.getElementById('bnav'); if(!bn) return;
+  bn.querySelectorAll('button[data-sb]').forEach(b => {
+    const src = document.querySelector('#' + b.dataset.sb + ' svg'); const slot = b.querySelector('.bn-i');
+    if(src && slot){ const c = src.cloneNode(true); c.removeAttribute('width'); c.removeAttribute('height'); c.setAttribute('aria-hidden','true'); slot.appendChild(c); }
+  });
+  bn.querySelectorAll('.bn-i svg').forEach(s => s.setAttribute('aria-hidden','true'));
+  const sync = () => {
+    let act = 'mas';
+    bn.querySelectorAll('button[data-sb]').forEach(b => { const s = document.getElementById(b.dataset.sb); if(s && s.classList.contains('on')) act = b.dataset.bn; });
+    if(document.getElementById('sbMetodo') && document.getElementById('sbMetodo').classList.contains('on')) act = 'deportiva';
+    bn.querySelectorAll('button').forEach(b => { const on = b.dataset.bn === act; b.classList.toggle('on', on); if(on) b.setAttribute('aria-current','page'); else b.removeAttribute('aria-current'); });
+    const sb = document.getElementById('sbCartBadge'), bb = document.getElementById('bnCartBadge');
+    if(sb && bb) bb.textContent = sb.style.display === 'none' ? '' : sb.textContent;
+  };
+  const sbEl = document.getElementById('sidebar');
+  if(sbEl) new MutationObserver(() => { clearTimeout(sync._t); sync._t = setTimeout(sync, 30); }).observe(sbEl, { subtree:true, attributes:true, attributeFilter:['class','style'], childList:true, characterData:true });
+  sync();
+  // Con el teclado abierto se esconde (deja sitio al campo)
+  const esCampo = el => el && (el.tagName === 'INPUT' && !/^(checkbox|radio|button|submit|range|color|file)$/i.test(el.type) || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT' || el.isContentEditable);
+  document.addEventListener('focusin', e => { if(esCampo(e.target)) document.body.classList.add('bn-off'); });
+  document.addEventListener('focusout', () => setTimeout(() => { if(!esCampo(document.activeElement)) document.body.classList.remove('bn-off'); }, 60));
+})();
 </script>
 </body>
 </html>
