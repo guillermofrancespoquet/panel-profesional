@@ -588,6 +588,31 @@ body.dark-mode .mn-bib-b.veg{color:var(--t800)}
   .mn-meal-f .mn-chk{margin-left:0;width:100%}
   .mn-auto-t th:nth-child(n+5),.mn-auto-t td:nth-child(n+5){display:none}
 }
+
+/* ═══ Coherencia con el panel (nov 2026): el verde solo para lo que significa algo ═══ */
+.btn-soft{background:var(--sf);color:var(--g700);border-color:var(--bdm)}
+.btn-soft:hover{background:var(--g100);border-color:var(--bdm)}
+body.dark-mode .btn-soft{color:var(--g700);border-color:var(--bdm)}
+.mn-btn:hover{background:var(--g100);border-color:var(--bdm)}
+.mn-btn.pri:hover{background:var(--btn-h);border-color:var(--btn-h)}
+.mn-btn.dan:hover{background:var(--red-bg);border-color:var(--red)}
+.mn-btn.scan{background:var(--sf);border-color:var(--bdm);color:var(--g900)}
+.mn-btn.scan svg{color:var(--t600)}
+.mn-btn.scan:hover{background:var(--g100);box-shadow:none}
+.mn-btn.ghost{color:var(--g700)}
+.mn-btn.ghost:hover{background:var(--g100)}
+.mn-nav-i.on{background:var(--g100);color:var(--g900);font-weight:600}
+.mn-rec-h:hover{background:var(--g100)}
+.mn-ext-i:hover{background:var(--g200)}
+.mn-tot,.mn-dt,.mn-dt-h b,.mn-dt-f,.mn-dt-n,.mn-cp,.mn-cp *,table td{font-variant-numeric:tabular-nums}
+.mn-dt-b{cursor:default}
+#chartTip{position:fixed;z-index:9000;pointer-events:none;background:#1a1d1c;color:#fff;border-radius:9px;padding:6px 10px 7px;font:500 11px/1.25 var(--f);box-shadow:0 6px 18px rgba(0,0,0,.22);transform:translate(-50%,calc(-100% - 10px));opacity:0;transition:opacity .12s;white-space:nowrap}
+#chartTip.on{opacity:1}
+#chartTip b{display:block;font-size:13.5px;font-weight:600;letter-spacing:-.01em;font-variant-numeric:tabular-nums;margin-top:1px}
+#chartTip::after{content:"";position:absolute;left:50%;bottom:-4px;width:8px;height:8px;background:#1a1d1c;transform:translateX(-50%) rotate(45deg)}
+body.dark-mode #chartTip,body.dark-mode #chartTip::after{background:#f0f0ec}
+body.dark-mode #chartTip{color:#14181a}
+@media(prefers-reduced-motion:reduce){#chartTip{transition:none}}
 </style>
 </head>
 <body>
@@ -1964,14 +1989,32 @@ function mnTotDiaHtml(d) {
   if (!d.comidas.length) return '';
   const fila = (lbl, val, tgt, u, k, ban) => {
     if (ban && val >= 0) { const lo = ban[0], hi = ban[1], est = !val ? '' : val >= lo * 0.9 && val <= hi * 1.1 ? (val >= lo && val <= hi ? 'ok' : 'warn') : 'bad';
-      return `<div class="mn-dt k-${k}"><div class="mn-dt-h"><span><i class="mn-dt-k"></i>${lbl}</span><b>${mnF(val)}${u}</b></div><div class="mn-dt-b"><i style="width:${Math.min(100, Math.round(val / hi * 100))}%"></i></div><div class="mn-dt-f ${est}">referencia ${mnF(lo)}–${mnF(hi)}${u}${est === 'ok' || !val ? '' : val < lo ? ' · por debajo' : ' · por encima'}</div></div>`; }
-    const est = tgt ? mnEstadoBarra(val, tgt) : '', dif = tgt ? Math.round((val / tgt - 1) * 100) : 0; return `<div class="mn-dt k-${k}"><div class="mn-dt-h"><span><i class="mn-dt-k"></i>${lbl}</span><b>${mnF(val)}${u}</b></div><div class="mn-dt-b"><i style="width:${tgt ? Math.min(100, Math.round(val / tgt * 100)) : 0}%"></i></div><div class="mn-dt-f ${est}">${tgt ? 'objetivo ' + mnF(tgt) + u + (est === 'ok' ? '' : ' · ' + (dif > 0 ? '+' : '') + dif + ' %') : '&nbsp;'}</div></div>`; };
+      return `<div class="mn-dt k-${k}"><div class="mn-dt-h"><span><i class="mn-dt-k"></i>${lbl}</span><b>${mnF(val)}${u}</b></div><div class="mn-dt-b" data-tt="${lbl} · referencia ${mnF(lo)}–${mnF(hi)}${u}|${mnF(val)}${u}"><i style="width:${Math.min(100, Math.round(val / hi * 100))}%"></i></div><div class="mn-dt-f ${est}">referencia ${mnF(lo)}–${mnF(hi)}${u}${est === 'ok' || !val ? '' : val < lo ? ' · por debajo' : ' · por encima'}</div></div>`; }
+    const est = tgt ? mnEstadoBarra(val, tgt) : '', dif = tgt ? Math.round((val / tgt - 1) * 100) : 0; return `<div class="mn-dt k-${k}"><div class="mn-dt-h"><span><i class="mn-dt-k"></i>${lbl}</span><b>${mnF(val)}${u}</b></div><div class="mn-dt-b" data-tt="${lbl}${tgt ? ' · objetivo ' + mnF(tgt) + u : ''}|${mnF(val)}${u}"><i style="width:${tgt ? Math.min(100, Math.round(val / tgt * 100)) : 0}%"></i></div><div class="mn-dt-f ${est}">${tgt ? 'objetivo ' + mnF(tgt) + u + (est === 'ok' ? '' : ' · ' + (dif > 0 ? '+' : '') + dif + ' %') : '&nbsp;'}</div></div>`; };
   const pctG = t.kcal > 0 ? t.grasa * 9 / t.kcal * 100 : 0, estG = !t.kcal ? '' : pctG >= 20 && pctG <= 25 ? 'ok' : pctG >= 17 && pctG <= 28 ? 'warn' : 'bad';
   const kg = peso ? ` · ${mnF(t.prot / peso, 1)} g/kg de proteína · ${mnF(t.hc / peso, 1)} g/kg de hidratos` : '';
   return `<div class="mn-dtot"><div class="mn-dtot-h"><span class="mn-k" style="margin:0">Totales del día (estimados)</span><span class="mn-ayuda">${obj ? 'frente al objetivo de «' + sudEsc((MN_TIPOS_DIA.find(x => x[0] === mnTipoDia(d)) || ['', 'este día'])[1]) + '»' : 'sin objetivo definido'}</span></div>
     <div class="mn-dt-g">${fila('kcal', t.kcal, obj && obj.kcal, '', 'kcal')}${fila('Proteína', t.prot, obj && obj.prot, ' g', 'prot', peso ? [0.8 * peso, 1.6 * peso] : null)}${fila('Hidratos', t.hc, obj && obj.hc, ' g', 'hc')}${fila('Grasa', t.grasa, obj && obj.grasa, ' g', 'grasa', obj ? [0.2 * obj.kcal / 9, 0.25 * obj.kcal / 9] : null)}</div>
     <p class="mn-dt-n"><span class="mn-estado ${estG}"><i></i>Grasa ${mnF(pctG)} % de las kcal${estG ? '' : ''}</span> (referencia 20–25 %)${sudEsc(kg)}</p>${aviso ? `<p class="mn-dt-n warn">${sudEsc(aviso)}.</p>` : ''}</div>`;
 }
+// ── Recuadro de las gráficas (data-tt="título|valor"), igual que en el panel ──
+(function(){
+  let tip = null;
+  const pon = el => {
+    if(!tip){ tip = document.createElement('div'); tip.id = 'chartTip'; tip.setAttribute('aria-hidden','true'); document.body.appendChild(tip); }
+    const [a, v] = String(el.getAttribute('data-tt')||'').split('|');
+    tip.innerHTML = `${sudEsc(a||'')}${v ? `<b>${sudEsc(v)}</b>` : ''}`;
+    const r = el.getBoundingClientRect();
+    tip.style.left = Math.max(90, Math.min(innerWidth - 90, r.left + r.width / 2)) + 'px';
+    tip.style.top = Math.max(50, r.top) + 'px';
+    tip.classList.add('on');
+  };
+  const quita = () => { if(tip) tip.classList.remove('on'); };
+  document.addEventListener('pointerover', e => { const el = e.target.closest && e.target.closest('[data-tt]'); if(el) pon(el); });
+  document.addEventListener('pointerout', e => { const el = e.target.closest && e.target.closest('[data-tt]'); if(el && !(e.relatedTarget && el.contains(e.relatedTarget))) quita(); });
+  document.addEventListener('pointerdown', e => { const el = e.target.closest && e.target.closest('[data-tt]'); if(el) pon(el); else quita(); }, true);
+  addEventListener('scroll', quita, true);
+})();
 function mnRefrescarTotales() {
   if (!MN || MN.tab !== 'menu') return;
   const d = mnDia(); if (!d) return;
