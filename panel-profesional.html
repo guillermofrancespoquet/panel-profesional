@@ -1984,6 +1984,26 @@ body.dark-mode .gsearch-item-sub{color:var(--g500)}
 .sb-search-results .gsearch-group-label b{color:rgba(255,255,255,.4)}
 .sb-search-results .gsearch-avatar{background:rgba(255,255,255,.1);color:#fff}
 @media(max-width:860px){.gs-foot{display:none}}
+
+/* Gráficas: recuadro oscuro al pasar el ratón o tocar un punto/barra (data-tt = «título|valor») */
+.tt-hit{fill:transparent;cursor:pointer}
+#chartTip{position:fixed;z-index:9000;pointer-events:none;background:#1a1d1c;color:#fff;border-radius:9px;padding:6px 10px 7px;font:500 11px/1.25 var(--f);box-shadow:0 6px 18px rgba(0,0,0,.22);transform:translate(-50%,calc(-100% - 10px));opacity:0;transition:opacity .12s;white-space:nowrap}
+#chartTip.on{opacity:1}
+#chartTip b{display:block;font-size:13.5px;font-weight:600;letter-spacing:-.01em;font-variant-numeric:tabular-nums;margin-top:1px}
+#chartTip::after{content:"";position:absolute;left:50%;bottom:-4px;width:8px;height:8px;background:#1a1d1c;transform:translateX(-50%) rotate(45deg)}
+body.dark-mode #chartTip,body.dark-mode #chartTip::after{background:#f0f0ec}
+body.dark-mode #chartTip{color:#14181a}
+@media(prefers-reduced-motion:reduce){#chartTip{transition:none}}
+/* Facturación: cobrado por mes */
+.fx-chart-wrap{margin:0 0 1.5rem}
+.fx-bars{width:100%;height:auto;display:block;overflow:visible}
+.fx-bars text{font-family:var(--f);font-size:10.5px;fill:var(--g500)}
+.fx-bars .bar{fill:var(--g200)}
+.fx-bars .bar.on{fill:var(--t400)}
+.fx-bars g:hover .bar:not(.on){fill:var(--g400);opacity:.5}
+.fx-chart-h{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:0 4px 8px}
+.fx-chart-h b{font-size:20px;font-weight:600;letter-spacing:-.02em;color:var(--g900);font-variant-numeric:tabular-nums}
+.fx-chart-h span{font-size:12px;color:var(--g500)}
 </style>
 </head>
 <body>
@@ -2294,6 +2314,11 @@ body.dark-mode .gsearch-item-sub{color:var(--g500)}
     </div>
 
     <div class="kstrip" id="factStats"></div>
+
+    <div class="fx-card fx-chart-wrap">
+      <div class="fx-bar"><span class="ttl">Cobrado por mes</span></div>
+      <div id="factChart"></div>
+    </div>
 
     <div class="fx-card">
       <div class="fx-bar">
@@ -4797,6 +4822,8 @@ function renderFacturacion(){
     cel('Nutrición Deportiva', factEur(totDep), `${nDep} consulta${nDep!==1?'s':''} cobrada${nDep!==1?'s':''}`, '<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>') +
     cel('Método 3M', factEur(totM3M), `${nM3M} pago${nM3M!==1?'s':''}`, '<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>') +
     cel('Pendiente de cobro', factEur(suma(pend)), pend.length ? `${pend.length} por recuperar${porc.length ? ` · ${porc.length} por cobrar (${factEur(suma(porc))})` : ''}` : (porc.length ? `${porc.length} por cobrar cuando lleguen (${factEur(suma(porc))})` : 'Nada pendiente'), '<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>', pend.length ? 'red' : '');
+  document.getElementById('factChart').innerHTML = factBarras(filas, hoy);
+  if(!window._fxRs){ window._fxRs = true; let t; addEventListener('resize', () => { clearTimeout(t); t = setTimeout(() => { const v = document.getElementById('vfact'); if(v && v.classList.contains('active')) document.getElementById('factChart').innerHTML = factBarras(factFilas(), new Date()); }, 200); }); }
   // Movimientos
   const todos = [...pend, ...cob, ...porc];
   const grupos = { todos, cobrado: cob, pendiente: pend, porcobrar: porc };
@@ -4817,6 +4844,50 @@ function renderFacturacion(){
     </div>`).join('');
 }
 function factFiltroSet(k){ factFiltro = k; renderFacturacion(); }
+// ── Recuadro de las gráficas (data-tt="título|valor"): ratón y toque ──
+(function(){
+  let tip = null;
+  const pon = el => {
+    if(!tip){ tip = document.createElement('div'); tip.id = 'chartTip'; tip.setAttribute('aria-hidden','true'); document.body.appendChild(tip); }
+    const [t, v] = String(el.getAttribute('data-tt')||'').split('|');
+    tip.innerHTML = `${sudEsc(t||'')}${v ? `<b>${sudEsc(v)}</b>` : ''}`;
+    const r = el.getBoundingClientRect();
+    tip.style.left = Math.max(70, Math.min(innerWidth - 70, r.left + r.width / 2)) + 'px';
+    tip.style.top = Math.max(50, r.top) + 'px';
+    tip.classList.add('on');
+  };
+  const quita = () => { if(tip) tip.classList.remove('on'); };
+  document.addEventListener('pointerover', e => { const el = e.target.closest && e.target.closest('[data-tt]'); if(el) pon(el); });
+  document.addEventListener('pointerout', e => { const el = e.target.closest && e.target.closest('[data-tt]'); if(el && !(e.relatedTarget && el.contains(e.relatedTarget))) quita(); });
+  document.addEventListener('pointerdown', e => { const el = e.target.closest && e.target.closest('[data-tt]'); if(el) pon(el); else quita(); }, true);
+  addEventListener('scroll', quita, true);
+})();
+function factBarras(filas, hoy){
+  const n = factPeriod === 'ano' ? hoy.getMonth() + 1 : factPeriod === 'mes' ? 6 : 12;
+  const meses = [];
+  for(let k = n - 1; k >= 0; k--){ const d = new Date(hoy.getFullYear(), hoy.getMonth() - k, 1); meses.push({ key: `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`, d }); }
+  meses.forEach(m => m.v = filas.filter(x => x.estado === 'cobrado' && String(x.fecha).slice(0,7) === m.key).reduce((t,x) => t + x.importe, 0));
+  const max = Math.max(...meses.map(m => m.v), 1);
+  const paso = (() => { const b = Math.pow(10, Math.floor(Math.log10(max))); const r = max / b; return (r <= 2 ? 0.5 : r <= 5 ? 1 : 2) * b; })();
+  const top = Math.ceil(max / paso) * paso;
+  const cont = document.getElementById('factChart'), W = Math.max(300, Math.round((cont && cont.clientWidth) || 640)), H = W < 500 ? 170 : 200, pL = 46, pR = 8, pT = 12, pB = 26, aw = (W - pL - pR) / meses.length, bw = Math.min(46, aw * .58);
+  const y = v => pT + (1 - v / top) * (H - pT - pB);
+  const eur0 = v => v.toLocaleString('es-ES', { maximumFractionDigits:0 }) + ' €';
+  let g = '';
+  for(let v = 0; v <= top + 1e-9; v += paso){ const yy = y(v).toFixed(1); g += `<line x1="${pL}" x2="${W-pR}" y1="${yy}" y2="${yy}" stroke="var(--bd)" stroke-width="${v ? .7 : 1}" ${v ? 'stroke-dasharray="2 4"' : ''}/><text x="${pL-8}" y="${(+yy+3.5).toFixed(1)}" text-anchor="end">${v >= 1000 ? (v/1000).toLocaleString('es-ES',{maximumFractionDigits:1}) + ' k' : v.toLocaleString('es-ES')}</text>`; }
+  const cur = `${hoy.getFullYear()}-${String(hoy.getMonth()+1).padStart(2,'0')}`;
+  const barras = meses.map((m, i) => {
+    const x = pL + aw * i + (aw - bw) / 2, yy = y(m.v), h = Math.max(m.v ? 2 : 0, H - pB - yy), r = Math.min(6, h / 2, bw / 2);
+    const nom = m.d.toLocaleDateString('es-ES', { month:'long', year:'numeric' });
+    const path = h ? `M${x.toFixed(1)} ${(H-pB).toFixed(1)} V${(H-pB-h+r).toFixed(1)} Q${x.toFixed(1)} ${(H-pB-h).toFixed(1)} ${(x+r).toFixed(1)} ${(H-pB-h).toFixed(1)} H${(x+bw-r).toFixed(1)} Q${(x+bw).toFixed(1)} ${(H-pB-h).toFixed(1)} ${(x+bw).toFixed(1)} ${(H-pB-h+r).toFixed(1)} V${(H-pB).toFixed(1)} Z` : '';
+    return `<g data-tt="${sudEsc(nom.charAt(0).toUpperCase() + nom.slice(1))}|${eur0(m.v)}"><rect x="${(pL + aw*i).toFixed(1)}" y="${pT}" width="${aw.toFixed(1)}" height="${H-pT-pB}" fill="transparent"/>${path ? `<path class="bar${m.key===cur?' on':''}" d="${path}"/>` : ''}<text x="${(x+bw/2).toFixed(1)}" y="${H-8}" text-anchor="middle" ${m.key===cur?'style="fill:var(--g900);font-weight:600"':''}>${m.d.toLocaleDateString('es-ES',{month:'short'}).replace('.','')}</text></g>`;
+  }).join('');
+  const total = meses.reduce((t,m) => t + m.v, 0), media = total / meses.length;
+  const resumen = meses.map(m => `${m.d.toLocaleDateString('es-ES',{month:'long'})} ${eur0(m.v)}`).join(', ');
+  return `<div class="fx-chart-h"><b>${eur0(total)}</b><span>en ${meses.length} mes${meses.length!==1?'es':''} · media de ${eur0(Math.round(media))} al mes</span></div>
+    <svg class="fx-bars" viewBox="0 0 ${W} ${H}" role="img" aria-label="Cobrado por mes: ${sudEsc(resumen)}">${g}${barras}</svg>`;
+}
+
 async function factCobrar(id){
   const c = factData.citas.find(x => x.id == id); if(!c) return;
   const r = await patchCita(id, { pagado:true });
@@ -8262,9 +8333,11 @@ function medSvg(series,titulo,unit,dec,rango){
     }
     cuerpo+=`<path d="${ruta}" fill="none" stroke="${se.color}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`;
     se.sr.forEach((p,i)=>{
-      const ult=i===se.sr.length-1, tip=`<title>${fmtF(p.fecha)}: ${medNum(p.v,dec)} ${unit}</title>`;
-      if(ult) cuerpo+=`<circle cx="${P[i][0].toFixed(1)}" cy="${P[i][1].toFixed(1)}" r="7" fill="${se.color}" opacity=".16"/><circle cx="${P[i][0].toFixed(1)}" cy="${P[i][1].toFixed(1)}" r="3.6" fill="${se.color}" stroke="var(--bg)" stroke-width="1.4">${tip}</circle>`;
-      else if(se.sr.length<=14) cuerpo+=`<circle class="dot" cx="${P[i][0].toFixed(1)}" cy="${P[i][1].toFixed(1)}" r="2.6" stroke="${se.color}" stroke-width="1.6">${tip}</circle>`;
+      const ult=i===se.sr.length-1, cx=P[i][0].toFixed(1), cy=P[i][1].toFixed(1);
+      const tt=sudEsc(`${multi?(se.name+' · '):''}${fmtF(p.fecha)}|${medNum(p.v,dec)} ${unit}`);
+      if(ult) cuerpo+=`<circle cx="${cx}" cy="${cy}" r="7" fill="${se.color}" opacity=".16"/><circle cx="${cx}" cy="${cy}" r="3.6" fill="${se.color}" stroke="var(--bg)" stroke-width="1.4"/>`;
+      else if(se.sr.length<=14) cuerpo+=`<circle class="dot" cx="${cx}" cy="${cy}" r="2.6" stroke="${se.color}" stroke-width="1.6"/>`;
+      cuerpo+=`<circle class="tt-hit" cx="${cx}" cy="${cy}" r="9" data-tt="${tt}"/>`;
     });
     const lab=(p,q)=>`<text class="v" x="${q[0].toFixed(1)}" y="${Math.max(q[1]-9,10).toFixed(1)}" text-anchor="middle">${medNum(p.v,dec)}</text>`;
     cuerpo+=lab(z,pz)+(multi?'':lab(a,P[0]));
