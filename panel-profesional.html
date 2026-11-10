@@ -1957,6 +1957,33 @@ body.dark-mode .btn-soft{color:var(--g700);border-color:var(--bdm,var(--bd))}
 .dpg-amt.red{color:var(--red)}
 .dpg-btn{display:flex;align-items:center;justify-content:space-between;width:100%;margin-top:10px;height:36px;padding:0 12px;border:.5px solid var(--bdm,var(--bd));border-radius:10px;background:var(--sf);color:var(--g700);font:600 12.5px var(--f);cursor:pointer}
 .dpg-btn:hover{background:var(--g100)}
+
+/* Buscador Ctrl+K: grupos con contador, resaltado, estados y atajos */
+.gsearch-group-label{display:flex;align-items:center;justify-content:space-between}
+.gsearch-group-label b{font-weight:600;letter-spacing:0;color:var(--g400);font-variant-numeric:tabular-nums}
+.gsearch-item{position:relative}
+.gsearch-item.sel,.gsearch-item:hover{background:rgba(0,0,0,.035)}
+body.dark-mode .gsearch-item.sel,body.dark-mode .gsearch-item:hover{background:rgba(255,255,255,.045)}
+body.dark-mode .gsearch-item-sub{color:var(--g500)}
+.gsearch-input{color:var(--g900)}
+.gsearch-input:focus,.gsearch-input:focus-visible{outline:none;box-shadow:none}
+.gsearch-item.acc .gsearch-avatar{background:var(--g100);color:var(--g500)}
+.gsearch-input::placeholder{color:var(--g400)}
+.gs-t{flex:1;min-width:0}.gs-t>div{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gsearch-item mark{background:rgba(184,149,106,.28);color:inherit;border-radius:3px;padding:0 1px}
+.gs-pill{flex:none;font-size:11px;font-weight:600;padding:2px 8px;border-radius:7px;background:var(--g100);color:var(--g700);white-space:nowrap}
+.gs-pill.red{background:rgba(184,50,50,.1);color:var(--red)}.gs-pill.warn{background:var(--gold-50);color:var(--gold-dk)}.gs-pill.ok{background:var(--pill-g,rgba(29,158,117,.12));color:var(--t800)}
+.gsearch-avatar,.gsearch-avatar.dep{border-radius:9px;background:var(--g100);color:var(--g700)}
+.gs-n{font-size:11.5px;color:var(--g400);white-space:nowrap;font-variant-numeric:tabular-nums}
+.gs-k{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;padding:0 5px;border-radius:5px;border:.5px solid var(--bdm,var(--bd));background:var(--g50,var(--bg));font:600 10.5px var(--f);color:var(--g500)}
+.gs-foot{display:flex;gap:14px;align-items:center;padding:9px 14px;border-top:.5px solid var(--bd);font-size:11.5px;color:var(--g500);background:var(--g50,var(--bg))}
+.gs-foot span{display:inline-flex;align-items:center;gap:5px}.gs-foot .r{margin-left:auto}
+.sb-search-results .gs-pill{background:rgba(255,255,255,.1);color:rgba(255,255,255,.85)}
+.sb-search-results .gs-pill.red{background:rgba(242,133,131,.18);color:#F7B4B3}
+.sb-search-results .gsearch-item mark{background:rgba(217,184,140,.35);color:#fff}
+.sb-search-results .gsearch-group-label b{color:rgba(255,255,255,.4)}
+.sb-search-results .gsearch-avatar{background:rgba(255,255,255,.1);color:#fff}
+@media(max-width:860px){.gs-foot{display:none}}
 </style>
 </head>
 <body>
@@ -2916,9 +2943,11 @@ body.dark-mode .btn-soft{color:var(--g700);border-color:var(--bdm,var(--bd))}
   <div class="gsearch-modal">
     <div class="gsearch-input-wrap">
       <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      <input type="text" class="gsearch-input" id="gsearchInput" placeholder="Buscar o escribir una acción (nueva cita, antropometría…)" oninput="runGlobalSearch()">
+      <input type="text" class="gsearch-input" id="gsearchInput" placeholder="Buscar clientes, citas o una acción (nueva cita, antropometría…)" oninput="runGlobalSearch()" aria-controls="gsearchResults">
+      <span class="gs-n" id="gsCount" aria-live="polite"></span><kbd class="gs-k">Esc</kbd>
     </div>
-    <div class="gsearch-results" id="gsearchResults"></div>
+    <div class="gsearch-results" id="gsearchResults" tabindex="0" aria-label="Resultados"></div>
+    <div class="gs-foot" aria-hidden="true"><span><kbd class="gs-k">↑</kbd><kbd class="gs-k">↓</kbd>Navegar</span><span><kbd class="gs-k">Intro</kbd>Abrir</span><span><kbd class="gs-k">Esc</kbd>Cerrar</span><span class="r"><kbd class="gs-k">Ctrl</kbd><kbd class="gs-k">K</kbd>desde cualquier pantalla</span></div>
   </div>
 </div>
 
@@ -3898,9 +3927,13 @@ async function openGlobalSearch(){
   document.getElementById('mGlobalSearch').style.display = 'flex';
   document.getElementById('gsearchInput').value = '';
   document.getElementById('gsearchResults').innerHTML = searchHtml('', true);
+  const gn = document.getElementById('gsCount'); if(gn) gn.textContent = '';
+  gsMarcar(0);
   setTimeout(()=>document.getElementById('gsearchInput').focus(), 50);
   const [c, d, ci] = await Promise.all([getAll(), getDeportistas(), getCitas()]);
   gsClients = c || []; gsDeps = d || []; gsCitas = ci || [];
+  if(typeof _cart !== 'undefined' && !_cart.listo) cargarCartera({ silencioso:true });
+  if(document.getElementById('gsearchInput').value.trim()) runGlobalSearch();
 }
 function closeGlobalSearch(){
   document.getElementById('mGlobalSearch').style.display = 'none';
@@ -3935,60 +3968,89 @@ function accHtml(q, deps){
     todas.push({t:'Plan nutricional de '+d.nombre, k:'menu semanal dieta plan comidas compra planificacion', f:()=>abrirMenuSemanal(d.id)});
   });
   const lista = palabras.length ? todas.filter(a=>{ const h=_nrm(a.t+' '+a.k); return palabras.every(w=>h.includes(w)); }) : ACC_BASE.slice(0,6);
-  _accList = lista.slice(0,6);
+  _accList = lista.slice(0, palabras.length ? 3 : 6);
   if(!_accList.length) return '';
-  return '<div class="gsearch-group-label">Acciones</div>' + _accList.map((a,i)=>`<div class="gsearch-item acc" onclick="accionRapida(${i})">
+  return gsGrupo('Acciones', _accList.length) + _accList.map((a,i)=>`<div class="gsearch-item acc" onclick="accionRapida(${i})">
       <div class="gsearch-avatar"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
       <div><div class="gsearch-item-name">${sudEsc(a.t)}</div></div>
     </div>`).join('');
 }
 function accionRapida(i){ const a=_accList[i]; closeGlobalSearch(); if(a) a.f(); }
 // Devuelve el HTML de resultados para el texto buscado ('' si no hay texto; con vacioConAcciones, la ventana vacía lista acciones). Lo usan la ventana (escritorio) y la barra lateral (móvil).
+// Resalta la búsqueda en un texto (sin distinguir mayúsculas ni tildes)
+function gsHl(txt, q){
+  const t = String(txt||''), n = _nrm(t), w = _nrm(q).trim();
+  const i = w ? n.indexOf(w) : -1;
+  if(i < 0 || n.length !== t.length) return sudEsc(t);
+  return sudEsc(t.slice(0,i)) + '<mark>' + sudEsc(t.slice(i, i+w.length)) + '</mark>' + sudEsc(t.slice(i+w.length));
+}
+const gsGrupo = (titulo, n) => `<div class="gsearch-group-label"><span>${titulo}</span><b>${n}</b></div>`;
 function searchHtml(qRaw, vacioConAcciones){
   const q = String(qRaw||'').trim().toLowerCase();
   if(!q) return vacioConAcciones ? accHtml('', []) : '';
-  const mClients = gsClients.filter(c=>c.nombre.toLowerCase().includes(q)).slice(0,6);
-  const mDeps = gsDeps.filter(d=>d.nombre.toLowerCase().includes(q)).slice(0,6);
-  const mCitas = gsCitas.filter(c=>c.cliente.toLowerCase().includes(q)).slice(0,6);
-
-  const palabras = _nrm(q).split(/\s+/).filter(w=>w.length>=2);
+  const nq = _nrm(q);
+  const tiene = s => _nrm(s).includes(nq);
+  const allClients = gsClients.filter(c=>tiene(c.nombre));
+  const allDeps = gsDeps.filter(d=>tiene(d.nombre) || tiene(d.deporte));
+  const hoyIso = localISO(new Date());
+  const allCitas = gsCitas.filter(c=>tiene(c.cliente)).sort((a,b)=>{ const fa = String(a.fecha).slice(0,10), fb = String(b.fecha).slice(0,10), pa = fa < hoyIso, pb = fb < hoyIso; return (pa - pb) || (pa ? fb.localeCompare(fa) : fa.localeCompare(fb)); });
+  const tareas = (typeof _cart !== 'undefined' && _cart.tareas) ? _cart.tareas.filter(t=>tiene(t.nombre)) : [];
+  const palabras = nq.split(/\s+/).filter(w=>w.length>=2);
   const acc = accHtml(q, gsDeps.filter(d=>palabras.some(w=>_nrm(d.nombre).includes(w))).slice(0,3));
-  if(!mClients.length && !mDeps.length && !mCitas.length && !acc){
-    return '<p class="gsearch-empty">Sin resultados para "'+sudEsc(q)+'".</p>';
-  }
-
-  let html = acc;
-  if(mClients.length){
-    html += '<div class="gsearch-group-label">Método 3M</div>';
-    html += mClients.map(c=>`<div class="gsearch-item" onclick="jumpToClient(${c.id})">
-      <div class="gsearch-avatar">${getInitials(c.nombre)}</div>
-      <div><div class="gsearch-item-name">${c.nombre}</div><div class="gsearch-item-sub">Semana ${Math.min((c.semana||0)+1,12)} de 12</div></div>
+  _gsTareas = tareas.slice(0,4);
+  const total = allClients.length + allDeps.length + allCitas.length + tareas.length + _accList.length;
+  _gsTotal = total;
+  if(!total) return '<p class="gsearch-empty">Sin resultados para «'+sudEsc(qRaw.trim())+'».</p>';
+  const estCart = id => { const f = (typeof _cart !== 'undefined' && _cart.filas) ? _cart.filas.find(x => x.d && x.d.id == id) : null; return f && f.est !== 'ok' ? `<span class="gs-pill ${f.est==='risk'?'red':'warn'}">${f.est==='risk'?'En riesgo':'Por mirar'}</span>` : ''; };
+  let html = '';
+  if(allDeps.length){
+    html += gsGrupo('Nutrición Deportiva', allDeps.length);
+    html += allDeps.slice(0,6).map(d=>`<div class="gsearch-item" onclick="jumpToDeportista(${d.id})">
+      <div class="gsearch-avatar dep">${sudEsc(getInitials(d.nombre))}</div>
+      <div class="gs-t"><div class="gsearch-item-name">${gsHl(d.nombre, q)}</div><div class="gsearch-item-sub">${gsHl(d.deporte||'Sin modalidad', q)}</div></div>${estCart(d.id)}
     </div>`).join('');
   }
-  if(mDeps.length){
-    html += '<div class="gsearch-group-label">Nutrición Deportiva</div>';
-    html += mDeps.map(d=>`<div class="gsearch-item" onclick="jumpToDeportista(${d.id})">
-      <div class="gsearch-avatar dep">${getInitials(d.nombre)}</div>
-      <div><div class="gsearch-item-name">${d.nombre}</div><div class="gsearch-item-sub">${d.deporte||'Sin modalidad'}</div></div>
+  if(tareas.length){
+    html += gsGrupo('Por hacer', tareas.length);
+    html += _gsTareas.map((t,i)=>`<div class="gsearch-item" onclick="gsTarea(${i})">
+      <div class="gsearch-avatar cita"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
+      <div class="gs-t"><div class="gsearch-item-name">${gsHl(t.nombre, q)}</div><div class="gsearch-item-sub">${sudEsc(t.txt)}</div></div><span class="gs-pill ${t.urg===2?'red':''}">${sudEsc(t.btn)}</span>
     </div>`).join('');
   }
-  if(mCitas.length){
-    html += '<div class="gsearch-group-label">Agenda</div>';
-    html += mCitas.map(c=>{
-      const dateStr = new Date(c.fecha+'T00:00:00').toLocaleDateString('es-ES',{day:'numeric',month:'short'});
+  if(allCitas.length){
+    html += gsGrupo('Agenda', allCitas.length);
+    html += allCitas.slice(0,6).map(c=>{
+      const f = String(c.fecha).slice(0,10), dateStr = new Date(f+'T00:00:00').toLocaleDateString('es-ES',{day:'numeric',month:'short'}) + (c.hora ? ' · ' + String(c.hora).slice(0,5) : '');
+      const est = c.hecha ? '<span class="gs-pill ok">Hecha</span>' : (!c.pagado && c.requiere_pago!==false && citaYaPaso(c)) ? '<span class="gs-pill red">Sin cobrar</span>' : f >= hoyIso ? '<span class="gs-pill">Próxima</span>' : '';
       return `<div class="gsearch-item" onclick="jumpToAgenda()">
-      <div class="gsearch-avatar cita">
-        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-      </div>
-      <div><div class="gsearch-item-name">${c.cliente}</div><div class="gsearch-item-sub">${c.servicio||'Revisión'} · ${dateStr}</div></div>
+      <div class="gsearch-avatar cita"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+      <div class="gs-t"><div class="gsearch-item-name">${gsHl(c.cliente, q)}</div><div class="gsearch-item-sub">${sudEsc(c.servicio||'Revisión')} · ${dateStr}</div></div>${est}
     </div>`;
     }).join('');
   }
-  return html;
+  if(allClients.length){
+    html += gsGrupo('Método 3M', allClients.length);
+    html += allClients.slice(0,6).map(c=>`<div class="gsearch-item" onclick="jumpToClient(${c.id})">
+      <div class="gsearch-avatar">${sudEsc(getInitials(c.nombre))}</div>
+      <div class="gs-t"><div class="gsearch-item-name">${gsHl(c.nombre, q)}</div><div class="gsearch-item-sub">Semana ${Math.min((c.semana||0)+1,12)} de 12</div></div>${c.pagado===false?'<span class="gs-pill red">Pago pendiente</span>':''}
+    </div>`).join('');
+  }
+  return html + acc;
+}
+let _gsTareas = [], _gsTotal = 0, _gsSel = 0;
+function gsTarea(i){ const t = _gsTareas[i]; closeGlobalSearch(); if(t) setTimeout(() => (new Function(t.fn))(), 0); }
+function gsMarcar(i){
+  const items = [...document.querySelectorAll('#gsearchResults .gsearch-item')];
+  if(!items.length){ _gsSel = 0; return; }
+  _gsSel = (i + items.length) % items.length;
+  items.forEach((el,k) => el.classList.toggle('sel', k === _gsSel));
+  items[_gsSel].scrollIntoView({ block:'nearest' });
 }
 function runGlobalSearch(){
-  const el = document.getElementById('gsearchResults');
-  el.innerHTML = searchHtml(document.getElementById('gsearchInput').value, true) || '<p class="gsearch-empty">Escribe para buscar…</p>';
+  const el = document.getElementById('gsearchResults'), v = document.getElementById('gsearchInput').value;
+  el.innerHTML = searchHtml(v, true) || '<p class="gsearch-empty">Escribe para buscar…</p>';
+  const n = document.getElementById('gsCount'); if(n) n.textContent = v.trim() ? `${_gsTotal} resultado${_gsTotal!==1?'s':''}` : '';
+  gsMarcar(0);
 }
 // ── Búsqueda dentro de la barra lateral (móvil) ──
 let _gsLoadedAt = 0;
@@ -4048,7 +4110,10 @@ document.addEventListener('click', function(e){
   if(modal && e.target === modal) closeGlobalSearch();
 });
 document.addEventListener('keydown', function(e){
-  if(e.key === 'Enter' && e.target && e.target.id === 'gsearchInput'){ const f = document.querySelector('#gsearchResults .gsearch-item'); if(f){ e.preventDefault(); f.click(); } }
+  if(e.target && e.target.id === 'gsearchInput'){
+    if(e.key === 'ArrowDown' || e.key === 'ArrowUp'){ e.preventDefault(); gsMarcar(_gsSel + (e.key === 'ArrowDown' ? 1 : -1)); }
+    else if(e.key === 'Enter'){ const f = document.querySelectorAll('#gsearchResults .gsearch-item')[_gsSel] || document.querySelector('#gsearchResults .gsearch-item'); if(f){ e.preventDefault(); f.click(); } }
+  }
   if((e.metaKey || e.ctrlKey) && e.key === 'k'){
     e.preventDefault();
     openGlobalSearch();
