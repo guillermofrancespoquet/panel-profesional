@@ -2020,6 +2020,14 @@ body.dark-mode #chartTip{color:#14181a}
   body:not(.emb-view):not(.bn-off) #toasts{bottom:calc(84px + env(safe-area-inset-bottom,0px))}
 }
 @media(prefers-reduced-motion:reduce){.bnav{transition:none}}
+
+/* ═══ Fluidez: fundido al cambiar de pantalla y botones «ocupado» ═══ */
+.view.view-in{animation:vIn .16s ease-out}
+@keyframes vIn{from{opacity:0}to{opacity:1}}
+.busy{position:relative;pointer-events:none;cursor:progress;opacity:.85}
+.busy::after{content:"";display:inline-block;width:12px;height:12px;margin-left:8px;vertical-align:-2px;border-radius:50%;border:2px solid currentColor;border-right-color:transparent;animation:spinB .7s linear infinite}
+@keyframes spinB{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.view.view-in{animation:none}.busy::after{animation-duration:1.6s}}
 </style>
 </head>
 <body>
@@ -3751,7 +3759,17 @@ function authRefresh(){
   return _authRefreshing;
 }
 async function authToken(){ const s=authLoad(); if(!s) return null; return Date.now()<s.expires_at ? s.access_token : authRefresh(); }
+// Fluidez: hora de la última escritura (invalida lo ya cargado) y peticiones en curso (botones «ocupado»)
+let _mutAt = 0, _inflight = 0;
+const _RPC_LECTURA = /\/rpc\/(es_profesional|objetivos?_progreso|peso_reciente)\b/;
 async function authFetch(url,opts={}){
+  const _m = String(opts.method||'GET').toUpperCase();
+  if(_m !== 'GET' && _m !== 'HEAD' && !_RPC_LECTURA.test(url)) _mutAt = Date.now();
+  _inflight++;
+  try{ return await _authFetch(url, opts); }
+  finally{ _inflight--; if(!_inflight) setTimeout(_botonesLibres, 0); }
+}
+async function _authFetch(url,opts={}){
   const go=async tok=>{ try{ const rr=await fetch(url,{...opts,headers:{'apikey':SKEY,'Authorization':'Bearer '+(tok||SKEY),...(opts.headers||{})}}); conexion(true); return rr; }catch(e){ conexion(false); throw e; } };
   const habiaSesion=!!authLoad();
   const tok=await authToken();
@@ -5074,7 +5092,7 @@ async function loadDashboard(){
   }).join(''):dashVacio('bolt','Sin revisiones en los próximos 7 días.');
 
   // ── Clientes por mirar: sale de la Cartera (mismas reglas) y rellena la frase de arriba y la insignia de la barra lateral ──
-  cargarCartera({ silencioso: true });
+  if(!(_cargado.cartera && _cargado.cartera > _mutAt && Date.now() - _cargado.cartera < 45000)){ _cargado.cartera = Date.now(); cargarCartera({ silencioso: true }); }
 
   dashPintarEstado();
 }
@@ -5654,6 +5672,7 @@ function togglePw(){
   b.setAttribute('aria-label',ver?'Ocultar contraseña':'Mostrar contraseña'); b.title=b.getAttribute('aria-label');
 }
 function logout(){
+  try{ for(const k in _cargado) delete _cargado[k]; }catch(e){}
   const s=authLoad();
   if(s) fetch(SURL+'/auth/v1/logout',{method:'POST',headers:{'apikey':SKEY,'Authorization':'Bearer '+s.access_token}}).catch(()=>{});
   authClear();
@@ -5663,7 +5682,7 @@ function logout(){
   document.getElementById('sidebar').classList.remove('show');
   show('vlogin');
 }
-function show(v){_autoDep.ahora();_autoM3.ahora();document.querySelectorAll('.view').forEach(e=>e.classList.remove('active'));document.getElementById(v).classList.add('active');document.body.classList.toggle('emb-view',v==='vmenusem'||v==='vantro');}
+function show(v){_autoDep.ahora();_autoM3.ahora();const _nv=document.getElementById(v),_ya=_nv.classList.contains('active');document.querySelectorAll('.view').forEach(e=>e.classList.remove('active'));_nv.classList.add('active');if(!_ya){_nv.classList.remove('view-in');void _nv.offsetWidth;_nv.classList.add('view-in');}document.body.classList.toggle('emb-view',v==='vmenusem'||v==='vantro');}
 // ═══════════════ VENTANAS Y TECLADO (iPhone / iPad) ═══════════════
 // Con el teclado abierto, o cuando Safari desplaza la página al enfocar un campo, la zona visible es más pequeña y está más abajo que la «pantalla» que ve la
 // página: las ventanas se centraban en la pantalla entera y su parte de arriba quedaba fuera de lo visible. Aquí se mide la zona realmente visible (visualViewport)
@@ -5803,12 +5822,12 @@ function toggleServiciosGroup(){
 
 function navTo(section){
   document.querySelectorAll('.sb-item').forEach(b=>b.classList.remove('on'));
-  if(section==='home'){document.getElementById('sbHome').classList.add('on');show('vhome');loadDashboard();}
-  else if(section==='cartera'){document.getElementById('sbCartera').classList.add('on');show('vcartera');cargarCartera();}
-  else if(section==='agenda'){document.getElementById('sbAgenda').classList.add('on');show('vagenda');loadCitas();}
-  else if(section==='metodo'){document.getElementById('sbMetodo').classList.add('on');show('vdash');load();}
-  else if(section==='deportiva'){document.getElementById('sbDep').classList.add('on');show('vdepdash');loadDeportistas();}
-  else if(section==='facturacion'){document.getElementById('sbFact').classList.add('on');show('vfact');loadFacturacion();}
+  if(section==='home'){document.getElementById('sbHome').classList.add('on');show('vhome');navCargar('home');}
+  else if(section==='cartera'){document.getElementById('sbCartera').classList.add('on');show('vcartera');navCargar('cartera');}
+  else if(section==='agenda'){document.getElementById('sbAgenda').classList.add('on');show('vagenda');navCargar('agenda');}
+  else if(section==='metodo'){document.getElementById('sbMetodo').classList.add('on');show('vdash');navCargar('metodo');}
+  else if(section==='deportiva'){document.getElementById('sbDep').classList.add('on');show('vdepdash');navCargar('deportiva');}
+  else if(section==='facturacion'){document.getElementById('sbFact').classList.add('on');show('vfact');navCargar('facturacion');}
   else if(section==='antropometria'){document.getElementById('sbAntropo').classList.add('on');show('vantro');cargarAntropometria();}
   else if(section==='menusem'){document.getElementById('sbMenuSem').classList.add('on');show('vmenusem');cargarMenuSemanal();}
   else if(section==='plan'){document.getElementById('sbPlan').classList.add('on');show('vplan');initPlan();}
@@ -12124,6 +12143,41 @@ async function resetGuion(clientId, semana, nombre) {
   document.addEventListener('focusin', e => { if(esCampo(e.target)) document.body.classList.add('bn-off'); });
   document.addEventListener('focusout', () => setTimeout(() => { if(!esCampo(document.activeElement)) document.body.classList.remove('bn-off'); }, 60));
 })();
+
+// ═══════════════ FLUIDEZ ═══════════════
+// (1) Al volver a una sección se enseña lo que ya había y no se vuelve a pedir si se cargó hace menos de 45 s y desde
+//     entonces no se ha escrito nada (cualquier escritura por authFetch lo invalida). «Actualizar» y tirar hacia abajo siguen pidiendo siempre.
+const NAV_CARGA = { home: () => loadDashboard(), cartera: () => cargarCartera(), agenda: () => loadCitas(), metodo: () => load(), deportiva: () => loadDeportistas(), facturacion: () => loadFacturacion() };
+const _cargado = {};
+function navCargar(k, previo){
+  const t = _cargado[k], fn = NAV_CARGA[k]; if(!fn) return;
+  if(t && t > _mutAt && Date.now() - t < 45000) return;
+  _cargado[k] = Date.now();
+  try{ const r = fn(); if(r && r.catch) r.catch(() => { delete _cargado[k]; }); }catch(e){ delete _cargado[k]; }
+}
+// (3) Precarga: al pasar el ratón por una entrada de la barra lateral (150 ms) o al tocar la barra inferior, se empieza a cargar antes del clic
+(function(){
+  let tm = null;
+  const sec = el => { const b = el && el.closest && el.closest('[onclick^="navTo(\'"]'); if(!b) return null; const m = /navTo\('([a-z-]+)'\)/.exec(b.getAttribute('onclick')); return m && NAV_CARGA[m[1]] ? m[1] : null; };
+  document.addEventListener('pointerover', e => { if(e.pointerType !== 'mouse') return; const k = sec(e.target); if(!k) return; clearTimeout(tm); tm = setTimeout(() => navCargar(k), 150); });
+  document.addEventListener('pointerout', e => { if(sec(e.target)) clearTimeout(tm); });
+  document.addEventListener('pointerdown', e => { if(e.pointerType === 'mouse') return; const k = sec(e.target); if(k) navCargar(k); }, true);
+})();
+// (4) Respuesta inmediata en los botones de guardar: se marcan «ocupados» (y no admiten un segundo toque) mientras hay peticiones en curso
+let _busy = [];
+function _botonesLibres(){
+  const ahora = Date.now();
+  _busy = _busy.filter(x => { if(_inflight && ahora - x.t < 20000) return true; if(ahora - x.t < 150){ setTimeout(_botonesLibres, 160); return true; } x.b.classList.remove('busy'); x.b.removeAttribute('aria-busy'); return false; });
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest && e.target.closest('.btn-ok,.btn-save,.rev-ok,#fxGo');
+  if(!b || b.disabled) return;
+  if(b.classList.contains('busy')){ e.preventDefault(); e.stopImmediatePropagation(); return; }
+  setTimeout(() => {   // solo si el clic ha lanzado alguna petición
+    if(!_inflight) return;
+    b.classList.add('busy'); b.setAttribute('aria-busy', 'true'); _busy.push({ b, t: Date.now() });
+  }, 0);
+}, true);
 </script>
 </body>
 </html>
