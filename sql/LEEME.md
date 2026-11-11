@@ -27,6 +27,7 @@ Todos se ejecutan a mano en Supabase → SQL Editor → New query → Run. Son s
    - `supabase_notificaciones.sql` (avisos al móvil del cliente: seguimiento semanal; requiere `supabase_seguimiento.sql`; **además hay que crear la Edge Function y programarla**, ver «Avisos al móvil» más abajo)
    - `supabase_plan_pendiente.sql` (recordatorio «Plan por preparar» tras una consulta; una columna, opcional)
    - `supabase_sin_revision.sql` (marca «Sin revisión prevista» para que la Cartera no pida fecha; una columna, opcional)
+   - `supabase_analiticas_compartir.sql` (analíticas visibles para el cliente con un mensaje opcional: columnas `analiticas.visible_cliente` y `nota_cliente` y `cliente_mis_analiticas()`; requiere `supabase_analiticas.sql`; nunca da las notas privadas ni el archivo)
    - `supabase_ficha_inicial.sql` (ficha inicial propia, sustituye a los dos Google Forms; requiere `supabase_formularios.sql` y `supabase_clientes_acceso.sql`; aditivo: una tabla y dos funciones, sin tocar `cliente_mi_ficha`)
    - `supabase_calendario_google.sql` (columna `citas.google_event_id` para el Calendario de Google; opcional, va con la Edge Function `calendario-google`, ver «Calendario de Google» más abajo)
 8. `supabase_seguridad_3_endurecer.sql`, **el último** (endurecimiento tras la revisión de seguridad del 26 oct 2026: rutas de archivos, límites, direcciones de avisos, privilegios; sustituye tres funciones por su versión endurecida, que ya llevan también sus archivos originales). Después, `supabase_diagnostico_seguridad.sql` (solo lectura): todo debe salir «OK».
