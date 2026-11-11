@@ -484,6 +484,13 @@ body>*:not(#mnPrint){display:none !important}
 body.dark-mode #chartTip,body.dark-mode #chartTip::after{background:#f0f0ec}
 body.dark-mode #chartTip{color:#14181a}
 @media(prefers-reduced-motion:reduce){#chartTip{transition:none}}
+
+/* ═══ Coherencia con el panel, cierre (nov 2026): principal en --btn, secundarios blancos con borde, iconos de las tarjetas iguales ═══ */
+.btn{background:var(--btn);border-radius:var(--r-btn,10px)}
+.btn:hover{background:var(--btn-h)}
+.btn.soft,body.dark-mode .btn.soft{background:var(--sf);color:var(--g700);box-shadow:none;border:.5px solid var(--bdm)}
+.btn.soft:hover,body.dark-mode .btn.soft:hover{background:var(--g100)}
+.tile-ic,.tile-ic.au{background:var(--g100);color:var(--t600);box-shadow:inset 0 0 0 .5px var(--bdm)}
 </style>
 </head>
 <body>
