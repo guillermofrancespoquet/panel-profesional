@@ -2067,6 +2067,12 @@ body.dark-mode .accion-badge.subtle.empty{color:var(--g400);background:none}
 .dep-chip.active,body.dark-mode .dep-chip.active{background:var(--btn);border-color:var(--btn);color:#fff}
 .cmp-ej button{background:var(--sf);border-color:var(--bdm);border-radius:var(--r-btn,10px)}
 body.dark-mode .wnum.lk{color:var(--g700)}   /* semanas bloqueadas del Método 3M: el gris no llegaba a 4,5:1 en oscuro */
+
+/* Plantilla de consulta */
+.cons-ta{min-height:58px}
+.cons-prev{margin-top:12px;padding:10px 12px;border-radius:10px;background:var(--g100);border:.5px solid var(--bdm);font-size:13px;color:var(--g700);line-height:1.45}
+.cons-prev span{display:block;font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--g500);margin-bottom:3px}
+.tl-s b{color:var(--g700);font-weight:600}
 </style>
 </head>
 <body>
@@ -2993,10 +2999,10 @@ body.dark-mode .wnum.lk{color:var(--g700)}   /* semanas bloqueadas del Método 3
     <div id="consCampos">
       <label class="mfl" for="consFecha">Día</label>
       <input type="date" class="inp" id="consFecha">
-      <label class="mfl" for="consNota" style="margin-top:12px">Lo hablado y los acuerdos <span class="hd-opt">(opcional)</span></label>
-      <textarea class="notes-ta" id="consNota" maxlength="600" style="min-height:110px" placeholder="Ej. Sube hidratos antes de entrenar, revisamos el desayuno en la próxima visita."></textarea>
+      <div class="cons-prev" id="consPrev" hidden></div>
+      <div id="consPlantilla"></div>
       <div id="consPlanBox" style="margin-top:14px">
-        <label class="plan-chk" for="consPlan"><input type="checkbox" id="consPlan" checked onchange="document.getElementById('consPlanFechaBox').style.display=this.checked?'':'none'"><span><b>Plan por preparar</b><br><span class="med-note" style="margin:0">Te lo recuerda en «Por atender» hasta que publiques su plan.</span></span></label>
+        <label class="plan-chk" for="consPlan"><input type="checkbox" id="consPlan" checked onchange="document.getElementById('consPlanFechaBox').style.display=this.checked?'':'none'"><span><b>Plan por preparar</b><br><span class="med-note" style="margin:0">Te lo recuerda en la Cartera hasta que publiques su plan.</span></span></label>
         <div id="consPlanFechaBox" style="margin-top:8px"><label class="mfl" for="consPlanPara">Quiero tenerlo para el día</label><input type="date" class="inp" id="consPlanPara"></div>
         <p class="med-note" id="consPlanNota" style="margin:8px 0 0"></p>
       </div>
@@ -10424,7 +10430,7 @@ function objEstado(a){
 function objDiasTxt(dias){ return dias == null ? '' : dias > 1 ? `quedan ${dias} días` : dias === 1 ? 'queda 1 día' : dias === 0 ? 'es hoy' : dias === -1 ? 'hace 1 día' : `hace ${-dias} días`; }
 
 function objCardHtml(a, depId, n){
-  const tit = objTit(a.tipo, a.titulo, a.inicial, a.objetivo, a.unidad), pct = Math.round(a.progreso * 100), est = objEstado(a);
+  const tit = objTit(a.tipo, a.titulo, a.inicial, a.objetivo, a.unidad), pct = Number.isFinite(+a.progreso) ? Math.max(0, Math.min(100, Math.round(a.progreso * 100))) : 0, est = objEstado(a);   // sin avance calculable (datos incompletos) la barra queda en 0 y no sale «NaN %»
   const dia = a.fecha_limite ? `${objFecha(a.fecha_limite)} · ${objDiasTxt(a.dias)}` : 'Sin fecha límite';
   const rend = a.tipo === 'rendimiento';
   return `<div class="obj-card">
@@ -10640,7 +10646,7 @@ async function loadHistorial(depId){
   const d = deportistas.find(x=>x.id==depId) || {};
   const dia = f => String(f||'').slice(0,10);
   const ev = [];
-  rows.forEach(x=>{ const n = x.nota || 'Consulta registrada', larga = n.length > 60 || n.includes('\n'); ev.push({tipo:'sesion', fecha:dia(x.fecha), t: larga ? 'Consulta' : n, s: larga ? n : '', id:x.id, borrable:true}); });
+  rows.forEach(x=>{ const n = x.nota || 'Consulta registrada', larga = n.length > 60 || n.includes('\n'); ev.push({tipo:'sesion', fecha:dia(x.fecha), t: larga ? 'Consulta' : n, s: larga ? n : '', cons: larga, id:x.id, borrable:true}); });
   meds.forEach(x=>{ const m=medPunto(x), partes=[]; if(m.peso!=null) partes.push(medNum(m.peso,1)+' kg'); if(m.grasa!=null) partes.push(medNum(m.grasa,1)+' % grasa'); ev.push({tipo:'medicion', fecha:dia(x.fecha), t:'Valoración antropométrica', s:partes.join(' · ')}); });
   bios.forEach(x=>{ const v=x.valores||{}, partes=[]; if(v.peso!=null) partes.push(medNum(+v.peso,1)+' kg'); if(v.pct_grasa!=null) partes.push(medNum(+v.pct_grasa,1)+' % grasa'); ev.push({tipo:'medicion', fecha:dia(x.fecha), t:'Bioimpedancia'+(x.aparato?' · '+x.aparato:''), s:partes.join(' · ')}); });
   segs.forEach(x=>{ const q=x.respuestas||{}, bajos=SEG_P.filter(m=>q[m.k]!=null&&q[m.k]<=2).map(m=>m.t.toLowerCase());
@@ -10657,7 +10663,7 @@ async function loadHistorial(depId){
   ev.filter(e=>e.tipo==='medicion').forEach(e=>{ (hechos[e.fecha] = hechos[e.fecha] || new Set()).add(e.t.startsWith('Bioimpedancia') ? 'Bioimpedancia' : 'Antropometría'); });
   Object.keys(hechos).forEach(f=>{
     const que = [...hechos[f]].join(' + '), previa = ev.find(e=>e.tipo==='sesion' && e.fecha===f);
-    if(previa) previa.s = (previa.s ? previa.s + ' · ' : '') + que;
+    if(previa) previa.s = (previa.s ? previa.s + (previa.cons ? '\n' : ' · ') : '') + que;
     else ev.push({tipo:'sesion', fecha:f, t:'Consulta', s:que});
   });
   _tlEventos = ev.filter(e=>/^\d{4}-\d{2}-\d{2}$/.test(e.fecha)).sort((a,b)=>b.fecha.localeCompare(a.fecha));
@@ -10675,7 +10681,7 @@ function pintarTimeline(depId){
     if(m!==mes){ mes=m; html+=`<div class="tl-mes">${m.charAt(0).toUpperCase()+m.slice(1)}</div>`; }
     const fecha=f.toLocaleDateString('es-ES',{day:'numeric',month:'short'});
     html+=`<div class="tl-item hist-item"><span class="tl-ico ${e.tipo}" aria-hidden="true"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">${TL_ICO[e.tipo]}</svg></span>
-      <div class="tl-body"><div class="tl-t">${sudEsc(e.t)}</div>${e.s?`<div class="tl-s">${e.html?e.s:sudEsc(e.s)}</div>`:''}</div>
+      <div class="tl-body"><div class="tl-t">${sudEsc(e.t)}</div>${e.s?`<div class="tl-s">${e.html?e.s:e.cons?consNotaHtml(e.s):sudEsc(e.s)}</div>`:''}</div>
       <span class="tl-f">${fecha}</span>${e.borrable?`<button class="tl-del" onclick="deleteHistorial(${e.id},${depId},this)" title="Eliminar" aria-label="Eliminar este registro"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg></button>`:''}</div>`;
   });
   el.innerHTML=chips+html;
@@ -10746,7 +10752,8 @@ async function abrirConsulta(depId, cita){
   document.getElementById('consSub').textContent = d ? d.nombre : (cita ? cita.cliente : '');
   document.getElementById('consCampos').style.display = d ? '' : 'none';
   document.getElementById('consFecha').value = cita ? String(cita.fecha).slice(0,10) : localISO(new Date());
-  document.getElementById('consNota').value = '';
+  document.getElementById('consPlantilla').innerHTML = consPlantillaHtml();
+  if(d) consPrevPintar(d.id); else { const pv = document.getElementById('consPrev'); pv.hidden = true; }
   // «Plan por preparar»: solo si la columna existe (supabase_plan_pendiente.sql) y hay deportista
   const pb = document.getElementById('consPlanBox'), pe = d ? planPendienteVivo(d, null) : null, hayCol = !!(d && 'plan_pendiente' in d);
   pb.style.display = d ? '' : 'none';
@@ -10760,7 +10767,38 @@ async function abrirConsulta(depId, cita){
   document.getElementById('consPago').checked = false;
   document.getElementById('consGuardar').disabled = false;
   document.getElementById('mConsulta').style.display = 'flex';
-  if(d) setTimeout(() => enfocar('consNota'), 60);
+  if(d) setTimeout(() => enfocar('cons_ido'), 60);
+}
+// ── Plantilla de consulta: apartados opcionales; se guardan como líneas «Apartado: texto» en historial_deportista.nota ──
+const CONS_CAMPOS = [
+  ['ido', 'Cómo ha ido', 'Ej. Buena adherencia entre semana; los fines de semana cuesta más.'],
+  ['cambios', 'Cambios en el plan', 'Ej. Subimos hidratos antes de entrenar y cambiamos la cena.'],
+  ['pasos', 'Próximos pasos', 'Ej. Probar el desayuno nuevo y anotar el peso dos veces por semana.'],
+  ['notas', 'Otras notas', '']
+];
+function consPlantillaHtml(){
+  return CONS_CAMPOS.map(([k, l, ph]) => `<label class="mfl" for="cons_${k}" style="margin-top:12px">${l} <span class="hd-opt">(opcional)</span></label><textarea class="notes-ta cons-ta" id="cons_${k}" maxlength="300" rows="2" placeholder="${sudEsc(ph)}"></textarea>`).join('');
+}
+function consComponer(){
+  const v = CONS_CAMPOS.map(([k, l]) => [l, (document.getElementById('cons_' + k)?.value || '').trim().replace(/\s*\n+\s*/g, ' ')]).filter(x => x[1]);
+  if(v.length === 1 && v[0][0] === 'Otras notas') return v[0][1];   // solo texto libre: como antes
+  return v.map(([l, x]) => l + ': ' + x).join('\n');
+}
+// Línea de tiempo: los apartados de la plantilla, con su rótulo en negrita
+function consNotaHtml(n){
+  const rot = CONS_CAMPOS.map(c => c[1]);
+  return String(n || '').split('\n').map(l => { const i = l.indexOf(': '), r = i > 0 ? l.slice(0, i) : ''; return rot.includes(r) ? `<b>${sudEsc(r)}:</b> ${sudEsc(l.slice(i + 2))}` : sudEsc(l); }).join('\n');
+}
+// Lo acordado en la consulta anterior («Próximos pasos»), para tenerlo delante al registrar la siguiente
+async function consPrevPintar(depId){
+  const box = document.getElementById('consPrev'); box.hidden = true; box.innerHTML = '';
+  try{
+    const r = await sb(`historial_deportista?deportista_id=eq.${depId}&order=fecha.desc&limit=8&select=fecha,nota`);
+    if(!Array.isArray(r) || !_cons || _cons.depId != depId) return;
+    const x = r.find(h => /(^|\n)Próximos pasos: /.test(h.nota || '')); if(!x) return;
+    const pasos = (x.nota.split('\n').find(l => l.startsWith('Próximos pasos: ')) || '').slice(16);
+    box.innerHTML = `<span>Acordado el ${sudEsc(objFecha(x.fecha))}</span>${sudEsc(pasos)}`; box.hidden = false;
+  }catch(e){}
 }
 function cerrarConsulta(){ document.getElementById('mConsulta').style.display = 'none'; _cons = null; }
 async function guardarConsulta(){
@@ -10768,7 +10806,7 @@ async function guardarConsulta(){
   const btn = document.getElementById('consGuardar'); btn.disabled = true;
   try{
     if(C.depId != null){
-      const fecha = document.getElementById('consFecha').value || localISO(new Date()), nota = document.getElementById('consNota').value.trim();
+      const fecha = document.getElementById('consFecha').value || localISO(new Date()), nota = consComponer();
       const r = await insertHistorial({deportista_id: C.depId, fecha, nota: nota || 'Consulta registrada'});
       if(esErrorSb(r)) throw new Error('historial');
       await touchActividad(C.depId);

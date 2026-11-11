@@ -614,6 +614,10 @@ body.dark-mode .btn-soft{color:var(--g700);border-color:var(--bdm)}
 body.dark-mode #chartTip,body.dark-mode #chartTip::after{background:#f0f0ec}
 body.dark-mode #chartTip{color:#14181a}
 @media(prefers-reduced-motion:reduce){#chartTip{transition:none}}
+
+/* Coherencia: «Cancelar» blanco con borde, como en el panel */
+.btn-cancel{background:var(--sf);border:.5px solid var(--bdm);color:var(--g700);font-weight:600}
+.btn-cancel:hover{background:var(--g100)}
 </style>
 </head>
 <body>
@@ -1445,7 +1449,7 @@ function mnPintar() {
 function mnMenuHtml() {
   const c = MN.c, s = mnSem(), d = mnDia(), toca = MN.row.semana_actual || c.semanas[0].id, ctx = d.ctx || {};
   const navSem = c.semanas.map(x => `<button type="button" class="mn-nav-i${x.id === s.id ? ' on' : ''}" onclick="mnElegirSemana('${x.id}')"><span>${sudEsc(x.nombre)}</span>${c.semanas.length > 1 && x.id === toca ? '<span class="mn-tag">Esta semana</span>' : ''}</button>`).join('');
-  const navDias = s.dias.map((x, i) => `<button type="button" class="mn-nav-i${i === MN.dia ? ' on' : ''}" onclick="mnElegirDia(${i})"><span>${sudEsc(x.n)}${mnDiaPie(x) ? `<small>${sudEsc(mnDiaPie(x))}</small>` : ''}</span>${x.comidas.length ? `<span class="mn-n" aria-label="${x.comidas.length} comidas">${x.comidas.length}</span>` : ''}</button>`).join('');
+  const navDias = s.dias.map((x, i) => `<button type="button" class="mn-nav-i${i === MN.dia ? ' on' : ''}" onclick="mnElegirDia(${i})"><span>${sudEsc(x.n || 'Día ' + (i + 1))}${mnDiaPie(x) ? `<small>${sudEsc(mnDiaPie(x))}</small>` : ''}</span>${x.comidas.length ? `<span class="mn-n" aria-label="${x.comidas.length} comidas">${x.comidas.length}</span>` : ''}</button>`).join('');
   const comidas = d.comidas.length ? d.comidas.map((m, i) => mnComidaHtml(m, i, d.comidas.length)).join('') : `<div class="mn-vacio"><b>Este día no tiene comidas todavía</b><span class="mn-ayuda">Añade las que necesite este cliente: pueden ser 3, 4, 5 o las que haga falta.</span></div>`;
   return `${mnReajBanner()}${mnFichaBanner()}<div class="mn-grid">
     <aside class="mn-side">
