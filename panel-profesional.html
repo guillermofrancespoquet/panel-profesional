@@ -2073,6 +2073,13 @@ body.dark-mode .wnum.lk{color:var(--g700)}   /* semanas bloqueadas del Método 3
 .cons-prev{margin-top:12px;padding:10px 12px;border-radius:10px;background:var(--g100);border:.5px solid var(--bdm);font-size:13px;color:var(--g700);line-height:1.45}
 .cons-prev span{display:block;font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--g500);margin-bottom:3px}
 .tl-s b{color:var(--g700);font-weight:600}
+
+/* Analíticas: hierro en deportistas y bloque «Para el cliente» */
+.ana-fe{margin:14px 0 4px;padding:12px 14px;border-radius:12px;border:.5px solid var(--bdm);background:var(--sf)}
+.ana-fe.warn{border-color:rgba(184,149,106,.55);box-shadow:inset 3px 0 0 var(--gold)}
+.ana-fe p{margin:0;font-size:13.5px}
+.ana-fe a{color:var(--t600)}
+.ana-cli{margin-top:14px}
 </style>
 </head>
 <body>
@@ -8001,7 +8008,8 @@ const BS_ICON={
   ext:'<line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/>',
   chart:'<line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>',
   doc:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>',
-  trash:'<polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/>'
+  trash:'<polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/>',
+  check:'<polyline points="20 6 9 17 4 12"/>'
 };
 function btnSoft(label,onclick,icon,sm){
   return `<button class="btn-soft${sm?' sm':''}" onclick="${onclick}"><svg width="${sm?12:13}" height="${sm?12:13}" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">${BS_ICON[icon]}</svg>${label}</button>`;
@@ -9462,8 +9470,8 @@ async function loadAna(depId) {
     const v = r.valores || [], fuera = anaFuera(r);
     return `<tr><td class="n bio-f1">${anaFechaTxt(r.fecha)}</td><td class="bio-ap">${sudEsc(r.laboratorio || '—')}</td>
       <td class="n" data-l="Valores">${v.length}</td>
-      <td data-l="Fuera de rango">${fuera.length ? `<span class="ana-e alto">${fuera.length} fuera de rango</span>` : '<span class="ana-e ok">Todo en rango</span>'}</td>
-      <td class="act"><div class="row-actions">${btnSoft('Ver', `anaVer(${r.id},${depId})`, 'doc', true)}${btnDel('Eliminar analítica', `anaEliminar(${r.id},${depId},this)`)}</div></td></tr>`;
+      <td data-l="Fuera de rango">${fuera.length ? `<span class="ana-e alto">${fuera.length} fuera de rango</span>` : '<span class="ana-e ok">Todo en rango</span>'}${anaHierroDep(r).chip}${r.visible_cliente ? ' <span class="ana-e sin">Compartida</span>' : ''}</td>
+      <td class="act"><div class="row-actions">${btnSoft('Ver', `anaVer(${r.id},${depId})`, 'doc', true)}${'visible_cliente' in r ? btnSoft(r.visible_cliente ? 'Dejar de compartir' : 'Compartir con el cliente', `anaVisible(${r.id},${depId},${!r.visible_cliente})`, r.visible_cliente ? 'trash' : 'ext', true) : ''}${btnDel('Eliminar analítica', `anaEliminar(${r.id},${depId},this)`)}</div></td></tr>`;
   }).join('');
   box.innerHTML = `<table class="plan-lista bio-lista"><thead><tr><td>Fecha</td><td>Laboratorio</td><td>Valores</td><td>Resumen</td><td></td></tr></thead><tbody>${filas}</tbody></table>${acciones}<p class="med-note">${ANA_NOTA}</p>`;
 }
@@ -9630,9 +9638,48 @@ function anaVer(id, depId) {
     <p class="ana-meta">${sudEsc(r.laboratorio || 'Laboratorio sin indicar')} · ${v.length} valores${r.notas ? ' · ' + sudEsc(r.notas) : ''}</p>
     ${fuera.length ? `<div class="ana-fuera"><b>Fuera de rango:</b> ${fuera.map(x => `<span class="ana-e ${x.e}">${sudEsc(x.n)} ${anaFmt(x.v, x.op)} ${sudEsc(x.u || '')}</span>`).join(' ')}</div>` : '<div class="bio-ok">Todos los valores con rango están dentro del rango del laboratorio.</div>'}
     ${grupos.map(([s, xs]) => `<p class="bio-sec">${s}</p><table class="plan-lista ana-t"><thead><tr><td>Prueba</td><td>Resultado</td><td>Referencia</td><td>Estado</td><td class="hide-m">Anterior</td></tr></thead><tbody>${xs.map(fila).join('')}</tbody></table>`).join('')}
+    ${anaHierroDep(r).html}
+    ${'visible_cliente' in r ? `<div class="ana-cli"><p class="bio-sec">Para el cliente</p><p class="med-note" style="margin-top:0">${r.visible_cliente ? 'La ve en su área («Composición corporal» → «Mis analíticas») con los rangos del laboratorio, sin tus notas ni el archivo.' : 'Todavía no la ve: compártela desde la lista de analíticas.'}</p><label class="mfl" for="anaNotaCli">Mensaje para el cliente <span class="hd-opt">(opcional, lo verá con la analítica)</span></label><textarea class="notes-ta" id="anaNotaCli" maxlength="500" rows="3" placeholder="Ej. La ferritina está algo baja: lo hablamos en la revisión y ajustamos la alimentación.">${sudEsc(r.nota_cliente || '')}</textarea><div class="med-actions" style="border:none;padding-top:0">${btnSoft('Guardar mensaje', `anaNotaCliGuardar(${r.id},${depId})`, 'check')}</div></div>` : ''}
     <p class="med-note">${ANA_NOTA}</p>
     ${ai >= 0 ? `<div class="med-actions">${btnSoft('Ver el informe original', `abrirArchivo(${depId},${ai})`, 'doc')}</div>` : ''}`;
   document.getElementById('mAnaVer').style.display = 'flex';
+}
+// ── Hierro en deportistas: estadios de Peeling et al. 2007, tal como los recoge Sim et al. 2019 (Eur J Appl Physiol 119:1463–78, doi 10.1007/s00421-019-04157-y) ──
+// Estadio 1 (déficit de hierro): ferritina < 35 µg/L, Hb > 115 g/L, saturación de transferrina > 16 %.
+// Estadio 2 (déficit sin anemia): ferritina < 20 µg/L, Hb > 115 g/L, saturación < 16 %.
+// Estadio 3 (anemia ferropénica): ferritina < 12 µg/L, Hb < 115 g/L, saturación < 16 %.
+// Solo lo ve el profesional: es orientativo, no un diagnóstico, y no sustituye al rango del laboratorio.
+function anaHierroDep(r){
+  const v = (r && r.valores) || [], de = k => v.find(x => x.k === k && x.v != null && !isNaN(x.v));
+  const f = de('ferritina'); if(!f) return { chip:'', html:'' };
+  const ferr = /µg\/dl|ug\/dl/i.test(f.u || '') ? f.v * 10 : f.v;                      // ng/mL = µg/L
+  const hbx = de('hemoglobina'), hb = hbx ? (/g\/l/i.test(hbx.u || '') && !/dl/i.test(hbx.u || '') ? hbx.v : hbx.v * 10) : null;   // g/dL → g/L
+  const tsx = de('transferrina_sat'), ts = tsx ? tsx.v : null;
+  let est = null;
+  if(ferr < 12 && hb != null && hb < 115 && ts != null && ts < 16) est = [3, 'Anemia ferropénica (estadio 3)'];
+  else if(ferr < 20 && hb != null && hb > 115 && ts != null && ts < 16) est = [2, 'Déficit de hierro sin anemia (estadio 2)'];
+  else if(ferr < 35 && hb != null && hb > 115 && ts != null && ts > 16) est = [1, 'Déficit de hierro (estadio 1: depósitos bajos)'];
+  const baja = ferr < 35;
+  const falta = [hbx ? '' : 'hemoglobina', tsx ? '' : 'saturación de transferrina'].filter(Boolean);
+  const datos = [`ferritina ${anaFmt(ferr)} µg/L`, hb != null ? `hemoglobina ${anaFmt(hb)} g/L` : '', ts != null ? `saturación ${anaFmt(ts)} %` : ''].filter(Boolean).join(' · ');
+  const txt = est ? est[1] : baja ? 'Ferritina por debajo de 35 µg/L: depósitos bajos para un deportista' + (falta.length ? ` (falta ${falta.join(' y ')} para ver el estadio)` : ' (no encaja del todo en un estadio)') : 'Ferritina de 35 µg/L o más: sin déficit de hierro según estos cortes';
+  const chip = est || baja ? ` <span class="ana-e alto" title="${sudEsc(txt)}">Hierro bajo (deporte)</span>` : '';
+  const html = `<div class="ana-fe${est || baja ? ' warn' : ''}"><p class="bio-sec" style="margin-top:0">Hierro en deportistas</p><p><b>${sudEsc(txt)}</b></p><p class="med-note" style="margin:4px 0 0">${sudEsc(datos)}. Estadios de Peeling et al. 2007 (recogidos en Sim et al. 2019): 1 — ferritina &lt; 35 µg/L con Hb &gt; 115 g/L y saturación &gt; 16 %; 2 — ferritina &lt; 20 µg/L, Hb &gt; 115 g/L y saturación &lt; 16 %; 3 — ferritina &lt; 12 µg/L, Hb &lt; 115 g/L y saturación &lt; 16 %. Cribado: una vez al año sin síntomas; cada 3–6 meses si hay riesgo o antecedentes. Orientativo, no es un diagnóstico; la ferritina sube con la inflamación y el ejercicio intenso reciente. <a href="https://doi.org/10.1007/s00421-019-04157-y" target="_blank" rel="noopener">Fuente</a></p></div>`;
+  return { chip, html };
+}
+async function anaVisible(id, depId, visible){
+  let r; try{ r = await sb(`analiticas?id=eq.${id}`, {method:'PATCH', headers:{'Prefer':'return=minimal'}, body:JSON.stringify({visible_cliente:visible})}); }catch(e){ r = {code:'red'}; }
+  if(esErrorSb(r)){ toast(r.code === '42703' || r.code === 'PGRST204' ? 'Falta ejecutar el SQL «supabase_analiticas_compartir.sql» en Supabase.' : 'No se pudo cambiar. Inténtalo de nuevo.', {tipo:'error', ms:6000}); return; }
+  toast(visible ? 'Analítica compartida: el cliente la ve en «Composición corporal»' : 'El cliente ya no ve esta analítica', {ms:4500});
+  if(currentDepId == depId) loadAna(depId);
+}
+async function anaNotaCliGuardar(id, depId){
+  const ta = document.getElementById('anaNotaCli'); if(!ta) return;
+  const nota = ta.value.trim().slice(0, 500) || null;
+  let r; try{ r = await sb(`analiticas?id=eq.${id}`, {method:'PATCH', headers:{'Prefer':'return=minimal'}, body:JSON.stringify({nota_cliente:nota})}); }catch(e){ r = {code:'red'}; }
+  if(esErrorSb(r)){ toast(r.code === '42703' || r.code === 'PGRST204' ? 'Falta ejecutar el SQL «supabase_analiticas_compartir.sql» en Supabase.' : 'No se pudo guardar. Inténtalo de nuevo.', {tipo:'error', ms:6000}); return; }
+  const x = (_anaCache[depId] || []).find(y => y.id == id); if(x) x.nota_cliente = nota;
+  toast(nota ? 'Mensaje guardado' : 'Mensaje quitado');
 }
 function cerrarAnaVer() { document.getElementById('mAnaVer').style.display = 'none'; }
 function anaEliminar(id, depId, btn) {

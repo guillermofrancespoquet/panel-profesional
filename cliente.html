@@ -491,6 +491,24 @@ body.dark-mode #chartTip{color:#14181a}
 .btn.soft,body.dark-mode .btn.soft{background:var(--sf);color:var(--g700);box-shadow:none;border:.5px solid var(--bdm)}
 .btn.soft:hover,body.dark-mode .btn.soft:hover{background:var(--g100)}
 .tile-ic,.tile-ic.au{background:var(--g100);color:var(--t600);box-shadow:inset 0 0 0 .5px var(--bdm)}
+
+/* Mis analíticas (área de clientes) */
+.ana-ch{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:13px;font-weight:600;color:var(--g700)}
+.ana-sel{height:34px;border-radius:var(--r-btn,10px);border:.5px solid var(--bdm);background:var(--sf);color:var(--g700);font:500 13px var(--f);padding:0 8px}
+.ana-cnota{margin:10px 0 0;padding:10px 12px;border-radius:10px;background:var(--g100);font-size:14px;line-height:1.5}
+.ana-cf{margin:10px 0 0;font-size:13.5px;line-height:1.9}
+.ana-ce{display:inline-block;font-size:11.5px;font-weight:600;padding:1px 9px;border-radius:20px;line-height:1.6;white-space:nowrap}
+.ana-ce.ok{background:var(--pill-g);color:var(--t800)}
+.ana-ce.alto{background:rgba(184,50,50,.12);color:var(--red)}
+.ana-ce.bajo{background:rgba(43,108,176,.12);color:#2B6CB0}
+body.dark-mode .ana-ce.bajo{color:#8DB8E8}
+.ana-ce.sin{background:var(--g100);color:var(--g500)}
+.ana-det{margin-top:12px}
+.ana-det summary{cursor:pointer;font-size:13.5px;font-weight:600;color:var(--t600);padding:6px 0}
+.ana-cs{margin:12px 0 4px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--g500)}
+.ana-cr{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:10px;align-items:center;padding:8px 0;border-bottom:.5px solid var(--bd);font-size:13.5px}
+.ana-cv{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.ana-cv small{display:block;font-size:11px;color:var(--g500)}
 </style>
 </head>
 <body>
@@ -1086,8 +1104,8 @@ async function abrirDatos(){
   if(DATOS){ pintarDatos(); return; }
   $('datosBody').innerHTML='<div class="spin" style="margin-top:6vh"></div>';
   try{
-    const [v,a,bi,su]=await Promise.all([rpc('cliente_mis_valoraciones'),rpc('cliente_mis_archivos'),rpc('cliente_mis_bioimpedancias').catch(()=>[]),rpc('cliente_mis_tests_sudoracion').catch(()=>[])]);   // báscula y test de sudoración son opcionales: sin su SQL, simplemente no salen
-    DATOS={vals:Array.isArray(v)?v:[],archivos:Array.isArray(a)?a.filter(f=>!esMaterial(f)):[],bio:Array.isArray(bi)?bi:[],sud:Array.isArray(su)?su:[]};
+    const [v,a,bi,an,su]=await Promise.all([rpc('cliente_mis_valoraciones'),rpc('cliente_mis_archivos'),rpc('cliente_mis_bioimpedancias').catch(()=>[]),rpc('cliente_mis_analiticas').catch(()=>[]),rpc('cliente_mis_tests_sudoracion').catch(()=>[])]);   // báscula y test de sudoración son opcionales: sin su SQL, simplemente no salen
+    DATOS={vals:Array.isArray(v)?v:[],archivos:Array.isArray(a)?a.filter(f=>!esMaterial(f)):[],bio:Array.isArray(bi)?bi:[],sud:Array.isArray(su)?su:[],ana:Array.isArray(an)?an:[]};
   }catch(e){ $('datosBody').innerHTML='<p class="empty">No se pudieron cargar tus datos. Comprueba tu conexión y vuelve a entrar.</p>'; return; }
   pintarDatos();
 }
@@ -1126,6 +1144,22 @@ function sudBloque(tests){
     <div class="card">${ex||'<p class="empty">Todavía no hay resultados para mostrar.</p>'}
     <p class="note">Vale para condiciones parecidas a las del test. Para una prueba concreta, tu nutricionista lo ajusta en tu plan.</p></div>`;
 }
+// Analíticas compartidas por el profesional: breve (fecha, su mensaje y lo que está fuera de rango) y, si se quiere, todos los valores.
+const ANA_EC={ok:['Normal','ok'],alto:['Alto','alto'],bajo:['Bajo','bajo'],sin:['Sin rango','sin']};
+function anaNum(v,op){ return v==null||isNaN(v)?'—':(op||'')+String(+(+v).toFixed(2)).replace('.',','); }
+function anaRango(x){ return x.min!=null&&x.max!=null?anaNum(x.min)+' – '+anaNum(x.max):x.max!=null?'< '+anaNum(x.max):x.min!=null?'> '+anaNum(x.min):'—'; }
+function anaBloque(lista,id){
+  const ord=lista.slice().sort((a,b)=>String(b.fecha).localeCompare(String(a.fecha))||b.id-a.id), a=ord.find(x=>x.id==id)||ord[0];
+  const v=a.valores||[], fuera=v.filter(x=>x.e==='alto'||x.e==='bajo');
+  const sel=ord.length>1?`<select class="ana-sel" aria-label="Elegir analítica" onchange="$('anaCli').innerHTML=anaBloque(DATOS.ana,this.value)">${ord.map(x=>`<option value="${x.id}"${x.id==a.id?' selected':''}>${fmtF(String(x.fecha).slice(0,10),true)}</option>`).join('')}</select>`:'';
+  const secs=[...new Set(v.map(x=>x.sec||'Otros'))];
+  const tabla=secs.map(s=>`<p class="ana-cs">${esc(s)}</p>`+v.filter(x=>(x.sec||'Otros')===s).map(x=>{const e=ANA_EC[x.e]||ANA_EC.sin; return `<div class="ana-cr"><span class="ana-cn">${esc(x.n)}</span><span class="ana-cv"><b>${anaNum(x.v,x.op)}</b> ${esc(x.u||'')}<small>${anaRango(x)}</small></span><span class="ana-ce ${e[1]}">${e[0]}</span></div>`;}).join('')).join('');
+  return `<div class="card"><div class="ana-ch"><span>${sel?esc(a.laboratorio||'Analítica'):fmtF(String(a.fecha).slice(0,10))+(a.laboratorio?' · '+esc(a.laboratorio):'')}</span>${sel}</div>
+    ${a.nota?`<p class="ana-cnota">${esc(a.nota)}</p>`:''}
+    ${fuera.length?`<p class="ana-cf">Fuera del rango del laboratorio: ${fuera.map(x=>`<span class="ana-ce ${x.e}">${esc(x.n)} ${anaNum(x.v,x.op)} ${esc(x.u||'')}</span>`).join(' ')}</p>`:'<p class="ana-cf">Todos los valores están dentro del rango del laboratorio.</p>'}
+    <details class="ana-det"><summary>Ver todos los valores (${v.length})</summary>${tabla}</details>
+    <p class="note">Los rangos son los que imprime tu laboratorio. Tu nutricionista te explica qué significa cada valor.</p></div>`;
+}
 function pintarDatos(){
   const pts=DATOS.vals.map(punto).sort((a,b)=>new Date(a.fecha)-new Date(b.fecha));
   const bio=DATOS.bio||[];
@@ -1149,6 +1183,7 @@ function pintarDatos(){
       +'</tbody></table></div>';
   }
   if((DATOS.sud||[]).length) h+='<p class="sec">Mi test de sudoración</p>'+sudBloque(DATOS.sud);
+  if((DATOS.ana||[]).length) h+='<p class="sec">Mis analíticas</p><div id="anaCli">'+anaBloque(DATOS.ana,null)+'</div>';
   h+='<p class="sec">Documentos</p>';
   if(!DATOS.archivos.length) h+='<div class="card">'+vacioC('<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>','Sin documentos por ahora','Tus informes y análisis aparecerán aquí cuando tu nutricionista los comparta contigo.')+'</div>';
   else h+='<div class="card">'+DATOS.archivos.map((f,i)=>`<div class="file"><span class="file-ic"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span><div class="file-info"><div class="file-n">${esc(f.nombre)}</div><div class="file-d">${f.fecha?fmtF(String(f.fecha).slice(0,10)):''}</div></div><button class="btn soft" onclick="abrirArchivo(${i})">Abrir</button></div>`).join('')+'</div>';
