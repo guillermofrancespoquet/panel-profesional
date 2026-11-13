@@ -509,6 +509,17 @@ body.dark-mode .ana-ce.bajo{color:#8DB8E8}
 .ana-cr{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:10px;align-items:center;padding:8px 0;border-bottom:.5px solid var(--bd);font-size:13.5px}
 .ana-cv{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
 .ana-cv small{display:block;font-size:11px;color:var(--g500)}
+/* ═══ REPASO PROFESIONAL (nov 2026): fecha sobre el saludo, rótulo «Tu espacio» y tarjetas en dos columnas en pantallas anchas ═══ */
+.hello-k{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--g500);margin-bottom:6px}
+#vhome.active .hello-k{animation:rise .45s ease both}
+.tiles{display:block}
+@media(min-width:820px){
+  #vhome .wrap{max-width:920px}
+  .tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .tiles .tile{margin-bottom:0;height:100%}
+  #vhome .nota-card,#vhome .rev-card,#vhome .obj-card{max-width:none}
+}
+
 </style>
 </head>
 <body>
@@ -594,6 +605,7 @@ body.dark-mode .ana-ce.bajo{color:#8DB8E8}
 </div>
 
 <div id="vhome" class="view" role="main"><div class="wrap">
+  <p class="hello-k" id="helloK"></p>
   <h1 class="hello" id="hello">Hola</h1>
   <p class="hello-sub" id="helloSub"></p>
   <button type="button" class="hello-msg" id="helloMsg" style="display:none"></button>
@@ -625,6 +637,8 @@ body.dark-mode .ana-ce.bajo{color:#8DB8E8}
     </div>
   </div>
   <div id="objWrap"></div>
+  <div class="home-sep"><span>Tu espacio</span></div>
+  <div class="tiles" id="tiles">
   <button class="tile" onclick="abrirDatos()">
     <span class="tile-ic"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>
     <span><span class="tile-t">Composición corporal</span><br><span class="tile-d">Antropometría, bioimpedancia y evolución</span></span>
@@ -632,7 +646,7 @@ body.dark-mode .ana-ce.bajo{color:#8DB8E8}
   </button>
   <button class="tile" onclick="abrirPlan()">
     <span class="tile-ic au"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="14" y2="17"/></svg></span>
-    <span><span class="tile-t">Planificación nutricional</span><br><span class="tile-d">Tu plan personalizado</span></span>
+    <span><span class="tile-t">Planificación nutricional</span><br><span class="tile-d" id="tilePlanD">Tu plan personalizado</span></span>
     <span class="tile-go"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></span>
   </button>
   <button class="tile" id="tileSupl" style="display:none" onclick="abrirSupl()">
@@ -660,6 +674,7 @@ body.dark-mode .ana-ce.bajo{color:#8DB8E8}
     <span><span class="tile-t">Formularios</span><br><span class="tile-d" id="tileFormsD">Cuestionarios de tu nutricionista</span><br><span class="tile-badge" id="tileFormsB"></span></span>
     <span class="tile-go"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></span>
   </button>
+  </div>
   <div class="home-sep" id="compSep" style="display:none"><span>Próxima competición</span></div>
   <button class="tile tile-comp" id="tileComp" style="display:none" onclick="abrirComp()">
     <span class="tile-ic au"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M4 22V4"/><path d="M4 4h13l-2 4 2 4H4"/></svg></span>
@@ -977,11 +992,13 @@ async function entrar(){
   const nombre=String(FICHA.nombre||'').trim().split(/\s+/)[0]||'';
   const hh=new Date().getHours(), saludo=hh>=6&&hh<14?'Buenos días':hh>=14&&hh<21?'Buenas tardes':'Buenas noches';
   $('hello').textContent=nombre?(saludo+', '+nombre):saludo;
+  $('helloK').textContent=new Date().toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long',timeZone:'Europe/Madrid'});
   $('helloSub').textContent=[FICHA.deporte,FICHA.objetivo].filter(Boolean).join(' · ')||'Aquí tienes tu información.';
   const [pl,dd,mm,su,ob,ma]=await Promise.all([pPl,pDd,pMm,pSu,pOb,pMa]);
   PLANES=Array.isArray(pl)?pl:[];
   DIA=dd&&Array.isArray(dd.comidas)?dd:null;   // opcional: sin su SQL no sale la tarjeta
   MENU_DATA=mm&&mm.menu&&Array.isArray(mm.menu.semanas)&&mm.menu.semanas.length?mm:null;   // opcional: sin su SQL, o sin menú publicado, no sale la tarjeta
+  if(MENU_DATA) $('tilePlanD').textContent='Tu menú de la semana, la compra y las recetas';
   MATS=(Array.isArray(ma)?ma:[]).filter(esMaterial);   // materiales: guías en PDF que el profesional comparte; sin ninguno, no sale la opción
   SUPL=Array.isArray(su)?su:[];   // opcional: sin su SQL, o sin nada asignado, no sale la opción
   OBJ=Array.isArray(ob)?ob.filter(o=>o&&o.objetivo!=null).slice(0,2):[];   // opcional: sin su SQL, o sin objetivo puesto por el profesional, no sale nada
@@ -1553,7 +1570,7 @@ function pintarTileForms(){
   b.className='tile-badge'+(n?'':' ok');
   // Con formularios pendientes van los primeros; cuando está todo hecho bajan al final de las tarjetas (el plan de competición sigue en su apartado aparte).
   const cont=t.parentNode;
-  if(n) cont.insertBefore(t,cont.querySelector('.tile')); else cont.insertBefore(t,$('compSep'));
+  if(n) cont.insertBefore(t,cont.querySelector('.tile')); else cont.appendChild(t);
 }
 const CHECK_SVG='<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>';
 function abrirForms(){
