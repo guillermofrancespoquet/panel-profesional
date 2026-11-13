@@ -2080,6 +2080,48 @@ body.dark-mode .wnum.lk{color:var(--g700)}   /* semanas bloqueadas del Método 3
 .ana-fe p{margin:0;font-size:13.5px}
 .ana-fe a{color:var(--t600)}
 .ana-cli{margin-top:14px}
+/* ═══ REPASO PROFESIONAL (nov 2026): un solo sistema de formularios, radios, títulos y banners ═══
+   Campos: 44 px de alto, radio 10 px y etiqueta en minúsculas en TODAS las pantallas (ventanas y herramientas).
+   Banners oscuros: el botón principal es crema (como en la ficha y en «Tu próxima cita»), nunca verde sobre verde. */
+input.inp,select.inp{height:44px;padding-top:0;padding-bottom:0}
+.frm .inp{height:44px;border-radius:10px;font-size:14.5px}
+.frm textarea.inp,.frm .notes-ta{border-radius:10px}
+.frm .mfl{font-size:12.5px;font-weight:500;text-transform:none;letter-spacing:0;color:var(--g500);margin-bottom:6px}
+.frm .mfl .hd-opt{font-size:11.5px}
+.btn-soft{border-radius:10px}
+.btn-rem-add,.btn-hist-add{border-radius:10px;font-size:13px}
+.hd-h,.frm .hd-h{font-size:13px;font-weight:600;letter-spacing:0}
+.ref-title,.sup-gtitle{font-weight:600}
+.foto-pick{margin-bottom:16px}
+.cart-tchips .dep-chip.active b{opacity:1}
+.mc .mfl-hint{margin-bottom:14px}
+.det-hero .det-meta .ic-in{opacity:.85}
+/* Desplegables: la misma flecha propia en todas partes (en táctil, el selector nativo) */
+@media (pointer:fine){
+  select.inp{appearance:none;-webkit-appearance:none;-moz-appearance:none;padding-right:40px;cursor:pointer;text-overflow:ellipsis;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%230F6E56' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;background-position:right 15px center;background-size:14px}
+  body.dark-mode select.inp{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%239FE1CB' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E")}
+  select.inp option{background-image:none;background-color:var(--sf);color:var(--g900)}
+}
+.hist-add.prog{grid-template-columns:minmax(0,1fr) auto}
+.page-header.hero .btn-add{background:#F4F2ED;color:var(--t900);box-shadow:none}
+.page-header.hero .btn-add:hover{background:#fff;opacity:1}
+/* Ficha del cliente de Método 3M: mismo banner que la ficha del deportista */
+.det-hero{background:linear-gradient(135deg,var(--t900) 0%,#1f4d5e 100%);color:#fff;border:none;border-radius:16px;box-shadow:0 6px 18px rgba(4,52,44,.18)}
+.det-hero-in>div:first-child::before{content:'Método 3M';display:block;font-size:9.5px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:#D9B88C;margin-bottom:6px}
+.det-hero .det-name{color:#fff}
+.det-hero .det-meta{color:rgba(255,255,255,.8)}
+.det-hero .btn-action{background:rgba(255,255,255,.1) !important;border:.5px solid rgba(255,255,255,.28);color:#fff !important}
+.det-hero .btn-action:hover{background:rgba(255,255,255,.18) !important;opacity:1}
+.det-hero .btn-action.primary{background:#F4F2ED !important;border-color:#F4F2ED;color:var(--t900) !important}
+.det-hero .btn-action.primary:hover{background:#fff !important}
+.det-hero .btn-action.danger{color:#F4B5B3 !important;background:rgba(242,133,131,.12) !important;border-color:rgba(242,133,131,.35)}
+.det-hero .act-bar-sep{background:rgba(255,255,255,.22)}
+.det-hero .pay-toggle{background:rgba(255,255,255,.12);border:.5px solid rgba(255,255,255,.3);color:#fff}
+.det-hero .pay-toggle.pending{background:rgba(242,133,131,.16);border-color:rgba(242,133,131,.4);color:#F8C9C7}
+.guion-header{background:linear-gradient(135deg,var(--t900) 0%,#1f4d5e 100%);border-radius:16px}
+
 </style>
 </head>
 <body>
@@ -2438,7 +2480,7 @@ body.dark-mode .wnum.lk{color:var(--g700)}   /* semanas bloqueadas del Método 3
 </div>
 
 <!-- PÁGINA: ENTRENAMIENTO -->
-<div id="ventreno" class="view" role="main">
+<div id="ventreno" class="view frm" role="main">
   <div class="page">
     <div class="page-header hero">
       <div data-k="Herramienta"><p class="page-title" role="heading" aria-level="1">Entrenamiento</p><p class="page-sub">1RM, zonas de intensidad y progresión de cargas — cualquier deporte</p></div>
@@ -2491,7 +2533,7 @@ body.dark-mode .wnum.lk{color:var(--g700)}   /* semanas bloqueadas del Método 3
           <input type="date" class="inp" id="progFecha" aria-label="Fecha">
         </div>
       </div>
-      <div class="hist-add">
+      <div class="hist-add prog">
         <input type="text" class="inp" id="progNota" placeholder="Nota opcional (RPE, sensaciones, contexto…)" style="margin:0;flex:1">
         <button class="btn-hist-add" onclick="addProgresion()">Añadir registro</button>
       </div>
@@ -2646,13 +2688,13 @@ body.dark-mode .wnum.lk{color:var(--g700)}   /* semanas bloqueadas del Método 3
   </div>
 </div>
 
-<div id="vmenu" class="view" role="main">
+<div id="vmenu" class="view frm" role="main">
   <div class="page">
     <div class="page-header hero">
       <div data-k="Herramienta"><p class="page-title" role="heading" aria-level="1">Generador de menú semanal</p><p class="page-sub">Plantillas plant-based first — legumbres, integrales y vegetales como protagonistas</p></div>
     </div>
 
-    <div class="calc-grid" style="margin-bottom:14px">
+    <div class="dash-card hd-card" style="margin-bottom:14px"><div class="calc-grid">
       <div>
         <label class="mfl">Calorías objetivo</label>
         <select class="inp" id="menuKcal" aria-label="Calorías objetivo">
@@ -2668,13 +2710,13 @@ body.dark-mode .wnum.lk{color:var(--g700)}   /* semanas bloqueadas del Método 3
           <option value="strict">100% vegetal</option>
         </select>
       </div>
-      <div style="display:flex;align-items:flex-end">
-        <button class="btn-add" style="width:100%;justify-content:center" onclick="generarMenu()">
+      <div style="grid-column:1/-1">
+        <button class="btn-add" onclick="generarMenu()">
           <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.85.99 6.57 2.57L21 8"/><path d="M21 3v5h-5"/></svg>
           Generar menú
         </button>
       </div>
-    </div>
+    </div></div>
 
     <div id="menuResult"></div>
   </div>
@@ -3176,12 +3218,12 @@ body.dark-mode .wnum.lk{color:var(--g700)}   /* semanas bloqueadas del Método 3
       <div class="ref-section" id="refImc">
         <div class="ref-head"><p class="ref-title">IMC en adultos</p><span class="ref-src">OMS</span></div>
         <table class="ref-table">
-          <tr><td>Bajo peso</td><td>&lt; 18.5</td></tr>
-          <tr><td>Normopeso</td><td>18.5 – 24.9</td></tr>
-          <tr><td>Sobrepeso</td><td>25.0 – 29.9</td></tr>
-          <tr><td>Obesidad grado I</td><td>30.0 – 34.9</td></tr>
-          <tr><td>Obesidad grado II</td><td>35.0 – 39.9</td></tr>
-          <tr><td>Obesidad grado III</td><td>≥ 40.0</td></tr>
+          <tr><td>Bajo peso</td><td>&lt; 18,5</td></tr>
+          <tr><td>Normopeso</td><td>18,5 – 24,9</td></tr>
+          <tr><td>Sobrepeso</td><td>25,0 – 29,9</td></tr>
+          <tr><td>Obesidad grado I</td><td>30,0 – 34,9</td></tr>
+          <tr><td>Obesidad grado II</td><td>35,0 – 39,9</td></tr>
+          <tr><td>Obesidad grado III</td><td>≥ 40,0</td></tr>
           </table>
         <p class="ref-note">El IMC no distingue masa grasa de masa magra — usar junto a composición corporal cuando sea posible.</p>
       </div>
@@ -3203,7 +3245,7 @@ body.dark-mode .wnum.lk{color:var(--g700)}   /* semanas bloqueadas del Método 3
           <tr><td>Riesgo aumentado</td><td>H &gt; 94 cm · M &gt; 80 cm</td></tr>
           <tr><td>Riesgo sustancialmente aumentado</td><td>H &gt; 102 cm · M &gt; 88 cm</td></tr>
           <tr><td colspan="2" class="ref-sub">Relación cintura-cadera</td></tr>
-          <tr><td>Riesgo sustancialmente aumentado</td><td>H ≥ 0.90 · M ≥ 0.85</td></tr>
+          <tr><td>Riesgo sustancialmente aumentado</td><td>H ≥ 0,90 · M ≥ 0,85</td></tr>
           </table>
         <p class="ref-note">Cortes de referencia para adultos; no son universales (varían con etnia, edad y país), úsalos como orientación. El protocolo OMS mide la cintura en el punto medio entre la última costilla y la cresta ilíaca: no es el mismo punto que la cintura mínima de ISAK.</p>
       </div>
@@ -3261,11 +3303,11 @@ body.dark-mode .wnum.lk{color:var(--g700)}   /* semanas bloqueadas del Método 3
           <tr><td>Prediabetes (ADA)</td><td>100 – 125</td></tr>
           <tr><td>Diabetes</td><td>≥ 126 (confirmar en 2 ocasiones)</td></tr>
           <tr><td colspan="2" class="ref-sub">HbA1c (%)</td></tr>
-          <tr><td>Normal</td><td>&lt; 5.7</td></tr>
-          <tr><td>Prediabetes</td><td>5.7 – 6.4</td></tr>
-          <tr><td>Diabetes</td><td>≥ 6.5</td></tr>
+          <tr><td>Normal</td><td>&lt; 5,7</td></tr>
+          <tr><td>Prediabetes</td><td>5,7 – 6,4</td></tr>
+          <tr><td>Diabetes</td><td>≥ 6,5</td></tr>
           </table>
-        <p class="ref-note">Aquí se usan los criterios ADA. La OMS define la glucosa alterada en ayunas más tarde, desde 110 mg/dL (6.1 mmol/L) hasta 125 (6.9 mmol/L); el límite de diabetes coincide (≥ 126).</p>
+        <p class="ref-note">Aquí se usan los criterios ADA. La OMS define la glucosa alterada en ayunas más tarde, desde 110 mg/dL (6,1 mmol/L) hasta 125 (6,9 mmol/L); el límite de diabetes coincide (≥ 126).</p>
       </div>
       <div class="ref-section" id="refTa">
         <div class="ref-head"><p class="ref-title">Presión arterial (mmHg)</p><span class="ref-src">ACC/AHA</span></div>
@@ -3282,8 +3324,8 @@ body.dark-mode .wnum.lk{color:var(--g700)}   /* semanas bloqueadas del Método 3
         <div class="ref-head"><p class="ref-title">Anemia y estado del hierro (adultos)</p><span class="ref-src">OMS 2020</span></div>
         <table class="ref-table">
           <tr><td colspan="2" class="ref-sub">Hemoglobina — anemia</td></tr>
-          <tr><td>Hombres</td><td>&lt; 13.0 g/dL</td></tr>
-          <tr><td>Mujeres no gestantes</td><td>&lt; 12.0 g/dL</td></tr>
+          <tr><td>Hombres</td><td>&lt; 13,0 g/dL</td></tr>
+          <tr><td>Mujeres no gestantes</td><td>&lt; 12,0 g/dL</td></tr>
           <tr><td colspan="2" class="ref-sub">Ferritina</td></tr>
           <tr><td>Déficit de hierro</td><td>&lt; 15 µg/L</td></tr>
           <tr><td>Déficit con infección o inflamación</td><td>&lt; 70 µg/L (inflamación: PCR &gt; 5 mg/L o GPA &gt; 1 g/L)</td></tr>
@@ -3297,11 +3339,11 @@ body.dark-mode .wnum.lk{color:var(--g700)}   /* semanas bloqueadas del Método 3
         <div class="ref-head"><p class="ref-title">Micronutrientes</p><span class="ref-src">Varias</span></div>
         <table class="ref-table stack">
           <tr><td>Vitamina D (25-OH)</td><td>Endocrine Society 2011: suficiencia ≥ 30 ng/mL · insuficiencia 20–29 · deficiencia &lt; 20. Su guía de 2024 ya no fija un nivel objetivo ni recomienda la analítica de rutina en sanos</td></tr>
-          <tr><td>Vitamina D — IOM / EFSA</td><td>≥ 20 ng/mL (50 nmol/L) cubre las necesidades de ≥ 97.5% de la población</td></tr>
+          <tr><td>Vitamina D — IOM / EFSA</td><td>≥ 20 ng/mL (50 nmol/L) cubre las necesidades de ≥ 97,5% de la población</td></tr>
           <tr><td>Vitamina D — ingesta</td><td>RDA 600 UI (15 µg) · EFSA AI 15 µg · máximo tolerable 4000 UI (100 µg)</td></tr>
           <tr><td>Calcio — ingesta (IOM)</td><td>RDA 1000 mg/día (19–50 años) · máximo tolerable 2500 mg</td></tr>
           <tr><td>Vitamina B12</td><td>200 – 900 pg/mL (varía por laboratorio)</td></tr>
-          <tr><td>Ácido fólico</td><td>2.7 – 17.0 ng/mL</td></tr>
+          <tr><td>Ácido fólico</td><td>2,7 – 17,0 ng/mL</td></tr>
           </table>
         <p class="ref-note">Los puntos de corte de suficiencia de vitamina D varían según la sociedad científica de referencia — usar siempre el rango del laboratorio emisor.</p>
       </div>
@@ -3314,8 +3356,8 @@ body.dark-mode .wnum.lk{color:var(--g700)}   /* semanas bloqueadas del Método 3
           <tr><td>Grasas trans</td><td>&lt; 1% de las kcal</td></tr>
           <tr><td>Sal</td><td>&lt; 5 g/día (≈ 2 g de sodio)</td></tr>
           <tr><td colspan="2" class="ref-sub">EFSA</td></tr>
-          <tr><td>Sodio</td><td>2.0 g/día — ingesta segura y adecuada</td></tr>
-          <tr><td>Potasio</td><td>3.5 g/día (ingesta adecuada)</td></tr>
+          <tr><td>Sodio</td><td>2,0 g/día — ingesta segura y adecuada</td></tr>
+          <tr><td>Potasio</td><td>3,5 g/día (ingesta adecuada)</td></tr>
           <tr><td>Fibra</td><td>25 g/día</td></tr>
           <tr><td>Grasa total</td><td>20 – 35% de las kcal</td></tr>
           <tr><td>Hidratos de carbono</td><td>45 – 60% de las kcal</td></tr>
@@ -3326,28 +3368,28 @@ body.dark-mode .wnum.lk{color:var(--g700)}   /* semanas bloqueadas del Método 3
       <div class="ref-section" id="refProt">
         <div class="ref-head"><p class="ref-title">Proteína — recomendación institucional</p><span class="ref-src">OMS · EFSA · IOM</span></div>
         <table class="ref-table">
-          <tr><td>OMS / FAO / UNU (2007)</td><td>0.83 — ingesta segura, adulto</td></tr>
-          <tr><td>EFSA (2012)</td><td>0.83 — PRI, adulto ≥ 18 años</td></tr>
-          <tr><td>IOM / NAM (EE.UU., 2005)</td><td>0.8 — RDA · AMDR 10–35% de las kcal</td></tr>
+          <tr><td>OMS / FAO / UNU (2007)</td><td>0,83 — ingesta segura, adulto</td></tr>
+          <tr><td>EFSA (2012)</td><td>0,83 — PRI, adulto ≥ 18 años</td></tr>
+          <tr><td>IOM / NAM (EE.UU., 2005)</td><td>0,8 — RDA · AMDR 10–35% de las kcal</td></tr>
           </table>
-        <p class="ref-note">0.8 g/kg/día es la recomendación óptima para la población general sana, calculada por balance nitrogenado. No está pensada para poblaciones entrenadas ni objetivos de composición corporal: ver la tarjeta siguiente.</p>
+        <p class="ref-note">0,8 g/kg/día es la recomendación óptima para la población general sana, calculada por balance nitrogenado. No está pensada para poblaciones entrenadas ni objetivos de composición corporal: ver la tarjeta siguiente.</p>
       </div>
       <div class="ref-section" id="refProtDep">
         <div class="ref-head"><p class="ref-title">Proteína según contexto (g/kg/día)</p><span class="ref-src">Evidencia</span></div>
         <table class="ref-table stack">
-          <tr><td>Población general</td><td>0.8</td></tr>
-          <tr><td>Activo recreativo (orientativo)</td><td>1.0 – 1.2</td></tr>
-          <tr><td>Deportista entrenado, sin déficit calórico</td><td>1.2 – 1.6</td></tr>
-          <tr><td>Fuerza / hipertrofia</td><td>1.4 – 2.0 (posición ISSN 2017)</td></tr>
-          <tr><td>Déficit calórico en deportista</td><td>1.6 – 2.4 (≈ 2.3 – 3.1 por kg de masa libre de grasa)</td></tr>
+          <tr><td>Población general</td><td>0,8</td></tr>
+          <tr><td>Activo recreativo (orientativo)</td><td>1,0 – 1,2</td></tr>
+          <tr><td>Deportista entrenado, sin déficit calórico</td><td>1,2 – 1,6</td></tr>
+          <tr><td>Fuerza / hipertrofia</td><td>1,4 – 2,0 (posición ISSN 2017)</td></tr>
+          <tr><td>Déficit calórico en deportista</td><td>1,6 – 2,4 (≈ 2,3 – 3,1 por kg de masa libre de grasa)</td></tr>
           </table>
-        <p class="ref-note">Sin déficit, la necesidad de un atleta sube respecto a la población general pero no se dispara: IAAO ≈ 1.2 en deporte de equipo (seguro 1.4) y ≈ 1.6 en resistencia (seguro ≈ 1.85), y la síntesis proteica se satura hacia ese punto. En déficit las necesidades aumentan: con ≈ 1.0 g/kg se perdió más masa magra que con ≈ 2.3 g/kg. Límites: los estudios IAAO son de corta duración, con pocos sujetos y con una dieta previa de 1.2–1.4 g/kg, y el de déficit dura 2 semanas (n = 20): son orientación, no un techo. Fuentes: Packer 2017, Williamson 2023, Mettler 2010, Helms 2014, ISSN 2017.</p>
+        <p class="ref-note">Sin déficit, la necesidad de un atleta sube respecto a la población general pero no se dispara: IAAO ≈ 1,2 en deporte de equipo (seguro 1,4) y ≈ 1,6 en resistencia (seguro ≈ 1,85), y la síntesis proteica se satura hacia ese punto. En déficit las necesidades aumentan: con ≈ 1,0 g/kg se perdió más masa magra que con ≈ 2,3 g/kg. Límites: los estudios IAAO son de corta duración, con pocos sujetos y con una dieta previa de 1,2–1,4 g/kg, y el de déficit dura 2 semanas (n = 20): son orientación, no un techo. Fuentes: Packer 2017, Williamson 2023, Mettler 2010, Helms 2014, ISSN 2017.</p>
       </div>
       <div class="ref-section" id="refAgua">
         <div class="ref-head"><p class="ref-title">Hidratación — ingesta total de referencia</p><span class="ref-src">EFSA</span></div>
         <table class="ref-table stack">
-          <tr><td>Hombres adultos</td><td>~2.5 L/día (incluye agua de alimentos)</td></tr>
-          <tr><td>Mujeres adultas</td><td>~2.0 L/día (incluye agua de alimentos)</td></tr>
+          <tr><td>Hombres adultos</td><td>~2,5 L/día (incluye agua de alimentos)</td></tr>
+          <tr><td>Mujeres adultas</td><td>~2,0 L/día (incluye agua de alimentos)</td></tr>
           <tr><td>Deportistas</td><td>Ajustar según tasa de sudoración individual y duración/intensidad</td></tr>
           </table>
       </div>
@@ -3368,7 +3410,7 @@ body.dark-mode .wnum.lk{color:var(--g700)}   /* semanas bloqueadas del Método 3
         <div class="ref-head"><p class="ref-title">Reposición de líquidos</p><span class="ref-src">ACSM</span></div>
         <table class="ref-table stack">
           <tr><td>Durante el ejercicio</td><td>Lo justo para no perder más del 2 % del peso; nunca más que la tasa de sudoración (beber de más aumenta el riesgo de hiponatremia)</td></tr>
-          <tr><td>Post-ejercicio</td><td>1.25 – 1.5 L por cada kg de peso perdido</td></tr>
+          <tr><td>Post-ejercicio</td><td>1,25 – 1,5 L por cada kg de peso perdido</td></tr>
           </table>
       </div>
       <div class="ref-section" id="refCho">
@@ -3378,7 +3420,7 @@ body.dark-mode .wnum.lk{color:var(--g700)}   /* semanas bloqueadas del Método 3
           <tr><td>45 – 75 min</td><td>Cantidades pequeñas / enjuague bucal con CHO</td></tr>
           <tr><td>1 – 2 h</td><td>~30 g/h</td></tr>
           <tr><td>2 – 3 h</td><td>~60 g/h</td></tr>
-          <tr><td>&gt; 2.5 – 3 h (ultra-resistencia)</td><td>Hasta 90 g/h — múltiples fuentes transportables (glucosa:fructosa)</td></tr>
+          <tr><td>&gt; 2,5 – 3 h (ultra-resistencia)</td><td>Hasta 90 g/h — múltiples fuentes transportables (glucosa:fructosa)</td></tr>
           </table>
         <p class="ref-note">Guías generales ACSM/ISSN. Los umbrales exactos varían según intensidad, clima, aclimatación y tolerancia digestiva individual.</p>
       </div>
@@ -3660,11 +3702,11 @@ body.dark-mode .wnum.lk{color:var(--g700)}   /* semanas bloqueadas del Método 3
       <div>
         <label class="mfl" for="calcProteina">Proteína objetivo</label>
         <select class="inp" id="calcProteina" onchange="calcAll()">
-          <option value="0.8">0.8 g/kg — Sedentario / RDA mínimo</option>
-          <option value="1.2">1.2 g/kg — Activo / deportista, mínimo eficaz</option>
-          <option value="1.6" selected>1.6 g/kg — Deportista entrenado / fuerza (sin déficit)</option>
-          <option value="2.0">2.0 g/kg — Déficit moderado / gran volumen</option>
-          <option value="2.4">2.4 g/kg — Déficit agresivo (preservar músculo)</option>
+          <option value="0.8">0,8 g/kg — Sedentario / RDA mínimo</option>
+          <option value="1.2">1,2 g/kg — Activo / deportista, mínimo eficaz</option>
+          <option value="1.6" selected>1,6 g/kg — Deportista entrenado / fuerza (sin déficit)</option>
+          <option value="2.0">2,0 g/kg — Déficit moderado / gran volumen</option>
+          <option value="2.4">2,4 g/kg — Déficit agresivo (preservar músculo)</option>
         </select>
       </div>
       <div>
@@ -5128,7 +5170,7 @@ async function loadDashboard(){
   document.getElementById('dashSesionesCount').textContent=sesiones.length;
   document.getElementById('dashSesiones').innerHTML=sesiones.length?sesiones.slice(0,5).map(c=>{
     const tag=c.fecha===todayISO?'Hoy':'Mañana';
-    const hora=c.hora?c.hora.slice(0,5)+'h':'';
+    const hora=c.hora?c.hora.slice(0,5)+' h':'';
     return `<div class="dash-row"><div class="dash-row-dot ${c.fecha===todayISO?'gold':'teal'}"></div><div class="dash-row-txt"><div class="dash-row-name">${c.cliente}</div><div class="dash-row-sub">${c.servicio||'Revisión'}${hora?' · '+hora:''}</div></div><span class="dash-row-tag">${tag}</span></div>`;
   }).join(''):dashVacio('cal','Sin sesiones para hoy ni para mañana.');
 
@@ -7549,7 +7591,7 @@ function renderCitaItem(c, isPast) {
   const d = new Date(c.fecha + 'T00:00:00');
   const day = d.getDate();
   const month = MESES_CORTO[d.getMonth()];
-  const horaTxt = c.hora ? ` · ${c.hora.slice(0,5)}h` : '';
+  const horaTxt = c.hora ? ` · ${c.hora.slice(0,5)} h` : '';
   const paid = !!c.pagado;
   const needsPay = c.requiere_pago !== false;
   const payHtml = needsPay
@@ -8620,7 +8662,7 @@ async function loadEstado(depId){
   // Formularios iniciales
   const pend = [['inicial', 'Cuestionario inicial'], ['anamnesis', 'Anamnesis']].filter(([k]) => !(fm[k] && fm[k].hecho)).map(x => x[1]);
   const fi = fichaEst && fichaEst[0] && fichaEst[0].enviado_en ? fichaEst[0] : null;
-  if(pend.length) add('Formularios', 'Pendientes: ' + pend.join(' y ') + '.', true);
+  if(pend.length && !fi) add('Formularios', 'Ficha inicial pendiente.', true);
   if(fi){ const al = fiAlertas(fi.respuestas); add('Ficha inicial', al.length ? 'Enviada. A tener en cuenta: ' + al.join(' · ') + '.' : 'Enviada, sin alertas en salud.', al.length > 0, '<button type="button" class="btn-soft sm" onclick="depTab(\'seguimiento\')">Ver ficha</button>'); }
 
   // Protección de datos: solo si el consentimiento está activado y el cliente no está de baja
@@ -10217,7 +10259,8 @@ async function loadMenuBox(depId){
     el.innerHTML = `<p style="margin:0 0 10px">${cambios ? `<span class="acc-pill">Plan nutricional publicado el ${fmt(pub)} · hay cambios sin publicar</span>` : `<span class="acc-pill on">Plan nutricional publicado el ${fmt(pub)} · lo ve el cliente</span>`}</p><div class="med-actions">${btnSoft('Abrir plan nutricional',`abrirMenuSemanal(${depId})`,'doc')}</div>`;
     return;
   }
-  const texto = m ? 'Plan nutricional en borrador: el cliente aún no lo ve y sigue viendo el enlace de arriba.' : 'Puedes montar su plan nutricional en la app nueva; hasta que lo publiques, el cliente sigue viendo el enlace de arriba.';
+  const hayEnlace = !!((deportistas.find(x => x.id == depId) || {}).plan_url);
+  const texto = m ? 'Plan nutricional en borrador: el cliente aún no lo ve' + (hayEnlace ? ' y sigue viendo el enlace de arriba.' : '.') : 'Puedes montar su plan nutricional en el planificador' + (hayEnlace ? '; hasta que lo publiques, el cliente sigue viendo el enlace de arriba.' : ': el cliente lo verá cuando lo publiques.');
   el.innerHTML = viejo + `<p class="med-empty" style="margin:12px 0 8px">${texto}</p><div class="med-actions">${btnSoft(m ? 'Abrir plan nutricional' : 'Crear plan nutricional',`abrirMenuSemanal(${depId})`,m ? 'doc' : 'plus')}</div>`;
 }
 async function loadPlanes(depId){
