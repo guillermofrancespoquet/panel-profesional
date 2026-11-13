@@ -3279,18 +3279,19 @@ body.dark-mode .wnum.lk{color:var(--g700)}   /* semanas bloqueadas del Método 3
         <p class="ref-note">ACC/AHA es más estricta: define HTA desde 130/80. Las guías europeas (ESC/ESH 2018; ESC 2024) mantienen el umbral de HTA en ≥ 140/90 en consulta; la ESC 2024 añade la categoría «PA elevada» (120–139 / 70–89).</p>
       </div>
       <div class="ref-section" id="refHierro">
-        <div class="ref-head"><p class="ref-title">Anemia y estado del hierro (adultos)</p><span class="ref-src">OMS</span></div>
+        <div class="ref-head"><p class="ref-title">Anemia y estado del hierro (adultos)</p><span class="ref-src">OMS 2020</span></div>
         <table class="ref-table">
           <tr><td colspan="2" class="ref-sub">Hemoglobina — anemia</td></tr>
           <tr><td>Hombres</td><td>&lt; 13.0 g/dL</td></tr>
           <tr><td>Mujeres no gestantes</td><td>&lt; 12.0 g/dL</td></tr>
           <tr><td colspan="2" class="ref-sub">Ferritina</td></tr>
           <tr><td>Déficit de hierro</td><td>&lt; 15 µg/L</td></tr>
-          <tr><td>Déficit con infección o inflamación</td><td>&lt; 70 µg/L</td></tr>
+          <tr><td>Déficit con infección o inflamación</td><td>&lt; 70 µg/L (inflamación: PCR &gt; 5 mg/L o GPA &gt; 1 g/L)</td></tr>
+          <tr><td>Embarazo</td><td>&lt; 15 µg/L (primer trimestre)</td></tr>
           <tr><td>Posible sobrecarga (adultos sanos)</td><td>&gt; 150 µg/L mujeres con menstruación · &gt; 200 µg/L hombres y mujeres sin menstruación</td></tr>
           <tr><td>Posible sobrecarga u otra enfermedad (adultos no sanos)</td><td>&gt; 500 µg/L</td></tr>
           </table>
-        <p class="ref-note">Interpretar siempre con hemoglobina, marcadores de inflamación (PCR) y clínica. En deporte muchos protocolos usan un corte más alto (p. ej. &lt; 30 ng/mL para suplementar): es criterio clínico, no umbral OMS. Suplementar solo ante déficit confirmado.</p>
+        <p class="ref-note">Interpretar siempre con hemoglobina, marcadores de inflamación (PCR) y clínica. La ferritina sola no confirma una sobrecarga: indica que hay que seguir estudiando (OMS 2020). Los cortes de déficit valen desde los 5 años (en menores de 5: &lt; 12 µg/L, o &lt; 30 µg/L con infección). En deportistas se usan cortes más altos, que no son de la OMS: estadios de Peeling 2007 recogidos en Sim 2019 (ferritina &lt; 35 / &lt; 20 / &lt; 12 µg/L, ver Analíticas). Suplementar solo ante déficit confirmado.</p>
       </div>
       <div class="ref-section" id="refMicro">
         <div class="ref-head"><p class="ref-title">Micronutrientes</p><span class="ref-src">Varias</span></div>
@@ -3518,7 +3519,7 @@ body.dark-mode .wnum.lk{color:var(--g700)}   /* semanas bloqueadas del Método 3
         <div class="sup-card">
           <div class="sup-top"><p class="sup-name">Hierro</p><span class="sup-badge ctx">Clínico</span></div>
           <div class="sup-row"><span>Uso</span><p>Solo ante déficit confirmado por analítica — nunca de forma preventiva sin datos</p></div>
-          <div class="sup-row"><span>Criterio</span><p>Ferritina &lt; 15 µg/L (OMS); con inflamación &lt; 70 µg/L (OMS 2020); en deporte, estadios de Peeling 2007 (Sim 2019, ver Analíticas)</p></div>
+          <div class="sup-row"><span>Criterio</span><p>Ferritina &lt; 15 µg/L, o &lt; 70 µg/L con inflamación (PCR &gt; 5 mg/L), desde los 5 años (OMS 2020); en deporte, estadios de Peeling 2007 (Sim 2019, ver Analíticas)</p></div>
           <div class="sup-row"><span>Referencias</span><p>EFSA: 11 mg/día hombres · 16 mg/día mujeres premenopáusicas · nivel seguro 40 mg/día de hierro total (EFSA 2024, sin máximo tolerable) · IOM: máximo 45 mg/día</p></div>
         </div>
         <div class="sup-card">
@@ -10308,7 +10309,7 @@ const SUP_CAT = [
   { k:'b12', n:'Vitamina B12', ev:'contexto', sinDosis:true,
     calc:() => ({ dosis:'', momento:'', explica:'Suplementación rutinaria en dietas veganas o vegetarianas estrictas (los alimentos vegetales no la aportan de forma fiable). Ingesta de referencia: EFSA 4 µg/día en adultos (embarazo 4,5; lactancia 5); IOM 2,4 µg/día. EFSA no fija máximo tolerable. La dosis del suplemento depende del producto y de si es diaria o semanal.', refs:'EFSA 2015 (doi 10.2903/j.efsa.2015.4150); IOM 1998', avisos:[] }) },
   { k:'hierro', n:'Hierro', ev:'contexto', analitica:true, sinDosis:true,
-    calc:() => ({ dosis:'', momento:'', explica:'Solo ante déficit confirmado por analítica. Ingesta de referencia (EFSA): 11 mg/día en hombres y 16 mg/día en mujeres premenopáusicas. EFSA 2024 no fija máximo tolerable, pero sí un nivel seguro de 40 mg/día de hierro total (dieta + suplementos) en adultos, embarazo y lactancia incluidos; IOM: máximo 45 mg/día. Ferritina: < 15 µg/L indica déficit en adultos (OMS); con inflamación, < 70 µg/L (OMS 2020). En deporte se usan cortes más altos (estadios de Peeling 2007 en Sim 2019, ver Analíticas).', refs:'EFSA DRV 2015 y nivel seguro 2024 (doi 10.2903/j.efsa.2024.8819); IOM 2001; OMS 2020; Sim 2019', avisos:['Nunca de forma preventiva sin datos de analítica.', 'Dosis por encima del nivel seguro (40 mg/día en total) solo como tratamiento indicado y con control. Los suplementos dan a menudo molestias digestivas y heces oscuras.'] }) },
+    calc:() => ({ dosis:'', momento:'', explica:'Solo ante déficit confirmado por analítica. Ingesta de referencia (EFSA): 11 mg/día en hombres y 16 mg/día en mujeres premenopáusicas. EFSA 2024 no fija máximo tolerable, pero sí un nivel seguro de 40 mg/día de hierro total (dieta + suplementos) en adultos, embarazo y lactancia incluidos; IOM: máximo 45 mg/día. Ferritina (OMS 2020, desde los 5 años): < 15 µg/L indica déficit; con infección o inflamación (PCR > 5 mg/L), < 70 µg/L. En deporte se usan cortes más altos (estadios de Peeling 2007 en Sim 2019, ver Analíticas).', refs:'EFSA DRV 2015 y nivel seguro 2024 (doi 10.2903/j.efsa.2024.8819); IOM 2001; OMS 2020; Sim 2019', avisos:['Nunca de forma preventiva sin datos de analítica.', 'Dosis por encima del nivel seguro (40 mg/día en total) solo como tratamiento indicado y con control. Los suplementos dan a menudo molestias digestivas y heces oscuras.'] }) },
   { k:'magnesio', n:'Magnesio', ev:'contexto',
     calc:() => ({ dosis:'Hasta 250 mg al día', momento:'', explica:'Solo si la dieta no llega o hay déficit. Ingesta adecuada (EFSA 2015): 350 mg/día en hombres y 300 mg/día en mujeres, con la comida. Máximo para el magnesio de suplementos: 250 mg/día (SCF 2001, el que aplica EFSA); por encima aumenta la diarrea. Calambres: una revisión Cochrane (2020) no encontró beneficio en los calambres idiopáticos y no hay ensayos en calambres asociados al ejercicio.', refs:'EFSA 2015 (doi 10.2903/j.efsa.2015.4186); SCF 2001 / EFSA 2018 (doi 10.2903/j.efsa.2018.5484); Cochrane 2020 (Garrison, doi 10.1002/14651858.CD009402.pub3)', avisos:['No superar 250 mg/día de magnesio en suplementos (EFSA).', 'Para calambres del ejercicio no hay respaldo: revisa antes hidratación, sodio, carga de entrenamiento y fatiga.'] }) },
   { k:'calcio', n:'Calcio', ev:'contexto', sinDosis:true,
