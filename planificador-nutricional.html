@@ -650,6 +650,9 @@ body.dark-mode #chartTip{color:#14181a}
 <div class="mbg" id="mMnCat" style="display:none;z-index:310" role="dialog" aria-modal="true" aria-labelledby="mnCatTit" onclick="if(event.target===this)mnCatCerrar()">
   <div class="mc" style="max-width:600px;max-height:calc(100dvh - var(--vvt,0px) - var(--vvb,0px) - 2rem);overflow-y:auto" id="mnCatCuerpo"></div>
 </div>
+<div class="mbg" id="mMnReac" style="display:none;z-index:310" role="dialog" aria-modal="true" aria-labelledby="mnReacTit" onclick="if(event.target===this)mnReacCerrar()">
+  <div class="mc" style="max-width:520px;max-height:calc(100dvh - var(--vvt,0px) - var(--vvb,0px) - 2rem);overflow-y:auto" id="mnReacCuerpo"></div>
+</div>
 <div class="mbg" id="mMnCopiar" style="display:none;z-index:310" role="dialog" aria-modal="true" aria-labelledby="mnCopTit" onclick="if(event.target===this)mnCopiarCerrar()">
   <div class="mc" style="max-width:420px;max-height:calc(100dvh - var(--vvt,0px) - var(--vvb,0px) - 2rem);overflow-y:auto" id="mnCopCuerpo"></div>
 </div>
@@ -1461,12 +1464,12 @@ function mnMenuHtml() {
   const navSem = c.semanas.map(x => `<button type="button" class="mn-nav-i${x.id === s.id ? ' on' : ''}" onclick="mnElegirSemana('${x.id}')"><span>${sudEsc(x.nombre)}</span>${c.semanas.length > 1 && x.id === toca ? '<span class="mn-tag">Esta semana</span>' : ''}</button>`).join('');
   const navDias = s.dias.map((x, i) => `<button type="button" class="mn-nav-i${i === MN.dia ? ' on' : ''}" onclick="mnElegirDia(${i})"><span>${sudEsc(x.n || 'Día ' + (i + 1))}${mnDiaPie(x) ? `<small>${sudEsc(mnDiaPie(x))}</small>` : ''}</span>${x.comidas.length ? `<span class="mn-n" aria-label="${x.comidas.length} comidas">${x.comidas.length}</span>` : ''}</button>`).join('');
   const comidas = d.comidas.length ? d.comidas.map((m, i) => mnComidaHtml(m, i, d.comidas.length)).join('') : `<div class="mn-vacio"><b>Este día no tiene comidas todavía</b><span class="mn-ayuda">Añade las que necesite este cliente: pueden ser 3, 4, 5 o las que haga falta.</span></div>`;
-  return `${mnReajBanner()}${mnFichaBanner()}<div class="mn-grid">
+  return `${mnReajBanner()}${mnFichaBanner()}${mnReacBanner()}<div class="mn-grid">
     <aside class="mn-side">
       <section class="mn-card"><p class="mn-k">Plan</p><label class="mn-l" for="mnTitulo">Título</label><input class="inp" id="mnTitulo" maxlength="120" value="${sudEsc(c.titulo || '')}" oninput="MN.c.titulo=this.value;mnCambio()">
         <div class="mn-f" style="margin-top:12px"><label class="mn-l" for="mnFac">Cantidades al publicar <span class="hd-opt">(%)</span></label><input class="inp" id="mnFac" type="number" min="50" max="150" step="5" value="${Math.round((c.factor || 1) * 100)}" onchange="mnFactorSet(this.value)"></div>
         <label class="mn-chk" style="margin-top:8px"><input type="checkbox"${c.ajusteCliente ? ' checked' : ''} onchange="mnAjusteSet(this.checked)"> El cliente puede ajustarlas</label>
-        <div class="mn-add" style="margin:12px 0 0">${mnBtn('Versiones' + ((c.versiones || []).length ? ' (' + c.versiones.length + ')' : ''), 'mnVerAbrir()', { sm: true, icon: 'undo' })}${mnBtn('Copiar de otro cliente', 'mnCopAbrir()', { sm: true, icon: 'copy' })}${mnBtn('PDF', 'mnImprAbrir()', { sm: true, icon: 'book' })}</div></section>
+        <div class="mn-add" style="margin:12px 0 0">${mnReacBtn()}${mnBtn('Versiones' + ((c.versiones || []).length ? ' (' + c.versiones.length + ')' : ''), 'mnVerAbrir()', { sm: true, icon: 'undo' })}${mnBtn('Copiar de otro cliente', 'mnCopAbrir()', { sm: true, icon: 'copy' })}${mnBtn('PDF', 'mnImprAbrir()', { sm: true, icon: 'book' })}</div></section>
       <section class="mn-card"><p class="mn-k">Objetivos nutricionales</p>${mnObjResumenHtml()}</section>
       <section class="mn-card"><div class="mn-k-row"><p class="mn-k">Semanas</p>${mnBtn('', 'mnNuevaSemana()', { icon: 'plus', sm: true, ghost: true, title: 'Añadir semana' })}</div>
         <div class="mn-nav" role="group" aria-label="Semanas">${navSem}</div>
@@ -2041,7 +2044,8 @@ function mnDiaPie(x) { const t = mnTotDia(x); return [x.ctx && x.ctx.texto, t.ca
 
 // ── Ventana «Objetivos nutricionales» ──
 async function mnCargarPerfil(depId) {
-  const out = { sexo: '', nac: '', talla: null, peso: null, pesoFecha: '', pesoRec: null, objetivo: null, ficha: null };
+  const out = { sexo: '', nac: '', talla: null, peso: null, pesoFecha: '', pesoRec: null, objetivo: null, ficha: null, reacc: [] };
+  try { const rx = await sb(`reacciones_comidas?deportista_id=eq.${depId}&order=actualizado.desc&select=clave,nombre,momento,reaccion,actualizado`); if (Array.isArray(rx)) out.reacc = rx; } catch (e) {}   // opcional: sin supabase_reacciones_comidas.sql queda vacío
   const rpcLista = (fn) => sb('rpc/' + fn, { method: 'POST', body: JSON.stringify({ p_dep: depId }) }).then(v => Array.isArray(v) ? v : null).catch(() => null);
   const rpcOpc = (fn) => sb('rpc/' + fn, { method: 'POST', body: JSON.stringify({ p_dep: depId }) }).then(v => (v && typeof v === 'object' && !Array.isArray(v) && !v.code && !v.message) ? v : null).catch(() => null);
   const [pr, va, rec, obj, fi] = await Promise.all([sb(`antropometria_perfil?deportista_id=eq.${depId}&select=*`).catch(() => null), sb(`antropometria_valoraciones?deportista_id=eq.${depId}&order=fecha.desc&limit=1&select=fecha,resumen,medidas`).catch(() => null), rpcOpc('peso_reciente'), rpcLista('objetivos_progreso').then(l => Array.isArray(l) ? (l.find(x => x && x.tipo === 'peso') || l[0] || null) : rpcOpc('objetivo_progreso')), sb(`fichas_iniciales?deportista_id=eq.${depId}&select=respuestas,enviado_en`).catch(() => null)]);
@@ -2152,6 +2156,55 @@ function mnFichaPendiente() {
 function mnFichaBanner() {
   const i = mnFichaPendiente(); if (!i) return '';
   return `<div class="mn-reaj" role="status"><div><b>La ficha inicial menciona alimentos que evitar</b><span>Se añadirían a «No puede o no quiere comer»: ${i.nuevos.map(sudEsc).join(', ')}.${i.alerg ? ' Incluye su alergia o intolerancia.' : ''} El generador y las sustituciones no los propondrán.</span></div><div class="mn-add" style="margin:0">${mnBtn('Añadir a excluidos', 'mnFichaAplicar()', { sm: true, icon: 'plus' })}${mnBtn('Ahora no', 'mnFichaAhoraNo()', { sm: true, ghost: true })}</div></div>`;
+}
+// ═══ Reacciones del cliente a las comidas del plan (supabase_reacciones_comidas.sql) ═══
+// El cliente marca cada comida con «me gusta», «no me gusta» o «no puedo» en su vista del plan. Aquí se ven y se pueden pasar sus ingredientes a
+// «No puede o no quiere comer» (siempre con un botón; nada se aplica solo). La reacción es a la comida por su nombre y tipo, como en `cliente.html`.
+const MN_RX_T = { no_puedo: 'No puede', no_gusta: 'No le gusta', gusta: 'Le gusta' };
+const mnReacLista = () => (MN.perfil && MN.perfil.reacc) || [];
+const mnReacNeg = () => mnReacLista().filter(x => x.reaccion !== 'gusta');
+function mnReacBanner() {
+  const neg = mnReacNeg().filter(x => !MN.c.reacVisto || x.actualizado > MN.c.reacVisto); if (!neg.length) return '';
+  return `<div class="mn-reaj" role="status"><div><b>El cliente ha marcado ${neg.length} comida${neg.length !== 1 ? 's' : ''} del plan como «no me gusta» o «no puedo»</b><span>${neg.slice(0, 3).map(x => sudEsc(x.nombre)).join(', ')}${neg.length > 3 ? '…' : ''}. Puedes ver sus ingredientes y pasarlos a «No puede o no quiere comer».</span></div><div class="mn-add" style="margin:0">${mnBtn('Ver reacciones', 'mnReacAbrir()', { sm: true, icon: 'plus' })}${mnBtn('Ahora no', 'mnReacAhoraNo()', { sm: true, ghost: true })}</div></div>`;
+}
+function mnReacBtn() { const n = mnReacLista().length; return n ? mnBtn('Reacciones (' + n + ')', 'mnReacAbrir()', { sm: true, icon: 'plus' }) : ''; }
+function mnReacAhoraNo() { MN.c.reacVisto = new Date().toISOString(); mnCambio(); mnPintar(); }
+// Ingredientes de una comida marcada: se buscan en la copia publicada (es lo que ve el cliente) con el mismo nombre que le sale a él.
+function mnReacIngredientes(x) {
+  const pub = MN.row && MN.row.publicado; if (!pub || !Array.isArray(pub.semanas)) return [];
+  const recetas = pub.recetas || [], out = [];
+  pub.semanas.forEach(s => s.dias.forEach(d => d.comidas.forEach(m => {
+    if (m.libre) return;
+    const rec = recetas.find(r => r.id === m.receta), ing = (m.ing || []).map(i => i.n || i.t).filter(Boolean);
+    const nombre = m.nombre || (rec && rec.nombre) || (ing.length ? ing.slice(0, 3).join(', ') + (ing.length > 3 ? '…' : '') : 'Sin detallar');
+    if ((mnNorm(nombre) + '|' + (m.tipo || 'O')).slice(0, 160) === x.clave) ing.forEach(n => { if (!out.some(o => mnNorm(o) === mnNorm(n))) out.push(n); });
+  })));
+  return out;
+}
+function mnReacAbrir() {
+  const L = mnReacLista(), nom = MN.nombre || 'El cliente';
+  const bloque = r => {
+    const l = L.filter(x => x.reaccion === r); if (!l.length) return '';
+    return `<p class="mn-sec">${MN_RX_T[r]} (${l.length})</p>` + l.map(x => {
+      const ing = r === 'gusta' ? [] : mnReacIngredientes(x), ya = mnGenPalabras((MN.c.gen || {}).excl);
+      return `<div class="mn-reaj-r" style="display:block"><b>${sudEsc(x.nombre)}</b> <span class="mn-ayuda">${x.momento ? sudEsc(x.momento) + ' · ' : ''}${sudEsc(mnFecha(x.actualizado))}</span>
+        ${ing.length ? `<div style="margin-top:6px">${ing.map(n => { const ex = ya.some(w => mnGenTiene(w, mnNorm(n)) || mnGenTiene(mnNorm(n), w)); return `<label class="mn-chk" style="margin-right:10px"><input type="checkbox" class="mnReacIng" value="${sudEsc(n)}"${ex ? ' disabled' : ''}> ${sudEsc(n)}${ex ? ' <i>(ya excluido)</i>' : ''}</label>`; }).join('')}</div>` : (r === 'gusta' ? '' : '<p class="mn-ayuda" style="margin:4px 0 0">Esta comida ya no está en el plan publicado.</p>')}</div>`;
+    }).join('');
+  };
+  document.getElementById('mnReacCuerpo').innerHTML = `<p class="mt" id="mnReacTit">Reacciones al plan</p>
+    <p class="ms">Lo que ${sudEsc(nom)} ha marcado en su vista del plan. Marca los ingredientes que quieras añadir a «No puede o no quiere comer»: el generador y las sustituciones no los propondrán.</p>
+    ${bloque('no_puedo')}${bloque('no_gusta')}${bloque('gusta')}
+    <div class="mn-add" style="margin-top:14px">${mnBtn('Añadir los marcados a excluidos', 'mnReacAplicar()', { pri: true, icon: 'plus' })}${mnBtn('Cerrar', 'mnReacCerrar()', { ghost: true })}</div>`;
+  document.getElementById('mMnReac').style.display = 'flex';
+}
+function mnReacCerrar() { document.getElementById('mMnReac').style.display = 'none'; MN.c.reacVisto = new Date().toISOString(); mnCambio(); mnPintar(); }
+function mnReacAplicar() {
+  const sel = [...document.querySelectorAll('#mnReacCuerpo .mnReacIng:checked')].map(c => c.value);
+  if (!sel.length) { toast('Marca al menos un ingrediente.', { tipo: 'aviso' }); return; }
+  MN.c.gen = MN.c.gen || {}; const prev = MN.c.gen.excl || '';
+  MN.c.gen.excl = (prev.trim() ? prev.trim().replace(/[,;\s]+$/, '') + ', ' : '') + sel.join(', ');
+  MN.c.reacVisto = new Date().toISOString(); mnCambio(); document.getElementById('mMnReac').style.display = 'none'; mnPintar();
+  toast('Añadido a «No puede o no quiere comer»', { ms: 7000, accion: { texto: 'Deshacer', fn: () => { MN.c.gen.excl = prev; mnCambio(); mnPintar(); } } });
 }
 function mnFichaAplicar() {
   const i = mnFichaPendiente(); if (!i) return;

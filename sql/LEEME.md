@@ -29,6 +29,9 @@ Todos se ejecutan a mano en Supabase → SQL Editor → New query → Run. Son s
    - `supabase_sin_revision.sql` (marca «Sin revisión prevista» para que la Cartera no pida fecha; una columna, opcional)
    - `supabase_analiticas_compartir.sql` (analíticas visibles para el cliente con un mensaje opcional: columnas `analiticas.visible_cliente` y `nota_cliente` y `cliente_mis_analiticas()`; requiere `supabase_analiticas.sql`; nunca da las notas privadas ni el archivo)
    - `supabase_ficha_inicial.sql` (ficha inicial propia, sustituye a los dos Google Forms; requiere `supabase_formularios.sql` y `supabase_clientes_acceso.sql`; aditivo: una tabla y dos funciones, sin tocar `cliente_mi_ficha`)
+   - `supabase_avisos_profesional.sql` (Novedades del dashboard y avisos genéricos al móvil del profesional: tablas `avisos_profesional` y `push_profesional`, disparadores en seguimientos, pesos, comidas, fotos, ficha inicial y consentimientos; requiere `supabase_proteccion_datos.sql`; **además hay que desplegar la Edge Function `avisos-profesional` y programar `pg_cron`**, ver «Avisos de novedades» más abajo)
+   - `supabase_reacciones_comidas.sql` (el cliente marca comidas del plan: «me gusta / no me gusta / no puedo»; tabla `reacciones_comidas`, `cliente_reaccionar_comida` y `cliente_mis_reacciones`; **antes** que `supabase_avisos_profesional.sql` si se quiere el aviso de «no me gusta» —el disparador de reacciones se crea en este archivo—; opcional)
+   - `supabase_seguimiento_extra.sql` (pregunta propia opcional de 0 a 10 en el seguimiento semanal de un cliente: columna `clientes_deportivos.seguimiento_extra`, tabla `seguimientos_extra`, `cliente_mi_pregunta` y `cliente_guardar_extra`; sin pregunta escrita el cliente no ve nada nuevo; opcional)
    - `supabase_calendario_google.sql` (columna `citas.google_event_id` para el Calendario de Google; opcional, va con la Edge Function `calendario-google`, ver «Calendario de Google» más abajo)
 8. `supabase_seguridad_3_endurecer.sql`, **el último** (endurecimiento tras la revisión de seguridad del 26 oct 2026: rutas de archivos, límites, direcciones de avisos, privilegios; sustituye tres funciones por su versión endurecida, que ya llevan también sus archivos originales). Después, `supabase_diagnostico_seguridad.sql` (solo lectura): todo debe salir «OK».
 9. `supabase_proteccion_datos.sql` (protección de datos: consentimientos, baja del cliente y registro de eliminaciones; **después del paso 8**, no cambia sus funciones; ver «Protección de datos» más abajo)
@@ -103,6 +106,17 @@ Pasos (una sola vez, ~15 min):
 6. En el panel: Ajustes → «Calendario de Google» → «Probar conexión» (debe decir «Conectado con el calendario …») → «Enviar las próximas citas» para meter las que ya tienes.
 
 Si algo falla, «Probar conexión» dice qué: calendario no compartido (paso 2), API no activada o permiso insuficiente (pasos 1 y 2), clave no válida (paso 3) o función no instalada (paso 4). Para dejar de enviar citas a Google basta con borrar el secreto `GOOGLE_SA_JSON`. Los eventos ya creados se quedan en tu calendario.
+
+## Avisos de novedades (móvil del profesional)
+
+Qué hace: cuando un cliente envía el seguimiento, anota un peso, sube una foto o comida, envía la ficha inicial o retira un consentimiento, aparece en la tarjeta **Novedades** del dashboard y, si lo activas, te llega **un aviso genérico al móvil** («Tienes novedades», sin nombres ni datos). Varias novedades seguidas son un solo aviso (espera 1 minuto sin más) y respeta las horas de silencio (22:00–8:00 por defecto).
+
+Pasos (una vez):
+
+1. Ejecuta `supabase_avisos_profesional.sql` (y, si los quieres, `supabase_reacciones_comidas.sql` y `supabase_seguimiento_extra.sql`).
+2. Supabase → Edge Functions → nueva función `avisos-profesional` → Via Editor → pega `supabase_funcion_avisos_profesional.ts` → **desactiva «Verify JWT»** → Deploy. **No hay secretos nuevos**: usa los de `avisos-seguimiento` (`AVISOS_SECRET`, `VAPID_PRIVADA_JWK`, `VAPID_PUBLICA`, `VAPID_CONTACTO`).
+3. Programa la tarea de `pg_cron` que va comentada al final de `supabase_avisos_profesional.sql` (con tu `AVISOS_SECRET`; no la escribas en chats). Solo llama a la función si hay algo que avisar.
+4. En el panel: Ajustes → «Avisos de novedades» → «Activar avisos en este dispositivo» y elige de qué quieres que avise. En iPhone el panel debe estar **instalado en la pantalla de inicio** (iOS ≥ 16.4). «Probar aviso» manda uno al momento.
 
 ## Convención
 

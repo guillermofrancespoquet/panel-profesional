@@ -359,7 +359,7 @@ body.dark-mode input,body.dark-mode select,body.dark-mode textarea{background:va
 .mnv-fac button{width:34px;height:34px;border-radius:10px;border:.5px solid var(--bdm);background:var(--sf);color:var(--g900);font-size:18px;line-height:1;cursor:pointer}
 .mnv-fac button:disabled{opacity:.4;cursor:default}
 .mnv-fac .mnv-fac-r{width:auto;padding:0 12px;font-size:12px;color:var(--t600)}
-.mnv-pdf{margin-top:14px;text-align:center}
+.mnv-pdf{margin-top:14px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
 .mnv-cp{margin-bottom:12px}
 .mnv-cpf{display:flex;align-items:flex-start;gap:12px;padding:11px 0;border-top:.5px solid var(--bd);font-size:14px;cursor:pointer}
 .mnv-cpf:first-of-type{border-top:0}
@@ -519,6 +519,20 @@ body.dark-mode .ana-ce.bajo{color:#8DB8E8}
   .tiles .tile{margin-bottom:0;height:100%}
   #vhome .nota-card,#vhome .rev-card,#vhome .obj-card{max-width:none}
 }
+
+/* Reacciones a las comidas, pregunta propia del seguimiento y plan sin conexión */
+.mnv-rx{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.mnv-rxb{display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 12px;border-radius:10px;border:.5px solid var(--bdm);background:var(--sf);color:var(--g700);font:inherit;font-size:13px;font-weight:600;cursor:pointer;touch-action:manipulation}
+.mnv-rxb svg{color:var(--g500)}
+.mnv-rxb.on.gusta{background:var(--t50);border-color:var(--t400);color:var(--t800)}.mnv-rxb.on.gusta svg{color:var(--t600)}
+.mnv-rxb.on.no_gusta,.mnv-rxb.on.no_puedo{background:var(--pill-au);border-color:var(--pill-au-bd);color:var(--gold-dk)}.mnv-rxb.on.no_gusta svg,.mnv-rxb.on.no_puedo svg{color:var(--gold-dk)}
+.scale10{display:grid;grid-template-columns:repeat(11,minmax(0,1fr));gap:4px}
+.sc10{height:44px;border-radius:10px;border:.5px solid var(--bdm);background:var(--sf);color:var(--g900);font:inherit;font-size:14px;font-weight:600;cursor:pointer;padding:0;touch-action:manipulation}
+.sc10.on{background:var(--btn);border-color:var(--btn);color:#fff}
+@media(max-width:380px){.sc10{font-size:13px}}
+.off-b{display:flex;align-items:center;gap:8px 12px;flex-wrap:wrap;background:var(--pill-au);border:.5px solid var(--pill-au-bd);color:var(--gold-dk);border-radius:12px;padding:10px 14px;margin-bottom:12px;font-size:13px}
+.off-b span{flex:1;min-width:160px}
+#vmenu.offline .back{display:none}
 
 </style>
 </head>
@@ -912,7 +926,7 @@ async function guardarPassword(){
 function logout(){
   const s=authLoad();
   if(s) fetch(SURL+'/auth/v1/logout',{method:'POST',headers:{'apikey':SKEY,'Authorization':'Bearer '+s.access_token}}).catch(()=>{});
-  authClear(); FICHA=DATOS=REG=CONS=null; PLANES=[]; SUPL=[]; MATS=[]; OBJ=[]; DIA=null; DIA_FILE=null; REG_CMP=null; 
+  offBorrar(); OFFLINE_MODE=false; authClear(); FICHA=DATOS=REG=CONS=null; REACC=null; PREG=null; PLANES=[]; SUPL=[]; MATS=[]; OBJ=[]; DIA=null; DIA_FILE=null; REG_CMP=null; 
   $('lpass').value=''; $('lerr').textContent='';
   show('vlogin');
 }
@@ -978,12 +992,13 @@ async function entrar(){
   show('vload');
   // Las peticiones opcionales salen a la vez que la ficha (antes iban una detrás de otra: 5 viajes seguidos). Si fallan, simplemente no salen sus tarjetas.
   const opc=fn=>rpc(fn).catch(()=>null);
-  const pCons=opc('cliente_consentimientos'), pPl=opc('cliente_mis_planes'), pDd=opc('cliente_mis_comidas'), pMm=opc('cliente_mi_menu'), pSu=opc('cliente_mi_suplementacion'), pOb=opc('cliente_mis_objetivos').then(l=>Array.isArray(l)?l:opc('cliente_mi_objetivo').then(o=>o&&typeof o==='object'&&o.objetivo!=null?[o]:[])), pMa=opc('cliente_mis_archivos');
+  const pCons=opc('cliente_consentimientos'), pPl=opc('cliente_mis_planes'), pDd=opc('cliente_mis_comidas'), pMm=opc('cliente_mi_menu'), pSu=opc('cliente_mi_suplementacion'), pOb=opc('cliente_mis_objetivos').then(l=>Array.isArray(l)?l:opc('cliente_mi_objetivo').then(o=>o&&typeof o==='object'&&o.objetivo!=null?[o]:[])), pRx=opc('cliente_mis_reacciones'), pPg=opc('cliente_mi_pregunta'), pMa=opc('cliente_mis_archivos');
   try{
     FICHA=await rpc('cliente_mi_ficha');
   }catch(e){
     if(!authLoad()) return;
     if(e.status===404){ mostrarSin('El área de clientes todavía no está activada','Vuelve a intentarlo más tarde o escribe a tu nutricionista.'); return; }
+    if(!e.status&&entrarSinConexion()) return;   // sin cobertura y con el plan guardado en este móvil
     mostrarSin('No se pudo cargar tu información','Comprueba tu conexión y vuelve a intentarlo.'); return;
   }
   if(!FICHA){ mostrarSin('Tu cuenta aún no está activada','Tu perfil todavía no está vinculado a esta cuenta. Escribe a tu nutricionista para que active tu acceso.'); return; }
@@ -994,11 +1009,14 @@ async function entrar(){
   $('hello').textContent=nombre?(saludo+', '+nombre):saludo;
   $('helloK').textContent=new Date().toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long',timeZone:'Europe/Madrid'});
   $('helloSub').textContent=[FICHA.deporte,FICHA.objetivo].filter(Boolean).join(' · ')||'Aquí tienes tu información.';
-  const [pl,dd,mm,su,ob,ma]=await Promise.all([pPl,pDd,pMm,pSu,pOb,pMa]);
+  const [pl,dd,mm,su,ob,ma,rx,pg]=await Promise.all([pPl,pDd,pMm,pSu,pOb,pMa,pRx,pPg]);
+  REACC=rx&&typeof rx==='object'&&!Array.isArray(rx)?rx:null;   // opcional: sin su SQL no salen los botones «Me gusta»
+  PREG=pg&&typeof pg==='object'&&pg.pregunta?pg:null;   // opcional: solo si el profesional le ha puesto una pregunta propia en el seguimiento
   PLANES=Array.isArray(pl)?pl:[];
   DIA=dd&&Array.isArray(dd.comidas)?dd:null;   // opcional: sin su SQL no sale la tarjeta
   MENU_DATA=mm&&mm.menu&&Array.isArray(mm.menu.semanas)&&mm.menu.semanas.length?mm:null;   // opcional: sin su SQL, o sin menú publicado, no sale la tarjeta
   if(MENU_DATA) $('tilePlanD').textContent='Tu menú de la semana, la compra y las recetas';
+  OFFLINE_MODE=false; offGuardar();
   MATS=(Array.isArray(ma)?ma:[]).filter(esMaterial);   // materiales: guías en PDF que el profesional comparte; sin ninguno, no sale la opción
   SUPL=Array.isArray(su)?su:[];   // opcional: sin su SQL, o sin nada asignado, no sale la opción
   OBJ=Array.isArray(ob)?ob.filter(o=>o&&o.objetivo!=null).slice(0,2):[];   // opcional: sin su SQL, o sin objetivo puesto por el profesional, no sale nada
@@ -1784,7 +1802,7 @@ const SEG_ESC=[
   {k:'digestion',t:'Digestión',d:'¿Cómo te han sentado las comidas?',l:['Fatal','Mal','Normal','Bien','Genial'],c:'#9A7DB3'},
   {k:'animo',t:'Estado de ánimo',d:'¿Cómo te has sentido en general?',l:['Fatal','Mal','Normal','Bien','Genial'],c:'#C98B6B'}];
 const CARAS=['😣','🙁','😐','🙂','😄'];
-let SEGS=[], SEG_FORM={};
+let SEGS=[], SEG_FORM={}, PREG=null;
 async function abrirSeg(){
   show('vseg'); $('segBody').innerHTML='<div class="spin" style="margin-top:6vh"></div>';
   try{ const r=await rpc('cliente_mis_seguimientos'); SEGS=Array.isArray(r)?r:[]; }catch(e){ SEGS=[]; }
@@ -1793,7 +1811,7 @@ async function abrirSeg(){
 function pintarSeg(editar,celebra){
   const pend=!!(FICHA.forms&&FICHA.forms.seguimiento_pendiente), ult=SEGS[SEGS.length-1];
   let h='';
-  if(pend||editar){ SEG_FORM=editar&&ult?{...ult.respuestas}:{entrenos:0}; h+=formSeg(); }
+  if(pend||editar){ SEG_FORM=editar&&ult?{...ult.respuestas}:{entrenos:0}; if(editar&&PREG&&PREG.valor!=null) SEG_FORM.extra=PREG.valor; h+=formSeg(); }
   else{
     if(celebra){ const nom=String(FICHA.nombre||'').trim().split(/\s+/)[0]; h+=`<div class="card celebra" role="status"><span class="celebra-ic"><svg width="34" height="34" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span><p class="celebra-t">¡Gracias${nom?', '+esc(nom):''}!</p><p class="celebra-s">Tu seguimiento está enviado. Cada semana que lo cuentas ayuda a ajustar mejor tu plan.</p></div>`; }
     h+=`<div class="card seg-ok"><span class="fchk on">${CHECK_SVG}</span><span style="flex:1;min-width:0"><b>Seguimiento de esta semana enviado</b><br><span class="empty">${ult?'Semana del '+fmtF(ult.semana)+'. ':''}Gracias: tu nutricionista lo revisará.</span></span><button class="btn soft" onclick="pintarSeg(true)">Modificar</button></div>`;
@@ -1807,6 +1825,7 @@ function formSeg(){
   return `<p class="seg-lead">Menos de un minuto. Contesta con sinceridad: no hay respuestas buenas ni malas, nos sirve para ajustar tu plan.</p>${esc5}
     <div class="sq"><div class="sq-t">Entrenamientos</div><div class="sq-d">¿Cuántas sesiones has hecho esta semana?</div>
       <div class="stepper"><button type="button" aria-label="Menos" onclick="segEntr(-1)">−</button><b id="entrV">${SEG_FORM.entrenos??0}</b><button type="button" aria-label="Más" onclick="segEntr(1)">+</button><span>sesiones</span></div></div>
+    ${PREG?`<div class="sq"><div class="sq-t">${esc(PREG.pregunta)}</div><div class="sq-d">Elige un número de 0 a 10.</div><div class="scale10" id="sc-extra" role="group" aria-label="${esc(PREG.pregunta)}">${Array.from({length:11},(_,n)=>`<button type="button" class="sc10${SEG_FORM.extra===n?' on':''}" aria-label="${esc(PREG.pregunta)}: ${n} de 10" aria-pressed="${SEG_FORM.extra===n}" onclick="segExtra(${n})">${n}</button>`).join('')}</div></div>`:''}
     <div class="sq"><div class="sq-t">Peso <span class="empty" style="font-weight:500">(opcional)</span></div><div class="sq-d">Si te has pesado esta semana, en ayunas y sin ropa.</div>
       <input class="seg-inp" id="segPeso" type="text" inputmode="decimal" autocomplete="off" placeholder="72,4" value="${SEG_FORM.peso!=null?String(SEG_FORM.peso).replace('.',','):''}" style="max-width:180px"></div>
     <div class="sq"><div class="sq-t">Molestias o lesiones <span class="empty" style="font-weight:500">(opcional)</span></div><div class="sq-d">Dolores, molestias digestivas, lesiones…</div>
@@ -1817,10 +1836,12 @@ function formSeg(){
     <button class="btn" id="segBtn" style="width:100%" onclick="segEnviar()">Enviar seguimiento</button>`;
 }
 function segSet(k,n){ SEG_FORM[k]=n; document.querySelectorAll('#sc-'+k+' .sc').forEach((b,i)=>b.classList.toggle('on',i+1===n)); $('segErr').textContent=''; }
+function segExtra(n){ SEG_FORM.extra=n; document.querySelectorAll('#sc-extra .sc10').forEach((b,i)=>{ b.classList.toggle('on',i===n); b.setAttribute('aria-pressed',String(i===n)); }); $('segErr').textContent=''; }
 function segEntr(d){ SEG_FORM.entrenos=Math.max(0,Math.min(21,(SEG_FORM.entrenos||0)+d)); $('entrV').textContent=SEG_FORM.entrenos; }
 async function segEnviar(){
   const err=$('segErr'), falta=SEG_ESC.find(q=>!SEG_FORM[q.k]);
   if(falta){ err.textContent='Falta valorar: '+falta.t.toLowerCase()+'.'; $('sc-'+falta.k).scrollIntoView({behavior:'smooth',block:'center'}); return; }
+  if(PREG&&SEG_FORM.extra==null){ err.textContent='Falta contestar: '+PREG.pregunta.toLowerCase()+'.'; $('sc-extra').scrollIntoView({behavior:'smooth',block:'center'}); return; }
   const pesoTxt=$('segPeso').value.trim().replace(',','.'), peso=pesoTxt===''?null:Number(pesoTxt);
   if(peso!==null&&(isNaN(peso)||peso<20||peso>300)){ err.textContent='Revisa el peso: escribe solo el número, por ejemplo 72,4.'; $('segPeso').focus(); return; }
   const o={}; SEG_ESC.forEach(q=>o[q.k]=SEG_FORM[q.k]); o.entrenos=SEG_FORM.entrenos||0;
@@ -1830,6 +1851,7 @@ async function segEnviar(){
   const b=$('segBtn'); b.disabled=true; b.textContent='Enviando…'; err.textContent='';
   try{
     await rpc('cliente_guardar_seguimiento',{p_respuestas:o});
+    if(PREG){ await rpc('cliente_guardar_extra',{p_valor:SEG_FORM.extra}).catch(()=>{}); try{ const g=await rpc('cliente_mi_pregunta'); if(g&&g.pregunta) PREG=g; }catch(e){} }
     const [f,r]=await Promise.all([rpc('cliente_mi_ficha'),rpc('cliente_mis_seguimientos')]);
     if(f) FICHA=f; SEGS=Array.isArray(r)?r:[];
   }catch(e){ b.disabled=false; b.textContent='Enviar seguimiento'; err.textContent='No se pudo enviar. Comprueba tu conexión y vuelve a intentarlo.'; return; }
@@ -1854,6 +1876,7 @@ function evolucionSeg(){
   const g=[serie(pts,'peso','#1D9E75','Peso','kg',1)];
   SEG_ESC.forEach(q=>g.push(serie(pts,q.k,q.c,q.t,'1–5',0,[1,5])));
   g.push(serie(pts,'entrenos','#04342C','Entrenamientos','sesiones',0));
+  if(PREG&&(PREG.serie||[]).length>1) g.push(serie(PREG.serie.map(s=>({fecha:s.semana,extra:s.valor})),'extra','#C98B6B',PREG.pregunta,'0–10',0,[0,10]));
   const gr=g.filter(Boolean).join('');
   if(gr) h+=`<div class="series">${gr}</div>`;
   return h;
@@ -1864,6 +1887,7 @@ let PLANES=[], SUPL=[], MATS=[], OBJ=[];
 // ═══ Mi menú semanal: copia ya publicada por el profesional (nunca el borrador ni el catálogo) ═══
 // El bloque mnv*/mnImpr* es el mismo de planificador-nutricional.html (vista del cliente): si cambia allí, copiarlo aquí.
 let MENU=null, MENU_DATA=null; const MNV={sem:null,dia:0,tab:'hoy',rec:null,f:1};
+let REACC=null, MNV_RX=[];   // reacciones a las comidas: { clave: 'gusta'|'no_gusta'|'no_puedo' }; null = sin su SQL
 const mnRng = c => { const f = x => ({ 0.25: '¼', 0.5: '½', 0.75: '¾' })[+x] || String(+(+x).toFixed(2)).replace('.', ','); return c.max ? f(c.min) + '-' + f(c.max) : f(c.min); };
 const mnQtyTxt = c => (!c || c.modo === 'libre') ? '' : (c.modo === 'ud' ? mnRng(c) : mnRng(c) + ' ' + c.u);
 const mnIngTxt = i => { const q = mnQtyTxt(i.cant); return q ? (i.cant.modo === 'ud' ? q + ' ' + i.n : q + ' de ' + i.n) : i.n; }; // lo que lee el cliente
@@ -1941,6 +1965,7 @@ const mnvSem=()=>MENU.menu.semanas.find(s=>s.id===MNV.sem)||MENU.menu.semanas.fi
 function mnvIdxHoy(s){ const i=s.dias.findIndex(d=>d.dow===mnvHoyDow()); return i>=0?i:0; }
 function mnvSet(k,v){ MNV[k]=v; if(k==='sem'){ const s=mnvSem(); MNV.dia=Math.min(MNV.dia,s.dias.length-1); } pintarMenu(); }
 function pintarMenu(){
+  MNV_RX=[];
   const m=MENU.menu, s=mnvSem(), tabs=[['hoy','Hoy'],['semana','Semana']];
   if((s.compra||[]).length) tabs.push(['compra','Compra']);
   if((m.recetas||[]).length) tabs.push(['recetas','Recetas']);
@@ -1952,7 +1977,9 @@ function pintarMenu(){
   if(m.ajuste) h+=mnvFactorHtml();
   h+=`<div class="mnv-tabs" role="tablist" aria-label="Secciones">${tabs.map(t=>`<button type="button" role="tab" class="mnv-tab${MNV.tab===t[0]?' on':''}" aria-selected="${MNV.tab===t[0]}" onclick="mnvSet('tab','${t[0]}')">${t[1]}</button>`).join('')}</div>`;
   h+=MNV.tab==='hoy'?mnvHoy(s):MNV.tab==='semana'?mnvSemana(s):MNV.tab==='compra'?mnvCompra(s):MNV.tab==='recetas'?mnvRecetas():mnvPlan();
-  h+=`<div class="mnv-pdf"><button type="button" class="mnv-rb" onclick="mnvImprimir()">Descargar PDF</button></div>`;
+  h+=`<div class="mnv-pdf"><button type="button" class="mnv-rb" onclick="mnvImprimir()">Descargar PDF</button>${OFFLINE_MODE?'':`<button type="button" class="mnv-rb" onclick="offAlternar()">${offOn()?'Quitar la copia sin conexión':'Tener este plan sin conexión'}</button>`}</div>${!OFFLINE_MODE&&offOn()?`<p class="note" style="margin:8px 2px 0">Guardado en este móvil: puedes abrirlo sin cobertura. Se borra al cerrar sesión.</p>`:''}`;
+  if(OFFLINE_MODE){ const c=offLeer(); h=`<div class="off-b" role="status"><b>Sin conexión</b><span>Estás viendo tu plan guardado${c?' el '+esc(fmtF(String(c.guardado).slice(0,10),true)):''}.</span><button type="button" class="mnv-rb" onclick="location.reload()">Reintentar</button></div>`+h; }
+  $('vmenu').classList.toggle('offline',OFFLINE_MODE);
   $('menuBody').innerHTML=h; cargarFotos($('menuBody'));
 }
 function mnvComida(m){
@@ -1964,6 +1991,7 @@ function mnvComida(m){
     ${ing.length?`<div class="mnv-ing">${ing.map(i=>`<span class="mnv-i">${esc(mnvTxt(i))}${i.nota?` <i>(${esc(i.nota)})</i>`:''}</span>`).join('')}</div>`:''}
     ${!m.libre&&ing.some(i=>(i.sust||[]).length)?`<details class="mnv-alt"><summary>Alternativas permitidas</summary>${ing.filter(i=>(i.sust||[]).length).map(i=>`<p><b>${esc(mnvTxt(i))}</b> → ${i.sust.map(x=>esc(x.t)+(x.max?` <i>(máx. ${x.max} ${x.max===1?'vez':'veces'} por semana)</i>`:'')).join(' · ')}</p>`).join('')}</details>`:''}
     ${m.nota?`<p class="mnv-nota">${esc(m.nota)}</p>`:''}
+    ${mnvReacHtml(m)}
     ${m.receta&&(MENU.menu.recetas||[]).some(r=>r.id===m.receta)?`<button type="button" class="mnv-rb" onclick="mnvVerReceta('${esc(m.receta)}')">Ver receta</button>`:''}
   </div>`;
 }
@@ -2019,6 +2047,45 @@ function mnvCompra(s) {
   const g = mnCompraAgrupa(mnCompraAjusta(filas, MNV.f || 1)), hechas = filas.filter(f => marcas[f.k]).length;
   return `<p class="mnv-sub">Lo que necesitas para esta semana · ${hechas} de ${filas.length} marcados${(MNV.f || 1) !== 1 ? ' · ajustada a tus cantidades' : ''}</p>` + g.map(x => `<div class="card mnv-cp"><p class="mnv-sh" style="margin-top:0">${esc(x.c)}</p>${x.f.map(f => `<label class="mnv-cpf${marcas[f.k] ? ' ok' : ''}"><input type="checkbox"${marcas[f.k] ? ' checked' : ''} onchange="mnvCompraMarca('${esc(f.k)}',this.checked)"><span class="mnv-cpn">${esc(f.n)}</span><span class="mnv-cpq">${f.libre ? 'al gusto' : esc(f.txt)}${f.fmt ? `<small>${esc(f.fmt)}</small>` : ''}</span></label>`).join('')}</div>`).join('');
 }
+// Reacciones (supabase_reacciones_comidas.sql): un toque por comida. La clave es el nombre de la comida + su tipo, así «Porridge de avena» es la misma reacción todos los días.
+const MNV_RX_ICO={gusta:'<path d="M7 10v12"/><path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z"/>',no_gusta:'<path d="M17 14V2"/><path d="M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22a3.13 3.13 0 0 1-3-3.88Z"/>',no_puedo:'<circle cx="12" cy="12" r="10"/><path d="m4.9 4.9 14.2 14.2"/>'};
+const MNV_RX_TXT={gusta:'Me gusta',no_gusta:'No me gusta',no_puedo:'No puedo'};
+function mnvReacHtml(m){
+  if(REACC===null||OFFLINE_MODE||m.libre) return '';
+  const nombre=mnvNombre(m), k=(mnNorm(nombre)+'|'+(m.tipo||'O')).slice(0,160), i=MNV_RX.push({k,n:nombre.slice(0,160),mo:(MNV_TIPO[m.tipo]||MNV_TIPO.O)[0]})-1, cur=REACC[k]||'';
+  return `<div class="mnv-rx" role="group" aria-label="¿Qué te parece esta comida?">${['gusta','no_gusta','no_puedo'].map(r=>`<button type="button" class="mnv-rxb ${r}${cur===r?' on':''}" aria-pressed="${cur===r}" onclick="mnvReac(${i},'${r}')"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">${MNV_RX_ICO[r]}</svg>${MNV_RX_TXT[r]}</button>`).join('')}</div>`;
+}
+async function mnvReac(i,r){
+  const x=MNV_RX[i]; if(!x||REACC===null) return;
+  const antes=REACC[x.k], nueva=antes===r?'':r;
+  if(nueva) REACC[x.k]=nueva; else delete REACC[x.k];
+  pintarMenu();
+  try{ await rpc('cliente_reaccionar_comida',{p_clave:x.k,p_nombre:x.n,p_momento:x.mo,p_reaccion:nueva}); }
+  catch(e){ if(antes) REACC[x.k]=antes; else delete REACC[x.k]; pintarMenu(); toast('No se pudo guardar. Inténtalo de nuevo.',{tipo:'error'}); }
+}
+
+// Plan sin conexión (opcional): el cliente elige guardar en su móvil la última versión publicada para verla sin cobertura (p. ej. en el supermercado).
+// Es solo su propio plan, solo en su móvil, y se borra al cerrar sesión o al quitarlo. sw-cliente.js guarda además la cáscara de la app (sin datos).
+const OFF_KEY='nl_plan_offline', OFF_ON='nl_plan_offline_on'; let OFFLINE_MODE=false;
+const offOn=()=>{ try{ return localStorage.getItem(OFF_ON)==='1'; }catch(e){ return false; } };
+function offGuardar(){
+  if(!offOn()) return;
+  try{ if(MENU_DATA) localStorage.setItem(OFF_KEY,JSON.stringify({guardado:new Date().toISOString(),data:MENU_DATA})); else localStorage.removeItem(OFF_KEY); }catch(e){}
+}
+function offLeer(){ try{ const c=JSON.parse(localStorage.getItem(OFF_KEY)||'null'); return offOn()&&c&&c.data&&c.data.menu&&Array.isArray(c.data.menu.semanas)&&c.data.menu.semanas.length?c:null; }catch(e){ return null; } }
+function offBorrar(){ try{ localStorage.removeItem(OFF_KEY); localStorage.removeItem(OFF_ON); }catch(e){} }
+async function offRegistrar(){ try{ if('serviceWorker' in navigator) await navigator.serviceWorker.register('sw-cliente.js',{scope:'cliente.html'}); }catch(e){} }
+function offAlternar(){
+  if(offOn()){ offBorrar(); toast('Copia sin conexión quitada'); }
+  else{ try{ localStorage.setItem(OFF_ON,'1'); }catch(e){} offGuardar(); offRegistrar(); toast('Listo: podrás ver tu plan sin conexión'); }
+  pintarMenu();
+}
+function entrarSinConexion(){
+  const c=offLeer(); if(!c) return false;
+  OFFLINE_MODE=true; MENU_DATA=c.data; abrirMenu(); return true;
+}
+window.addEventListener('online',()=>{ if(OFFLINE_MODE) location.reload(); });
+if(offOn()) offRegistrar();
 function abrirMenu(){
   const d=MENU_DATA; if(!d) return; const m=d.menu;
   MENU={menu:m,semana_actual:d.semana_actual&&m.semanas.some(s=>s.id===d.semana_actual)?d.semana_actual:m.semanas[0].id};
