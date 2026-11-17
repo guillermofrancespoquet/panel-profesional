@@ -2101,7 +2101,19 @@ input.inp,select.inp{height:44px;padding-top:0;padding-bottom:0}
 }
 .foto-pick{margin-bottom:16px}
 
-/* Novedades del dashboard */
+/* Novedades del dashboard: campanita junto a «Personalizar» */
+.dash-acc{display:flex;gap:8px;align-items:flex-start;flex:none}
+.nov-wrap{position:relative}
+.dash-bell{position:relative;flex:none;display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:10px;border:.5px solid var(--bdm,var(--bd));background:var(--sf);color:var(--g700);cursor:pointer}
+.dash-bell:hover,.dash-bell[aria-expanded="true"]{background:var(--g100)}
+.nov-badge{position:absolute;top:-6px;right:-6px;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--red);color:#fff;font:700 11px/18px var(--f);text-align:center;font-variant-numeric:tabular-nums;border:2px solid var(--bg,#fff);box-sizing:content-box}
+.nov-pop{position:absolute;top:44px;right:0;z-index:140;width:360px;max-width:calc(100vw - 32px);background:var(--sf);border:.5px solid var(--bdm,var(--bd));border-radius:14px;box-shadow:0 12px 32px rgba(4,52,44,.16);padding:6px 14px 10px}
+.nov-pop[hidden]{display:none}
+.nov-pop-h{display:flex;align-items:center;justify-content:space-between;padding:10px 0 6px;font:600 13px var(--f);color:var(--g700);border-bottom:.5px solid var(--bd)}
+.nov-x{width:28px;height:28px;border:0;background:none;border-radius:8px;color:var(--g500);cursor:pointer;display:inline-flex;align-items:center;justify-content:center}
+.nov-x:hover{background:var(--g100)}
+.nov-list{max-height:min(60vh,420px);overflow:auto}
+@media(max-width:860px){.nov-pop{position:fixed;top:calc(var(--sat,0px) + 64px);left:16px;right:16px;width:auto;max-width:none}}
 .dash-row-dot.gris{background:var(--g200)}
 .dash-nov.visto .dash-row-name,.dash-nov.visto .dash-row-sub{color:var(--g500)}
 .dash-nov.visto .dash-row-name{font-weight:500}
@@ -2342,7 +2354,16 @@ input.inp,select.inp{height:44px;padding-top:0;padding-bottom:0}
           <p class="dash-greet" role="heading" aria-level="1">Hola, Guillermo</p>
           <div class="dash-resumen" id="dashResumen" aria-live="polite"></div>
         </div>
+        <div class="dash-acc">
+        <div class="nov-wrap">
+          <button type="button" class="dash-bell" id="novBell" onclick="novAlternar(event)" aria-haspopup="true" aria-expanded="false" aria-controls="novPop" aria-label="Novedades de tus clientes"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="nov-badge" id="novBadge" hidden>0</span></button>
+          <div class="nov-pop" id="novPop" role="dialog" aria-label="Novedades de tus clientes" hidden>
+            <div class="nov-pop-h"><span>Novedades</span><button type="button" class="nov-x" onclick="novCerrar()" aria-label="Cerrar"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" viewBox="0 0 24 24"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg></button></div>
+            <div id="dashNov" class="nov-list"></div>
+          </div>
+        </div>
         <button type="button" class="dash-pers" id="dashPersBtn" onclick="dashPersonalizar()" aria-pressed="false" aria-label="Personalizar el panel"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg><span>Personalizar</span></button>
+      </div>
       </div>
       <div class="dash-persbar" id="dashPersBar" style="display:none"><span>Mueve las tarjetas con las flechas u ocúltalas con el ojo. Se guarda solo en este navegador.</span><span class="dash-persbar-b"><button type="button" class="btn-soft sm" onclick="dashPersReset()">Restablecer</button><button type="button" class="btn-soft sm" onclick="dashPersonalizar()">Listo</button></span></div>
     </div>
@@ -2352,12 +2373,12 @@ input.inp,select.inp{height:44px;padding-top:0;padding-bottom:0}
       <div id="dashProxima"></div>
       <div id="dashTodoOk"></div>
       <div class="dash-grid g2" id="dashSecHoy" data-col="hoy">
-        <div class="dash-card" data-dc="revisiones">
+        <div class="dash-card" data-dc="sesiones">
         <div class="dash-card-head">
-          <span class="dash-card-title"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>Revisiones próximas</span>
-          <span class="dash-card-count" id="dashRevCount">0</span>
+          <span class="dash-card-title"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Hoy y mañana</span>
+          <span class="dash-card-count" id="dashSesionesCount">0</span>
         </div>
-        <div id="dashRevisiones"></div>
+        <div id="dashSesiones"></div>
       </div>
         <div class="dash-card" data-dc="recordatorios">
       <div class="dash-card-head">
@@ -2375,12 +2396,12 @@ input.inp,select.inp{height:44px;padding-top:0;padding-bottom:0}
     <section class="dash-sec" aria-labelledby="dsCli">
       <h2 class="dash-sec-h" id="dsCli"><span>Clientes</span><button type="button" class="dash-sec-l" onclick="navTo('cartera')">Ver Cartera <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg></button></h2>
       <div class="dash-grid g3" id="dashSecCli" data-col="clientes">
-        <div class="dash-card" data-dc="novedades" id="dashNovedades">
+        <div class="dash-card" data-dc="revisiones">
         <div class="dash-card-head">
-          <span class="dash-card-title"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>Novedades</span>
-          <span class="dash-card-count" id="dashNovCount">0</span>
+          <span class="dash-card-title"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>Revisiones próximas</span>
+          <span class="dash-card-count" id="dashRevCount">0</span>
         </div>
-        <div id="dashNov"></div>
+        <div id="dashRevisiones"></div>
       </div>
         <div class="dash-card" data-dc="porhacer">
         <div class="dash-card-head">
@@ -5071,6 +5092,12 @@ async function loadDashboard(){
     .sort((a,b)=>(a.fecha+  (a.hora||'')).localeCompare(b.fecha+(b.hora||'')));
   _dash.hoy=sesiones.filter(c=>c.fecha===todayISO).length;
   pintarProximaDash(dashCitas,dashDeps);
+  document.getElementById('dashSesionesCount').textContent=sesiones.length;
+  document.getElementById('dashSesiones').innerHTML=sesiones.length?sesiones.slice(0,5).map(c=>{
+    const tag=c.fecha===todayISO?'Hoy':'Mañana';
+    const hora=c.hora?c.hora.slice(0,5)+' h':'';
+    return `<div class="dash-row"><div class="dash-row-dot ${c.fecha===todayISO?'gold':'teal'}"></div><div class="dash-row-txt"><div class="dash-row-name">${c.cliente}</div><div class="dash-row-sub">${c.servicio||'Revisión'}${hora?' · '+hora:''}</div></div><span class="dash-row-tag">${tag}</span></div>`;
+  }).join(''):dashVacio('cal','Sin sesiones para hoy ni para mañana.');
 
   // ── Pagos pendientes/atrasados ──
   const impagos=dashCitas.filter(c=>!c.pagado&&c.requiere_pago!==false).sort((a,b)=>(citaYaPaso(b)-citaYaPaso(a))||a.fecha.localeCompare(b.fecha));   // primero las que ya pasaron
@@ -5148,7 +5175,8 @@ function novPintar(){
   const el = document.getElementById('dashNov'); if (!el) return;
   const gr = novGrupos(), sin = gr.filter(x => !x.visto);
   _nov.sinVer = _nov.lista.filter(x => !x.visto).length;
-  document.getElementById('dashNovCount').textContent = _nov.sinVer;
+  const bd = document.getElementById('novBadge'); if (bd) { bd.textContent = _nov.sinVer > 99 ? '99+' : _nov.sinVer; bd.hidden = !_nov.sinVer; }
+  const bl = document.getElementById('novBell'); if (bl) bl.setAttribute('aria-label', _nov.sinVer ? `Novedades de tus clientes: ${_nov.sinVer} sin ver` : 'Novedades de tus clientes');
   if (typeof dashPintarEstado === 'function') dashPintarEstado();
   if (!_nov.listo) { el.innerHTML = skRows(3); return; }
   if (_nov.sinSql) { el.innerHTML = dashVacio('ok', 'Las novedades necesitan el SQL de avisos.'); return; }
@@ -5157,7 +5185,7 @@ function novPintar(){
     const T = NOV_T[x.tipo], n = x.ids.length, nombre = _nov.nombres[x.dep] || 'Cliente';
     return `<button type="button" class="dash-row dash-hacer dash-nov${x.visto ? ' visto' : ''}" onclick="novAbrir(${x.dep},'${x.tipo}')"><div class="dash-row-dot ${x.visto ? 'gris' : 'gold'}"></div><div class="dash-row-txt"><div class="dash-row-name">${sudEsc(nombre)}</div><div class="dash-row-sub">${sudEsc(n > 1 ? T.p(n) : T.u)}</div></div><span class="dash-row-tag">${novHace(x.ult)}</span></button>`;
   };
-  el.innerHTML = gr.slice(0, 5).map(fila).join('') + (sin.length ? `<button type="button" class="dash-mas" onclick="novTodoVisto()">Marcar todo como visto</button>` : '');
+  el.innerHTML = gr.slice(0, 12).map(fila).join('') + (sin.length ? `<button type="button" class="dash-mas" onclick="novTodoVisto()">Marcar todo como visto</button>` : '');
 }
 async function novMarcar(ids){
   if (!ids.length) return;
@@ -5165,11 +5193,16 @@ async function novMarcar(ids){
   novPintar();
   try{ await sb(`avisos_profesional?id=in.(${ids.join(',')})`, { method: 'PATCH', headers: { 'Prefer': 'return=minimal' }, body: JSON.stringify({ visto: true, push_pendiente: false }) }); }catch(e){}
 }
+function novAlternar(e){ if (e) e.stopPropagation(); const pop = document.getElementById('novPop'); if (!pop) return; pop.hidden ? novAbrirPop() : novCerrar(); }
+function novAbrirPop(){ const pop = document.getElementById('novPop'); pop.hidden = false; document.getElementById('novBell').setAttribute('aria-expanded', 'true'); }
+function novCerrar(){ const pop = document.getElementById('novPop'); if (!pop || pop.hidden) return; pop.hidden = true; const b = document.getElementById('novBell'); b.setAttribute('aria-expanded', 'false'); }
+document.addEventListener('click', e => { const pop = document.getElementById('novPop'); if (pop && !pop.hidden && !e.target.closest('.nov-wrap')) novCerrar(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { const pop = document.getElementById('novPop'); if (pop && !pop.hidden) { novCerrar(); const b = document.getElementById('novBell'); if (b) b.focus(); } } });
 function novTodoVisto(){ novMarcar(_nov.lista.filter(x => !x.visto).map(x => x.id)); }
 // Al abrir la ficha de un cliente (desde donde sea) se dan por vistas sus novedades
 function novVistoDep(depId){ const ids = _nov.lista.filter(x => x.deportista_id == depId && !x.visto).map(x => x.id); if (ids.length) novMarcar(ids); }
 async function novAbrir(dep, tipo){
-  const T = NOV_T[tipo];
+  const T = NOV_T[tipo]; novCerrar();
   await abrirFichaDash(dep);
   if (T && T.tab) depTab(T.tab);
 }
@@ -5214,7 +5247,7 @@ async function avPintar(){
   box.innerHTML = `<p class="med-note" style="margin:0 0 10px">El aviso nunca lleva nombres ni datos: dice «Tienes novedades» y el detalle lo ves al abrir el panel. Si llegan varias seguidas, es un solo aviso.</p>${estado}
     <p class="aj-sub" style="margin:14px 0 4px;font-weight:600">Avisar al móvil cuando…</p>${filas}
     <label class="plan-check" style="margin:12px 0 0"><input type="checkbox" id="avSil" ${cfg.silencio ? 'checked' : ''} onchange="avCfgGuardar()"><span>No molestar de 22:00 a 8:00 (los avisos llegan por la mañana)</span></label>
-    <p class="med-note" style="margin:10px 0 0">Todas las novedades salen siempre en la tarjeta «Novedades» del dashboard, avises o no al móvil.</p>`;
+    <p class="med-note" style="margin:10px 0 0">Todas las novedades salen siempre en la campanita del dashboard, avises o no al móvil.</p>`;
 }
 const avU8 = s => { const p = '='.repeat((4 - s.length % 4) % 4), b = atob((s + p).replace(/-/g, '+').replace(/_/g, '/')); return Uint8Array.from(b, c => c.charCodeAt(0)); };
 async function avActivar(){
@@ -5259,7 +5292,7 @@ function dashPintarEstado() {
   p.push(pill(_dash.hoy ? n(_dash.hoy, 'cita hoy', 'citas hoy') : 'Sin citas hoy', '', 'agenda'));
   if (_dash.avisos) p.push(pill(n(_dash.avisos, 'cliente por mirar', 'clientes por mirar'), 'warn', 'cartera'));
   if (_dash.venc) p.push(pill(n(_dash.venc, 'cobro vencido', 'cobros vencidos'), 'red', 'facturacion'));
-  if (_nov.sinVer) p.push(`<button type="button" onclick="document.getElementById('dashNovedades').scrollIntoView({behavior:'smooth',block:'center'})" class="dash-pill"><i aria-hidden="true"></i>${n(_nov.sinVer, 'novedad', 'novedades')}</button>`);
+  if (_nov.sinVer) p.push(`<button type="button" onclick="novAlternar(event)" class="dash-pill"><i aria-hidden="true"></i>${n(_nov.sinVer, 'novedad', 'novedades')}</button>`);
   const todo = _dash.avisos === 0 && !_dash.venc && !_dash.revs;
   if (todo) p.push(pill('Todo al día', 'ok'));
   r.innerHTML = p.join('');
