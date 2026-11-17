@@ -2100,6 +2100,11 @@ input.inp,select.inp{height:44px;padding-top:0;padding-bottom:0}
   .res-side .depd-section{margin-bottom:1.25rem}
 }
 .foto-pick{margin-bottom:16px}
+
+/* Novedades del dashboard */
+.dash-row-dot.gris{background:var(--g200)}
+.dash-nov.visto .dash-row-name,.dash-nov.visto .dash-row-sub{color:var(--g500)}
+.dash-nov.visto .dash-row-name{font-weight:500}
 .cart-tchips .dep-chip.active b{opacity:1}
 .mc .mfl-hint{margin-bottom:14px}
 .det-hero .det-meta .ic-in{opacity:.85}
@@ -2347,12 +2352,12 @@ input.inp,select.inp{height:44px;padding-top:0;padding-bottom:0}
       <div id="dashProxima"></div>
       <div id="dashTodoOk"></div>
       <div class="dash-grid g2" id="dashSecHoy" data-col="hoy">
-        <div class="dash-card" data-dc="sesiones">
+        <div class="dash-card" data-dc="revisiones">
         <div class="dash-card-head">
-          <span class="dash-card-title"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Hoy y mañana</span>
-          <span class="dash-card-count" id="dashSesionesCount">0</span>
+          <span class="dash-card-title"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>Revisiones próximas</span>
+          <span class="dash-card-count" id="dashRevCount">0</span>
         </div>
-        <div id="dashSesiones"></div>
+        <div id="dashRevisiones"></div>
       </div>
         <div class="dash-card" data-dc="recordatorios">
       <div class="dash-card-head">
@@ -2370,12 +2375,12 @@ input.inp,select.inp{height:44px;padding-top:0;padding-bottom:0}
     <section class="dash-sec" aria-labelledby="dsCli">
       <h2 class="dash-sec-h" id="dsCli"><span>Clientes</span><button type="button" class="dash-sec-l" onclick="navTo('cartera')">Ver Cartera <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg></button></h2>
       <div class="dash-grid g3" id="dashSecCli" data-col="clientes">
-        <div class="dash-card" data-dc="revisiones">
+        <div class="dash-card" data-dc="novedades" id="dashNovedades">
         <div class="dash-card-head">
-          <span class="dash-card-title"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>Revisiones próximas</span>
-          <span class="dash-card-count" id="dashRevCount">0</span>
+          <span class="dash-card-title"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>Novedades</span>
+          <span class="dash-card-count" id="dashNovCount">0</span>
         </div>
-        <div id="dashRevisiones"></div>
+        <div id="dashNov"></div>
       </div>
         <div class="dash-card" data-dc="porhacer">
         <div class="dash-card-head">
@@ -5050,7 +5055,8 @@ async function loadDashboard(){
   renderFactOfDay();
   loadRecordatorios();
   let [dashClients,dashCitas,dashDeps]=await Promise.all([getAll(),getCitas(),getDeportistas()]);
-  dashClients=dashClients||[];dashCitas=dashCitas||[];dashDeps=(dashDeps||[]).filter(d=>!d.fecha_baja);
+  dashClients=dashClients||[];dashCitas=dashCitas||[];_nov.nombres={};(dashDeps||[]).forEach(d=>{_nov.nombres[d.id]=d.nombre;});dashDeps=(dashDeps||[]).filter(d=>!d.fecha_baja);
+  cargarNovedades();
   citas=dashCitas;   // la misma lista que la agenda: así «Editar» y «Registrar consulta» de la próxima cita funcionan desde aquí
   _dash={hoy:0,venc:0,revs:0,avisos:null};
   aplicarLayoutDash();
@@ -5065,12 +5071,6 @@ async function loadDashboard(){
     .sort((a,b)=>(a.fecha+  (a.hora||'')).localeCompare(b.fecha+(b.hora||'')));
   _dash.hoy=sesiones.filter(c=>c.fecha===todayISO).length;
   pintarProximaDash(dashCitas,dashDeps);
-  document.getElementById('dashSesionesCount').textContent=sesiones.length;
-  document.getElementById('dashSesiones').innerHTML=sesiones.length?sesiones.slice(0,5).map(c=>{
-    const tag=c.fecha===todayISO?'Hoy':'Mañana';
-    const hora=c.hora?c.hora.slice(0,5)+' h':'';
-    return `<div class="dash-row"><div class="dash-row-dot ${c.fecha===todayISO?'gold':'teal'}"></div><div class="dash-row-txt"><div class="dash-row-name">${c.cliente}</div><div class="dash-row-sub">${c.servicio||'Revisión'}${hora?' · '+hora:''}</div></div><span class="dash-row-tag">${tag}</span></div>`;
-  }).join(''):dashVacio('cal','Sin sesiones para hoy ni para mañana.');
 
   // ── Pagos pendientes/atrasados ──
   const impagos=dashCitas.filter(c=>!c.pagado&&c.requiere_pago!==false).sort((a,b)=>(citaYaPaso(b)-citaYaPaso(a))||a.fecha.localeCompare(b.fecha));   // primero las que ya pasaron
@@ -5107,6 +5107,140 @@ async function loadDashboard(){
   dashPintarEstado();
 }
 
+
+// ═══════════════ NOVEDADES Y AVISOS AL MÓVIL (supabase_avisos_profesional.sql) ═══════════════
+// Cuando un cliente envía el seguimiento, anota un peso, sube una foto o una comida, envía la ficha inicial, retira un consentimiento o marca una comida
+// del plan, la base apunta una fila en `avisos_profesional` (solo el tipo y el cliente). La tarjeta «Novedades» del dashboard las agrupa por cliente, tipo y día;
+// al abrir la ficha de un cliente (desde ahí o desde donde sea) sus novedades se dan por vistas. El aviso al móvil lo manda la Edge Function `avisos-profesional`
+// (un aviso genérico, sin nombres ni datos; agrupado; con horas de silencio) y se configura en Ajustes → «Avisos de novedades».
+const NOV_T = {
+  seguimiento:   { u: 'Seguimiento semanal enviado', p: n => `${n} seguimientos enviados`, tab: 'seguimiento', aj: 'Seguimiento semanal enviado', push: true },
+  comida:        { u: 'Comida anotada en el diario', p: n => `${n} comidas anotadas en el diario`, tab: 'seguimiento', aj: 'Comida o foto en el diario', push: true },
+  ficha:         { u: 'Ficha inicial enviada', p: n => `${n} fichas iniciales enviadas`, tab: 'seguimiento', aj: 'Ficha inicial enviada', push: true },
+  consentimiento:{ u: 'Ha retirado un consentimiento', p: n => `${n} consentimientos retirados`, tab: 'archivos', aj: 'Retirada de un consentimiento', push: true },
+  peso:          { u: 'Peso anotado', p: n => `${n} pesos anotados`, tab: 'seguimiento', aj: 'Peso anotado', push: false },
+  foto:          { u: 'Foto de progreso subida', p: n => `${n} fotos de progreso subidas`, tab: 'seguimiento', aj: 'Foto de progreso', push: false },
+  reaccion:      { u: 'Ha marcado una comida del plan', p: n => `${n} comidas del plan marcadas`, tab: 'plan', aj: 'Comida del plan marcada («no me gusta» o «no puedo»)', push: false }
+};
+const _nov = { lista: [], listo: false, sinSql: false, sinVer: 0, nombres: {} };
+async function cargarNovedades(){
+  let r = null;
+  try{ r = await sb('avisos_profesional?tipo=neq.prueba&order=creado.desc&limit=200&select=id,deportista_id,tipo,creado,visto'); }catch(e){}
+  _nov.sinSql = !Array.isArray(r); _nov.lista = Array.isArray(r) ? r.filter(x => NOV_T[x.tipo] && x.deportista_id != null) : []; _nov.listo = true;
+  novPintar();
+}
+function novGrupos(){
+  const g = {}, dia = c => localISO(new Date(c));
+  _nov.lista.forEach(x => {
+    const k = [x.deportista_id, x.tipo, dia(x.creado), x.visto ? 1 : 0].join('|');
+    (g[k] = g[k] || { dep: x.deportista_id, tipo: x.tipo, visto: !!x.visto, ids: [], ult: x.creado }).ids.push(x.id);
+    if (x.creado > g[k].ult) g[k].ult = x.creado;
+  });
+  return Object.values(g).sort((a, b) => (a.visto - b.visto) || String(b.ult).localeCompare(String(a.ult)));
+}
+function novHace(c){
+  const m = Math.max(0, Math.round((Date.now() - new Date(c).getTime()) / 60000));
+  if (m < 1) return 'ahora'; if (m < 60) return `hace ${m} min`;
+  const h = Math.round(m / 60); if (h < 24) return `hace ${h} h`;
+  const d = Math.round(h / 24); return d === 1 ? 'ayer' : `hace ${d} días`;
+}
+function novPintar(){
+  const el = document.getElementById('dashNov'); if (!el) return;
+  const gr = novGrupos(), sin = gr.filter(x => !x.visto);
+  _nov.sinVer = _nov.lista.filter(x => !x.visto).length;
+  document.getElementById('dashNovCount').textContent = _nov.sinVer;
+  if (typeof dashPintarEstado === 'function') dashPintarEstado();
+  if (!_nov.listo) { el.innerHTML = skRows(3); return; }
+  if (_nov.sinSql) { el.innerHTML = dashVacio('ok', 'Las novedades necesitan el SQL de avisos.'); return; }
+  if (!gr.length) { el.innerHTML = dashVacio('ok', 'Sin novedades de tus clientes.'); return; }
+  const fila = x => {
+    const T = NOV_T[x.tipo], n = x.ids.length, nombre = _nov.nombres[x.dep] || 'Cliente';
+    return `<button type="button" class="dash-row dash-hacer dash-nov${x.visto ? ' visto' : ''}" onclick="novAbrir(${x.dep},'${x.tipo}')"><div class="dash-row-dot ${x.visto ? 'gris' : 'gold'}"></div><div class="dash-row-txt"><div class="dash-row-name">${sudEsc(nombre)}</div><div class="dash-row-sub">${sudEsc(n > 1 ? T.p(n) : T.u)}</div></div><span class="dash-row-tag">${novHace(x.ult)}</span></button>`;
+  };
+  el.innerHTML = gr.slice(0, 5).map(fila).join('') + (sin.length ? `<button type="button" class="dash-mas" onclick="novTodoVisto()">Marcar todo como visto</button>` : '');
+}
+async function novMarcar(ids){
+  if (!ids.length) return;
+  _nov.lista.forEach(x => { if (ids.includes(x.id)) x.visto = true; });
+  novPintar();
+  try{ await sb(`avisos_profesional?id=in.(${ids.join(',')})`, { method: 'PATCH', headers: { 'Prefer': 'return=minimal' }, body: JSON.stringify({ visto: true, push_pendiente: false }) }); }catch(e){}
+}
+function novTodoVisto(){ novMarcar(_nov.lista.filter(x => !x.visto).map(x => x.id)); }
+// Al abrir la ficha de un cliente (desde donde sea) se dan por vistas sus novedades
+function novVistoDep(depId){ const ids = _nov.lista.filter(x => x.deportista_id == depId && !x.visto).map(x => x.id); if (ids.length) novMarcar(ids); }
+async function novAbrir(dep, tipo){
+  const T = NOV_T[tipo];
+  await abrirFichaDash(dep);
+  if (T && T.tab) depTab(T.tab);
+}
+
+// ── Avisos al móvil (Ajustes → «Avisos de novedades») ──
+const AV_VAPID = 'BMlFDqDpvNaUiEllEp06SjPmSFaE_LMOQo1-Iks0qsQbS-9wbD_oUX0ll_wCWQui6YqPn0OZ20qiebzrndzljak';
+const AV_DEF = { push: { seguimiento: true, comida: true, ficha: true, consentimiento: true, peso: false, foto: false, reaccion: false }, silencio: true };
+let _avCfg = null;
+const avSoporte = () => 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window;
+const avIos = () => /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+const avInstalada = () => window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+async function avCfgLeer(){
+  const r = await Promise.resolve(sb('ajustes_app?clave=eq.avisos_prof&select=valor')).catch(() => null);
+  const v = Array.isArray(r) && r[0] && r[0].valor && typeof r[0].valor === 'object' ? r[0].valor : {};
+  _avCfg = { push: { ...AV_DEF.push, ...(v.push || {}) }, silencio: typeof v.silencio === 'boolean' ? v.silencio : AV_DEF.silencio };
+  return _avCfg;
+}
+async function avCfgGuardar(){
+  const push = {}; Object.keys(NOV_T).forEach(k => { const c = document.getElementById('avT_' + k); if (c) push[k] = c.checked; });
+  const s = document.getElementById('avSil');
+  _avCfg = { push: { ...(_avCfg ? _avCfg.push : AV_DEF.push), ...push }, silencio: s ? s.checked : true };
+  const r = await sb('ajustes_app?on_conflict=clave', { method: 'POST', headers: { 'Prefer': 'resolution=merge-duplicates,return=minimal' }, body: JSON.stringify([{ clave: 'avisos_prof', valor: _avCfg, actualizado: new Date().toISOString() }]) });
+  if (esErrorSb(r)) toast('No se pudo guardar. Inténtalo de nuevo.', { tipo: 'error' }); else toast('Guardado');
+}
+async function avSuscripcion(){
+  if (!avSoporte()) return null;
+  try{ const reg = await navigator.serviceWorker.ready; return await reg.pushManager.getSubscription(); }catch(e){ return null; }
+}
+async function avPintar(){
+  const box = document.getElementById('ajAvBox'); if (!box) return;
+  const cfg = await avCfgLeer(), sub = await avSuscripcion();
+  if (!document.getElementById('ajAvBox')) return;
+  let estado;
+  if (!avSoporte()) estado = avIos() && !avInstalada()
+    ? '<p class="med-note" style="margin:0 0 10px">En iPhone y iPad los avisos solo funcionan con el panel instalado en la pantalla de inicio: toca Compartir → «Añadir a pantalla de inicio», ábrelo desde ahí y vuelve a esta pantalla.</p>'
+    : '<p class="med-note" style="margin:0 0 10px">Este navegador no admite avisos. Prueba desde el panel instalado en tu móvil.</p>';
+  else if (Notification.permission === 'denied') estado = '<p class="med-note" style="margin:0 0 10px">Los avisos están bloqueados en este dispositivo: actívalos en los ajustes del navegador o de la app.</p>';
+  else estado = `<div class="aj-row"><b>Este dispositivo</b><span class="v">${sub ? 'Avisos activados' : 'Sin avisos'}</span></div><div class="aj-btns">${sub
+    ? '<button type="button" class="btn-soft" onclick="avDesactivar()">Desactivar</button>'
+    : '<button type="button" class="btn-soft" onclick="avActivar()">Activar avisos en este dispositivo</button>'}</div>`;
+  const filas = Object.keys(NOV_T).map(k => `<label class="plan-check" style="margin:4px 0"><input type="checkbox" id="avT_${k}" ${cfg.push[k] ? 'checked' : ''} onchange="avCfgGuardar()"><span>${sudEsc(NOV_T[k].aj)}</span></label>`).join('');
+  box.innerHTML = `<p class="med-note" style="margin:0 0 10px">El aviso nunca lleva nombres ni datos: dice «Tienes novedades» y el detalle lo ves al abrir el panel. Si llegan varias seguidas, es un solo aviso.</p>${estado}
+    <p class="aj-sub" style="margin:14px 0 4px;font-weight:600">Avisar al móvil cuando…</p>${filas}
+    <label class="plan-check" style="margin:12px 0 0"><input type="checkbox" id="avSil" ${cfg.silencio ? 'checked' : ''} onchange="avCfgGuardar()"><span>No molestar de 22:00 a 8:00 (los avisos llegan por la mañana)</span></label>
+    <p class="med-note" style="margin:10px 0 0">Todas las novedades salen siempre en la tarjeta «Novedades» del dashboard, avises o no al móvil.</p>`;
+}
+const avU8 = s => { const p = '='.repeat((4 - s.length % 4) % 4), b = atob((s + p).replace(/-/g, '+').replace(/_/g, '/')); return Uint8Array.from(b, c => c.charCodeAt(0)); };
+async function avActivar(){
+  if (!avSoporte()) return;
+  if (!AV_VAPID) { toast('Faltan las claves de avisos (ver sql/LEEME.md).', { tipo: 'aviso' }); return; }
+  try{
+    const perm = await Notification.requestPermission();
+    if (perm !== 'granted') { toast('No se han activado: hace falta permitir las notificaciones.', { tipo: 'aviso' }); avPintar(); return; }
+    const reg = await navigator.serviceWorker.ready;
+    const sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: avU8(AV_VAPID) });
+    const r = await sb('push_profesional?on_conflict=endpoint', { method: 'POST', headers: { 'Prefer': 'resolution=merge-duplicates,return=minimal' }, body: JSON.stringify([{ endpoint: sub.endpoint }]) });
+    if (esErrorSb(r)) { try{ await sub.unsubscribe(); }catch(e){} toast('No se pudo activar. Falta ejecutar supabase_avisos_profesional.sql.', { tipo: 'error' }); avPintar(); return; }
+    await sb('avisos_profesional', { method: 'POST', headers: { 'Prefer': 'return=minimal' }, body: JSON.stringify({ tipo: 'prueba', push_pendiente: true }) });
+    toast('Avisos activados: en un minuto te llega uno de prueba.', { ms: 6000 });
+  }catch(e){ toast('No se pudo activar los avisos en este dispositivo.', { tipo: 'error' }); }
+  avPintar();
+}
+async function avDesactivar(){
+  const sub = await avSuscripcion();
+  if (sub) { const ep = sub.endpoint; try{ await sub.unsubscribe(); }catch(e){} try{ await sb('push_profesional?endpoint=eq.' + encodeURIComponent(ep), { method: 'DELETE', headers: { 'Prefer': 'return=minimal' } }); }catch(e){} }
+  toast('Avisos desactivados en este dispositivo'); avPintar();
+}
+// El service worker avisa cuando llega un aviso con el panel abierto; al volver a la pestaña también se refrescan las novedades.
+if ('serviceWorker' in navigator) navigator.serviceWorker.addEventListener('message', e => { if (e.data && e.data.novedades && document.getElementById('vhome').classList.contains('active')) cargarNovedades(); });
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && document.getElementById('vhome') && document.getElementById('vhome').classList.contains('active') && _nov.listo) cargarNovedades(); });
+
 // ═══════════════ DASHBOARD: resumen del día, próxima cita, acceso rápido y personalización ═══════════════
 let _dash = { hoy: 0, venc: 0, revs: 0, avisos: null };
 const DV_ICO = {
@@ -5125,6 +5259,7 @@ function dashPintarEstado() {
   p.push(pill(_dash.hoy ? n(_dash.hoy, 'cita hoy', 'citas hoy') : 'Sin citas hoy', '', 'agenda'));
   if (_dash.avisos) p.push(pill(n(_dash.avisos, 'cliente por mirar', 'clientes por mirar'), 'warn', 'cartera'));
   if (_dash.venc) p.push(pill(n(_dash.venc, 'cobro vencido', 'cobros vencidos'), 'red', 'facturacion'));
+  if (_nov.sinVer) p.push(`<button type="button" onclick="document.getElementById('dashNovedades').scrollIntoView({behavior:'smooth',block:'center'})" class="dash-pill"><i aria-hidden="true"></i>${n(_nov.sinVer, 'novedad', 'novedades')}</button>`);
   const todo = _dash.avisos === 0 && !_dash.venc && !_dash.revs;
   if (todo) p.push(pill('Todo al día', 'ok'));
   r.innerHTML = p.join('');
@@ -7700,6 +7835,7 @@ function depTabKey(e){
   e.preventDefault(); depTab(ks[i]); const b=document.getElementById('depTab-'+ks[i]); if(b) b.focus();
 }
 function openDepDet(id) {
+  novVistoDep(id);
   sbMarcar('sbDep');   // llegue desde donde llegue (Cartera, dashboard, Ctrl+K), la barra marca Nutrición Deportiva
   if(_depTabDep!=id){ _depTab='resumen'; _depTabDep=id; }
   currentDepId = id;
@@ -7813,6 +7949,11 @@ function openDepDet(id) {
     </div>
 
     <div class="depd-section">
+      <p class="sec-title">Pregunta propia en su seguimiento</p>
+      <div class="med-box" id="extraBox">${skel(1)}</div>
+    </div>
+
+    <div class="depd-section">
       <p class="sec-title">Peso y fotos del cliente</p>
       <div class="med-box" id="regCliBox">${skel(2)}</div>
     </div>
@@ -7921,7 +8062,7 @@ function openDepDet(id) {
   cargarAvatares(document.getElementById('depdetPage'));
   loadHistorial(d.id);
   loadAccesoCliente(d.id);
-  loadSeguimientos(d.id);
+  loadSeguimientos(d.id); loadPreguntaExtra(d.id);
   depTabsFade();
   loadRegCliente(d.id);
   loadDiario(d.id);
@@ -8091,6 +8232,46 @@ function pintarCmpFotos(){
 function cerrarFoto(){ document.getElementById('mFoto').style.display = 'none'; document.getElementById('fotoBody').innerHTML = ''; }
 
 const SEG_CORTO = {adherencia:'Adh.', energia:'Ene.', sueno:'Sue.', digestion:'Dig.', animo:'Áni.'};   // cabeceras cortas para que la tabla quepa en el móvil
+// ═══════════════ PREGUNTA PROPIA EN EL SEGUIMIENTO (supabase_seguimiento_extra.sql) ═══════════════
+// Opcional y por cliente: si el profesional escribe una pregunta, el seguimiento semanal de ese cliente añade una escala de 0 a 10 con ella
+// (p. ej. «Dolor de rodilla»). Sin pregunta, el cliente no ve nada nuevo. La respuesta guarda una copia de la pregunta, así que al cambiarla
+// las respuestas antiguas conservan la suya y la gráfica solo junta las de la pregunta actual.
+async function loadPreguntaExtra(depId, editar){
+  const el = document.getElementById('extraBox'); if (!el) return;
+  const d = deportistas.find(x => x.id == depId); if (!d) return;
+  let r = null; try{ r = await sb(`seguimientos_extra?deportista_id=eq.${depId}&order=semana.asc&select=semana,pregunta,valor`); }catch(e){}
+  if (!document.getElementById('extraBox') || currentDepId != depId) return;
+  if (!('seguimiento_extra' in d) || !Array.isArray(r)) { el.innerHTML = '<p class="med-empty">Esta función necesita el SQL <b>supabase_seguimiento_extra.sql</b> ejecutado en Supabase.</p>'; return; }
+  const q = d.seguimiento_extra && d.seguimiento_extra.pregunta ? String(d.seguimiento_extra.pregunta) : '';
+  const form = (txt, ok) => `<div class="acc-form"><input type="text" class="inp" id="extraIn" maxlength="80" value="${sudEsc(txt)}" placeholder="Ej. Dolor de rodilla (0 sin dolor · 10 el peor)" aria-label="Pregunta propia" onkeydown="if(event.key==='Enter')extraGuardar(${depId})"><button type="button" class="btn-soft" onclick="extraGuardar(${depId})">${ok}</button></div>`;
+  if (!q) { el.innerHTML = `<p class="med-note" style="margin:0 0 10px">Opcional. Si escribes una pregunta, su seguimiento semanal añade una escala de 0 a 10 con ella (por ejemplo, «Dolor de rodilla»). Si no escribes nada, no ve ninguna pregunta nueva.</p>${form('', 'Añadir pregunta')}`; return; }
+  const sr = r.filter(x => x.pregunta === q), ult = sr[sr.length - 1];
+  const graf = medSerie(sr.map(x => ({ fecha: x.semana, v: x.valor })), 'v', 'var(--gold)', q, '0–10', 0, [0, 10]);
+  const fmt = f => new Date(f + 'T00:00:00').toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
+  el.innerHTML = `<div class="aj-row"><b>Pregunta</b><span class="v">${sudEsc(q)}</span></div>
+    <p class="med-note" style="margin:6px 0 10px">${ult ? `Última respuesta: <b>${ult.valor}/10</b> (semana del ${sudEsc(fmt(ult.semana))}).` : 'Todavía no la ha contestado: le sale en su próximo seguimiento semanal.'}</p>
+    ${graf ? `<div class="med-series">${graf}</div>` : ''}
+    ${editar ? form(q, 'Guardar') : ''}
+    <div class="med-actions">${editar ? '' : btnSoft('Cambiar pregunta', `loadPreguntaExtra(${depId},true)`, 'doc')}${btnSoft('Quitar pregunta', `extraQuitar(${depId})`, 'trash')}</div>`;
+  if (editar) { const i = document.getElementById('extraIn'); if (i && !esTactil()) i.focus(); }
+}
+async function extraGuardar(depId){
+  const i = document.getElementById('extraIn'), q = i ? i.value.trim().replace(/\s+/g, ' ') : ''; if (!q) { toast('Escribe la pregunta.', { tipo: 'aviso' }); return; }
+  const v = { pregunta: q.slice(0, 80), desde: localISO(new Date()) };
+  const r = await sb(`clientes_deportivos?id=eq.${depId}`, { method: 'PATCH', headers: { 'Prefer': 'return=minimal' }, body: JSON.stringify({ seguimiento_extra: v }) });
+  if (esErrorSb(r)) { toast('No se pudo guardar. Falta ejecutar supabase_seguimiento_extra.sql.', { tipo: 'error' }); return; }
+  const d = deportistas.find(x => x.id == depId); if (d) d.seguimiento_extra = v;
+  toast('Pregunta guardada: sale en su próximo seguimiento'); loadPreguntaExtra(depId);
+}
+async function extraQuitar(depId){
+  const d = deportistas.find(x => x.id == depId), prev = d && d.seguimiento_extra;
+  const r = await sb(`clientes_deportivos?id=eq.${depId}`, { method: 'PATCH', headers: { 'Prefer': 'return=minimal' }, body: JSON.stringify({ seguimiento_extra: null }) });
+  if (esErrorSb(r)) { toast('No se pudo quitar. Inténtalo de nuevo.', { tipo: 'error' }); return; }
+  if (d) d.seguimiento_extra = null;
+  toast('Pregunta quitada: su seguimiento vuelve a ser el de siempre', { ms: 7000, accion: { texto: 'Deshacer', fn: async () => { await sb(`clientes_deportivos?id=eq.${depId}`, { method: 'PATCH', headers: { 'Prefer': 'return=minimal' }, body: JSON.stringify({ seguimiento_extra: prev }) }); if (d) d.seguimiento_extra = prev; loadPreguntaExtra(depId); } } });
+  loadPreguntaExtra(depId);
+}
+
 async function loadSeguimientos(depId){
   loadPushDev(depId);
   const el=document.getElementById('segBox'); let r=null;
@@ -11147,7 +11328,7 @@ const RG_TABLAS = [['ficha', 'clientes_deportivos?id=eq.{id}&select=*'], ['antro
   ['tests_sudoracion', 'tests_sudoracion?deportista_id=eq.{id}&select=*'], ['planes_competicion', 'planes_competicion?deportista_id=eq.{id}&select=*'],
   ['historial_deportista', 'historial_deportista?deportista_id=eq.{id}&select=*'], ['progresion_cargas', 'progresion_cargas?deportista_id=eq.{id}&select=*'],
   ['seguimientos', 'seguimientos?deportista_id=eq.{id}&select=*'], ['pesos_cliente', 'pesos_cliente?deportista_id=eq.{id}&select=*'], ['fotos_cliente', 'fotos_cliente?deportista_id=eq.{id}&select=*'],
-  ['comidas_cliente', 'comidas_cliente?deportista_id=eq.{id}&select=*'], ['suplementos_cliente', 'suplementos_cliente?deportista_id=eq.{id}&select=*'], ['objetivos_cliente', 'objetivos_cliente?deportista_id=eq.{id}&select=*'],
+  ['comidas_cliente', 'comidas_cliente?deportista_id=eq.{id}&select=*'], ['suplementos_cliente', 'suplementos_cliente?deportista_id=eq.{id}&select=*'], ['seguimientos_extra', 'seguimientos_extra?deportista_id=eq.{id}&select=*'], ['reacciones_comidas', 'reacciones_comidas?deportista_id=eq.{id}&select=*'], ['objetivos_cliente', 'objetivos_cliente?deportista_id=eq.{id}&select=*'],
   ['menus_cliente', 'menus_cliente?deportista_id=eq.{id}&select=*'], ['consentimientos', 'consentimientos?deportista_id=eq.{id}&select=*'], ['fichas_iniciales', 'fichas_iniciales?deportista_id=eq.{id}&select=*'], ['acceso_area_clientes', 'clientes_acceso?deportista_id=eq.{id}&select=email,creado']];
 async function rgRecoger(d) {
   const datos = {}, faltan = [];
@@ -11443,9 +11624,10 @@ async function abrirAjustes(){
     +card('<ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.7 4 3 9 3s9-1.3 9-3V5"/><path d="M3 12c0 1.7 4 3 9 3s9-1.3 9-3"/>','Mantenimiento','Copias y limpieza de archivos.',`<p class="med-note">La copia de seguridad descarga todos los datos del panel. Limpiar archivos busca fotos y documentos de deportistas que ya no existen.</p><div class="aj-btns"><button type="button" class="btn-soft" onclick="cerrarAjustes();exportAllData()">Copia de seguridad</button><button type="button" class="btn-soft" onclick="cerrarAjustes();abrirHuerfanos()">Limpiar archivos</button></div>`)
     +card('<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>','Calendario de Google','Tus citas y revisiones, en tu calendario.',`<p class="med-note">Al crear, mover o borrar una cita o revisión, se crea, mueve o borra sola en tu Google Calendar («REVISIÓN - ANA», color Tomate, 60 min, sin notas ni importes). Solo va del panel a Google: lo que cambies en Google no vuelve aquí.</p><div class="aj-row"><b>Estado</b><span class="v" id="ajGcalEst">Comprobando…</span></div><div class="aj-btns"><button type="button" class="btn-soft" id="ajGcalProbar" onclick="gcalProbar()">Probar conexión</button><button type="button" class="btn-soft" id="ajGcalEnviar" onclick="gcalEnviarProximas()">Enviar las próximas citas</button></div>`)
     +card('<rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/>','Aplicación','Tu cuenta y la versión instalada.',`<div class="aj-row"><b>Cuenta</b><span class="v">${mail?sudEsc(mail):'—'}</span></div><div class="aj-row"><b>Versión</b><span class="v" id="ajVer">Comprobando…</span></div><div class="aj-btns"><button type="button" class="btn-soft" onclick="buscarActualizacion()">Buscar actualización</button></div>`)
+    +card('<path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>','Avisos de novedades','Cuando un cliente envía algo, te avisa el móvil.',`<div id="ajAvBox"><p class="med-note" style="margin:0">Cargando…</p></div>`)
     +card('<rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M7 14h10"/>','Atajos','Para moverte más rápido.',`<div class="aj-row"><span>Buscar en todo el panel</span><span class="v"><span class="aj-kbd">Ctrl / ⌘</span> <span class="aj-kbd">K</span></span></div><div class="aj-row"><span>Cerrar una ventana o el menú</span><span class="v"><span class="aj-kbd">Esc</span></span></div><div class="aj-row"><span>Abrir la barra lateral (móvil)</span><span class="v">Deslizar desde el borde</span></div>`)
     +`<div class="aj-foot"><button type="button" class="btn-cancel" onclick="cerrarAjustes()">Cerrar</button></div>`;
-  ajPintarModo(); ajRgPintar(); gcalPintarEstado();
+  ajPintarModo(); ajRgPintar(); gcalPintarEstado(); avPintar();
   document.getElementById('mAjustes').style.display='flex';
   document.querySelector('#ajCuerpo .aj-seg button').focus();
   try{ const r=await fetch(location.pathname,{method:'HEAD',cache:'no-store'}); const lm=r.headers.get('last-modified'); const el=document.getElementById('ajVer'); if(el) el.textContent=lm?new Date(lm).toLocaleString('es-ES',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}):'—'; }catch(e){ const el=document.getElementById('ajVer'); if(el) el.textContent='—'; }

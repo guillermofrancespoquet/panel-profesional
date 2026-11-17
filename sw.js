@@ -3,9 +3,10 @@
 // - panel-profesional.html: «red primero»; si la red falla o tarda más de 3,5 s, se usa la última copia. Así siempre se abre la versión
 //   más reciente cuando hay conexión y, sin conexión, la app abre y avisa en lugar de dar un error del navegador.
 // - iconos y manifest: copia en caché que se refresca en segundo plano.
+// - Avisos de novedades: la Edge Function `avisos-profesional` manda un aviso SIN contenido (nunca nombres ni datos de clientes); el texto es siempre el de abajo.
 // Todo lo demás (calculadora, área de clientes, Método 3M, Supabase, fuentes) pasa de largo: este archivo no lo toca.
 // Si se cambia esta lógica, subir el número de CACHE.
-const CACHE = 'nl-panel-v3';
+const CACHE = 'nl-panel-v4';
 const PAGINA = 'panel-profesional.html';
 const ESTATICOS = ['icon-192.png', 'icon-512.png', 'icon-rounded-192.png', 'icon-rounded-512.png', 'manifests/manifest-panel.json'];
 const SIN_CONEXION = '<!doctype html><html lang="es"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Sin conexión</title>'
@@ -43,4 +44,21 @@ self.addEventListener('fetch', e => {
   const archivo = url.pathname.split('/').pop();
   if (req.mode === 'navigate' && archivo === PAGINA) { e.respondWith(paginaRedPrimero(req)); return; }
   if (ESTATICOS.includes(archivo)) e.respondWith(estaticoYRefresco(req, archivo).catch(() => fetch(req)));
+});
+
+// Aviso de novedades (sin contenido): se agrupa con `tag`, así dos avisos seguidos son uno solo.
+self.addEventListener('push', e => {
+  e.waitUntil(self.registration.showNotification('Tienes novedades', {
+    body: 'Alguno de tus clientes ha enviado algo. Ábrelo para verlo.',
+    icon: 'icon-192.png', badge: 'icon-192.png', tag: 'novedades', renotify: false,
+  }));
+});
+self.addEventListener('notificationclick', e => {
+  e.notification.close();
+  const destino = new URL(PAGINA, self.registration.scope).href;
+  e.waitUntil(self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(lista => {
+    const abierta = lista.find(c => c.url.split('?')[0].split('#')[0] === destino);
+    if (abierta && 'focus' in abierta) { abierta.postMessage({ novedades: true }); return abierta.focus(); }
+    return self.clients.openWindow(destino);
+  }));
 });
