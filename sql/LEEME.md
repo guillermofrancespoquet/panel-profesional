@@ -109,7 +109,7 @@ Si algo falla, «Probar conexión» dice qué: calendario no compartido (paso 2)
 
 ## Avisos de novedades (móvil del profesional)
 
-Qué hace: cuando un cliente envía el seguimiento, anota un peso, sube una foto o comida, envía la ficha inicial o retira un consentimiento, aparece en la tarjeta **Novedades** del dashboard y, si lo activas, te llega **un aviso genérico al móvil** («Tienes novedades», sin nombres ni datos). Varias novedades seguidas son un solo aviso (espera 1 minuto sin más) y respeta las horas de silencio (22:00–8:00 por defecto).
+Qué hace: cuando un cliente envía el seguimiento, anota un peso, sube una foto o comida, envía la ficha inicial o retira un consentimiento, aparece en la **campanita** del dashboard y, si lo activas, te llega **un aviso genérico al móvil** («Tienes novedades», sin nombres ni datos). Varias novedades seguidas son un solo aviso (espera 1 minuto sin más) y respeta las horas de silencio (22:00–8:00 por defecto).
 
 Pasos (una vez):
 
