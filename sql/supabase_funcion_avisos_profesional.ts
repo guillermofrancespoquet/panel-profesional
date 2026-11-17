@@ -36,12 +36,12 @@ export async function cabeceraVapid(endpoint: string, jwk: JsonWebKey, publica: 
 }
 
 
-async function enviar(endpoint: string, jwk: JsonWebKey, publica: string, contacto: string): Promise<number> {
+async function enviar(endpoint: string, jwk: JsonWebKey, publica: string, contacto: string): Promise<{ st: number; msg: string }> {
   const r = await fetch(endpoint, {
     method: 'POST', redirect: 'manual', signal: AbortSignal.timeout(10000),
-    headers: { Authorization: await cabeceraVapid(endpoint, jwk, publica, contacto), TTL: '14400', Urgency: 'normal', Topic: 'novedades', 'Content-Length': '0' },
+    headers: { Authorization: await cabeceraVapid(endpoint, jwk, publica, contacto), TTL: '14400', Urgency: 'normal', 'Content-Length': '0' },   // sin cabecera Topic: Apple la rechaza si no es un valor concreto (BadWebPushTopic)
   });
-  return r.status;
+  return { st: r.status, msg: r.status >= 300 ? (await r.text().catch(() => '')).slice(0, 120) : '' };   // el motivo del rechazo (p. ej. BadJwtToken) ayuda a diagnosticar
 }
 
 async function handler(req: Request): Promise<Response> {
@@ -58,12 +58,12 @@ async function handler(req: Request): Promise<Response> {
   if (!ids?.length || !subs?.length) return Response.json({ enviados: 0, motivo: 'nada que avisar ahora' });
 
   const jwk = JSON.parse(env('VAPID_PRIVADA_JWK')), publica = env('VAPID_PUBLICA'), contacto = env('VAPID_CONTACTO') || 'mailto:admin@example.com';
-  let alguno = false; const caducados: number[] = [], fallos: number[] = [];
+  let alguno = false; const caducados: number[] = [], fallos: (number | string)[] = [];
   for (const s of subs) {
     if (!hostPermitido(s.endpoint)) { caducados.push(s.id); continue; }   // dirección rara: se borra sin enviar nada
     try {
-      const st = await enviar(s.endpoint, jwk, publica, contacto);
-      if (st >= 200 && st < 300) alguno = true; else if (st === 404 || st === 410) caducados.push(s.id); else fallos.push(st);
+      const { st, msg } = await enviar(s.endpoint, jwk, publica, contacto);
+      if (st >= 200 && st < 300) alguno = true; else if (st === 404 || st === 410) caducados.push(s.id); else fallos.push(st + (msg ? ' ' + msg : ''));
     } catch (_e) { fallos.push(0); }
   }
   if (alguno) await rpc('avisos_prof_enviado', { p_ids: ids });   // si falló todo (no por caducidad), se reintenta en el siguiente minuto
