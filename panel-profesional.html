@@ -1886,7 +1886,7 @@ body.dark-mode .btn-soft{color:var(--g700);border-color:var(--bdm,var(--bd))}
 .dash-vacio>span,.vacio-ic{background:var(--g100);color:var(--g500)}
 .stat-n,.med-stat-v,.obj-pct,.cmp-kcal b,.dash-prox-h b,.dash-stat-n{font-weight:600;letter-spacing:-.025em;font-variant-numeric:tabular-nums}
 /* Franja de cifras (una tarjeta dividida por líneas finas) */
-.kstrip{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--bd);border:.5px solid var(--bd);border-radius:16px;overflow:hidden;margin:1.1rem 0 1.5rem}
+.kstrip{display:grid;grid-template-columns:repeat(var(--kc,4),minmax(0,1fr));gap:1px;background:var(--bd);border:.5px solid var(--bd);border-radius:16px;overflow:hidden;margin:1.1rem 0 1.5rem}
 .kcell{background:var(--sf);padding:16px 18px 17px;min-width:0;display:flex;flex-direction:column;gap:6px}
 .kcell-h{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:13px;font-weight:500;color:var(--g500)}
 .kcell-h svg{color:var(--g400);flex:none}
@@ -1895,6 +1895,17 @@ body.dark-mode .btn-soft{color:var(--g700);border-color:var(--bdm,var(--bd))}
 .kcell.red>b{color:var(--red)}
 .kcell-s{font-size:12px;color:var(--g500);line-height:1.4}
 .kcell-s .up{color:var(--t600);font-weight:600}.kcell-s .down{color:var(--red);font-weight:600}
+button.kcell{border:0;margin:0;font:inherit;text-align:left;cursor:pointer;width:100%;color:inherit}
+button.kcell:hover{background:var(--t50)}
+button.kcell.on{background:var(--t50);box-shadow:inset 0 -2px 0 var(--t400)}
+.kcell.warn>b{color:var(--gold-dk)}
+.kcell.warn .kcell-h svg{color:var(--gold)}
+.dep-tools2{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:1rem}
+.dep-tools2 .cart-tchips{margin:0}
+.dep-vista{margin:0 0 0 auto}
+.dep-vista button{display:inline-flex;align-items:center;gap:6px}
+.dep-tabla.cart-list{margin-bottom:1rem}
+.kstrip:empty{display:none}
 @media(max-width:860px){.kstrip{grid-template-columns:repeat(2,1fr)}.kcell>b{font-size:23px}.kcell{padding:13px 14px}}
 /* Facturación: cabecera, movimientos y exportar */
 .fx-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
@@ -2756,13 +2767,19 @@ input.inp,select.inp{height:44px;padding-top:0;padding-bottom:0}
         Nuevo deportista
       </button>
     </div>
+    <div class="kstrip" id="depStrip" aria-label="Resumen de tu cartera de deportistas"></div>
     <div class="dep-toolbar">
       <div class="dep-search">
         <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         <input type="text" id="depSearchInp" placeholder="Buscar por nombre…" oninput="filterDeportistas()">
       </div>
       <button type="button" class="ui-btn" id="depBajasBtn" style="display:none" onclick="toggleBajas()"></button>
+      <div class="agenda-tabs dep-vista" id="depVista" role="group" aria-label="Forma de ver la lista">
+        <button type="button" class="agenda-tab" data-v="tarjetas" onclick="depVistaSet('tarjetas')">Tarjetas</button>
+        <button type="button" class="agenda-tab" data-v="tabla" onclick="depVistaSet('tabla')">Tabla</button>
+      </div>
     </div>
+    <div class="cart-tchips" id="depChips" style="margin-bottom:1rem"></div>
     <div class="dep-grid" id="depgrid"></div>
   </div>
 </div>
@@ -2882,6 +2899,7 @@ input.inp,select.inp{height:44px;padding-top:0;padding-bottom:0}
         Nueva cita
       </button>
     </div>
+    <div class="kstrip" id="agStrip" aria-label="Resumen de tu agenda"></div>
     <div class="agenda-toolbar">
       <div class="dep-search" style="flex:1;min-width:160px">
         <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -4956,6 +4974,26 @@ function factTramoAnterior(hoy){
   }
   return null;
 }
+// ═══════════════ FRANJA DE CIFRAS (kstrip): la pieza de Facturación, reutilizable ═══════════════
+// Cada celda: etiqueta con icono, cifra grande y una línea que cuenta qué significa. `go` (opcional) la vuelve un botón.
+function kIco(d){ return `<svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">${d}</svg>`; }
+function kCelda(l, v, sub, icono, cls, go){
+  const inner = `<div class="kcell-h"><span>${l}</span>${kIco(icono)}</div><b>${v}</b><div class="kcell-s">${sub || '&nbsp;'}</div>`;
+  return go ? `<button type="button" class="kcell ${cls || ''}" onclick="${go}">${inner}</button>` : `<div class="kcell ${cls || ''}">${inner}</div>`;
+}
+function kStripPon(id, celdas){ const el = document.getElementById(id); if(!el) return; el.style.setProperty('--kc', Math.min(4, Math.max(2, celdas.length))); el.innerHTML = celdas.join(''); }
+const K_IC = {
+  users:'<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+  ok:'<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>',
+  eye:'<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>',
+  alert:'<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>',
+  cal:'<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>',
+  clip:'<path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/>',
+  eur:'<path d="M4 10h12"/><path d="M4 14h9"/><path d="M19 6a7.7 7.7 0 0 0-5.2-2A7.9 7.9 0 0 0 6 12c0 4.4 3.5 8 7.8 8 2 0 3.8-.8 5.2-2"/>',
+  act:'<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>',
+  pct:'<line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/>',
+  smile:'<circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/>'
+};
 function renderFacturacion(){
   const hoy = new Date(), filas = factFilas();
   const cob = filas.filter(x => x.estado==='cobrado' && x.fecha && enPeriodo(x.fecha, hoy));
@@ -4973,8 +5011,7 @@ function renderFacturacion(){
     if(prev > 0){ const pct = Math.round((totCob - prev) / prev * 100); varTxt = `<span class="${pct>=0?'up':'down'}">${pct>=0?'↑':'↓'} ${Math.abs(pct)} %</span> frente al ${ant.txt}`; }
     else if(totCob > 0) varTxt = `Sin cobros en el ${ant.txt}`;
   }
-  const ico = d => `<svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">${d}</svg>`;
-  const cel = (l, v, sub, icono, cls='') => `<div class="kcell ${cls}"><div class="kcell-h"><span>${l}</span>${ico(icono)}</div><b>${v}</b><div class="kcell-s">${sub}</div></div>`;
+  const cel = (l, v, sub, icono, cls='') => kCelda(l, v, sub, icono, cls);
   document.getElementById('factStats').innerHTML =
     cel('Total cobrado', factEur(totCob), varTxt, '<path d="M4 10h12"/><path d="M4 14h9"/><path d="M19 6a7.7 7.7 0 0 0-5.2-2A7.9 7.9 0 0 0 6 12c0 4.4 3.5 8 7.8 8 2 0 3.8-.8 5.2-2"/>') +
     cel('Nutrición Deportiva', factEur(totDep), `${nDep} consulta${nDep!==1?'s':''} cobrada${nDep!==1?'s':''}`, '<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>') +
@@ -5750,8 +5787,9 @@ async function cargarCartera(opts){
       return { d, est, chips, nRed, serie, adhMedia, ultimaCons, sinCons30, rev: rv };
     });
     _cart.tClientes = tareas; cartTareasCitas();
-    _cart.listo = true;
+    _cart.listo = true; _cart.at = Date.now();
     cartPintar();
+    { const vd = document.getElementById('vdepdash'); if(vd && vd.classList.contains('active')) renderDeportistas(); }
     _dash.avisos = _cart.filas.filter(f => f.est !== 'ok').length; dashPintarEstado();
   }catch(e){
     const st1 = document.getElementById('cartStrip'); if(st1 && !_cart.listo) st1.innerHTML = '';
@@ -5813,7 +5851,7 @@ function cartPintarHacer(){
   const T = _cart.tareas, nRojas = T.filter(t => t.urg === 2).length;
   const n = document.getElementById('cartTabHacerN'); n.textContent = T.length || ''; n.classList.toggle('risk', nRojas > 0);
   sbPonBadge('sbCartBadge', T.length, 'tareas por hacer');
-  if(_cart.vista === 'hacer') document.getElementById('cartSub').textContent = T.length ? `${T.length} cosa${T.length !== 1 ? 's' : ''} por hacer${nRojas ? ` · ${nRojas} urgente${nRojas !== 1 ? 's' : ''}` : ''}` : 'Nada pendiente';
+  if(_cart.vista === 'hacer') document.getElementById('cartSub').textContent = T.length ? `${T.length} cosa${T.length !== 1 ? 's' : ''} por hacer${nRojas ? ` · ${nRojas} urgente${nRojas !== 1 ? 's' : ''}` : ''}${(() => { const m = Math.max(0, ...T.map(x => x.edad || 0)); return m > 0 ? ` · la más antigua, hace ${m} día${m !== 1 ? 's' : ''}` : ''; })()}` : 'Nada pendiente';
   const cuenta = k => T.filter(t => t.tipos.includes(k)).length;
   ch.innerHTML = T.length ? `<button type="button" class="dep-chip${_cart.tfiltro === 'todas' ? ' active' : ''}" aria-pressed="${_cart.tfiltro === 'todas'}" onclick="cartTFiltro('todas')">Todas<b>${T.length}</b></button>` +
     CART_TIPOS.filter(([k]) => cuenta(k)).map(([k, l]) => `<button type="button" class="dep-chip${_cart.tfiltro === k ? ' active' : ''}" aria-pressed="${_cart.tfiltro === k}" onclick="cartTFiltro('${k}')">${l}<b>${cuenta(k)}</b></button>`).join('') : '';
@@ -5851,6 +5889,24 @@ function cartSpark(vals){
   const l = vals[n - 1];
   return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" aria-hidden="true"><polyline points="${pts}" fill="none" stroke="var(--t400)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="${px(n-1).toFixed(1)}" cy="${py(l).toFixed(1)}" r="2.4" fill="var(--t400)"/></svg>`;
 }
+function cartTablaHtml(v){
+  const hoy = localISO(new Date()), dia = f => String(f || '').slice(0, 10);
+  const hace = f => { if(!f) return 'Aún ninguna'; const n = Math.round((new Date(hoy + 'T00:00:00') - new Date(dia(f) + 'T00:00:00')) / 86400000); return n <= 0 ? 'Hoy' : n === 1 ? 'Hace 1 día' : n < 60 ? `Hace ${n} días` : `Hace ${Math.round(n / 30.4)} meses`; };
+  const fmt = f => f ? new Date(dia(f) + 'T00:00:00').toLocaleDateString('es-ES', { day: 'numeric', month: 'short' }) : 'Sin fecha';
+  return `<div class="cart-head" aria-hidden="true"><div>Cliente</div><div>Estado</div><div>Qué mirar</div><div>Última consulta</div><div>Revisión</div><div class="cart-adh">Adherencia</div></div>` + v.map(f => {
+    const d = f.d, mostrar = f.chips.slice(0, 3), mas = f.chips.length - mostrar.length;
+    const chips = f.chips.length ? mostrar.map(c => `<span class="cart-chip ${c.cls}" title="${sudEsc(c.t)}">${sudEsc(c.t)}</span>`).join('') + (mas > 0 ? `<span class="cart-chip" title="${sudEsc(f.chips.slice(3).map(c => c.t).join(' · '))}">+${mas}</span>` : '') : '<span class="cart-ok">Todo en orden</span>';
+    const adh = f.adhMedia != null ? `${cartSpark(f.serie)}<span class="n">${medNum(f.adhMedia, 1)}/5</span>` : '<span class="cart-ok">—</span>';
+    return `<div class="cart-row" role="button" tabindex="0" onclick="abrirFichaDash(${d.id})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();abrirFichaDash(${d.id})}">
+      <div class="cart-cli"><span class="cart-av">${avatarHtml(d, '')}</span><div style="min-width:0"><div class="cart-n">${sudEsc(d.nombre)}</div><div class="cart-s">${sudEsc(d.deporte || '—')}</div></div></div>
+      <div class="cart-est"><span class="cart-dot ${f.est}"></span>${CART_EST[f.est].t}</div>
+      <div class="cart-mot">${chips}</div>
+      <div class="cart-c cart-cons"><span class="cart-k">Consulta</span>${hace(f.ultimaCons)}</div>
+      <div class="cart-c cart-rev"><span class="cart-k">Revisión</span>${fmt(f.rev)}</div>
+      <div class="cart-c cart-adh">${adh}</div>
+    </div>`;
+  }).join('');
+}
 function cartPintar(){
   cartPintarHacer();
   const filas = _cart.filas, el = document.getElementById('cartList'); if(!el) return;
@@ -5870,22 +5926,7 @@ function cartPintar(){
   v = v.slice().sort(ord);
   if(!filas.length){ el.innerHTML = vacioHtml('users','Aún no hay clientes en la cartera','Crea tu primer deportista y aquí verás su estado de un vistazo.',{t:'Nuevo deportista',f:"navTo('deportiva');openAddDep()"}); return; }
   if(!v.length){ el.innerHTML = vacioHtml('search','Ningún cliente coincide','Cambia el filtro o la búsqueda.',null,true); return; }
-  const hoy = localISO(new Date()), dia = f => String(f || '').slice(0, 10);
-  const hace = f => { if(!f) return 'Aún ninguna'; const n = Math.round((new Date(hoy + 'T00:00:00') - new Date(dia(f) + 'T00:00:00')) / 86400000); return n <= 0 ? 'Hoy' : n === 1 ? 'Hace 1 día' : n < 60 ? `Hace ${n} días` : `Hace ${Math.round(n / 30.4)} meses`; };
-  const fmt = f => f ? new Date(dia(f) + 'T00:00:00').toLocaleDateString('es-ES', { day: 'numeric', month: 'short' }) : 'Sin fecha';
-  el.innerHTML = `<div class="cart-head" aria-hidden="true"><div>Cliente</div><div>Estado</div><div>Qué mirar</div><div>Última consulta</div><div>Revisión</div><div class="cart-adh">Adherencia</div></div>` + v.map(f => {
-    const d = f.d, mostrar = f.chips.slice(0, 3), mas = f.chips.length - mostrar.length;
-    const chips = f.chips.length ? mostrar.map(c => `<span class="cart-chip ${c.cls}" title="${sudEsc(c.t)}">${sudEsc(c.t)}</span>`).join('') + (mas > 0 ? `<span class="cart-chip" title="${sudEsc(f.chips.slice(3).map(c => c.t).join(' · '))}">+${mas}</span>` : '') : '<span class="cart-ok">Todo en orden</span>';
-    const adh = f.adhMedia != null ? `${cartSpark(f.serie)}<span class="n">${medNum(f.adhMedia, 1)}/5</span>` : '<span class="cart-ok">—</span>';
-    return `<div class="cart-row" role="button" tabindex="0" onclick="abrirFichaDash(${d.id})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();abrirFichaDash(${d.id})}">
-      <div class="cart-cli"><span class="cart-av">${avatarHtml(d, '')}</span><div style="min-width:0"><div class="cart-n">${sudEsc(d.nombre)}</div><div class="cart-s">${sudEsc(d.deporte || '—')}</div></div></div>
-      <div class="cart-est"><span class="cart-dot ${f.est}"></span>${CART_EST[f.est].t}</div>
-      <div class="cart-mot">${chips}</div>
-      <div class="cart-c cart-cons"><span class="cart-k">Consulta</span>${hace(f.ultimaCons)}</div>
-      <div class="cart-c cart-rev"><span class="cart-k">Revisión</span>${fmt(f.rev)}</div>
-      <div class="cart-c cart-adh">${adh}</div>
-    </div>`;
-  }).join('');
+  el.innerHTML = cartTablaHtml(v);
   cargarAvatares(el);
 }
 
@@ -6493,6 +6534,7 @@ const deleteDep = (id) => sb(`clientes_deportivos?id=eq.${id}`, {method:'DELETE'
 
 let depSearchTerm = '';
 
+let _depFiltro = 'todos', _depVista = (() => { try { return localStorage.getItem('nl_dep_vista') === 'tabla' ? 'tabla' : 'tarjetas'; } catch (e) { return 'tarjetas'; } })();
 async function loadDeportistas() {
   skPoner('depgrid', skCards(8));
   deportistas = await getDeportistas() || [];
@@ -6500,6 +6542,34 @@ async function loadDeportistas() {
   const inp = document.getElementById('depSearchInp');
   if (inp) inp.value = '';
   renderDeportistas();
+  // El estado de cada deportista (al día, por mirar, en riesgo) sale de la Cartera: se pide solo si no hay datos recientes
+  const viejo = !_cart.listo || Date.now() - (_cart.at || 0) > 120000 || (typeof _mutAt === 'number' && _mutAt > (_cart.at || 0));
+  if (viejo) cargarCartera({ silencioso: true });
+}
+function depEstado(id) { const f = (_cart.filas || []).find(x => x.d && x.d.id == id); return f ? f.est : null; }
+function depFiltroSet(k) { _depFiltro = (_depFiltro === k && k !== 'todos') ? 'todos' : k; renderDeportistas(); }
+function depVistaSet(v) { _depVista = v === 'tabla' ? 'tabla' : 'tarjetas'; try { localStorage.setItem('nl_dep_vista', _depVista); } catch (e) {} renderDeportistas(); }
+// Franja de cifras de Nutrición Deportiva (misma pieza que Facturación)
+function depStripPintar() {
+  const el = document.getElementById('depStrip'); if (!el) return;
+  const act = (deportistas || []).filter(d => !d.fecha_baja);
+  if (!act.length) { el.style.display = 'none'; return; }
+  el.style.display = '';
+  const n = (k, s, p) => `${k} ${k === 1 ? s : p}`;
+  if (!_cart.listo) {
+    kStripPon('depStrip', [kCelda('Deportistas', act.length, 'Calculando su estado…', K_IC.users), kCelda('Al día', '—', '&nbsp;', K_IC.ok), kCelda('Por mirar', '—', '&nbsp;', K_IC.eye), kCelda('En riesgo', '—', '&nbsp;', K_IC.alert)]);
+    return;
+  }
+  const F = _cart.filas, cnt = { ok: 0, warn: 0, risk: 0 }; F.forEach(f => cnt[f.est]++);
+  const s30 = F.filter(f => f.sinCons30).length, conRev = F.filter(f => f.rev).length;
+  const urg = F.filter(f => f.est === 'risk').sort((a, b) => b.nRed - a.nRed || b.chips.length - a.chips.length)[0];
+  const pct = F.length ? Math.round(cnt.ok / F.length * 100) : 0;
+  kStripPon('depStrip', [
+    kCelda('Deportistas', F.length, `${conRev} con revisión programada`, K_IC.users, '', "depFiltroSet('todos')"),
+    kCelda('Al día', cnt.ok, F.length ? `${pct} % de tu cartera` : '', K_IC.ok, '', "depFiltroSet('ok')"),
+    kCelda('Por mirar', cnt.warn, s30 ? `${n(s30, 'lleva', 'llevan')} más de 30 días sin consulta` : 'Nadie lleva más de 30 días sin consulta', K_IC.eye, cnt.warn ? 'warn' : '', "depFiltroSet('warn')"),
+    kCelda('En riesgo', cnt.risk, cnt.risk ? `El más urgente: ${sudEsc(urg.d.nombre.split(' ')[0])}` : 'Ninguno', K_IC.alert, cnt.risk ? 'red' : '', "depFiltroSet('risk')")
+  ]);
 }
 
 function daysUntil(dateStr) {
@@ -6531,8 +6601,18 @@ function renderDeportistas() {
   const nBajas = deportistas.filter(d => d.fecha_baja).length, bb = document.getElementById('depBajasBtn');
   if (bb) { bb.style.display = nBajas ? '' : 'none'; bb.textContent = _verBajas ? 'Ocultar bajas' : `Ver bajas (${nBajas})`; }
   // Apply search filter
+  depStripPintar();
   let filtered = _verBajas ? deportistas : deportistas.filter(d => !d.fecha_baja);
   if (depSearchTerm) filtered = filtered.filter(d => d.nombre.toLowerCase().includes(depSearchTerm));
+  // Filtros con contador por estado (cuando la Cartera ya ha calculado el estado de cada uno)
+  const chipsEl = document.getElementById('depChips'), conEstado = _cart.listo && (_cart.filas || []).length;
+  if (chipsEl) {
+    const base = filtered, cuenta = k => base.filter(d => depEstado(d.id) === k).length;
+    chipsEl.innerHTML = conEstado ? [['todos', 'Todos', base.length], ['risk', 'En riesgo', cuenta('risk')], ['warn', 'Por mirar', cuenta('warn')], ['ok', 'Al día', cuenta('ok')]]
+      .map(([k, l, c]) => `<button type="button" class="dep-chip${_depFiltro === k ? ' active' : ''}" aria-pressed="${_depFiltro === k}" onclick="depFiltroSet('${k}')">${l}<b>${c}</b></button>`).join('') : '';
+  }
+  if (conEstado && _depFiltro !== 'todos') filtered = filtered.filter(d => depEstado(d.id) === _depFiltro);
+  document.querySelectorAll('#depVista button').forEach(b => { const on = b.dataset.v === _depVista; b.classList.toggle('on', on); b.setAttribute('aria-pressed', String(on)); });
 
   // Sort by revision urgency: overdue/soonest first, then no-date, then furthest
   filtered = [...filtered].sort((a, b) => {
@@ -6547,6 +6627,7 @@ function renderDeportistas() {
   document.getElementById('depsub').textContent = deportistas.length ? `${deportistas.length} deportista${deportistas.length>1?'s':''}${filtered.length!==deportistas.length?` · ${filtered.length} visible${filtered.length!==1?'s':''}`:''}` : 'Sin deportistas todavía';
 
   const g = document.getElementById('depgrid');
+  g.className = _depVista === 'tabla' ? 'cart-list dep-tabla' : 'dep-grid';
   if (!deportistas.length) {
     g.innerHTML = vacioHtml('users','Todavía no tienes deportistas','Añade al primero para llevar su ficha, sus mediciones y su seguimiento semanal.',{t:'Nuevo deportista',f:'openAddDep()'});
     return;
@@ -6554,6 +6635,13 @@ function renderDeportistas() {
   if (!filtered.length) {
     g.innerHTML = vacioHtml('search','Sin resultados','Prueba con otro nombre o quita el filtro.');
     return;
+  }
+  if (_depVista === 'tabla' && _cart.listo) {
+    const nom = (a, b) => String(a.d.nombre).localeCompare(String(b.d.nombre), 'es');
+    const fl = filtered.map(d => (_cart.filas || []).find(f => f.d.id == d.id)).filter(Boolean)
+      .sort((a, b) => CART_EST[a.est].o - CART_EST[b.est].o || b.nRed - a.nRed || b.chips.length - a.chips.length || nom(a, b));
+    if (fl.length) { g.innerHTML = cartTablaHtml(fl); cargarAvatares(g); return; }
+    g.className = 'dep-grid';
   }
   g.innerHTML = filtered.map(d => {
     const initials = getInitials(d.nombre);
@@ -6882,6 +6970,26 @@ function filterAgenda(){
   renderCitas();
 }
 
+// Franja de cifras de la agenda (siempre sobre todas las citas, no sobre el filtro activo)
+function agStripPintar(ahora) {
+  const el = document.getElementById('agStrip'); if (!el) return;
+  if (!citas.length) { el.style.display = 'none'; return; }
+  el.style.display = '';
+  const hoy = localISO(ahora), n = (k, s, p) => `${k} ${k === 1 ? s : p}`;
+  const dow = (ahora.getDay() + 6) % 7, lun = new Date(ahora.getFullYear(), ahora.getMonth(), ahora.getDate() - dow), dom = new Date(lun.getFullYear(), lun.getMonth(), lun.getDate() + 6);
+  const l0 = localISO(lun), l1 = localISO(dom), dia = c => String(c.fecha || '').slice(0, 10);
+  const deHoy = citas.filter(c => dia(c) === hoy), siguiente = deHoy.filter(c => c.hora && !citaYaPaso(c, ahora)).sort((a, b) => String(a.hora).localeCompare(String(b.hora)))[0];
+  const sem = citas.filter(c => dia(c) >= l0 && dia(c) <= l1), nD = sem.filter(c => citaTipo(c) === 'deportiva').length, nM = sem.filter(c => citaTipo(c) === 'metodo').length;
+  const impagas = citas.filter(c => !c.pagado && c.requiere_pago !== false && citaYaPaso(c, ahora)), euros = impagas.reduce((s, c) => s + (Number(c.monto) || 0), 0);
+  const hayHecha = citas.some(c => 'hecha' in c), hace = c => Math.max(0, Math.round((new Date(hoy + 'T00:00:00') - new Date(dia(c) + 'T00:00:00')) / 86400000));
+  const sinReg = hayHecha ? citas.filter(c => !c.hecha && citaYaPaso(c, ahora) && hace(c) <= 21) : [], vieja = sinReg.reduce((m, c) => Math.max(m, hace(c)), 0);
+  kStripPon('agStrip', [
+    kCelda('Hoy', deHoy.length, deHoy.length ? (siguiente ? `La siguiente, a las ${String(siguiente.hora).slice(0, 5)} h` : 'Ya no quedan más hoy') : 'Día libre', K_IC.cal),
+    kCelda('Esta semana', sem.length, sem.length ? [nD ? `${nD} de Nutrición Deportiva` : '', nM ? `${nM} de Método 3M` : ''].filter(Boolean).join(' · ') || 'Otras citas' : 'Sin citas esta semana', K_IC.cal),
+    kCelda('Pendiente de cobro', euros > 0 ? factEur(euros) : impagas.length, impagas.length ? `${n(impagas.length, 'cita pasada', 'citas pasadas')} sin cobrar` : 'Nada pendiente', K_IC.eur, impagas.length ? 'red' : ''),
+    kCelda('Sin registrar', sinReg.length, sinReg.length ? `La más antigua, hace ${n(vieja, 'día', 'días')}` : (hayHecha ? 'Todo registrado' : 'Hace falta el SQL de «hecha»'), K_IC.clip, sinReg.length ? 'warn' : '')
+  ]);
+}
 function renderCitas() {
   let filtered = citas;
   if (agendaFilterTipo !== 'todas') filtered = filtered.filter(c => citaTipo(c) === agendaFilterTipo);
@@ -6891,6 +6999,7 @@ function renderCitas() {
   const proximas = filtered.filter(c => !citaArchivada(c, ahora));
   const pasadas = filtered.filter(c => citaArchivada(c, ahora)).reverse();
 
+  agStripPintar(ahora);
   const filtroActivo = agendaFilterTipo !== 'todas' || agendaSearchTerm;
   document.getElementById('agendasub').textContent = citas.length
     ? `${proximas.length} próxima${proximas.length!==1?'s':''}${pasadas.length?` · ${pasadas.length} pasada${pasadas.length!==1?'s':''}`:''}${filtroActivo?` · ${filtered.length} de ${citas.length} totales`:''}`
@@ -7991,6 +8100,7 @@ function openDepDet(id) {
 
     <div class="depd-tabbar"><div class="depd-tabs" role="tablist" aria-label="Secciones de la ficha" onkeydown="depTabKey(event)">${DEP_TABS.map(([k,t])=>`<button type="button" role="tab" class="depd-tab${k===_depTab?' on':''}" id="depTab-${k}" data-k="${k}" aria-selected="${k===_depTab}" aria-controls="depPanel-${k}" tabindex="${k===_depTab?0:-1}" onclick="depTab('${k}')">${t}${k==='archivos'?`<span class="tab-n">${(d.archivos||[]).length}</span>`:''}</button>`).join('')}</div></div>
     <div class="depd-panel${_depTab==='resumen' ? ' on' : ''}" role="tabpanel" id="depPanel-resumen" aria-labelledby="depTab-resumen" data-k="resumen" tabindex="0">
+    <div class="kstrip" id="depKStrip" aria-label="Cifras clave del deportista"></div>
     <div class="res-grid">
     <div class="res-main">
     <div class="depd-section res-est">
@@ -8805,6 +8915,22 @@ async function loadEstado(depId){
     const n = dias(u.fecha), vieja = n > 90;
     add('Última medición', `${fmt(u.fecha)}${partes.length ? ': ' + partes.join(' · ') : ''}${bascula ? ' (báscula)' : ''} · ${hace(n)}${vieja ? ' — conviene volver a medir' : ''}`, vieja);
   } else add('Mediciones', 'Todavía no hay ninguna.', false);
+
+  // Franja de cifras de la parte alta del Resumen (misma pieza que Facturación)
+  try {
+    const u0 = fuente.length ? fuente[fuente.length - 1] : null, p0 = fuente.length > 1 ? fuente[0] : null, pa = fuente.length > 1 ? fuente[fuente.length - 2] : null;
+    const gU = u0 ? (bascula ? u0.pct_grasa : u0.grasa) : null, gA = pa ? (bascula ? pa.pct_grasa : pa.grasa) : null;
+    const dif = (x, y, dec, u) => `${x - y < 0 ? '↓' : '↑'} ${medNum(Math.abs(x - y), dec)} ${u}`;
+    const rec4 = segs.filter(x => dia(x.semana) >= localISO(new Date(Date.now() - 28 * 86400000))), adh = infMedia(rec4.map(x => (x.respuestas || {}).adherencia));
+    const lunesK = lunesMadridISO(), segOn = !!((d.formularios || {}).seguimiento || {}).activo, sinEnv = segOn && segYaToca(d, lunesK) && !segs.some(x => dia(x.semana) >= lunesK);
+    const ultC = [hist[0] && hist[0].fecha, u0 && u0.fecha, bpts.length ? bpts[bpts.length - 1].fecha : null].filter(Boolean).map(dia).sort().pop() || null, nC = ultC ? dias(ultC) : 0;
+    kStripPon('depKStrip', [
+      kCelda(bascula ? 'Peso (báscula)' : 'Peso', u0 && u0.peso != null ? medNum(u0.peso, 1) + ' kg' : '—', u0 && u0.peso != null ? (p0 && p0.peso != null ? `${dif(u0.peso, p0.peso, 1, 'kg')} desde el inicio` : `Medido ${hace(dias(u0.fecha))}`) : 'Sin mediciones', K_IC.act),
+      kCelda('% de grasa', gU != null ? medNum(gU, 1) + ' %' : '—', gU != null ? (gA != null ? `${dif(gU, gA, 1, 'pts')} frente a la anterior` : `Medido ${hace(dias(u0.fecha))}`) : 'Sin dato', K_IC.pct),
+      kCelda('Adherencia', adh != null ? medNum(adh, 1) + '/5' : '—', adh != null ? `Media de 4 semanas${sinEnv ? ' · esta semana sin enviar' : ''}` : (segOn ? 'Aún sin respuestas' : 'Seguimiento sin activar'), K_IC.smile, adh != null && adh <= 2 ? 'red' : ''),
+      kCelda('Última consulta', ultC ? (nC <= 0 ? 'Hoy' : `${nC} día${nC !== 1 ? 's' : ''}`) : '—', ultC ? `El ${fmt(ultC)}${nC > 30 ? ' · hace más de un mes' : ''}` : 'Aún no hay ninguna', K_IC.clip, ultC && nC > 30 ? 'warn' : '')
+    ]);
+  } catch (e) {}
 
   // Última analítica (solo si hay alguna: no se avisa de que falte)
   if(anaEst.length){
