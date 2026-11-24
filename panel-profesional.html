@@ -3634,6 +3634,14 @@ input.inp,select.inp{height:44px;padding-top:0;padding-bottom:0}
           <div class="sup-top"><p class="sup-name">Proteína en polvo</p><span class="sup-badge ctx">Herramienta</span></div>
           <div class="sup-row"><span>Uso</span><p>No es un ergogénico: es una forma práctica de completar la ingesta proteica diaria cuando no se alcanza con alimentos (whey o vegetal).</p></div>
         </div>
+        <div class="sup-card">
+          <div class="sup-top"><p class="sup-name">Fibra</p><span class="sup-badge ctx">Contexto</span></div>
+          <div class="sup-row"><span>Día a día</span><p>EFSA 2010: 25 g/día se consideran adecuados para la función intestinal normal en adultos (leído en resúmenes del dictamen; el original no se pudo abrir). En deportistas, una ingesta adecuada de fibra se asocia a una microbiota más sana; las dietas bajas en fibra o con muchos alimentos evitados pueden perjudicarla (Hughes 2021)</p></div>
+          <div class="sup-row"><span>Antes de la prueba</span><p>En resistencia con síntomas digestivos, entrenar el intestino con hidratos, reducir fibra y lácteos o seguir una dieta baja en FODMAP puede reducir las molestias (revisión sistemática, Montero-Carrasco 2024). Sin pauta de horas verificada: se prueba en entrenamiento</p></div>
+          <div class="sup-row"><span>Categorías de peso</span><p>Deportes de combate: &lt; 10 g/día durante 4 días permite perder un 1-2 % de masa corporal antes del pesaje, y tras el pesaje se limita la fibra (ISSN 2025). Criterio propio, sin fuente: no aplicarlo en menores</p></div>
+          <div class="sup-row"><span>Suplementos</span><p>No se ha revisado ningún suplemento de fibra (psyllium, inulina…): sin fuente aquí. La pauta es de alimentos</p></div>
+          <div class="sup-row"><span>Fuentes</span><p>EFSA 2010 (doi 10.2903/j.efsa.2010.1462); Hughes 2021 (doi 10.1093/advances/nmab077); Montero-Carrasco 2024 (doi 10.3390/nu16223852); ISSN 2025 (doi 10.1080/15502783.2025.2467909)</p></div>
+        </div>
         </div>
       </div>
       <div class="sup-group" id="supDebil">
@@ -3715,7 +3723,14 @@ input.inp,select.inp{height:44px;padding-top:0;padding-bottom:0}
         </div>
         <div class="sup-card">
           <div class="sup-top"><p class="sup-name">Antidopaje y calidad</p><span class="sup-badge warn">Norma</span></div>
-          <div class="sup-row"><span>Riesgo</span><p>Algunos suplementos contienen sustancias prohibidas sin declararlas (COI 2018). En deportistas federados, comprobar el producto antes de usarlo y preferir marcas con control de calidad independiente.</p></div>
+          <div class="sup-row"><span>Riesgo</span><p>Algunos suplementos contienen sustancias prohibidas sin declararlas (COI 2018). La revisión de Peeling 2019 (doi 10.1123/ijsnem.2018-0271) cita el riesgo de ingerir sustancias prohibidas presentes como contaminantes. En deportistas federados, comprobar el producto antes de usarlo</p></div>
+          <div class="sup-row"><span>Certificación</span><p>Programas independientes como NSF Certified for Sport (analiza unas 290 sustancias prohibidas y audita la fábrica) o Informed Sport (analiza cada lote). Según los propios programas reducen el riesgo, no lo eliminan; hay que comprobar el producto y el lote en su base de datos oficial. Un producto sin certificar no permite saber si lo de dentro coincide con la etiqueta (NSF). Close 2022 (doi 10.1123/ijsnem.2021-0335) propone, además, una estrategia de reducción de riesgos y probar siempre antes</p></div>
+          <div class="sup-row"><span>Lista de la AMA</span><p>No se pudo abrir la web de la AMA desde la app: lo que sigue viene de resúmenes de la lista 2026 y de la AIS. <b>Cafeína</b>: no prohibida; en el Programa de Seguimiento 2026 (solo en competición). <b>Glicerol</b>: retirado de la lista el 1 de enero de 2018 (AIS). <b>Cetonas exógenas</b>: no figuran en la lista; la UCI no las recomienda (2025) y el MPCC las prohíbe a sus equipos. <b>El resto: sin verificar</b>. Comprobar siempre la lista vigente y la normativa de la federación</p></div>
+        </div>
+        <div class="sup-card">
+          <div class="sup-top"><p class="sup-name">Sodio y electrolitos</p><span class="sup-badge warn">Seguridad</span></div>
+          <div class="sup-row"><span>Hiponatremia</span><p>La hiponatremia asociada al ejercicio es un sodio en sangre por debajo de 135 mmol/L durante o hasta 24 h después de una actividad prolongada (Wilderness Medical Society 2019, doi 10.1016/j.wem.2019.11.003)</p></div>
+          <div class="sup-row"><span>En la app</span><p>El sodio del sudor y la reposición salen del test de sudoración (Baker 2016) y del plan de competición. Sin pauta de suplementar sodio: no se pudo leer el consenso de 2015 (doi 10.1097/JSM.0000000000000221, sin resumen accesible), así que no se citan cantidades de ingesta durante el ejercicio</p></div>
         </div>
         <div class="sup-card">
           <div class="sup-top"><p class="sup-name">Poblaciones especiales</p><span class="sup-badge warn">Norma</span></div>
@@ -10783,6 +10798,9 @@ const SUP_CAT = [
     calc:() => ({ dosis:'', momento:'', explica:'No hay base para recomendarlas. Revisión sistemática de 10 estudios (Margolis 2020): de 16 resultados de rendimiento, 3 fueron positivos, 10 nulos y 3 negativos, con mucha heterogeneidad; otra revisión en corredores de fondo (Sun 2025: 7 estudios con suplementos de cetonas) no halló beneficios ni perjuicios. Bajan la glucosa en sangre (≈ 0,5 mmol/L frente a placebo) y suben el β-hidroxibutirato en sangre (Falkenhain 2022).', refs:'Margolis 2020 (doi 10.1093/advances/nmz104); Sun 2025 (doi 10.1177/19417381241271547); Falkenhain 2022 (doi 10.1093/advances/nmac036)', avisos:['Sin beneficio claro: no las recomiendes de forma rutinaria.', 'Al bajar la glucosa en sangre, consulta con el médico si hay diabetes o tratamiento que la modifique.'] }) },
   { k:'quercetina', n:'Quercetina', ev:'debil', sinDosis:true,
     calc:() => ({ dosis:'', momento:'', explica:'Efecto trivial: el metaanálisis de Kressler 2011 (11 estudios) halló una mejora de la resistencia y del VO₂máx entre trivial y pequeña (ES 0,15; ≈ 2 %), y el de Pelletier 2013 (7 estudios) concluyó que es poco probable que sea ergogénica: +0,74 % en rendimiento, significativo solo en personas sin entrenar (0,09 % en entrenadas). Los estudios usaron de mediana ≈ 1000 mg/día durante ≈ 11 días, pero eso describe lo que se probó, no una dosis recomendada.', refs:'Kressler 2011 (doi 10.1249/MSS.0b013e31822495a7); Pelletier 2013 (doi 10.1123/ijsnem.23.1.73)', avisos:['No merece la pena para rendimiento en deportistas entrenados.'] }) },
+  { k:'fibra', n:'Fibra (alimentos)', ev:'contexto', sinDosis:true,
+    calc:() => ({ dosis:'', momento:'', explica:'EFSA 2010 considera adecuados 25 g/día de fibra para la función intestinal normal en adultos. En deportistas, una ingesta adecuada se asocia a una microbiota más sana (Hughes 2021); en resistencia con síntomas digestivos, reducir fibra y lácteos, entrenar el intestino con hidratos o una dieta baja en FODMAP pueden reducir las molestias (Montero-Carrasco 2024). Para el pesaje en deportes de combate, < 10 g/día durante 4 días baja un 1-2 % de la masa corporal (ISSN 2025).', refs:'EFSA 2010 (doi 10.2903/j.efsa.2010.1462); Hughes 2021 (doi 10.1093/advances/nmab077); Montero-Carrasco 2024 (doi 10.3390/nu16223852); ISSN 2025 (doi 10.1080/15502783.2025.2467909)',
+      avisos:['La cifra de EFSA se leyó en resúmenes del dictamen: el original no se pudo abrir.', 'No se ha revisado ningún suplemento de fibra: la pauta es de alimentos. Reducir fibra antes de una prueba solo en quien tiene molestias, y probado en entrenamiento.'] }) },
   { k:'proteina', n:'Proteína en polvo', ev:'contexto', sinDosis:true,
     calc:() => ({ dosis:'', momento:'', explica:'No es un ergogénico: sirve para completar la ingesta proteica diaria cuando no se alcanza con alimentos. La dosis es lo que falte para su objetivo.', refs:'Herramientas → Suplementación', avisos:[] }) },
   { k:'vitd', n:'Vitamina D', ev:'contexto', analitica:true,
@@ -10805,6 +10823,15 @@ const SUP_CAT = [
 ];
 let _sup = null, suplCache = {};
 const supCat = k => SUP_CAT.find(x => x.k === k) || SUP_CAT[SUP_CAT.length - 1];
+// Estado antidopaje (solo para el profesional). La web de la AMA no se pudo abrir: solo se anota lo que consta en resúmenes de la lista 2026 y en la AIS; el resto, sin verificar.
+const SUP_AD_DEF = 'Estado antidopaje sin verificar: no se pudo consultar la lista de la AMA. En un deportista federado, comprobar la lista vigente y preferir un producto con certificación independiente (NSF Certified for Sport, Informed Sport).';
+const SUP_AD = {
+  cafeina:'No es sustancia prohibida: la lista de la AMA 2026 la mantiene en el Programa de Seguimiento (solo en competición), según resúmenes de la lista. Comprueba la lista vigente.',
+  glicerol:'Retirado de la lista de la AMA el 1 de enero de 2018 (AIS). Comprueba la lista vigente y la normativa de la federación.',
+  cetonas:'No figuran en la lista de la AMA; la UCI no las recomienda (2025) y el MPCC las prohíbe a sus equipos. Comprueba la normativa de la federación.',
+  fibra:'No aplica: es un componente de la dieta.'
+};
+const supAd = k => 'Antidopaje: ' + (SUP_AD[k] || SUP_AD_DEF);
 
 // Peso y edad del cliente para el cálculo: peso de la última antropometría, báscula o el que anota el propio cliente; edad por la fecha de nacimiento del perfil.
 async function supContexto(depId){
@@ -10869,10 +10896,10 @@ function supRecalcular(inicial){
   const necesitaPeso = !it.sinDosis && /\bp\.peso\b/.test(String(it.calc)) && !(k === 'creatina' && pautaSel.value !== 'carga');
   if(necesitaPeso && !(peso > 0)){ caja.innerHTML = '<p class="sup-calc-n">Escribe el peso del cliente para calcular la dosis.</p>'; return; }
   const c = it.calc({ peso: peso > 0 ? peso : 70, edad: _sup.edad }, it.pautas ? pautaSel.value : null);
-  const gen = supAvisos(_sup.edad), todos = gen.rojo.concat(c.avisos || [], gen.av);
+  const gen = supAvisos(_sup.edad), ad = supAd(k), todos = gen.rojo.concat(c.avisos || [], gen.av, [ad]);
   _sup.calc = { peso: necesitaPeso ? peso : null, edad: _sup.edad != null ? Math.round(_sup.edad * 10) / 10 : null, pauta: it.pautas ? pautaSel.value : null, explica: c.explica, refs: c.refs, avisos: todos };
   caja.innerHTML = `<p class="sup-calc-h">Solo para ti</p><p class="sup-calc-t">${sudEsc(c.explica)}</p>${c.refs ? `<p class="sup-calc-r">Fuente: ${sudEsc(c.refs)}</p>` : ''}
-    ${gen.rojo.map(a => `<p class="sup-av rojo">${sudEsc(a)}</p>`).join('')}${(c.avisos || []).concat(gen.av).map(a => `<p class="sup-av">${sudEsc(a)}</p>`).join('')}`;
+    ${gen.rojo.map(a => `<p class="sup-av rojo">${sudEsc(a)}</p>`).join('')}${(c.avisos || []).concat(gen.av, [ad]).map(a => `<p class="sup-av">${sudEsc(a)}</p>`).join('')}`;
   if(!_sup.dosisTocada) document.getElementById('supDosis').value = c.dosis;
   if(!_sup.momentoTocado) document.getElementById('supMomento').value = c.momento;
 }
