@@ -304,6 +304,14 @@ body.dark-mode .btn-soft.est-acc{color:var(--g700);border-color:var(--bdm,var(--
 .depd-hero .btn-action:hover{background:rgba(255,255,255,.18) !important;opacity:1}
 .depd-hero .btn-action.primary{background:#F4F2ED !important;border-color:#F4F2ED;color:var(--t900) !important}
 .depd-hero .btn-action.primary:hover{background:#fff !important}
+.depd-more{position:relative;display:inline-flex}
+.depd-more-b{padding-left:12px !important;padding-right:12px !important}
+.depd-menu{position:absolute;right:0;top:calc(100% + 6px);min-width:190px;background:var(--sf);border:.5px solid var(--bdm);border-radius:12px;padding:5px;box-shadow:0 10px 28px rgba(0,0,0,.22);z-index:60}
+.depd-menu[hidden]{display:none}
+.depd-menu button{display:flex;align-items:center;gap:8px;width:100%;text-align:left;border:0;background:transparent;border-radius:8px;padding:10px 12px;font:inherit;font-size:13px;font-weight:500;color:var(--g900);cursor:pointer}
+.depd-menu button:hover{background:var(--g100)}
+.depd-menu button.danger{color:var(--red)}
+.depd-menu button.danger:hover{background:rgba(184,50,50,.1)}
 .depd-hero .btn-action.danger{color:#F4B5B3 !important;background:rgba(242,133,131,.12) !important;border-color:rgba(242,133,131,.35)}
 .depd-section{margin-bottom:2rem;min-width:0}
 @media(max-width:860px){.depd-section{margin-bottom:1.75rem}}
@@ -382,6 +390,7 @@ body.dark-mode .acc-pill.on{color:var(--t100)}
 .med-delta{font-size:11px;color:var(--g500);margin-top:2px}
 .med-series{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-top:2px}
 .med-series>.med-serie:only-child{max-width:340px}
+@media (min-width:1100px){.med-series{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}}
 .med-serie{background:var(--bg);border:.5px solid var(--bd);border-radius:12px;padding:12px 14px 8px;min-width:0}
 .med-serie-t{font-size:11px;font-weight:600;color:var(--g500);margin-bottom:2px;display:flex;align-items:center;gap:6px}
 .med-serie-t i{display:inline-block;width:9px;height:9px;border-radius:50%}
@@ -913,9 +922,26 @@ button.dash-pill{cursor:pointer}button.dash-pill:hover{background:var(--g100)}
 .dash-chip{font-size:11px;font-weight:600;padding:3px 11px;border-radius:20px;background:rgba(255,255,255,.12);box-shadow:inset 0 0 0 .5px rgba(255,255,255,.22);color:#fff;white-space:nowrap}
 .dash-chip.warn{background:rgba(184,149,106,.24);box-shadow:inset 0 0 0 .5px rgba(217,184,140,.5);color:#F0D9B5}
 .dash-prox-a{display:flex;gap:8px;flex:none}
-.dash-prox-a .btn-soft{background:rgba(255,255,255,.1);border:.5px solid rgba(255,255,255,.28);color:#fff}
-.dash-prox-a .btn-soft:hover{background:rgba(255,255,255,.18)}
-.dash-prox-a .btn-soft.pri{background:#F4F2ED;border-color:#F4F2ED;color:var(--t900)}
+#dashSecHoy{align-items:start}
+.dash-resumen{grid-column:1/-1;display:block}
+.dash-resumen[hidden]{display:none}
+.dash-res-x{border:0;background:transparent;color:var(--g400);font:inherit;font-size:12px;font-weight:600;cursor:pointer;padding:4px 8px;border-radius:8px}
+.dash-res-x:hover{background:var(--g100);color:var(--g900)}
+.dres-g{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 22px}
+@media (min-width:900px){.dres-g{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.dres-i b{display:block;font-size:22px;font-weight:600;font-variant-numeric:tabular-nums;color:var(--g900);line-height:1.2}
+.dres-i span{display:block;font-size:12px;color:var(--g400);margin-top:2px}
+.dres-l{margin-top:12px;padding-top:12px;border-top:.5px solid var(--bdm);display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;font-size:12px;color:var(--g500)}
+.dres-l button{border:.5px solid var(--bdm);background:var(--sf);border-radius:10px;padding:4px 10px;font:inherit;font-size:12px;font-weight:600;color:var(--g900);cursor:pointer}
+.dres-l button:hover{background:var(--g100)}
+.dres-l button.warn{color:var(--gold-dk)}
+.dash-card.compact{padding-top:12px;padding-bottom:12px}
+.dash-card.compact .dash-card-head{margin-bottom:6px}
+.dash-card.compact .dash-vacio,.dash-card.compact .dash-empty{padding-top:2px;padding-bottom:2px}
+@media (max-width:860px){#dashSecCli [data-dc="porhacer"]{order:-1}}
+.dash-prox-a .btn-soft{background:rgba(255,255,255,.18);border:.5px solid rgba(255,255,255,.5);color:#fff !important}
+.dash-prox-a .btn-soft:hover{background:rgba(255,255,255,.28)}
+.dash-prox-a .btn-soft.pri{background:#F4F2ED;border-color:#F4F2ED;color:var(--t900) !important}
 .dash-prox-a .btn-soft.pri:hover{background:#fff}
 .dash-sec{margin-bottom:1.6rem}
 .dash-sec-h{display:flex;align-items:center;gap:12px;margin:0 0 .7rem;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--g500)}
@@ -2384,6 +2410,13 @@ input.inp,select.inp{height:44px;padding-top:0;padding-bottom:0}
       <div id="dashProxima"></div>
       <div id="dashTodoOk"></div>
       <div class="dash-grid g2" id="dashSecHoy" data-col="hoy">
+        <div class="dash-card dash-resumen" data-dc="resumen" id="dashResumenCard" hidden>
+          <div class="dash-card-head">
+            <span class="dash-card-title"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Resumen de la semana pasada</span>
+            <button type="button" class="dash-res-x" onclick="dashResumenOcultar()" aria-label="Ocultar el resumen de esta semana">Ocultar</button>
+          </div>
+          <div id="dashResSem"></div>
+        </div>
         <div class="dash-card" data-dc="sesiones">
         <div class="dash-card-head">
           <span class="dash-card-title"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Hoy y mañana</span>
@@ -5209,12 +5242,14 @@ async function loadDashboard(){
     .sort((a,b)=>(a.fecha+  (a.hora||'')).localeCompare(b.fecha+(b.hora||'')));
   _dash.hoy=sesiones.filter(c=>c.fecha===todayISO).length;
   pintarProximaDash(dashCitas,dashDeps);
+  dashResumenPintar(dashDeps,dashCitas);
   document.getElementById('dashSesionesCount').textContent=sesiones.length;
   document.getElementById('dashSesiones').innerHTML=sesiones.length?sesiones.slice(0,5).map(c=>{
     const tag=c.fecha===todayISO?'Hoy':'Mañana';
     const hora=c.hora?c.hora.slice(0,5)+' h':'';
     return `<div class="dash-row"><div class="dash-row-dot ${c.fecha===todayISO?'gold':'teal'}"></div><div class="dash-row-txt"><div class="dash-row-name">${c.cliente}</div><div class="dash-row-sub">${c.servicio||'Revisión'}${hora?' · '+hora:''}</div></div><span class="dash-row-tag">${tag}</span></div>`;
   }).join(''):dashVacio('cal','Sin sesiones para hoy ni para mañana.');
+  { const cs=document.querySelector('[data-dc="sesiones"]'); if(cs) cs.classList.toggle('compact',!sesiones.length); }
 
   // ── Pagos pendientes/atrasados ──
   const impagos=dashCitas.filter(c=>!c.pagado&&c.requiere_pago!==false).sort((a,b)=>(citaYaPaso(b)-citaYaPaso(a))||a.fecha.localeCompare(b.fecha));   // primero las que ya pasaron
@@ -5698,6 +5733,15 @@ function dashVivoIniciar(){
 //              más de 30 días sin consulta · sin revisión programada · objetivo con la fecha límite pasada · plan por preparar
 // Las tablas que no existan (SQL sin ejecutar) simplemente no aportan avisos.
 let _cart = { filas: [], filtro: 'todos', orden: 'urgencia', busca: '', cargando: false, listo: false, vista: 'hacer', tClientes: [], tCitas: [], tareas: [], citas: [], tfiltro: 'todas' };
+// Filtros y orden recordados en este navegador (nl_prefs_vistas); un valor desconocido se ignora
+const PREF_KEY = 'nl_prefs_vistas';
+function prefLeer(){ try{ const v = JSON.parse(localStorage.getItem(PREF_KEY) || 'null'); return v && typeof v === 'object' ? v : {}; }catch(e){ return {}; } }
+function prefGuarda(grupo, k, v){ try{ const p = prefLeer(); p[grupo] = Object.assign({}, p[grupo], { [k]: v }); localStorage.setItem(PREF_KEY, JSON.stringify(p)); }catch(e){} }
+(function(){ const c = prefLeer().cart || {};
+  if(['todos','ok','warn','risk','old'].includes(c.filtro)) _cart.filtro = c.filtro;
+  if(['urgencia','nombre','consulta','revision'].includes(c.orden)) _cart.orden = c.orden;
+  if(c.vista === 'clientes') _cart.vista = 'clientes';
+})();
 const CART_EST = { risk: { t: 'En riesgo', o: 0 }, warn: { t: 'Por mirar', o: 1 }, ok: { t: 'Al día', o: 2 } };
 async function cargarCartera(opts){
   const silencioso = !!(opts && opts.silencioso);
@@ -5823,7 +5867,7 @@ function cartTareasCitas(){
   _cart.tareas = _cart.tClientes.concat(out);
 }
 function cartVista(v){
-  _cart.vista = v === 'clientes' ? 'clientes' : 'hacer';
+  _cart.vista = v === 'clientes' ? 'clientes' : 'hacer'; prefGuarda('cart','vista',_cart.vista);
   document.getElementById('cartVHacer').style.display = _cart.vista === 'hacer' ? '' : 'none';
   document.getElementById('cartVCli').style.display = _cart.vista === 'clientes' ? '' : 'none';
   [['cartTabHacer', 'hacer'], ['cartTabCli', 'clientes']].forEach(([id, k]) => { const b = document.getElementById(id); b.classList.toggle('on', _cart.vista === k); b.setAttribute('aria-selected', String(_cart.vista === k)); });
@@ -5870,6 +5914,46 @@ function cartPintarHacer(){
   }).join('');
   cargarAvatares(el);
 }
+// Resumen de la semana pasada (lunes a miércoles; se oculta por semana). Sin SQL: seguimientos, historial y citas que ya se cargan.
+function dashLunesAnterior(){ const l = new Date(lunesMadridISO() + 'T00:00:00Z'); l.setUTCDate(l.getUTCDate() - 7); return l.toISOString().slice(0, 10); }
+function dashSumaDias(iso, n){ const d = new Date(iso + 'T00:00:00Z'); d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0, 10); }
+function dashResumenOcultar(){ try{ localStorage.setItem('nl_resumen_off', lunesMadridISO()); }catch(e){} const c = document.getElementById('dashResumenCard'); if(c) c.hidden = true; }
+let _resTok = 0;
+async function dashResumenPintar(todos, citasT){
+  const card = document.getElementById('dashResumenCard'), el = document.getElementById('dashResSem'); if(!card || !el) return;
+  const hoyL = lunesMadridISO(); let off = null; try{ off = localStorage.getItem('nl_resumen_off'); }catch(e){}
+  const dow = (new Date().getDay() + 6) % 7;   // 0 = lunes
+  if(off === hoyL || dow > 2 || !Array.isArray(todos) || !todos.length){ card.hidden = true; return; }
+  const tok = ++_resTok, ant = dashLunesAnterior(), ant2 = dashSumaDias(ant, -7);
+  let segs = null, hist = null;
+  try{ segs = await sb(`seguimientos?semana=gte.${ant2}&select=deportista_id,semana,respuestas`); }catch(e){}
+  try{ hist = await sb(`historial_deportista?fecha=gte.${ant}&fecha=lt.${hoyL}&select=deportista_id`); }catch(e){}
+  if(tok !== _resTok) return;
+  if(!Array.isArray(segs)){ card.hidden = true; return; }
+  const deps = todos.filter(d => d.formularios && d.formularios.seguimiento && d.formularios.seguimiento.activo && segYaToca(d, ant));
+  const mapa = {}; segs.forEach(s => { (mapa[s.deportista_id] = mapa[s.deportista_id] || {})[s.semana] = s.respuestas || {}; });
+  const recib = deps.filter(d => mapa[d.id] && mapa[d.id][ant]), sin = deps.filter(d => !(mapa[d.id] && mapa[d.id][ant]));
+  const bajan = [];
+  recib.forEach(d => { const a = mapa[d.id][ant].adherencia, p = mapa[d.id][ant2] && mapa[d.id][ant2].adherencia;
+    if(a != null && (a <= 2 || (p != null && p - a >= 2))) bajan.push({ d, a, p }); });
+  const molest = recib.filter(d => mapa[d.id][ant].molestias);
+  const consultas = Array.isArray(hist) ? hist.length : null;
+  const cobros = (citasT || []).filter(c => c.pagado && c.fecha >= ant && c.fecha < hoyL).length;
+  if(!deps.length && !consultas && !cobros){ card.hidden = true; return; }
+  const chip = (d, extra, cls) => `<button type="button"${cls ? ` class="${cls}"` : ''} onclick="abrirFichaDash(${d.id})">${sudEsc(d.nombre)}${extra ? ' · ' + extra : ''}</button>`;
+  const lista = (tit, arr, fn, cls) => arr.length ? `<div class="dres-l"><span>${tit}</span>${arr.slice(0, 6).map(fn).join('')}${arr.length > 6 ? `<span>+${arr.length - 6}</span>` : ''}</div>` : '';
+  const celda = (n, l) => `<div class="dres-i"><b>${n}</b><span>${l}</span></div>`;
+  el.innerHTML = `<div class="dres-g">
+      ${deps.length ? celda(`${recib.length} de ${deps.length}`, 'seguimientos recibidos') : ''}
+      ${consultas != null ? celda(consultas, consultas === 1 ? 'consulta registrada' : 'consultas registradas') : ''}
+      ${celda(cobros, cobros === 1 ? 'cita cobrada' : 'citas cobradas')}
+      ${deps.length ? celda(bajan.length, bajan.length === 1 ? 'cliente con la adherencia a la baja' : 'clientes con la adherencia a la baja') : ''}
+    </div>`
+    + lista('Adherencia a la baja:', bajan, x => chip(x.d, x.p != null && x.p - x.a >= 2 ? `de ${x.p} a ${x.a}` : `${x.a}/5`, 'warn'))
+    + lista('Sin enviar el seguimiento:', sin, d => chip(d, '', 'warn'))
+    + lista('Con molestias:', molest, d => chip(d, '', ''));
+  card.hidden = false;
+}
 function dashPorHacerPintar(){
   const el = document.getElementById('dashPorHacer'); if(!el) return;
   const T = (_cart.tareas || []).slice().sort((a, b) => b.urg - a.urg || (b.edad || 0) - (a.edad || 0) || String(a.nombre).localeCompare(String(b.nombre), 'es'));
@@ -5879,9 +5963,9 @@ function dashPorHacerPintar(){
   el.innerHTML = T.slice(0, 5).map(t => `<button type="button" class="dash-row dash-hacer" onclick="${t.fn}"><div class="dash-row-dot ${t.urg === 2 ? 'red' : 'gold'}"></div><div class="dash-row-txt"><div class="dash-row-name">${sudEsc(t.nombre)}</div><div class="dash-row-sub">${sudEsc(t.txt)}</div></div><span class="dash-row-tag">${t.btn}</span></button>`).join('') +
     (T.length > 5 ? `<button type="button" class="dash-mas" onclick="navTo('cartera')">Ver las ${T.length} tareas</button>` : '');
 }
-function cartFiltro(f){ _cart.filtro = (_cart.filtro === f && f !== 'todos') ? 'todos' : f; cartPintar(); }
+function cartFiltro(f){ _cart.filtro = (_cart.filtro === f && f !== 'todos') ? 'todos' : f; prefGuarda('cart','filtro',_cart.filtro); cartPintar(); }
 function cartBuscar(){ _cart.busca = (document.getElementById('cartBusca').value || '').trim().toLowerCase(); cartPintar(); }
-function cartOrden(){ _cart.orden = document.getElementById('cartOrd').value; cartPintar(); }
+function cartOrden(){ _cart.orden = document.getElementById('cartOrd').value; prefGuarda('cart','orden',_cart.orden); cartPintar(); }
 function cartSpark(vals){
   if(!vals || vals.length < 2) return vals && vals.length === 1 ? '' : '';
   const w = 64, h = 22, n = vals.length, px = i => 2 + i * (w - 4) / (n - 1), py = v => h - 3 - (Math.min(5, Math.max(1, v)) - 1) / 4 * (h - 6);
@@ -6547,7 +6631,7 @@ async function loadDeportistas() {
   if (viejo) cargarCartera({ silencioso: true });
 }
 function depEstado(id) { const f = (_cart.filas || []).find(x => x.d && x.d.id == id); return f ? f.est : null; }
-function depFiltroSet(k) { _depFiltro = (_depFiltro === k && k !== 'todos') ? 'todos' : k; renderDeportistas(); }
+function depFiltroSet(k) { _depFiltro = (_depFiltro === k && k !== 'todos') ? 'todos' : k; prefGuarda('dep','filtro',_depFiltro); renderDeportistas(); }
 function depVistaSet(v) { _depVista = v === 'tabla' ? 'tabla' : 'tarjetas'; try { localStorage.setItem('nl_dep_vista', _depVista); } catch (e) {} renderDeportistas(); }
 // Franja de cifras de Nutrición Deportiva (misma pieza que Facturación)
 function depStripPintar() {
@@ -6961,7 +7045,7 @@ function citaArchivada(c, ahora = new Date()){
 }
 
 function setAgendaFilter(tipo){
-  agendaFilterTipo = tipo;
+  agendaFilterTipo = tipo; prefGuarda('ag','tipo',tipo);
   document.querySelectorAll('#agendaChips .dep-chip').forEach(b=>b.classList.toggle('active', b.dataset.tipo===tipo));
   renderCitas();
 }
@@ -8091,10 +8175,16 @@ function openDepDet(id) {
           <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
           Editar
         </button>
-        <button class="btn-action danger" onclick="openDelDep(${d.id})">
-          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>
-          Eliminar
-        </button>
+        <span class="depd-more">
+          <button type="button" class="btn-action depd-more-b" id="depMasB" aria-haspopup="menu" aria-expanded="false" aria-label="Más acciones" onclick="depMasAlternar(event)">
+            <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg>
+          </button>
+          <div class="depd-menu" id="depMasM" role="menu" hidden>
+            <button type="button" role="menuitem" class="danger" onclick="depMasCerrar();openDelDep(${d.id})">
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>Eliminar cliente…
+            </button>
+          </div>
+        </span>
       </div>
     </div>
 
@@ -8499,6 +8589,7 @@ async function loadSeguimientos(depId){
   loadPushDev(depId);
   const el=document.getElementById('segBox'); let r=null;
   try{ r=await sb(`seguimientos?deportista_id=eq.${depId}&order=semana.asc&select=semana,respuestas`); }catch(e){}
+  if(Array.isArray(r)) r.sort((a,b)=>String(a.semana).localeCompare(String(b.semana)));
   if(!el||currentDepId!=depId) return;
   if(!Array.isArray(r)){ el.innerHTML='<p class="med-empty">Esta función necesita el SQL <b>supabase_seguimiento.sql</b> ejecutado en Supabase.</p>'; return; }
   const d=deportistas.find(x=>x.id==depId);
@@ -11343,6 +11434,10 @@ function quitarNotaCliente(id){ const ta = document.getElementById('depNotaCli')
 
 
 function openDelDep(id) { rgAbrirEliminar(id); }
+function depMasAlternar(e){ e.stopPropagation(); const m=document.getElementById('depMasM'), b=document.getElementById('depMasB'); if(!m) return; const ab=m.hidden; m.hidden=!ab; b.setAttribute('aria-expanded',String(ab)); if(ab){ const i=m.querySelector('button'); if(i) i.focus(); } }
+function depMasCerrar(){ const m=document.getElementById('depMasM'), b=document.getElementById('depMasB'); if(m&&!m.hidden){ m.hidden=true; if(b){ b.setAttribute('aria-expanded','false'); } } }
+document.addEventListener('click',e=>{ if(!e.target.closest||!e.target.closest('.depd-more')) depMasCerrar(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ const m=document.getElementById('depMasM'); if(m&&!m.hidden){ depMasCerrar(); const b=document.getElementById('depMasB'); if(b) b.focus(); } } });
 
 // ── Archivos en Storage: listar y borrar por carpeta (una carpeta por deportista: <id>/… en deportistas-docs y fotos-clientes) ──
 const BUCKETS_DEP = ['deportistas-docs', 'fotos-clientes'];
@@ -12688,6 +12783,16 @@ async function resetGuion(clientId, semana, nombre) {
   const esCampo = el => el && (el.tagName === 'INPUT' && !/^(checkbox|radio|button|submit|range|color|file)$/i.test(el.type) || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT' || el.isContentEditable);
   document.addEventListener('focusin', e => { if(esCampo(e.target)) document.body.classList.add('bn-off'); });
   document.addEventListener('focusout', () => setTimeout(() => { if(!esCampo(document.activeElement)) document.body.classList.remove('bn-off'); }, 60));
+})();
+
+// ═══════════════ PREFERENCIAS DE VISTAS ═══════════════
+(function(){
+  const p = prefLeer();
+  if(p.dep && ['todos','risk','warn','ok'].includes(p.dep.filtro)) _depFiltro = p.dep.filtro;
+  if(p.ag && ['todas','metodo','deportiva','otras'].includes(p.ag.tipo)){ agendaFilterTipo = p.ag.tipo; document.querySelectorAll('#agendaChips .dep-chip').forEach(b => b.classList.toggle('active', b.dataset.tipo === agendaFilterTipo)); }
+  const o = document.getElementById('cartOrd'); if(o) o.value = _cart.orden;
+  if(_cart.vista === 'clientes'){ const h = document.getElementById('cartVHacer'), c = document.getElementById('cartVCli'); if(h && c){ h.style.display = 'none'; c.style.display = ''; }
+    [['cartTabHacer','hacer'],['cartTabCli','clientes']].forEach(([id,k]) => { const b = document.getElementById(id); if(b){ b.classList.toggle('on', _cart.vista === k); b.setAttribute('aria-selected', String(_cart.vista === k)); } }); }
 })();
 
 // ═══════════════ FLUIDEZ ═══════════════
