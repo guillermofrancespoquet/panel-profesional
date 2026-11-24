@@ -520,6 +520,16 @@ body.dark-mode .ana-ce.bajo{color:#8DB8E8}
   #vhome .nota-card,#vhome .rev-card,#vhome .obj-card{max-width:none}
 }
 
+/* ═══ PANTALLAS INTERIORES (nov 2026): mismo estilo que el inicio — rótulo «Tu espacio», título más fino y, en pantallas anchas, más ancho y tarjetas en dos columnas ═══ */
+.view .wrap>.hello-k{margin-bottom:4px}
+#vdia .h2,#vmat .h2,#vsupl .h2,#vdatos .h2,#vreg .h2,#vforms .h2,#vcomp .h2,#vseg .h2{font-size:24px;font-weight:600;letter-spacing:-.025em}
+@media(min-width:820px){
+  #vdia .wrap,#vmat .wrap,#vsupl .wrap,#vdatos .wrap,#vreg .wrap,#vforms .wrap,#vcomp .wrap,#vseg .wrap{max-width:920px}
+  #formsBody,#suplBody{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:start}
+  #formsBody>.fcard,#suplBody>.card{margin-bottom:0;height:100%}
+  #suplBody>.note,#formsBody>.card{grid-column:1/-1}
+}
+
 /* Reacciones a las comidas, pregunta propia del seguimiento y plan sin conexión */
 .mnv-rx{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
 .mnv-rxb{display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 12px;border-radius:10px;border:.5px solid var(--bdm);background:var(--sf);color:var(--g700);font:inherit;font-size:13px;font-weight:600;cursor:pointer;touch-action:manipulation}
@@ -715,6 +725,7 @@ body.dark-mode .ana-ce.bajo{color:#8DB8E8}
 
 <div id="vdia" class="view" role="main"><div class="wrap">
   <button class="back" onclick="show('vhome')"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Inicio</button>
+  <p class="hello-k">Tu espacio</p>
   <h1 class="h2">Mi diario de comidas</h1>
   <div id="diaBody"></div>
 </div></div>
@@ -728,24 +739,28 @@ body.dark-mode .ana-ce.bajo{color:#8DB8E8}
 
 <div id="vmat" class="view" role="main"><div class="wrap">
   <button class="back" onclick="show('vhome')"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Inicio</button>
+  <p class="hello-k">Tu espacio</p>
   <h1 class="h2">Materiales</h1>
   <div id="matBody"></div>
 </div></div>
 
 <div id="vsupl" class="view" role="main"><div class="wrap">
   <button class="back" onclick="show('vhome')"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Inicio</button>
+  <p class="hello-k">Tu espacio</p>
   <h1 class="h2">Suplementación</h1>
   <div id="suplBody"></div>
 </div></div>
 
 <div id="vdatos" class="view" role="main"><div class="wrap">
   <button class="back" onclick="show('vhome')"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Inicio</button>
+  <p class="hello-k">Tu espacio</p>
   <h1 class="h2">Composición corporal</h1>
   <div id="datosBody"><div class="spin" style="margin-top:6vh"></div></div>
 </div></div>
 
 <div id="vreg" class="view" role="main"><div class="wrap">
   <button class="back" onclick="show('vhome')"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Inicio</button>
+  <p class="hello-k">Tu espacio</p>
   <h1 class="h2">Mi peso y mis fotos</h1>
   <div id="regBody"><div class="spin" style="margin-top:6vh"></div></div>
 </div></div>
@@ -766,6 +781,7 @@ body.dark-mode .ana-ce.bajo{color:#8DB8E8}
 
 <div id="vforms" class="view" role="main"><div class="wrap">
   <button class="back" onclick="show('vhome')"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Inicio</button>
+  <p class="hello-k">Tu espacio</p>
   <h1 class="h2">Formularios</h1>
   <p class="fcard-h">Rellénalos con calma: nos ayudan a preparar tu planificación. Cuando envíes cada uno, queda marcado solo.</p>
   <div id="formsBody"></div>
@@ -780,12 +796,14 @@ body.dark-mode .ana-ce.bajo{color:#8DB8E8}
 
 <div id="vcomp" class="view" role="main"><div class="wrap">
   <button class="back" onclick="show('vhome')"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Inicio</button>
+  <p class="hello-k">Tu espacio</p>
   <h1 class="h2">Mi plan de competición</h1>
   <div id="compBody"></div>
 </div></div>
 
 <div id="vseg" class="view" role="main"><div class="wrap">
   <button class="back" onclick="abrirForms()"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Formularios</button>
+  <p class="hello-k">Tu espacio</p>
   <h1 class="h2">Seguimiento semanal</h1>
   <div id="segBody"></div>
 </div></div>
